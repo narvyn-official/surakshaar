@@ -1,0 +1,7 @@
+ordinary: PASS (95 tests)
+placement: PASS (2 tests)
+workspace: PASS (2 tests)
+large-text: PASS (15 tests)
+thermal: PASS (2 tests)
+AR reference database: NOT TESTED — Google Play Services for AR absent. No physical tracking claim.
+Total passed: 116; failed groups: 0

@@ -1,0 +1,146 @@
+{
+  "version": 1,
+  "contentVersion": "learning-2026.10.10-draft2",
+  "active": [
+    {
+      "id": "fire",
+      "title": "Fire Safety",
+      "subtitle": "Recognise • decide • escape",
+      "icon": "fire",
+      "scenarios": [
+        "escape-first",
+        "extinguisher-check",
+        "agent-choice",
+        "school-fire-help",
+        "laboratory-evacuation",
+        "home-kitchen-transfer",
+        "workplace-handover"
+      ],
+      "awarenessScenarios": [
+        "escape-first",
+        "school-fire-help",
+        "laboratory-evacuation",
+        "home-kitchen-transfer"
+      ],
+      "adultScenarios": [
+        "escape-first",
+        "extinguisher-check",
+        "agent-choice",
+        "school-fire-help",
+        "laboratory-evacuation",
+        "home-kitchen-transfer",
+        "workplace-handover"
+      ],
+      "titleHi": "अग्नि सुरक्षा",
+      "subtitleHi": "खतरा पहचानें · सही निर्णय लें · सुरक्षित निकलें"
+    },
+    {
+      "id": "first-aid",
+      "title": "First Aid",
+      "subtitle": "Explore the body • recognise • help",
+      "icon": "first-aid",
+      "scenarios": [
+        "adult-collapse",
+        "school-help",
+        "bleeding-control",
+        "thermal-burn",
+        "recovery-monitor",
+        "adult-choking",
+        "seizure-safety",
+        "fracture-support",
+        "fainting-response",
+        "heat-illness",
+        "sprain-support",
+        "minor-wound-care",
+        "school-injury-help"
+      ],
+      "awarenessScenarios": [
+        "school-help",
+        "school-injury-help"
+      ],
+      "adultScenarios": [
+        "adult-collapse",
+        "school-help",
+        "bleeding-control",
+        "thermal-burn",
+        "recovery-monitor",
+        "adult-choking",
+        "seizure-safety",
+        "fracture-support",
+        "fainting-response",
+        "heat-illness",
+        "sprain-support",
+        "minor-wound-care",
+        "school-injury-help"
+      ],
+      "titleHi": "प्राथमिक उपचार",
+      "subtitleHi": "शरीर को समझें · स्थिति पहचानें · मदद करें"
+    }
+  ],
+  "legacy": [
+    "fire",
+    "gas",
+    "machinery",
+    "ppe",
+    "emergency"
+  ],
+  "contexts": [
+    "Independent learning",
+    "School",
+    "College",
+    "Workplace",
+    "Home and community"
+  ],
+  "completionPolicy": "Current catalogue practice is separate from historical industrial certification. Draft content cannot issue credentials.",
+  "audiencePolicy": "School awareness uses help-seeking and evacuation lessons. Adult casualty response lessons require an explicit adult-learning path and do not imply paediatric competence.",
+  "practiceEvidence": "Authored decision practice; body exploration and AR placement are recorded separately from assessed physical skills.",
+  "contextLabelsHi": {
+    "Independent learning": "स्वयं सीखें",
+    "School": "विद्यालय",
+    "College": "कॉलेज",
+    "Workplace": "कार्यस्थल",
+    "Home and community": "घर और समुदाय"
+  },
+  "labels": {
+    "back": {
+      "en": "Back",
+      "hi": "वापस"
+    },
+    "context": {
+      "en": "Learning context",
+      "hi": "सीखने का संदर्भ"
+    },
+    "body": {
+      "en": "Explore the body",
+      "hi": "शरीर को जानें"
+    },
+    "start": {
+      "en": "Start practice",
+      "hi": "अभ्यास शुरू करें"
+    },
+    "continue": {
+      "en": "Continue",
+      "hi": "आगे बढ़ें"
+    },
+    "again": {
+      "en": "Practise again",
+      "hi": "फिर अभ्यास करें"
+    },
+    "review": {
+      "en": "Content & review status",
+      "hi": "सामग्री और समीक्षा की स्थिति"
+    },
+    "pendingTranslation": {
+      "en": "New lessons are in English. Hindi translation is pending review.",
+      "hi": "नए पाठ अंग्रेज़ी में हैं। हिंदी अनुवाद की समीक्षा बाकी है।"
+    }
+  },
+  "uiLocalisationStatus": {
+    "en": "authored",
+    "hi": "draft-native-labels",
+    "sat": "pending"
+  },
+  "archivedVersions": [
+    "learning-2026.10.10-draft1"
+  ]
+}

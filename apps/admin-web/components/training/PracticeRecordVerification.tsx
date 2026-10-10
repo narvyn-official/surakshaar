@@ -1,0 +1,17 @@
+'use client';
+import {useEffect,useRef,useState} from 'react';
+import {requestJson} from '@/lib/client-api';
+import {Button} from '@/components/ui/button';
+import {Input} from '@/components/ui/input';
+type Result={checkedAt:number;status:'active'|'expired'|'revoked'|'unavailable';expiresAt?:number;sharedAt?:number;record?:{course:string;scenario:string;contentVersion:string;mode:string;scope:string;reviewStatus:string}};
+export function PracticeRecordVerification(){
+ const tokenInput=useRef<HTMLInputElement>(null);const [result,setResult]=useState<Result|null>(null),[busy,setBusy]=useState(false),[error,setError]=useState('');const sequence=useRef(0);
+ useEffect(()=>{const supplied=new URLSearchParams(location.hash.slice(1)).get('token');if(supplied){if(tokenInput.current)tokenInput.current.value=supplied;history.replaceState(null,'',location.pathname)}},[]);
+ async function verify(){if(busy)return;setBusy(true);setError('');setResult(null);const current=++sequence.current;try{const raw=tokenInput.current?.value.trim()??'',value=raw.includes('#')?new URLSearchParams(raw.slice(raw.indexOf('#')+1)).get('token')??'':raw;const reply=await requestJson<Result>('/api/public-learning-record','POST',{token:value});if(current===sequence.current)setResult(reply)}catch(e){if(current===sequence.current)setError(e instanceof Error?e.message:'Unable to check this record.')}finally{if(current===sequence.current)setBusy(false)}}
+ return <main className="learner-page"><header className="learner-header"><div><span className="eyebrow">SURAKSHAAR · LEARNING RECORD</span><h1>Shared practice record</h1><p>Check a completed learning exercise. This is not a professional certificate or proof of practical skill.</p></div></header>
+ <form className="admin-form panel p-6" onSubmit={e=>{e.preventDefault();void verify()}}><label>Private share link or code<Input ref={tokenInput} disabled={busy} onChange={()=>setResult(null)} required maxLength={2048} autoComplete="off" spellCheck={false}/></label><p className="fine">Anyone with this link can see its anonymous course metadata until it expires or the owner revokes it.</p><Button disabled={busy}>{busy?'Checking…':'Check current status'}</Button></form>
+ {error&&<p role="alert" className="notice error">{error}</p>}
+ {result&&<section className="panel p-6" aria-live="polite"><h2>{result.status==='active'?'Active practice share':result.status==='revoked'?'Sharing revoked':result.status==='expired'?'Share expired':'Share unavailable'}</h2>
+ <p className="fine">Checked {new Date(result.checkedAt).toLocaleString()}. Check again for current revocation status.</p>{result.status==='active'&&result.record?<><dl className="verification-result">{[['Course',result.record.course],['Exercise',result.record.scenario],['Practice mode',result.record.mode],['Content version',result.record.contentVersion],['Content review',result.record.reviewStatus],['Link expires',new Date(result.expiresAt!).toLocaleString()]].map(([label,value])=><div key={label}><dt>{label}</dt><dd>{value}</dd></div>)}</dl><p>{result.record.scope}</p><p className="fine">The stored decision sequence was checked against its authored content version. Identity, camera tracking and real-world competence are not verified. No learner name, email, raw answers or reflections are published.</p></>:<p>No practice metadata is available through this link. Ask the owner for a current share if needed.</p>}</section>}
+ </main>
+}

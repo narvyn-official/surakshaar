@@ -1,0 +1,21 @@
+{
+  "capturedAtUtc": "2026-10-04T17:27:25.826108+00:00",
+  "scope": "Diagnostic snapshot only; not proof of placement, completion or physical competence.",
+  "deviceKind": "emulator",
+  "model": "sdk_gphone64_arm64",
+  "androidRelease": "16",
+  "androidApi": "36",
+  "application": {
+    "versionName": "0.11.0-dev",
+    "versionCode": "24"
+  },
+  "arServices": {
+    "versionName": null,
+    "versionCode": null
+  },
+  "thermalStatus": 0,
+  "recentRoomArLogs": [],
+  "recentTrainingArLogs": [],
+  "logLimit": "Recent buffered AR messages may include earlier sessions; manually correlate session and APK version.",
+  "privacy": "No screenshots, camera recordings, contacts, account data or full system log were collected."
+}

@@ -1,0 +1,1 @@
+Room journal API integration passed: auth, validation, append-only snapshots, idempotency, atomic conflict, legacy import, credential separation.

@@ -1,0 +1,48 @@
+{
+  "status": "development-candidate-verified",
+  "releaseApproved": false,
+  "date": "2026-10-10",
+  "apk": {
+    "apkSha256": "6492c376eaeaccbd9f829ae60d8489233d63e018a43abb99b87762567809c7d6",
+    "apkBytes": 18295106
+  },
+  "unitTests": {
+    "tests": 203,
+    "failures": 0,
+    "errors": 0
+  },
+  "lint": {
+    "Error": 0,
+    "Warning": 47
+  },
+  "emulator": {
+    "device": "Suraksha_API36 / emulator-5554",
+    "api": 36,
+    "model": "sdk_gphone64_arm64",
+    "focusedTests": 3,
+    "standardPassed": true,
+    "font2Passed": true,
+    "originalProfileAndFontRestored": true,
+    "evidence": "artifacts/surakshaar-0.12.0/regression-2026-10-10",
+    "testedApkSha256": "6492c376eaeaccbd9f829ae60d8489233d63e018a43abb99b87762567809c7d6",
+    "finalApkRerun": "passed",
+    "privateDataRestoration": "Original databases/shared_prefs/files tar restored byte-for-byte; SHA-256 e74dafdb183d6638dc08893df95fcb6f1e1e72b4f604ec06ba082adc2f33f536. Font, animations and camera grant restored.",
+    "legacyRegression": {
+      "testedApkSha256": "0a3d28114da85d0bd189a91a4cedfe9796b4604e5dbbf3f4dc418829fba1df67",
+      "standardUniqueTests": 26,
+      "largeFontExecutions": 4,
+      "passed": true
+    }
+  },
+  "pythonValidatorTests": 17,
+  "scope": "Packaged anatomy, authored data, deterministic learning, simulated native UI. No clinical approval or sustained physical AR performance claim.",
+  "buildEvidence": "artifacts/surakshaar-0.12.0/final-resource-build.log",
+  "physicalPerformance": {
+    "accepted": false,
+    "report": "docs/surakshaar-0.12.0/phone-performance.md",
+    "review": "docs/surakshaar-0.12.0/ar-resource-review.md",
+    "finalApkInstalledOn": "Samsung SM-S921B",
+    "finalApkHomeReopened": true,
+    "finalApkArStressTest": "not-run; device previously reached critical thermal status 4"
+  }
+}

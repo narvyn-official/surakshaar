@@ -1,0 +1,293 @@
+package com.narvyn.suraksha
+
+import android.content.Context
+import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.platform.app.InstrumentationRegistry
+import org.json.JSONObject
+import org.json.JSONArray
+import org.junit.Assert.*
+import org.junit.Test
+import org.junit.runner.RunWith
+import java.util.UUID
+
+@RunWith(AndroidJUnit4::class)
+class RoomMissionStoreTest {
+    private fun isolated(block: (Context, String) -> Unit) {
+        val context = InstrumentationRegistry.getInstrumentation().targetContext
+        val name = "room-mission-test-${UUID.randomUUID()}.db"
+        try { block(context, name) } finally { context.deleteDatabase(name) }
+    }
+
+    private fun record(worker: String, module: String = "fire", mode: String = "screen", updated: Long = 100L) =
+        JSONObject().put("id", UUID.randomUUID().toString()).put("workerId", worker)
+            .put("module", module).put("mode", mode).put("updatedAt", updated)
+            .put("mission", RoomMission(module).toJson())
+
+    private fun rejected(block: () -> Unit) {
+        try { block(); fail("Invalid mission write was accepted") } catch (_: IllegalArgumentException) { }
+    }
+
+    private fun cue(phase: String, at: Any) = JSONObject().put("phase", phase).put("at", at)
+    private fun coaching(mode: String = "recall", vararg cues: JSONObject) =
+        JSONObject().put("version", 1).put("mode", mode).put("cues", JSONArray().apply { cues.forEach { put(it) } })
+
+    @Test fun authoredFireVariantsKeepOwnerDefinitionAndCoachingWhenResumed() = isolated { context,name ->
+        val m=RoomMission("fire",false,FireRoomScenarioCatalog.DAMAGED_ID)
+        m.act("alarm",1);m.act("select-clear-exit",2);m.act("select-suitable-extinguisher",3)
+        m.act("confirm-label-match",4)
+        val first=record("worker-one").put("mission",m.toJson())
+            .put("coaching",coaching("recall",cue("LABEL_CHECK",3),cue("DAMAGED_UNIT",5)))
+        RoomMissionStore(context,"worker-one",name).use { a ->
+            RoomMissionStore(context,"worker-two",name).use { b ->
+                a.save(first);assertNull(b.record(first.getString("id")))
+                rejected { b.save(first) }
+                rejected { b.save(JSONObject(first.toString()).put("workerId","worker-two")) }
+                for(other in listOf(RoomMission("fire"),RoomMission("fire",false,FireRoomScenarioCatalog.DEFAULT_ID),RoomMission("fire",true,FireRoomScenarioCatalog.DAMAGED_ID))) {
+                    rejected { a.save(JSONObject(first.toString()).put("mission",other.toJson())) }
+                }
+                val altered=JSONObject(first.toString())
+                altered.getJSONObject("mission").getJSONObject("scenario").put("fireDefinitionVersion",2)
+                rejected { a.save(altered) }
+                assertEquals(first.toString(),a.record(first.getString("id"))!!.toString())
+            }
+        }
+        RoomMissionStore(context,"worker-one",name).use { a ->
+            val saved=a.record(first.getString("id"))!!
+            val resumed=RoomMission.restore(saved.getJSONObject("mission"))
+            assertEquals(FireRoomScenarioCatalog.DAMAGED_ID,resumed.fireScenarioId)
+            assertEquals("DAMAGED_UNIT",resumed.phase)
+            val help=RoomCoaching.restore(saved.getJSONObject("coaching"),"fire")
+            assertEquals(2,help.cueCount)
+            assertTrue(resumed.act("reject-damaged-unit",6))
+            assertTrue(help.requestCue("ROUTE_RECHECK",7))
+            val next=JSONObject(saved.toString()).put("updatedAt",200L).put("mission",resumed.toJson()).put("coaching",help.toJson())
+            a.save(next);assertEquals(next.toString(),a.record(first.getString("id"))!!.toString())
+            assertFalse(next.getJSONObject("mission").getJSONObject("result").getBoolean("certifiable"))
+        }
+    }
+
+    @Test fun workerJournalsStaySeparateAndPersistAfterHelpersClose() = isolated { context, name ->
+        val first = record("worker-one", "fire", "camera")
+        val second = record("worker-two", "gas", "screen")
+        RoomMissionStore(context, "worker-one", name).use { a ->
+            RoomMissionStore(context, "worker-two", name).use { b ->
+                a.save(first); assertTrue(b.records().isEmpty())
+                b.save(second)
+                assertEquals(first.toString(), a.records().single().toString())
+                assertEquals(second.toString(), b.records().single().toString())
+            }
+        }
+        RoomMissionStore(context, "worker-one", name).use { assertEquals(first.toString(), it.records().single().toString()) }
+        RoomMissionStore(context, "worker-two", name).use { assertEquals(second.toString(), it.records().single().toString()) }
+    }
+
+    @Test fun ownerMismatchAndReboundIdCannotReplaceExistingEvidence() = isolated { context, name ->
+        val first = record("worker-one")
+        RoomMissionStore(context, "worker-one", name).use { a ->
+            RoomMissionStore(context, "worker-two", name).use { b ->
+                a.save(first)
+                rejected { b.save(first) }
+                rejected { b.save(JSONObject(first.toString()).put("workerId", "worker-two")) }
+                assertTrue(b.records().isEmpty())
+                assertEquals(first.toString(), a.records().single().toString())
+                // A rejected transactional collision must not poison the next legitimate write.
+                b.save(record("worker-two")); assertEquals(1, b.records().size)
+            }
+        }
+    }
+
+    @Test fun modeAndModuleAreLockedForAnExistingMissionId() = isolated { context, name ->
+        val original = record("worker-one", "fire", "screen")
+        RoomMissionStore(context, "worker-one", name).use { store ->
+            store.save(original)
+            rejected { store.save(JSONObject(original.toString()).put("mode", "camera")) }
+            val otherModule = record("worker-one", "gas", "screen").put("id", original.getString("id"))
+            rejected { store.save(otherModule) }
+            assertEquals(original.toString(), store.records().single().toString())
+        }
+    }
+
+    @Test fun invalidScopeAndCertificationClaimsNeverReplaceTheSavedSnapshot() = isolated { context, name ->
+        val original = record("worker-one")
+        RoomMissionStore(context, "worker-one", name).use { store ->
+            store.save(original)
+            for (value in listOf<Any>(true, "false", JSONObject.NULL)) {
+                val invalid = JSONObject(original.toString())
+                invalid.getJSONObject("mission").getJSONObject("result").put("certifiable", value)
+                rejected { store.save(invalid) }
+            }
+            val missing = JSONObject(original.toString()); missing.getJSONObject("mission").remove("result")
+            rejected { store.save(missing) }
+            val mismatched = JSONObject(original.toString()); mismatched.getJSONObject("mission").put("module", "gas")
+            rejected { store.save(mismatched) }
+            rejected { store.save(JSONObject(original.toString()).put("module", "unknown")) }
+            rejected { store.save(JSONObject(original.toString()).put("mode", "description")) }
+            rejected { store.save(JSONObject(original.toString()).put("updatedAt", -1)) }
+            rejected { store.save(JSONObject(original.toString()).put("updatedAt", "100")) }
+            assertEquals(original.toString(), store.records().single().toString())
+        }
+    }
+
+    @Test fun sameOwnerAndModeCanAtomicallyReplaceAndReadDetachedSnapshots() = isolated { context, name ->
+        val original = record("worker-one")
+        val engine = RoomMission("fire"); assertTrue(engine.act("alarm", 0))
+        val updated = JSONObject(original.toString()).put("updatedAt", 200L).put("mission", engine.toJson())
+        RoomMissionStore(context, "worker-one", name).use { store ->
+            store.save(original); store.save(updated)
+            assertEquals(1, store.records().size)
+            assertEquals(updated.toString(), store.records().single().toString())
+            store.records().single().getJSONObject("mission").put("phase", "COMPLETE")
+            assertEquals("EXIT", store.records().single().getJSONObject("mission").getString("phase"))
+            updated.getJSONObject("mission").put("phase", "COMPLETE")
+            assertEquals("EXIT", store.records().single().getJSONObject("mission").getString("phase"))
+        }
+        RoomMissionStore(context, "worker-one", name).use { reopened ->
+            val saved = reopened.records().single()
+            assertEquals(200L, saved.getLong("updatedAt"))
+            assertEquals("EXIT", saved.getJSONObject("mission").getString("phase"))
+        }
+    }
+
+    @Test fun malformedCoachingMetadataCannotCreateRecords() = isolated { context, name ->
+        val invalid = mutableListOf<Any>(JSONObject.NULL, "recall", JSONArray(), JSONObject(),
+            coaching().put("version", "1"), coaching().put("version", 2), coaching().put("version", true),
+            coaching().put("version", 1.25), coaching().put("mode", "exam"), coaching().put("mode", 1),
+            coaching().put("cues", JSONObject()), coaching().put("cues", JSONObject.NULL),
+            coaching().put("cues", JSONArray().put("ALARM")),
+            coaching().put("extra", true), coaching("guided", cue("ALARM", 0)),
+            coaching("recall", cue("COMPLETE", 0)), coaching("recall", cue("GAS_CHECK", 0)),
+            coaching("recall", cue("ALARM", -1)), coaching("recall", cue("ALARM", "1")),
+            coaching("recall", cue("ALARM", 1.25)), coaching("recall", cue("ALARM", true)),
+            coaching("recall", cue("ALARM", JSONObject.NULL)),
+            coaching("recall", cue("ALARM", 10), cue("PIN", 9)),
+            coaching("recall", cue("ALARM", 0).put("extra", "changed")))
+        for (key in listOf("version", "mode", "cues")) invalid.add(coaching().apply { remove(key) })
+        for (key in listOf("phase", "at")) invalid.add(coaching("recall", cue("ALARM", 0).apply { remove(key) }))
+        invalid.add(coaching().put("cues", JSONArray().apply { repeat(129) { put(cue("ALARM", it)) } }))
+        RoomMissionStore(context, "worker-one", name).use { store ->
+            for (metadata in invalid) {
+                rejected { store.save(record("worker-one").put("coaching", metadata)) }
+                assertTrue("Invalid metadata must not write a record: $metadata", store.records().isEmpty())
+            }
+            rejected { store.save(record("worker-one", "gas").put("coaching", coaching("recall", cue("ALARM", 0)))) }
+            store.save(record("worker-one", "gas").put("coaching", coaching("recall", cue("GAS_CHECK", 0), cue("BARRIER", 0), cue("ATTENDANT", 1), cue("REFUSE", Long.MAX_VALUE))))
+            assertEquals(1, store.records().size)
+        }
+    }
+
+    @Test fun coachingModeAndSavedCuePrefixCannotBeRebound() = isolated { context, name ->
+        val original = record("worker-one").put("coaching", coaching("recall", cue("ALARM", 10), cue("PIN", 20)))
+        RoomMissionStore(context, "worker-one", name).use { store ->
+            store.save(original)
+            val replacements = listOf(
+                coaching("guided"), coaching("recall"), coaching("recall", cue("ALARM", 10)),
+                coaching("recall", cue("ALARM", 11), cue("PIN", 20)),
+                coaching("recall", cue("AIM", 10), cue("PIN", 20)),
+                coaching("recall", cue("PIN", 10), cue("ALARM", 20)))
+            for (replacement in replacements) {
+                rejected { store.save(JSONObject(original.toString()).put("coaching", replacement)) }
+                assertEquals(original.toString(), store.records().single().toString())
+            }
+            rejected { store.save(JSONObject(original.toString()).apply { remove("coaching") }) }
+            assertEquals(original.toString(), store.records().single().toString())
+        }
+    }
+
+    @Test fun recalledCuesCanAppendAndRemainImmutableAfterReopening() = isolated { context, name ->
+        val first = record("worker-one").put("coaching", coaching("recall", cue("ALARM", 10)))
+        val appended = JSONObject(first.toString()).put("updatedAt", 200L)
+            .put("coaching", coaching("recall", cue("ALARM", 10), cue("PIN", 10), cue("AIM", 30)))
+        RoomMissionStore(context, "worker-one", name).use { store ->
+            store.save(first);store.save(appended)
+            assertEquals(appended.toString(), store.records().single().toString())
+            appended.getJSONObject("coaching").getJSONArray("cues").getJSONObject(0).put("at", 99)
+            assertEquals(10L, store.records().single().getJSONObject("coaching").getJSONArray("cues").getJSONObject(0).getLong("at"))
+        }
+        RoomMissionStore(context, "worker-one", name).use { reopened ->
+            val saved = reopened.records().single()
+            assertEquals(3, saved.getJSONObject("coaching").getJSONArray("cues").length())
+            rejected { reopened.save(first) }
+            val next = JSONObject(saved.toString())
+            next.getJSONObject("coaching").getJSONArray("cues").put(cue("SWEEP", 40))
+            reopened.save(next)
+            assertEquals(4, reopened.records().single().getJSONObject("coaching").getJSONArray("cues").length())
+        }
+    }
+
+    @Test fun legacyRecordsRemainGuidedAndCanReceiveExplicitGuidedMetadata() = isolated { context, name ->
+        val legacy = record("worker-one")
+        RoomMissionStore(context, "worker-one", name).use { it.save(legacy) }
+        RoomMissionStore(context, "worker-one", name).use { store ->
+            assertFalse(store.records().single().has("coaching"))
+            val oldStyleUpdate = JSONObject(legacy.toString()).put("updatedAt", 150L)
+            store.save(oldStyleUpdate)
+            rejected { store.save(JSONObject(legacy.toString()).put("coaching", coaching("recall"))) }
+            val explicitGuided = JSONObject(legacy.toString()).put("updatedAt", 200L).put("coaching", coaching("guided"))
+            store.save(explicitGuided)
+            assertEquals("guided", store.records().single().getJSONObject("coaching").getString("mode"))
+            // A legacy-shaped update is the same guided/empty meaning, not removal of recorded cues.
+            store.save(JSONObject(legacy.toString()).put("updatedAt", 300L))
+            assertFalse(store.records().single().has("coaching"))
+            val maximum = record("worker-one").put("coaching", coaching().put("cues", JSONArray().apply { repeat(128) { put(cue("ALARM", it)) } }))
+            store.save(maximum)
+            assertEquals(2, store.records().size)
+        }
+    }
+
+    @Test fun versionTwoJourneysPersistAssistanceForEveryNewPhase() = isolated { context, name ->
+        val expected=mutableMapOf<String,String>()
+        RoomMissionStore(context,"worker-one",name).use { store ->
+            for(module in listOf("fire","gas")) {
+                val engine=RoomMission(module);val help=RoomCoaching(module,true)
+                val actions=if(module=="fire")listOf("alarm","select-clear-exit","choose-evacuation","follow-clear-route","reach-assembly-point","report-missing-worker")
+                    else listOf("inspect-meter","select-specified-ppe","close-barrier","place-attendant-outside","send-buddy-check","confirm-buddy-ack","refuse-entry")
+                actions.forEachIndexed { i,action ->
+                    assertTrue(help.requestCue(engine.phase,i*10L));assertTrue(engine.act(action,i*10L+1))
+                }
+                assertTrue(engine.completed)
+                val value=record("worker-one",module).put("mission",engine.toJson()).put("coaching",help.toJson())
+                expected[value.getString("id")]=value.toString();store.save(value)
+                assertEquals(2,value.getJSONObject("mission").getInt("version"))
+                val phases=help.cues.map { it.phase }
+                if(module=="fire")assertTrue(phases.containsAll(listOf("EXIT","EQUIPMENT","EVACUATE","ASSEMBLY","REPORT")))
+                else assertTrue(phases.containsAll(listOf("PPE","COMMUNICATE","ACKNOWLEDGE")))
+                val invalid=JSONObject(value.toString())
+                invalid.getJSONObject("coaching").getJSONArray("cues").put(cue("COMPLETE",100))
+                rejected { store.save(invalid) }
+            }
+        }
+        RoomMissionStore(context,"worker-one",name).use { reopened ->
+            assertEquals(expected,reopened.records().associate { it.getString("id") to it.toString() })
+        }
+    }
+
+    @Test fun actualVersionOneGuidedAndRecallPayloadsSurviveNewVersionWritesUnchanged() = isolated { context, name ->
+        fun legacy():JSONObject {
+            val mission=JSONObject().put("version",1).put("module","fire").put("phase","PIN").put("completed",false)
+                .put("progress",0.0).put("overallProgress",0.2).put("released",false).put("lastInterruption",JSONObject.NULL)
+                .put("events",JSONArray().put(JSONObject().put("id","alarm").put("phase","ALARM").put("at",10)
+                    .put("accepted",true).put("reason","intentional-control"))).put("measurements",JSONArray())
+                .put("scenario",JSONObject().put("simulated",true).put("catalogVersion",1).put("role","scenario-authorised")
+                    .put("equipment","scenario-suitable").put("retreatPath","scenario-clear"))
+                .put("result",JSONObject().put("complete",false).put("certifiable",false).put("practical","not-assessed").put("outcome","in-progress"))
+            return record("worker-one").put("mission",mission)
+        }
+        val guided=legacy()
+        val recall=legacy().put("coaching",coaching("recall",cue("ALARM",0),cue("PIN",20)))
+        val original=mapOf(guided.getString("id") to guided.toString(),recall.getString("id") to recall.toString())
+        RoomMissionStore(context,"worker-one",name).use { store -> store.save(guided);store.save(recall) }
+        RoomMissionStore(context,"worker-one",name).use { store ->
+            assertEquals(original,store.records().associate { it.getString("id") to it.toString() })
+            store.save(record("worker-one","gas").put("coaching",coaching("recall",cue("PPE",30),cue("COMMUNICATE",40),cue("ACKNOWLEDGE",50))))
+            val records=store.records().associateBy { it.getString("id") }
+            for((id,payload) in original)assertEquals(payload,records.getValue(id).toString())
+            assertFalse(records.getValue(guided.getString("id")).has("coaching"))
+            assertEquals("PIN",records.getValue(recall.getString("id")).getJSONObject("mission").getString("phase"))
+            assertFalse(records.getValue(guided.getString("id")).getJSONObject("mission").has("evacuationOnly"))
+        }
+        RoomMissionStore(context,"worker-one",name).use { reopened ->
+            val records=reopened.records().associateBy { it.getString("id") }
+            for((id,payload) in original)assertEquals(payload,records.getValue(id).toString())
+        }
+    }
+}

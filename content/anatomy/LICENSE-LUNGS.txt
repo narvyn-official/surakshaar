@@ -1,0 +1,27 @@
+BodyParts3D / Anatomography lung parenchyma subset
+© Database Center for Life Science (DBCLS)
+
+Conservative licence retained for viewer-served 4.3 assets: Creative Commons
+Attribution-ShareAlike 2.1 Japan (CC BY-SA 2.1 JP).
+https://creativecommons.org/licenses/by-sa/2.1/jp/
+
+Source permission: https://lifesciencedb.jp/bp3d/info_en/index.html (License section)
+Source data service: https://lifesciencedb.jp/bp3d/
+Fetched 10 October 2026 through the official version-stamped 4.3 mapping and download.cgi.
+
+The archive licence page linked by the viewer now states CC BY 4.0 (updated 27
+February 2025): https://dbarchive.biosciencedbc.jp/en/bodyparts3d/lic.html
+The separately downloaded archive 4.0 pack uses that licence. This 4.3 subset
+retains the stricter viewer's explicit ShareAlike attribution instead of assuming
+that a changed archive notice supersedes every viewer-served asset's terms.
+
+OBJ downloads are unchanged. The subset selection, accompanying part manifest
+and Blender preview were made for SurakshaAR. Any distributed derivatives of
+this subset must retain attribution, licence links, changes and ShareAlike terms;
+do not label these assets CC BY 4.0 only. No endorsement is implied.
+
+The source project warns that some contours and concept assignments may contain
+errors. This subset has not received qualified anatomical or clinical approval.
+The asset is adult anatomy and does not validate treatment or practical skills.
+
+Distributed derivatives: grouped per lung, transformed to metres and decimated for mobile rendering. SurakshaAR lung derivatives retain CC BY-SA 2.1 JP.

@@ -1,0 +1,139 @@
+
+> surakshaar-admin@0.11.0-dev check
+> npm test && tsc --noEmit && npm run lint && npm run build
+
+
+> surakshaar-admin@0.11.0-dev test
+> tsx --test tests/*.test.ts
+
+✔ government-pilot role matrix separates training, administration and certification (1.172958ms)
+✔ JSON accepts objects and same-origin native/browser requests (56.938166ms)
+✔ rejects cross-origin, malformed JSON, primitives and unsupported media (2.590333ms)
+✔ bounds UTF-8 bytes and cancels a streamed oversized request (2.773834ms)
+✔ latest failure replaces earlier pass; practice cannot inflate coverage (2.370125ms)
+✔ all available latest assessments required and revoked credentials excluded (17.389ms)
+✔ CSV preserves quoting and neutralizes spreadsheet formulas (1.963333ms)
+✔ machinery critical failure overrides a high numerical score (3.400708ms)
+✔ archived content accepts its modules but rejects a new module or unknown version (0.588125ms)
+✔ PPE has its own analytics label, critical gate and version scope (1.651792ms)
+✔ all five current domains are required for complete coverage (1.353ms)
+✔ an emergency critical error cannot be averaged into a pass (0.44125ms)
+✔ 0.3.0 replays its four archived domains and cannot claim emergency evidence (0.933041ms)
+✔ expired and unrecorded credentials are excluded as the clock advances (0.32625ms)
+✔ learning/MFA migrations preserve existing review decisions and legacy policy (25.751417ms)
+✔ return destinations preserve local intent and reject redirect escapes (1.190875ms)
+✔ all five scenario histories replay and remain non-certifying (10.501375ms)
+✔ reject forged outcomes, event skips, wrong learner and rewritten history (5.04625ms)
+✔ approval rubric cannot accept an unchecked review (1.438792ms)
+✔ recovery mail requires secure configured delivery (1.027875ms)
+✔ reset delivery uses trusted base and fragment, and never follows redirects (92.456041ms)
+✔ legacy and v2 fire/gas journals stay noncertifying, including incomplete and evacuation-only (14.844208ms)
+✔ reject owner, version, forged certification, unknown fields and missing or reordered actions (7.725666ms)
+✔ virtual measurements bind to events and cannot fabricate timing or sweep coverage (3.345ms)
+✔ requested cues stay ordered, phase-bound and separate from guided practice (1.637416ms)
+✔ bounded envelopes reject oversized history, duplicate IDs and unknown schema (9.564ms)
+✔ new completion appends to incomplete snapshot, while changed identity or prior history conflicts (42.097375ms)
+✔ SQLite guard atomically rejects stale-parent forks without losing the previously imported snapshot (1.569292ms)
+✔ all 81 supplied cases answer or clarify within the source boundary (13.687584ms)
+✔ injection, assessment answer and cross-learner requests never call a provider (0.5365ms)
+✔ missing context, code-switching, transcription errors and conflicting procedures safely clarify (3.578542ms)
+✔ provider cannot invent prose, citations or select outside retrieved scope (4.012084ms)
+✔ Hindi support is stated honestly and Santali is not silently substituted (0.462875ms)
+✔ provider HTTP output is untrusted, bounded and cannot smuggle document instructions (31.580333ms)
+✔ an unresponsive provider is bounded and cannot hold the tutor indefinitely (3012.530709ms)
+✔ legacy has no assumed expiry; exact boundary expires (0.895708ms)
+✔ issuance needs an explicit, future, valid integer date (0.404125ms)
+✔ revocation wins and unrecorded/expired dates never become active (0.208583ms)
+ℹ tests 38
+ℹ suites 0
+ℹ pass 38
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 3509.585959
+
+> surakshaar-admin@0.11.0-dev lint
+> eslint . --ignore-pattern dist --ignore-pattern .next
+
+
+> surakshaar-admin@0.11.0-dev build
+> vinext build
+
+
+  vinext build  (Vite 8.3.0)
+
+(!) Your Vite config uses features that are unsupported by `configLoader: 'native'`, which is planned to become the default in a future major version of Vite:
+  - JSON import "./.openai/hosting.json" without import attributes (vite.config.ts:3:27). Add `with { type: 'json' }`
+  - import "./build/sites-vite-plugin" without a file extension (vite.config.ts:4:23). Add the file extension
+Set `VITE_CONFIG_NATIVE_IGNORE_WARNING=true` to suppress this warning.
+(node:75938) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(!) Your Vite config uses features that are unsupported by `configLoader: 'native'`, which is planned to become the default in a future major version of Vite:
+  - JSON import "./.openai/hosting.json" without import attributes (vite.config.ts:3:27). Add `with { type: 'json' }`
+  - import "./build/sites-vite-plugin" without a file extension (vite.config.ts:4:23). Add the file extension
+Set `VITE_CONFIG_NATIVE_IGNORE_WARNING=true` to suppress this warning.
+[1/5] analyze client references...
+transforming...
+✓ 787 modules transformed.
+rendering chunks...
+✓ built in 2.17s
+[2/5] analyze server references...
+transforming...
+✓ 970 modules transformed.
+rendering chunks...
+✓ built in 2.17s
+[3/5] build rsc environment...
+transforming...
+✓ 842 modules transformed.
+rendering chunks...
+computing gzip size...
+✓ built in 2.52s
+[4/5] build client environment...
+transforming...
+✓ 2784 modules transformed.
+rendering chunks...
+computing gzip size...
+✓ built in 3.89s
+[33m[PLUGIN_TIMINGS] [0mPlugin hooks ran for 3.6s of this 3.8s build (94%).
+2 hooks are listed without a time. Their calls overlapped, so the time inside one call includes work from other calls. To find their cost, profile the build with `node --cpu-prof`:
+  - vinext:og-inline-fetch-assets resolveId (8658 calls)
+  - alias resolveId (9084 calls)
+See https://rolldown.rs/reference/InputOptions.checks#plugintimings for more details.
+
+[5/5] build ssr environment...
+transforming...
+✓ 1036 modules transformed.
+rendering chunks...
+computing gzip size...
+✓ built in 4.16s
+[0m
+  Route (app)
+  ┌ ƒ /
+  ├ λ /api/admin/manage
+  ├ λ /api/admin/session
+  ├ λ /api/auth/:all+
+  ├ λ /api/credentials
+  ├ λ /api/governance
+  ├ λ /api/import
+  ├ λ /api/learner
+  ├ λ /api/learners
+  ├ λ /api/public-credential
+  ├ λ /api/records
+  ├ λ /api/room-journals
+  ├ λ /api/tutor
+  ├ λ /api/verify
+  ├ ƒ /certificate/:id
+  ├ ? /forgot-password
+  ├ ƒ /learn
+  ├ ƒ /login
+  ├ ? /reset-password
+  └ ? /verify
+
+  λ API  ƒ Dynamic  ? Unknown
+
+  ? Some routes could not be classified. vinext currently uses static analysis
+    and cannot detect dynamic API usage (headers(), cookies(), etc.) at build time.
+    Automatic classification will be improved in a future release.
+
+  Build complete. Run `vinext start` to start the production server.

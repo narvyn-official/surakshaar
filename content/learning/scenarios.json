@@ -1,0 +1,3612 @@
+{
+  "version": "learning-2026.10.10-draft2",
+  "review": {
+    "status": "draft",
+    "reviewer": null,
+    "checkedAgainst": [
+      "https://112.gov.in/",
+      "https://cpr.heart.org/en/resuscitation-science/cpr-and-ecc-guidelines/adult-basic-life-support",
+      "https://dfs.delhi.gov.in/dfs/fire-safety-precautions-against-electricity",
+      "https://www.acs.org/about/governance/committees/chemical-safety/publications-resources/guide-for-chemical-spill-response.html",
+      "https://www.london-fire.gov.uk/safety/the-home/cooking/pan-fires/",
+      "https://www.nhs.uk/conditions/burns-and-scalds/",
+      "https://www.nhs.uk/conditions/cuts-and-grazes/",
+      "https://www.nhs.uk/conditions/heat-exhaustion-heatstroke/",
+      "https://www.nhs.uk/conditions/sprains-and-strains/",
+      "https://www.nhs.uk/symptoms/fainting/",
+      "https://www.osha.gov/laws-regs/regulations/standardnumber/1910/1910.157",
+      "https://www.osha.gov/laws-regs/regulations/standardnumber/1910/1910.37",
+      "https://www.osha.gov/laws-regs/regulations/standardnumber/1910/1910.38",
+      "https://www.resus.org.uk/professional-library/2025-resuscitation-guidelines/first-aid-guidelines",
+      "https://www.sja.org.uk/first-aid-advice/choking/",
+      "https://www.sja.org.uk/first-aid-advice/cuts-and-grazes/",
+      "https://www.sja.org.uk/first-aid-advice/duties-and-responsibilities-of-first-aiders/",
+      "https://www.sja.org.uk/first-aid-advice/fainting/",
+      "https://www.sja.org.uk/first-aid-advice/fractures-and-broken-bones/",
+      "https://www.sja.org.uk/first-aid-advice/heat-exhaustion/",
+      "https://www.sja.org.uk/first-aid-advice/heatstroke/",
+      "https://www.sja.org.uk/first-aid-advice/recovery-position/",
+      "https://www.sja.org.uk/first-aid-advice/seizure/",
+      "https://www.sja.org.uk/first-aid-advice/severe-bleeding/",
+      "https://www.sja.org.uk/first-aid-advice/sprains-and-strains/",
+      "https://www.usfa.fema.gov/prevention/home-fires/prepare-for-fire/fire-extinguishers/index.html",
+      "https://www.usfa.fema.gov/prevention/home-fires/prepare-for-fire/home-fire-escape-plans/"
+    ],
+    "checkedOn": "2026-10-10",
+    "limitations": [
+      "Source cross-check is not qualified clinical or fire-instructor approval.",
+      "English authored content; Hindi and Santali translations pending review.",
+      "No practical competence or recognised qualification awarded.",
+      "Adult casualty lessons are separate from school awareness. Paediatric and infant treatment are not covered.",
+      "No real-time emergency diagnosis, CPR depth/force measurement or practical competence assessment.",
+      "Source organisations have not reviewed or endorsed this app.",
+      "International sources inform general principles; local clinical and fire-instructor adaptation remains pending.",
+      "OSHA and international fire sources support general principles; they are not represented as Indian statutory requirements. Equipment labels and the approved local emergency plan govern site response."
+    ],
+    "reviewMethod": "Primary-source cross-check and authored scenario consistency review by an AI coding assistant; not an independent clinical assessment."
+  },
+  "scenarios": [
+    {
+      "id": "adult-collapse",
+      "course": "first-aid",
+      "title": "An adult collapses",
+      "audience": "adult",
+      "setting": "community",
+      "casualtyAge": "adult",
+      "reviewStatus": "draft",
+      "reviewer": null,
+      "prerequisites": [
+        "Read the introduction"
+      ],
+      "objectives": [
+        "Recognise abnormal breathing",
+        "Delegate help clearly",
+        "Understand the CPR / AED sequence",
+        "Separate knowledge from physical skill"
+      ],
+      "steps": [
+        {
+          "id": "safe",
+          "title": "Pause at the scene",
+          "cue": "An adult has collapsed in a community hall. A chair has fallen nearby.",
+          "question": "Before approaching, what do you check?",
+          "choices": [
+            {
+              "id": "safe-0",
+              "text": "Check for hazards and whether you can approach safely",
+              "correct": true
+            },
+            {
+              "id": "safe-1",
+              "text": "Rush forward without looking",
+              "correct": false
+            },
+            {
+              "id": "safe-2",
+              "text": "Ask everyone to leave before calling for help",
+              "correct": false
+            }
+          ],
+          "explanation": "Notice hazards before approaching. If the area is unsafe, keep clear and summon emergency help. This simulated scene contains no electrical or traffic hazard.",
+          "part": null,
+          "source": "https://cpr.heart.org/en/resuscitation-science/cpr-and-ecc-guidelines/adult-basic-life-support",
+          "safetyCritical": true,
+          "evidenceType": "decision",
+          "requiresObservation": false
+        },
+        {
+          "id": "response",
+          "title": "Check responsiveness",
+          "cue": "The area is safe. The adult does not respond to your voice or a gentle shoulder tap.",
+          "question": "What information matters next?",
+          "choices": [
+            {
+              "id": "response-1",
+              "text": "Assume they are sleeping",
+              "correct": false
+            },
+            {
+              "id": "response-2",
+              "text": "Give them water",
+              "correct": false
+            },
+            {
+              "id": "response-0",
+              "text": "Check whether they are breathing normally and get help",
+              "correct": true
+            }
+          ],
+          "explanation": "Responsiveness and normal breathing guide a lay responder. Do not give food or drink to an unresponsive person. This activity does not train diagnosis.",
+          "part": null,
+          "source": "https://cpr.heart.org/en/resuscitation-science/cpr-and-ecc-guidelines/adult-basic-life-support",
+          "safetyCritical": true,
+          "evidenceType": "decision",
+          "requiresObservation": false
+        },
+        {
+          "id": "breathing",
+          "title": "Recognise the cue",
+          "cue": "The simulated adult makes occasional irregular gasps. There is no normal breathing.",
+          "question": "How should you interpret this?",
+          "choices": [
+            {
+              "id": "breathing-2",
+              "text": "Wait to see if they wake up",
+              "correct": false
+            },
+            {
+              "id": "breathing-0",
+              "text": "Gasping is not normal breathing; treat this as an emergency",
+              "correct": true
+            },
+            {
+              "id": "breathing-1",
+              "text": "Gasping means normal breathing",
+              "correct": false
+            }
+          ],
+          "explanation": "For an unresponsive adult, absent or abnormal breathing, including gasping, is a cardiac-arrest warning. A lay responder should not delay action while trying to diagnose the cause.",
+          "part": "FMA7309",
+          "source": "https://cpr.heart.org/en/resuscitation-science/cpr-and-ecc-guidelines/adult-basic-life-support",
+          "safetyCritical": true,
+          "evidenceType": "decision",
+          "anatomyPurpose": "Explore location only; not a measurement or diagnosis of a real person.",
+          "requiresObservation": false
+        },
+        {
+          "id": "buddy",
+          "title": "Give your buddy a clear task",
+          "cue": "A bystander is beside you. An AED is signposted nearby.",
+          "question": "Choose the clearest instruction.",
+          "choices": [
+            {
+              "id": "buddy-0",
+              "text": "You in the blue shirt: call emergency services, bring the AED and report back",
+              "correct": true
+            },
+            {
+              "id": "buddy-1",
+              "text": "Somebody should do something",
+              "correct": false
+            },
+            {
+              "id": "buddy-2",
+              "text": "Go home and find medicine",
+              "correct": false
+            }
+          ],
+          "explanation": "Address one person and specify help, equipment and a return report. In India use the local emergency response number; 112 is the integrated emergency service. No call is made by this simulation.",
+          "part": null,
+          "source": "https://112.gov.in/",
+          "safetyCritical": true,
+          "evidenceType": "decision",
+          "requiresObservation": false
+        },
+        {
+          "id": "cpr",
+          "title": "Begin simulated CPR learning",
+          "cue": "Emergency help has been activated. The adult remains unresponsive and is not breathing normally.",
+          "question": "Which learning action is appropriate?",
+          "choices": [
+            {
+              "id": "cpr-1",
+              "text": "Wait for the AED before starting CPR",
+              "correct": false
+            },
+            {
+              "id": "cpr-2",
+              "text": "Practise compressions on a classmate",
+              "correct": false
+            },
+            {
+              "id": "cpr-0",
+              "text": "Start the CPR sequence and follow dispatcher guidance",
+              "correct": true
+            }
+          ],
+          "explanation": "CPR should begin promptly. This app teaches sequence only. Effective compressions and breaths require practical training with an appropriate manikin and instructor. Never practise compressions on another learner.",
+          "part": "FMA7485",
+          "source": "https://cpr.heart.org/en/resuscitation-science/cpr-and-ecc-guidelines/adult-basic-life-support",
+          "safetyCritical": true,
+          "evidenceType": "decision",
+          "anatomyPurpose": "Explore location only; not a measurement or diagnosis of a real person.",
+          "requiresObservation": false
+        },
+        {
+          "id": "landmark",
+          "title": "Understand the chest landmark",
+          "cue": "Open the body view to locate the sternum and see its relationship to the ribs.",
+          "question": "What can this model teach?",
+          "choices": [
+            {
+              "id": "landmark-2",
+              "text": "Whether a real casualty has a pulse",
+              "correct": false
+            },
+            {
+              "id": "landmark-0",
+              "text": "The location of a landmark; a manikin is needed to assess compression skill",
+              "correct": true
+            },
+            {
+              "id": "landmark-1",
+              "text": "How hard I press a real chest",
+              "correct": false
+            }
+          ],
+          "explanation": "An anatomical model supports location knowledge. Touchscreen pressure does not measure chest compression force or depth. Inspecting a structure is exploration, not a practical competency assessment.",
+          "part": "FMA7485",
+          "source": "https://cpr.heart.org/en/resuscitation-science/cpr-and-ecc-guidelines/adult-basic-life-support",
+          "safetyCritical": false,
+          "evidenceType": "decision",
+          "anatomyPurpose": "Explore location only; not a measurement or diagnosis of a real person.",
+          "requiresObservation": true
+        },
+        {
+          "id": "aed",
+          "title": "The AED arrives",
+          "cue": "A virtual AED is now available. Its prompts have not yet started.",
+          "question": "What is the next principle?",
+          "choices": [
+            {
+              "id": "aed-0",
+              "text": "Turn it on and follow its instructions and pad diagrams",
+              "correct": true
+            },
+            {
+              "id": "aed-1",
+              "text": "Guess the pad positions from memory alone",
+              "correct": false
+            },
+            {
+              "id": "aed-2",
+              "text": "Use a phone as an AED",
+              "correct": false
+            }
+          ],
+          "explanation": "Follow the specific AED prompts and pad illustrations. A phone cannot deliver a therapeutic shock. Pad handling and special situations require an approved practical lesson.",
+          "part": null,
+          "source": "https://cpr.heart.org/en/resuscitation-science/cpr-and-ecc-guidelines/adult-basic-life-support",
+          "safetyCritical": true,
+          "evidenceType": "decision",
+          "requiresObservation": false
+        },
+        {
+          "id": "clear",
+          "title": "Analysis and shock prompts",
+          "cue": "The virtual AED announces that it is analysing the rhythm.",
+          "question": "How do you keep the simulated action safe?",
+          "choices": [
+            {
+              "id": "clear-1",
+              "text": "Keep a hand on the casualty during analysis",
+              "correct": false
+            },
+            {
+              "id": "clear-2",
+              "text": "Ignore the instructions if the screen is slow",
+              "correct": false
+            },
+            {
+              "id": "clear-0",
+              "text": "Ensure nobody touches the casualty; follow the AED prompts",
+              "correct": true
+            }
+          ],
+          "explanation": "Keep everyone clear during analysis and any advised shock. The scenario uses authored prompts and does not analyse a real heart rhythm.",
+          "part": null,
+          "source": "https://cpr.heart.org/en/resuscitation-science/cpr-and-ecc-guidelines/adult-basic-life-support",
+          "safetyCritical": true,
+          "evidenceType": "decision",
+          "requiresObservation": false
+        },
+        {
+          "id": "resume",
+          "title": "Continue after the prompt",
+          "cue": "The AED instructs the responder to resume CPR.",
+          "question": "Choose the next action.",
+          "choices": [
+            {
+              "id": "resume-2",
+              "text": "Remove the AED and walk away",
+              "correct": false
+            },
+            {
+              "id": "resume-0",
+              "text": "Resume CPR as instructed and follow dispatcher / AED guidance",
+              "correct": true
+            },
+            {
+              "id": "resume-1",
+              "text": "Stop permanently because the device was used",
+              "correct": false
+            }
+          ],
+          "explanation": "Follow the AED and emergency dispatcher. A completed screen sequence is evidence of decision practice only, not proof of effective resuscitation.",
+          "part": null,
+          "source": "https://cpr.heart.org/en/resuscitation-science/cpr-and-ecc-guidelines/adult-basic-life-support",
+          "safetyCritical": true,
+          "evidenceType": "decision",
+          "requiresObservation": false
+        },
+        {
+          "id": "handover",
+          "title": "Explain what happened",
+          "cue": "The emergency team arrives in this scenario.",
+          "question": "What should your handover contain?",
+          "choices": [
+            {
+              "id": "handover-0",
+              "text": "What you saw, when help was called and the actions / AED prompts followed",
+              "correct": true
+            },
+            {
+              "id": "handover-1",
+              "text": "A diagnosis you invented",
+              "correct": false
+            },
+            {
+              "id": "handover-2",
+              "text": "Only your score in the app",
+              "correct": false
+            }
+          ],
+          "explanation": "Report observations and actions clearly. Do not turn uncertain observations into a diagnosis. Review missed decisions and arrange hands-on training.",
+          "part": null,
+          "source": "https://cpr.heart.org/en/resuscitation-science/cpr-and-ecc-guidelines/adult-basic-life-support",
+          "safetyCritical": false,
+          "evidenceType": "decision",
+          "requiresObservation": false
+        }
+      ],
+      "evidenceType": "authored-decision-practice",
+      "practicalAssessment": false,
+      "locale": "en",
+      "localisationStatus": {
+        "en": "authored-draft",
+        "hi": "pending-review",
+        "sat": "pending-review"
+      },
+      "challengeType": "guided",
+      "teachBack": "Which cue mattered most, what action would you avoid, and when would you ask for help?",
+      "contextExamples": {
+        "School": "Student awareness: recognise danger and get a responsible adult. Adult treatment and equipment response are outside this path.",
+        "College": "Use the campus response plan. Adult casualty examples apply to adults, not a paediatric emergency.",
+        "Workplace": "Know the site alarm, assembly point and designated responder. Follow employer procedures and the limits of your training.",
+        "Home and community": "Give a precise address or landmark to emergency responders. Keep yourself and bystanders clear of hazards."
+      },
+      "transferScenarioIds": [
+        "heat-illness",
+        "fainting-response",
+        "minor-wound-care"
+      ]
+    },
+    {
+      "id": "school-help",
+      "course": "first-aid",
+      "title": "Get help for an unwell adult",
+      "audience": "awareness",
+      "setting": "school",
+      "casualtyAge": "adult",
+      "reviewStatus": "draft",
+      "reviewer": null,
+      "prerequisites": [
+        "Read the introduction"
+      ],
+      "objectives": [
+        "Recognise danger",
+        "Alert a responsible adult",
+        "Give a clear location",
+        "Avoid unsafe intervention"
+      ],
+      "steps": [
+        {
+          "id": "notice",
+          "title": "Notice and keep safe",
+          "cue": "A teacher is on the floor. A spilled drink is nearby.",
+          "question": "What is your first action?",
+          "choices": [
+            {
+              "id": "notice-1",
+              "text": "Run through the spill",
+              "correct": false
+            },
+            {
+              "id": "notice-2",
+              "text": "Try to lift the teacher alone",
+              "correct": false
+            },
+            {
+              "id": "notice-0",
+              "text": "Keep clear of the spill and alert another responsible adult",
+              "correct": true
+            }
+          ],
+          "explanation": "Your role in this activity is to recognise a problem, stay safe and get help.",
+          "part": null,
+          "source": "https://www.sja.org.uk/first-aid-advice/duties-and-responsibilities-of-first-aiders/",
+          "safetyCritical": true,
+          "evidenceType": "decision",
+          "requiresObservation": false
+        },
+        {
+          "id": "tell",
+          "title": "Communicate clearly",
+          "cue": "You find another teacher nearby.",
+          "question": "What do you say?",
+          "choices": [
+            {
+              "id": "tell-2",
+              "text": "I think I know exactly what disease they have",
+              "correct": false
+            },
+            {
+              "id": "tell-0",
+              "text": "An adult has collapsed in the hall; please come and call emergency help",
+              "correct": true
+            },
+            {
+              "id": "tell-1",
+              "text": "There is something somewhere",
+              "correct": false
+            }
+          ],
+          "explanation": "Give the location and what you observed. A responsible adult can coordinate help. Do not guess a diagnosis.",
+          "part": null,
+          "source": "https://www.sja.org.uk/first-aid-advice/duties-and-responsibilities-of-first-aiders/",
+          "safetyCritical": false,
+          "evidenceType": "decision",
+          "requiresObservation": false
+        },
+        {
+          "id": "space",
+          "title": "Make room for help",
+          "cue": "Adults are responding and need space.",
+          "question": "What can you do?",
+          "choices": [
+            {
+              "id": "space-0",
+              "text": "Keep others back and follow the responsible adult’s instructions",
+              "correct": true
+            },
+            {
+              "id": "space-1",
+              "text": "Crowd around and film the person",
+              "correct": false
+            },
+            {
+              "id": "space-2",
+              "text": "Give the person food or drink",
+              "correct": false
+            }
+          ],
+          "explanation": "Protect the person’s privacy and leave room for responders. Do not record or share images of an unwell person.",
+          "part": null,
+          "source": "https://www.sja.org.uk/first-aid-advice/duties-and-responsibilities-of-first-aiders/",
+          "safetyCritical": true,
+          "evidenceType": "decision",
+          "requiresObservation": false
+        },
+        {
+          "id": "limits",
+          "title": "Know your role",
+          "cue": "Another student asks to practise CPR on you.",
+          "question": "What do you say?",
+          "choices": [
+            {
+              "id": "limits-1",
+              "text": "Yes, if they press gently",
+              "correct": false
+            },
+            {
+              "id": "limits-2",
+              "text": "Only if someone records it",
+              "correct": false
+            },
+            {
+              "id": "limits-0",
+              "text": "No; compressions are practised on a training manikin with an instructor",
+              "correct": true
+            }
+          ],
+          "explanation": "Never practise chest compressions on another learner. This awareness path does not assign adult responder responsibilities.",
+          "part": null,
+          "source": "https://cpr.heart.org/en/resuscitation-science/cpr-and-ecc-guidelines/adult-basic-life-support",
+          "safetyCritical": true,
+          "evidenceType": "decision",
+          "requiresObservation": false
+        }
+      ],
+      "evidenceType": "authored-decision-practice",
+      "practicalAssessment": false,
+      "locale": "en",
+      "localisationStatus": {
+        "en": "authored-draft",
+        "hi": "pending-review",
+        "sat": "pending-review"
+      },
+      "challengeType": "guided",
+      "teachBack": "Which cue mattered most, what action would you avoid, and when would you ask for help?",
+      "contextExamples": {
+        "School": "Student awareness: recognise danger and get a responsible adult. Adult treatment and equipment response are outside this path.",
+        "College": "Use the campus response plan. Adult casualty examples apply to adults, not a paediatric emergency.",
+        "Workplace": "Know the site alarm, assembly point and designated responder. Follow employer procedures and the limits of your training.",
+        "Home and community": "Give a precise address or landmark to emergency responders. Keep yourself and bystanders clear of hazards."
+      },
+      "transferScenarioIds": [
+        "school-injury-help"
+      ]
+    },
+    {
+      "id": "escape-first",
+      "course": "fire",
+      "title": "Smoke blocks your usual route",
+      "audience": "awareness",
+      "setting": "community",
+      "casualtyAge": null,
+      "reviewStatus": "draft",
+      "reviewer": null,
+      "prerequisites": [
+        "Read the introduction"
+      ],
+      "objectives": [
+        "Raise the alarm",
+        "Choose a usable exit",
+        "Do not enter smoke",
+        "Assembly and accountability"
+      ],
+      "steps": [
+        {
+          "id": "notice",
+          "title": "Recognise uncertainty",
+          "cue": "You see smoke near a corridor. You do not know its source.",
+          "question": "What is the safe first decision?",
+          "choices": [
+            {
+              "id": "notice-2",
+              "text": "Assume it is harmless because the flame is small",
+              "correct": false
+            },
+            {
+              "id": "notice-0",
+              "text": "Raise the alarm and begin the evacuation procedure",
+              "correct": true
+            },
+            {
+              "id": "notice-1",
+              "text": "Move towards the smoke to identify the fuel",
+              "correct": false
+            }
+          ],
+          "explanation": "Treat smoke as a warning. Report what you see and follow the local evacuation procedure. Do not approach to investigate.",
+          "part": null,
+          "source": "https://www.usfa.fema.gov/prevention/home-fires/prepare-for-fire/home-fire-escape-plans/",
+          "safetyCritical": true,
+          "evidenceType": "decision",
+          "requiresObservation": false
+        },
+        {
+          "id": "exit",
+          "title": "Choose a different route",
+          "cue": "The usual exit is obscured by smoke. An alternative signed route is visibly clear.",
+          "question": "Which route do you choose?",
+          "choices": [
+            {
+              "id": "exit-0",
+              "text": "Use the clear alternative route according to the site plan",
+              "correct": true
+            },
+            {
+              "id": "exit-1",
+              "text": "Run through smoke because the familiar route is shorter",
+              "correct": false
+            },
+            {
+              "id": "exit-2",
+              "text": "Take the lift to save time",
+              "correct": false
+            }
+          ],
+          "explanation": "A familiar exit may become unusable. Use an available safe escape route and follow the site plan. Never enter smoke to complete an app task.",
+          "part": null,
+          "source": "https://www.usfa.fema.gov/prevention/home-fires/prepare-for-fire/home-fire-escape-plans/",
+          "safetyCritical": true,
+          "evidenceType": "decision",
+          "requiresObservation": false
+        },
+        {
+          "id": "role",
+          "title": "Know your role",
+          "cue": "You have not been trained or authorised to use an extinguisher.",
+          "question": "Should you attempt to fight the fire?",
+          "choices": [
+            {
+              "id": "role-1",
+              "text": "Yes; any extinguisher works on any fire",
+              "correct": false
+            },
+            {
+              "id": "role-2",
+              "text": "Yes; a phone lesson replaces practical authorisation",
+              "correct": false
+            },
+            {
+              "id": "role-0",
+              "text": "No; leave, alert others and seek help",
+              "correct": true
+            }
+          ],
+          "explanation": "Extinguisher response is conditional on training, the correct equipment, a small contained fire and a safe escape route. Evacuation is the right decision when these conditions are not met.",
+          "part": null,
+          "source": "https://www.usfa.fema.gov/prevention/home-fires/prepare-for-fire/fire-extinguishers/index.html",
+          "safetyCritical": true,
+          "evidenceType": "decision",
+          "requiresObservation": false
+        },
+        {
+          "id": "belongings",
+          "title": "Keep moving to safety",
+          "cue": "Your bag is in a room behind you.",
+          "question": "What do you do?",
+          "choices": [
+            {
+              "id": "belongings-2",
+              "text": "Ask a friend to go back for you",
+              "correct": false
+            },
+            {
+              "id": "belongings-0",
+              "text": "Leave belongings and continue to the assembly point",
+              "correct": true
+            },
+            {
+              "id": "belongings-1",
+              "text": "Return for the bag",
+              "correct": false
+            }
+          ],
+          "explanation": "Do not let belongings delay escape or cause re-entry. Tell the responsible staff about anyone unaccounted for.",
+          "part": null,
+          "source": "https://www.usfa.fema.gov/prevention/home-fires/prepare-for-fire/home-fire-escape-plans/",
+          "safetyCritical": true,
+          "evidenceType": "decision",
+          "requiresObservation": false
+        },
+        {
+          "id": "assembly",
+          "title": "Account for the group",
+          "cue": "At the assembly point a classmate is missing.",
+          "question": "What is your next action?",
+          "choices": [
+            {
+              "id": "assembly-0",
+              "text": "Tell the responsible staff; do not re-enter",
+              "correct": true
+            },
+            {
+              "id": "assembly-1",
+              "text": "Go back alone to search",
+              "correct": false
+            },
+            {
+              "id": "assembly-2",
+              "text": "Assume they went home",
+              "correct": false
+            }
+          ],
+          "explanation": "Report the missing person and their last known location. Trained responders coordinate searches; do not re-enter.",
+          "part": null,
+          "source": "https://www.usfa.fema.gov/prevention/home-fires/prepare-for-fire/home-fire-escape-plans/",
+          "safetyCritical": true,
+          "evidenceType": "decision",
+          "requiresObservation": false
+        },
+        {
+          "id": "transfer",
+          "title": "Apply it in another place",
+          "cue": "At home, smoke now blocks your usual door.",
+          "question": "Which principle stays the same?",
+          "choices": [
+            {
+              "id": "transfer-1",
+              "text": "Only school fires require evacuation",
+              "correct": false
+            },
+            {
+              "id": "transfer-2",
+              "text": "Find the source before alerting anyone",
+              "correct": false
+            },
+            {
+              "id": "transfer-0",
+              "text": "Use a safe available escape route and get help; do not enter smoke",
+              "correct": true
+            }
+          ],
+          "explanation": "The exact exit changes with the building. Recognition, alerting, safe escape and staying out remain the priorities. Learn the plan for each place.",
+          "part": null,
+          "source": "https://www.usfa.fema.gov/prevention/home-fires/prepare-for-fire/home-fire-escape-plans/",
+          "safetyCritical": true,
+          "evidenceType": "decision",
+          "requiresObservation": false
+        }
+      ],
+      "evidenceType": "authored-decision-practice",
+      "practicalAssessment": false,
+      "locale": "en",
+      "localisationStatus": {
+        "en": "authored-draft",
+        "hi": "pending-review",
+        "sat": "pending-review"
+      },
+      "challengeType": "guided",
+      "teachBack": "Which cue mattered most, what action would you avoid, and when would you ask for help?",
+      "contextExamples": {
+        "School": "Student awareness: recognise danger and get a responsible adult. Adult treatment and equipment response are outside this path.",
+        "College": "Use the campus response plan. Adult casualty examples apply to adults, not a paediatric emergency.",
+        "Workplace": "Know the site alarm, assembly point and designated responder. Follow employer procedures and the limits of your training.",
+        "Home and community": "Give a precise address or landmark to emergency responders. Keep yourself and bystanders clear of hazards."
+      },
+      "transferScenarioIds": [
+        "laboratory-evacuation",
+        "home-kitchen-transfer",
+        "workplace-handover"
+      ]
+    },
+    {
+      "id": "extinguisher-check",
+      "course": "fire",
+      "title": "Inspect before you respond",
+      "audience": "adult",
+      "setting": "workplace",
+      "casualtyAge": null,
+      "reviewStatus": "draft",
+      "reviewer": null,
+      "prerequisites": [
+        "Read the introduction"
+      ],
+      "objectives": [
+        "Check response conditions",
+        "Find a hidden equipment fault",
+        "Use labels rather than assumptions",
+        "Withdraw if conditions change"
+      ],
+      "steps": [
+        {
+          "id": "authority",
+          "title": "Check response conditions",
+          "cue": "Adult workplace simulation: the alarm is raised, emergency help is being called, smoke is not affecting you and your escape route is clear.",
+          "question": "What else must be true before considering extinguisher use?",
+          "choices": [
+            {
+              "id": "authority-0",
+              "text": "You are trained and authorised; the fire is small and contained; the correct unit is available",
+              "correct": true
+            },
+            {
+              "id": "authority-1",
+              "text": "An extinguisher is nearby, which is enough",
+              "correct": false
+            },
+            {
+              "id": "authority-2",
+              "text": "You have finished this app, which authorises you",
+              "correct": false
+            }
+          ],
+          "explanation": "Only a trained, authorised and physically able responder should consider an attempt. Smoke, uncertainty, unsuitable equipment or a threatened exit mean evacuation. This lesson does not authorise firefighting.",
+          "part": null,
+          "source": "https://www.usfa.fema.gov/prevention/home-fires/prepare-for-fire/fire-extinguishers/index.html",
+          "safetyCritical": true,
+          "evidenceType": "decision",
+          "requiresObservation": false
+        },
+        {
+          "id": "label",
+          "title": "Read the unit label",
+          "cue": "A virtual extinguisher has a label describing its approved uses. The fuel is uncertain.",
+          "question": "Which decision is appropriate?",
+          "choices": [
+            {
+              "id": "label-1",
+              "text": "Choose water for every fire",
+              "correct": false
+            },
+            {
+              "id": "label-2",
+              "text": "Treat all class letters as identical in every country",
+              "correct": false
+            },
+            {
+              "id": "label-0",
+              "text": "Do not guess agent suitability; withdraw and report uncertainty",
+              "correct": true
+            }
+          ],
+          "explanation": "Classification systems vary. Read the approved local label and site training. This scenario does not apply US class letters to Indian equipment.",
+          "part": null,
+          "source": "https://www.usfa.fema.gov/prevention/home-fires/prepare-for-fire/fire-extinguishers/index.html",
+          "safetyCritical": true,
+          "evidenceType": "decision",
+          "requiresObservation": false
+        },
+        {
+          "id": "fault",
+          "title": "Find the hidden fault",
+          "cue": "The virtual inspection card shows a missing safety seal and a damaged hose.",
+          "question": "What should you do with this unit?",
+          "choices": [
+            {
+              "id": "fault-2",
+              "text": "Repair it during the emergency",
+              "correct": false
+            },
+            {
+              "id": "fault-0",
+              "text": "Do not use it; report the fault and maintain a safe exit",
+              "correct": true
+            },
+            {
+              "id": "fault-1",
+              "text": "Ignore the fault and operate it",
+              "correct": false
+            }
+          ],
+          "explanation": "Condition checks matter. Damaged or uncertain equipment should not be treated as serviceable. Choose withdrawal when an appropriate serviceable unit is unavailable.",
+          "part": null,
+          "source": "https://www.usfa.fema.gov/prevention/home-fires/prepare-for-fire/fire-extinguishers/index.html",
+          "safetyCritical": true,
+          "evidenceType": "decision",
+          "requiresObservation": false
+        },
+        {
+          "id": "gauge",
+          "title": "Check the right indicators",
+          "cue": "The selected virtual unit is a stored-pressure extinguisher with a gauge. Its pointer is outside the marked operating range.",
+          "question": "What does this change?",
+          "choices": [
+            {
+              "id": "gauge-0",
+              "text": "Treat this unit as unavailable and report it",
+              "correct": true
+            },
+            {
+              "id": "gauge-1",
+              "text": "Use it because the cylinder looks full",
+              "correct": false
+            },
+            {
+              "id": "gauge-2",
+              "text": "Assume every extinguisher has the same gauge",
+              "correct": false
+            }
+          ],
+          "explanation": "Inspect the indicators and instructions for that model. Not all extinguisher types have a pressure gauge.",
+          "part": null,
+          "source": "https://www.usfa.fema.gov/prevention/home-fires/prepare-for-fire/fire-extinguishers/index.html",
+          "safetyCritical": true,
+          "evidenceType": "decision",
+          "requiresObservation": false
+        },
+        {
+          "id": "sequence",
+          "title": "Understand operation",
+          "cue": "For an appropriate, serviceable unit, the trained responder follows its operating label.",
+          "question": "What does the common PASS mnemonic describe?",
+          "choices": [
+            {
+              "id": "sequence-1",
+              "text": "Press the gauge and shake the cylinder",
+              "correct": false
+            },
+            {
+              "id": "sequence-2",
+              "text": "Spray towards smoke regardless of the fire base",
+              "correct": false
+            },
+            {
+              "id": "sequence-0",
+              "text": "Pull, aim, squeeze, sweep — subject to the unit’s instructions",
+              "correct": true
+            }
+          ],
+          "explanation": "PASS is an operating reminder, not permission to approach a fire. Use the specific unit’s label and practical training. The equipment lab lets you inspect the components.",
+          "part": null,
+          "source": "https://www.usfa.fema.gov/prevention/home-fires/prepare-for-fire/fire-extinguishers/index.html",
+          "safetyCritical": true,
+          "evidenceType": "decision",
+          "requiresObservation": false
+        },
+        {
+          "id": "change",
+          "title": "Conditions change",
+          "cue": "Smoke increases and your escape route is becoming threatened.",
+          "question": "What action takes priority?",
+          "choices": [
+            {
+              "id": "change-2",
+              "text": "Move deeper into the room",
+              "correct": false
+            },
+            {
+              "id": "change-0",
+              "text": "Stop the attempt and evacuate immediately",
+              "correct": true
+            },
+            {
+              "id": "change-1",
+              "text": "Continue until the extinguisher is empty",
+              "correct": false
+            }
+          ],
+          "explanation": "A changing scene invalidates the earlier decision to respond. Stop and retreat while escape is still possible.",
+          "part": null,
+          "source": "https://www.usfa.fema.gov/prevention/home-fires/prepare-for-fire/fire-extinguishers/index.html",
+          "safetyCritical": true,
+          "evidenceType": "decision",
+          "requiresObservation": false
+        },
+        {
+          "id": "report",
+          "title": "Handover observations",
+          "cue": "You are safely at the assembly point.",
+          "question": "What do you report?",
+          "choices": [
+            {
+              "id": "report-0",
+              "text": "Location, observed conditions, equipment fault and people at risk",
+              "correct": true
+            },
+            {
+              "id": "report-1",
+              "text": "A guaranteed cause of the fire",
+              "correct": false
+            },
+            {
+              "id": "report-2",
+              "text": "That the building is safe because flames are no longer visible",
+              "correct": false
+            }
+          ],
+          "explanation": "Report observable facts. Only the responsible emergency personnel can authorise re-entry. This app does not determine real-scene safety.",
+          "part": null,
+          "source": "https://www.usfa.fema.gov/prevention/home-fires/prepare-for-fire/fire-extinguishers/index.html",
+          "safetyCritical": false,
+          "evidenceType": "decision",
+          "requiresObservation": false
+        }
+      ],
+      "evidenceType": "authored-decision-practice",
+      "practicalAssessment": false,
+      "locale": "en",
+      "localisationStatus": {
+        "en": "authored-draft",
+        "hi": "pending-review",
+        "sat": "pending-review"
+      },
+      "challengeType": "guided",
+      "teachBack": "Which cue mattered most, what action would you avoid, and when would you ask for help?",
+      "contextExamples": {
+        "School": "Student awareness: recognise danger and get a responsible adult. Adult treatment and equipment response are outside this path.",
+        "College": "Use the campus response plan. Adult casualty examples apply to adults, not a paediatric emergency.",
+        "Workplace": "Know the site alarm, assembly point and designated responder. Follow employer procedures and the limits of your training.",
+        "Home and community": "Give a precise address or landmark to emergency responders. Keep yourself and bystanders clear of hazards."
+      },
+      "transferScenarioIds": [
+        "laboratory-evacuation",
+        "home-kitchen-transfer",
+        "workplace-handover"
+      ]
+    },
+    {
+      "id": "bleeding-control",
+      "course": "first-aid",
+      "title": "A serious bleeding injury",
+      "audience": "adult",
+      "setting": "community",
+      "casualtyAge": "adult",
+      "reviewStatus": "draft",
+      "reviewer": null,
+      "prerequisites": [
+        "Read the introduction"
+      ],
+      "objectives": [
+        "Protect yourself and ask permission",
+        "Prioritise pressure and emergency help",
+        "Avoid removing embedded objects",
+        "Recognise the limits of screen practice"
+      ],
+      "steps": [
+        {
+          "id": "consent",
+          "title": "Approach with care",
+          "cue": "An alert adult has a bleeding forearm after broken glass. You have checked the scene.",
+          "question": "What do you say first?",
+          "choices": [
+            {
+              "id": "consent-1",
+              "text": "Start filming the wound",
+              "correct": false
+            },
+            {
+              "id": "consent-2",
+              "text": "Promise you can diagnose the injury",
+              "correct": false
+            },
+            {
+              "id": "consent-0",
+              "text": "Introduce yourself and ask to help",
+              "correct": true
+            }
+          ],
+          "explanation": "Explain your actions and respect the person. Use gloves or another suitable barrier when available.",
+          "part": null,
+          "source": "https://www.sja.org.uk/first-aid-advice/duties-and-responsibilities-of-first-aiders/",
+          "safetyCritical": true,
+          "evidenceType": "decision",
+          "requiresObservation": false
+        },
+        {
+          "id": "pressure",
+          "title": "Control the bleeding",
+          "cue": "Heavy bleeding continues. No object is visible in this wound.",
+          "question": "Choose the immediate response.",
+          "choices": [
+            {
+              "id": "pressure-2",
+              "text": "Remove pressure repeatedly to inspect it",
+              "correct": false
+            },
+            {
+              "id": "pressure-0",
+              "text": "Apply firm direct pressure with a dressing or clean cloth; get emergency help",
+              "correct": true
+            },
+            {
+              "id": "pressure-1",
+              "text": "Wash the wound for several minutes before applying pressure",
+              "correct": false
+            }
+          ],
+          "explanation": "Heavy bleeding needs prompt pressure and emergency help. A helper can call while pressure continues.",
+          "part": null,
+          "source": "https://www.sja.org.uk/first-aid-advice/severe-bleeding/",
+          "safetyCritical": true,
+          "evidenceType": "decision",
+          "requiresObservation": false
+        },
+        {
+          "id": "embedded",
+          "title": "A different wound",
+          "cue": "In the next example, a glass fragment remains embedded.",
+          "question": "What changes?",
+          "choices": [
+            {
+              "id": "embedded-0",
+              "text": "Leave it in place and press beside it, not onto it",
+              "correct": true
+            },
+            {
+              "id": "embedded-1",
+              "text": "Pull it out to see the wound",
+              "correct": false
+            },
+            {
+              "id": "embedded-2",
+              "text": "Push it deeper to stop the blood",
+              "correct": false
+            }
+          ],
+          "explanation": "An embedded object may be limiting blood loss. Removing it can worsen bleeding.",
+          "part": null,
+          "source": "https://www.sja.org.uk/first-aid-advice/severe-bleeding/",
+          "safetyCritical": true,
+          "evidenceType": "decision",
+          "requiresObservation": false
+        },
+        {
+          "id": "escalate",
+          "title": "Pressure is not enough",
+          "cue": "The simulated limb bleed continues despite firm pressure.",
+          "question": "What should happen next?",
+          "choices": [
+            {
+              "id": "escalate-1",
+              "text": "Release pressure and leave the casualty",
+              "correct": false
+            },
+            {
+              "id": "escalate-2",
+              "text": "Assume the phone score means bleeding is controlled",
+              "correct": false
+            },
+            {
+              "id": "escalate-0",
+              "text": "Tell the dispatcher and follow further bleeding-control guidance",
+              "correct": true
+            }
+          ],
+          "explanation": "Escalation may need trained tourniquet use. This lesson does not teach application or certify pressure technique.",
+          "part": null,
+          "source": "https://www.resus.org.uk/professional-library/2025-resuscitation-guidelines/first-aid-guidelines",
+          "safetyCritical": true,
+          "evidenceType": "decision",
+          "requiresObservation": false
+        },
+        {
+          "id": "handover",
+          "title": "Keep the handover factual",
+          "cue": "A responder takes over.",
+          "question": "What information is useful?",
+          "choices": [
+            {
+              "id": "handover-2",
+              "text": "An invented diagnosis",
+              "correct": false
+            },
+            {
+              "id": "handover-0",
+              "text": "Where bleeding started, pressure applied and changes observed",
+              "correct": true
+            },
+            {
+              "id": "handover-1",
+              "text": "A guessed blood-loss volume",
+              "correct": false
+            }
+          ],
+          "explanation": "Screen choices record decisions only. Hands-on bleeding-control practice needs suitable training equipment and supervision.",
+          "part": null,
+          "source": "https://www.sja.org.uk/first-aid-advice/duties-and-responsibilities-of-first-aiders/",
+          "safetyCritical": false,
+          "evidenceType": "decision",
+          "requiresObservation": false
+        }
+      ],
+      "evidenceType": "authored-decision-practice",
+      "practicalAssessment": false,
+      "locale": "en",
+      "localisationStatus": {
+        "en": "authored-draft",
+        "hi": "pending-review",
+        "sat": "pending-review"
+      },
+      "challengeType": "guided",
+      "teachBack": "Which cue mattered most, what action would you avoid, and when would you ask for help?",
+      "contextExamples": {
+        "School": "Student awareness: recognise danger and get a responsible adult. Adult treatment and equipment response are outside this path.",
+        "College": "Use the campus response plan. Adult casualty examples apply to adults, not a paediatric emergency.",
+        "Workplace": "Know the site alarm, assembly point and designated responder. Follow employer procedures and the limits of your training.",
+        "Home and community": "Give a precise address or landmark to emergency responders. Keep yourself and bystanders clear of hazards."
+      },
+      "transferScenarioIds": [
+        "heat-illness",
+        "fainting-response",
+        "minor-wound-care"
+      ]
+    },
+    {
+      "id": "thermal-burn",
+      "course": "first-aid",
+      "title": "A hot-water burn",
+      "audience": "adult",
+      "setting": "community",
+      "casualtyAge": "adult",
+      "reviewStatus": "draft",
+      "reviewer": null,
+      "prerequisites": [
+        "Read the introduction"
+      ],
+      "objectives": [
+        "Remove the heat safely",
+        "Cool a thermal burn",
+        "Avoid harmful remedies",
+        "Recognise when to get urgent help"
+      ],
+      "steps": [
+        {
+          "id": "heat",
+          "title": "Stop further injury",
+          "cue": "An adult has spilled hot water on their forearm. The kettle is no longer a hazard.",
+          "question": "What starts care?",
+          "choices": [
+            {
+              "id": "heat-2",
+              "text": "Cover it tightly before cooling",
+              "correct": false
+            },
+            {
+              "id": "heat-0",
+              "text": "Move away from the heat and cool the affected area",
+              "correct": true
+            },
+            {
+              "id": "heat-1",
+              "text": "Apply cooking oil",
+              "correct": false
+            }
+          ],
+          "explanation": "This case is a thermal scald. Chemical and electrical burns need a different response.",
+          "part": null,
+          "source": "https://www.nhs.uk/conditions/burns-and-scalds/",
+          "safetyCritical": true,
+          "evidenceType": "decision",
+          "requiresObservation": false
+        },
+        {
+          "id": "cool",
+          "title": "Choose cooling",
+          "cue": "Cool running water is available.",
+          "question": "How should this thermal burn be cooled?",
+          "choices": [
+            {
+              "id": "cool-0",
+              "text": "Use cool running water for 20 minutes",
+              "correct": true
+            },
+            {
+              "id": "cool-1",
+              "text": "Press ice directly onto the skin",
+              "correct": false
+            },
+            {
+              "id": "cool-2",
+              "text": "Cool only until the pain first eases",
+              "correct": false
+            }
+          ],
+          "explanation": "Start cooling promptly. Keep the rest of the person warm; do not chill their whole body.",
+          "part": null,
+          "source": "https://www.nhs.uk/conditions/burns-and-scalds/",
+          "safetyCritical": true,
+          "evidenceType": "decision",
+          "requiresObservation": false
+        },
+        {
+          "id": "stuck",
+          "title": "Check clothing and jewellery",
+          "cue": "A loose bracelet is nearby, but fabric is stuck to the burn.",
+          "question": "What should you do?",
+          "choices": [
+            {
+              "id": "stuck-1",
+              "text": "Pull off the stuck fabric",
+              "correct": false
+            },
+            {
+              "id": "stuck-2",
+              "text": "Rub cream into the burn",
+              "correct": false
+            },
+            {
+              "id": "stuck-0",
+              "text": "Remove loose nearby items; leave stuck fabric in place",
+              "correct": true
+            }
+          ],
+          "explanation": "Avoid further skin damage. Do not use butter, oils or creams, or burst blisters.",
+          "part": null,
+          "source": "https://www.nhs.uk/conditions/burns-and-scalds/",
+          "safetyCritical": true,
+          "evidenceType": "decision",
+          "requiresObservation": false
+        },
+        {
+          "id": "cover",
+          "title": "After cooling",
+          "cue": "The burn has cooled. A clean covering is available.",
+          "question": "Choose the suitable principle.",
+          "choices": [
+            {
+              "id": "cover-2",
+              "text": "Rub the injured skin dry",
+              "correct": false
+            },
+            {
+              "id": "cover-0",
+              "text": "Cover loosely with an appropriate non-stick covering",
+              "correct": true
+            },
+            {
+              "id": "cover-1",
+              "text": "Wrap the limb tightly with adhesive material",
+              "correct": false
+            }
+          ],
+          "explanation": "Do not use an adhesive dressing directly on the burn. A cover should not constrict the limb.",
+          "part": null,
+          "source": "https://www.nhs.uk/conditions/burns-and-scalds/",
+          "safetyCritical": true,
+          "evidenceType": "decision",
+          "requiresObservation": false
+        },
+        {
+          "id": "escalate",
+          "title": "Recognise a different severity",
+          "cue": "A second example has a large, deep burn on the face.",
+          "question": "What is needed?",
+          "choices": [
+            {
+              "id": "escalate-0",
+              "text": "Urgent medical help",
+              "correct": true
+            },
+            {
+              "id": "escalate-1",
+              "text": "The same home-care-only plan",
+              "correct": false
+            },
+            {
+              "id": "escalate-2",
+              "text": "A camera diagnosis",
+              "correct": false
+            }
+          ],
+          "explanation": "Large, deep, facial, chemical or electrical burns need urgent assessment. When unsure, seek medical advice.",
+          "part": null,
+          "source": "https://www.nhs.uk/conditions/burns-and-scalds/",
+          "safetyCritical": true,
+          "evidenceType": "decision",
+          "requiresObservation": false
+        }
+      ],
+      "evidenceType": "authored-decision-practice",
+      "practicalAssessment": false,
+      "locale": "en",
+      "localisationStatus": {
+        "en": "authored-draft",
+        "hi": "pending-review",
+        "sat": "pending-review"
+      },
+      "challengeType": "guided",
+      "teachBack": "Which cue mattered most, what action would you avoid, and when would you ask for help?",
+      "contextExamples": {
+        "School": "Student awareness: recognise danger and get a responsible adult. Adult treatment and equipment response are outside this path.",
+        "College": "Use the campus response plan. Adult casualty examples apply to adults, not a paediatric emergency.",
+        "Workplace": "Know the site alarm, assembly point and designated responder. Follow employer procedures and the limits of your training.",
+        "Home and community": "Give a precise address or landmark to emergency responders. Keep yourself and bystanders clear of hazards."
+      },
+      "transferScenarioIds": [
+        "heat-illness",
+        "fainting-response",
+        "minor-wound-care"
+      ]
+    },
+    {
+      "id": "recovery-monitor",
+      "course": "first-aid",
+      "title": "Unresponsive but breathing",
+      "audience": "adult",
+      "setting": "community",
+      "casualtyAge": "adult",
+      "reviewStatus": "draft",
+      "reviewer": null,
+      "prerequisites": [
+        "Read the introduction"
+      ],
+      "objectives": [
+        "Distinguish normal breathing from gasping",
+        "Understand the purpose of a side-lying position",
+        "Monitor for change",
+        "Avoid routine rolling after trauma"
+      ],
+      "steps": [
+        {
+          "id": "recognise",
+          "title": "Choose the correct branch",
+          "cue": "The adult is unresponsive but breathing normally. There is no suspected injury. Help is being called.",
+          "question": "Which care principle fits?",
+          "choices": [
+            {
+              "id": "recognise-0",
+              "text": "Maintain the airway using a recovery position and monitor",
+              "correct": true
+            },
+            {
+              "id": "recognise-1",
+              "text": "Start compressions despite normal breathing",
+              "correct": false
+            },
+            {
+              "id": "recognise-2",
+              "text": "Give water to wake them",
+              "correct": false
+            }
+          ],
+          "explanation": "A recovery position supports an open airway in this situation. It is not the cardiac-arrest branch.",
+          "part": "FMA7394",
+          "source": "https://www.sja.org.uk/first-aid-advice/recovery-position/",
+          "safetyCritical": true,
+          "evidenceType": "decision",
+          "anatomyPurpose": "Explore location only; not a measurement or diagnosis of a real person.",
+          "requiresObservation": false
+        },
+        {
+          "id": "anatomy",
+          "title": "Inspect the airway",
+          "cue": "Use the body view to find the trachea.",
+          "question": "What does this exploration prove?",
+          "choices": [
+            {
+              "id": "anatomy-1",
+              "text": "A real person can breathe because the mesh is visible",
+              "correct": false
+            },
+            {
+              "id": "anatomy-2",
+              "text": "I can skip hands-on positioning practice",
+              "correct": false
+            },
+            {
+              "id": "anatomy-0",
+              "text": "I can identify a structure, not assess a real airway",
+              "correct": true
+            }
+          ],
+          "explanation": "The body view is an anatomical reference. Positioning another person requires practical technique and care.",
+          "part": "FMA7394",
+          "source": "https://www.sja.org.uk/first-aid-advice/recovery-position/",
+          "safetyCritical": false,
+          "evidenceType": "decision",
+          "anatomyPurpose": "Explore location only; not a measurement or diagnosis of a real person.",
+          "requiresObservation": true
+        },
+        {
+          "id": "monitor",
+          "title": "Keep checking",
+          "cue": "After positioning, the adult now makes occasional gasps instead of normal breaths.",
+          "question": "What changes?",
+          "choices": [
+            {
+              "id": "monitor-2",
+              "text": "Give food to restore energy",
+              "correct": false
+            },
+            {
+              "id": "monitor-0",
+              "text": "Treat gasping as abnormal; follow emergency guidance and start CPR",
+              "correct": true
+            },
+            {
+              "id": "monitor-1",
+              "text": "Leave them alone in the same position",
+              "correct": false
+            }
+          ],
+          "explanation": "The earlier decision no longer applies. Reassess breathing and act on the change; do not mistake gasps for normal breathing.",
+          "part": "FMA7310",
+          "source": "https://cpr.heart.org/en/resuscitation-science/cpr-and-ecc-guidelines/adult-basic-life-support",
+          "safetyCritical": true,
+          "evidenceType": "decision",
+          "anatomyPurpose": "Explore location only; not a measurement or diagnosis of a real person.",
+          "requiresObservation": false
+        },
+        {
+          "id": "trauma",
+          "title": "Do not generalise the manoeuvre",
+          "cue": "A different casualty has fallen from height and may have a spinal injury.",
+          "question": "Should you routinely roll them as in the earlier case?",
+          "choices": [
+            {
+              "id": "trauma-0",
+              "text": "No; minimise movement and get emergency guidance, prioritising the airway",
+              "correct": true
+            },
+            {
+              "id": "trauma-1",
+              "text": "Yes; every unconscious person is rolled the same way",
+              "correct": false
+            },
+            {
+              "id": "trauma-2",
+              "text": "Keep the airway blocked to avoid any movement",
+              "correct": false
+            }
+          ],
+          "explanation": "Suspected trauma changes the approach. Airway needs can require movement; follow dispatcher guidance and trained assistance.",
+          "part": null,
+          "source": "https://www.resus.org.uk/professional-library/2025-resuscitation-guidelines/first-aid-guidelines",
+          "safetyCritical": true,
+          "evidenceType": "decision",
+          "requiresObservation": false
+        }
+      ],
+      "evidenceType": "authored-decision-practice",
+      "practicalAssessment": false,
+      "locale": "en",
+      "localisationStatus": {
+        "en": "authored-draft",
+        "hi": "pending-review",
+        "sat": "pending-review"
+      },
+      "challengeType": "guided",
+      "teachBack": "Which cue mattered most, what action would you avoid, and when would you ask for help?",
+      "contextExamples": {
+        "School": "Student awareness: recognise danger and get a responsible adult. Adult treatment and equipment response are outside this path.",
+        "College": "Use the campus response plan. Adult casualty examples apply to adults, not a paediatric emergency.",
+        "Workplace": "Know the site alarm, assembly point and designated responder. Follow employer procedures and the limits of your training.",
+        "Home and community": "Give a precise address or landmark to emergency responders. Keep yourself and bystanders clear of hazards."
+      },
+      "transferScenarioIds": [
+        "heat-illness",
+        "fainting-response",
+        "minor-wound-care"
+      ]
+    },
+    {
+      "id": "adult-choking",
+      "course": "first-aid",
+      "title": "An adult is choking",
+      "audience": "adult",
+      "setting": "community",
+      "casualtyAge": "adult",
+      "reviewStatus": "draft",
+      "reviewer": null,
+      "prerequisites": [
+        "Read the introduction",
+        "Adult casualty only; pregnancy and inability to encircle the abdomen need an adapted technique",
+        "Use training equipment and an instructor for hands-on practice"
+      ],
+      "objectives": [
+        "Distinguish effective from ineffective cough",
+        "Understand the adult escalation sequence",
+        "Avoid blind finger sweeps",
+        "Recognise collapse and seek follow-up care"
+      ],
+      "steps": [
+        {
+          "id": "cough",
+          "title": "Notice the change",
+          "cue": "An adult coughs strongly after food enters their airway and can still speak.",
+          "question": "What is appropriate?",
+          "choices": [
+            {
+              "id": "cough-1",
+              "text": "Immediately start abdominal thrusts",
+              "correct": false
+            },
+            {
+              "id": "cough-2",
+              "text": "Give water to push the food down",
+              "correct": false
+            },
+            {
+              "id": "cough-0",
+              "text": "Encourage coughing and watch closely",
+              "correct": true
+            }
+          ],
+          "explanation": "An effective cough may clear the obstruction. Be ready to help if the cough becomes ineffective.",
+          "part": "FMA7394",
+          "source": "https://www.sja.org.uk/first-aid-advice/choking/",
+          "safetyCritical": true,
+          "evidenceType": "decision",
+          "anatomyPurpose": "Explore location only; not a measurement or diagnosis of a real person.",
+          "requiresObservation": false
+        },
+        {
+          "id": "severe",
+          "title": "The cough becomes silent",
+          "cue": "The adult cannot speak, breathe or cough effectively. A helper can call for help.",
+          "question": "Which simulated sequence fits severe adult choking?",
+          "choices": [
+            {
+              "id": "severe-2",
+              "text": "Wait silently for them to recover",
+              "correct": false
+            },
+            {
+              "id": "severe-0",
+              "text": "Get emergency help; give up to five back blows, then up to five abdominal thrusts if needed",
+              "correct": true
+            },
+            {
+              "id": "severe-1",
+              "text": "Ask them to swallow more food",
+              "correct": false
+            }
+          ],
+          "explanation": "Stop if the blockage clears; otherwise repeat the sequence while responsive. Practise physical technique only with an instructor and training equipment.",
+          "part": null,
+          "source": "https://cpr.heart.org/en/resuscitation-science/cpr-and-ecc-guidelines/adult-basic-life-support",
+          "safetyCritical": true,
+          "evidenceType": "decision",
+          "requiresObservation": false
+        },
+        {
+          "id": "sweep",
+          "title": "Avoid a harmful shortcut",
+          "cue": "You cannot see any object in the mouth.",
+          "question": "Should you sweep your fingers inside blindly?",
+          "choices": [
+            {
+              "id": "sweep-0",
+              "text": "No",
+              "correct": true
+            },
+            {
+              "id": "sweep-1",
+              "text": "Yes, every time",
+              "correct": false
+            },
+            {
+              "id": "sweep-2",
+              "text": "Only if somebody films it",
+              "correct": false
+            }
+          ],
+          "explanation": "Blind sweeps can worsen obstruction. Do not search with fingers for an unseen object.",
+          "part": null,
+          "source": "https://cpr.heart.org/en/resuscitation-science/cpr-and-ecc-guidelines/adult-basic-life-support",
+          "safetyCritical": true,
+          "evidenceType": "decision",
+          "requiresObservation": false
+        },
+        {
+          "id": "collapse",
+          "title": "The adult becomes unresponsive",
+          "cue": "The severe choking has not cleared. The adult collapses.",
+          "question": "What should happen?",
+          "choices": [
+            {
+              "id": "collapse-1",
+              "text": "Keep the person standing for more thrusts",
+              "correct": false
+            },
+            {
+              "id": "collapse-2",
+              "text": "Wait for them to cough again",
+              "correct": false
+            },
+            {
+              "id": "collapse-0",
+              "text": "Start CPR with compressions and ensure emergency help has been called",
+              "correct": true
+            }
+          ],
+          "explanation": "The response changes with loss of responsiveness. Follow dispatcher guidance; do not apply this adult lesson to infants.",
+          "part": "FMA7485",
+          "source": "https://cpr.heart.org/en/resuscitation-science/cpr-and-ecc-guidelines/adult-basic-life-support",
+          "safetyCritical": true,
+          "evidenceType": "decision",
+          "anatomyPurpose": "Explore location only; not a measurement or diagnosis of a real person.",
+          "requiresObservation": false
+        },
+        {
+          "id": "aftercare",
+          "title": "The blockage clears",
+          "cue": "Abdominal thrusts were used and the person is breathing again.",
+          "question": "What is the next care principle?",
+          "choices": [
+            {
+              "id": "aftercare-2",
+              "text": "Immediately resume eating",
+              "correct": false
+            },
+            {
+              "id": "aftercare-0",
+              "text": "Arrange medical evaluation and continue to observe",
+              "correct": true
+            },
+            {
+              "id": "aftercare-1",
+              "text": "Assume no injury is possible",
+              "correct": false
+            }
+          ],
+          "explanation": "Thrusts can cause injury. This adult example excludes pregnancy and cases where the abdomen cannot be encircled; those need an adapted technique.",
+          "part": null,
+          "source": "https://www.resus.org.uk/professional-library/2025-resuscitation-guidelines/first-aid-guidelines",
+          "safetyCritical": true,
+          "evidenceType": "decision",
+          "requiresObservation": false
+        }
+      ],
+      "evidenceType": "authored-decision-practice",
+      "practicalAssessment": false,
+      "locale": "en",
+      "localisationStatus": {
+        "en": "authored-draft",
+        "hi": "pending-review",
+        "sat": "pending-review"
+      },
+      "challengeType": "guided",
+      "teachBack": "Which cue mattered most, what action would you avoid, and when would you ask for help?",
+      "contextExamples": {
+        "School": "Student awareness: recognise danger and get a responsible adult. Adult treatment and equipment response are outside this path.",
+        "College": "Use the campus response plan. Adult casualty examples apply to adults, not a paediatric emergency.",
+        "Workplace": "Know the site alarm, assembly point and designated responder. Follow employer procedures and the limits of your training.",
+        "Home and community": "Give a precise address or landmark to emergency responders. Keep yourself and bystanders clear of hazards."
+      },
+      "transferScenarioIds": [
+        "heat-illness",
+        "fainting-response",
+        "minor-wound-care"
+      ]
+    },
+    {
+      "id": "seizure-safety",
+      "course": "first-aid",
+      "title": "Protect during a seizure",
+      "audience": "adult",
+      "setting": "community",
+      "casualtyAge": "adult",
+      "reviewStatus": "draft",
+      "reviewer": null,
+      "prerequisites": [
+        "Read the introduction"
+      ],
+      "objectives": [
+        "Create safe space without restraint",
+        "Keep objects out of the mouth",
+        "Identify emergency escalation",
+        "Recheck responsiveness and breathing"
+      ],
+      "steps": [
+        {
+          "id": "space",
+          "title": "Reduce injury risk",
+          "cue": "An adult falls and has jerking movements beside a chair.",
+          "question": "What is helpful?",
+          "choices": [
+            {
+              "id": "space-2",
+              "text": "Drag them across the room without danger present",
+              "correct": false
+            },
+            {
+              "id": "space-0",
+              "text": "Move nearby hazards and cushion the head if safe",
+              "correct": true
+            },
+            {
+              "id": "space-1",
+              "text": "Hold the person down",
+              "correct": false
+            }
+          ],
+          "explanation": "Give space, note the start time and protect privacy. Do not restrain them.",
+          "part": "FMA50801",
+          "source": "https://www.sja.org.uk/first-aid-advice/seizure/",
+          "safetyCritical": true,
+          "evidenceType": "decision",
+          "anatomyPurpose": "Explore location only; not a measurement or diagnosis of a real person.",
+          "requiresObservation": false
+        },
+        {
+          "id": "mouth",
+          "title": "Reject the mouth myth",
+          "cue": "A bystander offers a spoon to put in the person’s mouth.",
+          "question": "What do you do?",
+          "choices": [
+            {
+              "id": "mouth-0",
+              "text": "Stop them; put nothing in the mouth",
+              "correct": true
+            },
+            {
+              "id": "mouth-1",
+              "text": "Accept the spoon",
+              "correct": false
+            },
+            {
+              "id": "mouth-2",
+              "text": "Give a drink instead",
+              "correct": false
+            }
+          ],
+          "explanation": "Objects, fingers and drinks can cause harm. Do not force the mouth open.",
+          "part": null,
+          "source": "https://www.sja.org.uk/first-aid-advice/seizure/",
+          "safetyCritical": true,
+          "evidenceType": "decision",
+          "requiresObservation": false
+        },
+        {
+          "id": "call",
+          "title": "Recognise an emergency",
+          "cue": "This is the person’s first known seizure.",
+          "question": "When should help be requested?",
+          "choices": [
+            {
+              "id": "call-1",
+              "text": "Only after they return to work",
+              "correct": false
+            },
+            {
+              "id": "call-2",
+              "text": "Never for a seizure",
+              "correct": false
+            },
+            {
+              "id": "call-0",
+              "text": "Now; call emergency services",
+              "correct": true
+            }
+          ],
+          "explanation": "Emergency help is also needed for prolonged or repeated seizures, injury or abnormal breathing. Follow an existing care plan when appropriate.",
+          "part": null,
+          "source": "https://www.sja.org.uk/first-aid-advice/seizure/",
+          "safetyCritical": true,
+          "evidenceType": "decision",
+          "requiresObservation": false
+        },
+        {
+          "id": "after",
+          "title": "The movements stop",
+          "cue": "The person is no longer jerking.",
+          "question": "What should you check?",
+          "choices": [
+            {
+              "id": "after-2",
+              "text": "Whether they can eat immediately",
+              "correct": false
+            },
+            {
+              "id": "after-0",
+              "text": "Responsiveness and whether breathing is normal",
+              "correct": true
+            },
+            {
+              "id": "after-1",
+              "text": "Only whether they remember their name",
+              "correct": false
+            }
+          ],
+          "explanation": "Monitor and reassure. Unresponsive but normally breathing calls for airway care; absent or abnormal breathing calls for CPR and emergency guidance.",
+          "part": null,
+          "source": "https://www.sja.org.uk/first-aid-advice/seizure/",
+          "safetyCritical": true,
+          "evidenceType": "decision",
+          "requiresObservation": false
+        },
+        {
+          "id": "report",
+          "title": "Give a useful handover",
+          "cue": "Help arrives.",
+          "question": "What can you report reliably?",
+          "choices": [
+            {
+              "id": "report-0",
+              "text": "Start time, duration, movements and breathing changes",
+              "correct": true
+            },
+            {
+              "id": "report-1",
+              "text": "That they definitely have epilepsy",
+              "correct": false
+            },
+            {
+              "id": "report-2",
+              "text": "A video shared publicly",
+              "correct": false
+            }
+          ],
+          "explanation": "Observation supports responders. One episode does not establish its cause.",
+          "part": null,
+          "source": "https://www.sja.org.uk/first-aid-advice/seizure/",
+          "safetyCritical": false,
+          "evidenceType": "decision",
+          "requiresObservation": false
+        }
+      ],
+      "evidenceType": "authored-decision-practice",
+      "practicalAssessment": false,
+      "locale": "en",
+      "localisationStatus": {
+        "en": "authored-draft",
+        "hi": "pending-review",
+        "sat": "pending-review"
+      },
+      "challengeType": "guided",
+      "teachBack": "Which cue mattered most, what action would you avoid, and when would you ask for help?",
+      "contextExamples": {
+        "School": "Student awareness: recognise danger and get a responsible adult. Adult treatment and equipment response are outside this path.",
+        "College": "Use the campus response plan. Adult casualty examples apply to adults, not a paediatric emergency.",
+        "Workplace": "Know the site alarm, assembly point and designated responder. Follow employer procedures and the limits of your training.",
+        "Home and community": "Give a precise address or landmark to emergency responders. Keep yourself and bystanders clear of hazards."
+      },
+      "transferScenarioIds": [
+        "heat-illness",
+        "fainting-response",
+        "minor-wound-care"
+      ]
+    },
+    {
+      "id": "fracture-support",
+      "course": "first-aid",
+      "title": "A painful arm after a fall",
+      "audience": "adult",
+      "setting": "community",
+      "casualtyAge": "adult",
+      "reviewStatus": "draft",
+      "reviewer": null,
+      "prerequisites": [
+        "Read the introduction"
+      ],
+      "objectives": [
+        "Avoid testing an injured limb",
+        "Support without realignment",
+        "Recognise urgent warning signs"
+      ],
+      "steps": [
+        {
+          "id": "still",
+          "title": "Do not test the injury",
+          "cue": "An adult has a painful, swollen forearm after a fall. The scene is safe.",
+          "question": "What should you avoid?",
+          "choices": [
+            {
+              "id": "still-0",
+              "text": "Asking them to move it to prove whether it is broken",
+              "correct": true
+            },
+            {
+              "id": "still-1",
+              "text": "Reassuring them",
+              "correct": false
+            },
+            {
+              "id": "still-2",
+              "text": "Arranging assessment",
+              "correct": false
+            }
+          ],
+          "explanation": "Support the injured area in a comfortable position. A normal-looking limb does not rule out a fracture.",
+          "part": null,
+          "source": "https://www.sja.org.uk/first-aid-advice/fractures-and-broken-bones/",
+          "safetyCritical": true,
+          "evidenceType": "decision",
+          "requiresObservation": false
+        },
+        {
+          "id": "support",
+          "title": "Keep the limb supported",
+          "cue": "The arm looks deformed.",
+          "question": "Which response is appropriate?",
+          "choices": [
+            {
+              "id": "support-1",
+              "text": "Pull it straight",
+              "correct": false
+            },
+            {
+              "id": "support-2",
+              "text": "Massage firmly over the injury",
+              "correct": false
+            },
+            {
+              "id": "support-0",
+              "text": "Keep it supported and seek medical care",
+              "correct": true
+            }
+          ],
+          "explanation": "Do not try to realign a suspected fracture. Practical support and sling skills require supervised learning.",
+          "part": null,
+          "source": "https://www.sja.org.uk/first-aid-advice/fractures-and-broken-bones/",
+          "safetyCritical": true,
+          "evidenceType": "decision",
+          "requiresObservation": false
+        },
+        {
+          "id": "urgent",
+          "title": "Spot a warning sign",
+          "cue": "There is an open wound over the injury and the hand feels numb.",
+          "question": "How does this affect urgency?",
+          "choices": [
+            {
+              "id": "urgent-2",
+              "text": "Push any visible bone back in",
+              "correct": false
+            },
+            {
+              "id": "urgent-0",
+              "text": "Get emergency medical help",
+              "correct": true
+            },
+            {
+              "id": "urgent-1",
+              "text": "Wait until tomorrow",
+              "correct": false
+            }
+          ],
+          "explanation": "Open injuries or altered sensation require urgent assessment. Never push protruding bone back into place.",
+          "part": null,
+          "source": "https://www.sja.org.uk/first-aid-advice/fractures-and-broken-bones/",
+          "safetyCritical": true,
+          "evidenceType": "decision",
+          "requiresObservation": false
+        }
+      ],
+      "evidenceType": "authored-decision-practice",
+      "practicalAssessment": false,
+      "locale": "en",
+      "localisationStatus": {
+        "en": "authored-draft",
+        "hi": "pending-review",
+        "sat": "pending-review"
+      },
+      "challengeType": "guided",
+      "teachBack": "Which cue mattered most, what action would you avoid, and when would you ask for help?",
+      "contextExamples": {
+        "School": "Student awareness: recognise danger and get a responsible adult. Adult treatment and equipment response are outside this path.",
+        "College": "Use the campus response plan. Adult casualty examples apply to adults, not a paediatric emergency.",
+        "Workplace": "Know the site alarm, assembly point and designated responder. Follow employer procedures and the limits of your training.",
+        "Home and community": "Give a precise address or landmark to emergency responders. Keep yourself and bystanders clear of hazards."
+      },
+      "transferScenarioIds": [
+        "heat-illness",
+        "fainting-response",
+        "minor-wound-care"
+      ]
+    },
+    {
+      "id": "agent-choice",
+      "course": "fire",
+      "title": "Match the hazard, not the colour",
+      "audience": "adult",
+      "setting": "home and workplace",
+      "casualtyAge": null,
+      "reviewStatus": "draft",
+      "reviewer": null,
+      "prerequisites": [
+        "Read the introduction"
+      ],
+      "objectives": [
+        "Recognise incompatible agents",
+        "Distinguish fuel from electrical involvement",
+        "Use local equipment labels",
+        "Choose evacuation when unsure"
+      ],
+      "steps": [
+        {
+          "id": "oil",
+          "title": "A burning pan",
+          "cue": "There is a pan fire in a home kitchen. You are not trained to tackle it.",
+          "question": "Which response is appropriate?",
+          "choices": [
+            {
+              "id": "oil-1",
+              "text": "Throw water into the pan",
+              "correct": false
+            },
+            {
+              "id": "oil-2",
+              "text": "Carry the pan outside",
+              "correct": false
+            },
+            {
+              "id": "oil-0",
+              "text": "Get out, stay out and call for help; do not move the pan",
+              "correct": true
+            }
+          ],
+          "explanation": "Water can violently spread burning oil. Do not move a burning pan or approach it to complete this lesson.",
+          "part": null,
+          "source": "https://www.london-fire.gov.uk/safety/the-home/cooking/pan-fires/",
+          "safetyCritical": true,
+          "evidenceType": "decision",
+          "requiresObservation": false
+        },
+        {
+          "id": "electrical",
+          "title": "An energised appliance",
+          "cue": "A damaged appliance is burning. You cannot safely reach its isolator.",
+          "question": "What should you do?",
+          "choices": [
+            {
+              "id": "electrical-2",
+              "text": "Touch the appliance to check whether it is live",
+              "correct": false
+            },
+            {
+              "id": "electrical-0",
+              "text": "Keep clear, raise the alarm and evacuate",
+              "correct": true
+            },
+            {
+              "id": "electrical-1",
+              "text": "Pour a bucket of water over it",
+              "correct": false
+            }
+          ],
+          "explanation": "Electrical involvement adds a shock hazard. Do not approach to isolate power when that would expose you to danger.",
+          "part": null,
+          "source": "https://dfs.delhi.gov.in/dfs/fire-safety-precautions-against-electricity",
+          "safetyCritical": true,
+          "evidenceType": "decision",
+          "requiresObservation": false
+        },
+        {
+          "id": "labels",
+          "title": "Compare two labelled units",
+          "cue": "Adult workplace exercise: a trained responder identifies a small paper fire with no electrical involvement. A clear exit and safe conditions are confirmed.",
+          "question": "What establishes agent suitability?",
+          "choices": [
+            {
+              "id": "labels-0",
+              "text": "The unit’s approved label for this fuel and the site procedure",
+              "correct": true
+            },
+            {
+              "id": "labels-1",
+              "text": "The brightest cylinder colour",
+              "correct": false
+            },
+            {
+              "id": "labels-2",
+              "text": "The closest cylinder, regardless of its label",
+              "correct": false
+            }
+          ],
+          "explanation": "Different agents serve different hazards. Read the local label; an appearance or country’s class lettering alone is not enough.",
+          "part": null,
+          "source": "https://www.usfa.fema.gov/prevention/home-fires/prepare-for-fire/fire-extinguishers/index.html",
+          "safetyCritical": true,
+          "evidenceType": "decision",
+          "requiresObservation": false
+        },
+        {
+          "id": "sand",
+          "title": "Reject a universal rule",
+          "cue": "A learner says a sand bucket is suitable for every fire.",
+          "question": "Which answer is sound?",
+          "choices": [
+            {
+              "id": "sand-1",
+              "text": "Yes; sand always replaces an extinguisher",
+              "correct": false
+            },
+            {
+              "id": "sand-2",
+              "text": "Yes, provided the bucket is coloured red",
+              "correct": false
+            },
+            {
+              "id": "sand-0",
+              "text": "No; suitability depends on the hazard and approved site training",
+              "correct": true
+            }
+          ],
+          "explanation": "Do not generalise one site’s equipment to every fuel. Unknown suitability means no attempt and safe withdrawal.",
+          "part": null,
+          "source": "https://dfs.delhi.gov.in/dfs/fire-safety-precautions-against-electricity",
+          "safetyCritical": true,
+          "evidenceType": "decision",
+          "requiresObservation": false
+        },
+        {
+          "id": "transfer",
+          "title": "The scene is uncertain",
+          "cue": "You cannot identify the fuel or confirm a safe exit.",
+          "question": "Which choice demonstrates good judgement?",
+          "choices": [
+            {
+              "id": "transfer-2",
+              "text": "Move closer to get a better phone picture",
+              "correct": false
+            },
+            {
+              "id": "transfer-0",
+              "text": "Evacuate and report the uncertainty",
+              "correct": true
+            },
+            {
+              "id": "transfer-1",
+              "text": "Try each agent until one works",
+              "correct": false
+            }
+          ],
+          "explanation": "A valid decision can be to decline an attempt. Scoring should not reward firefighting when conditions are unsuitable.",
+          "part": null,
+          "source": "https://www.usfa.fema.gov/prevention/home-fires/prepare-for-fire/fire-extinguishers/index.html",
+          "safetyCritical": true,
+          "evidenceType": "decision",
+          "requiresObservation": false
+        }
+      ],
+      "evidenceType": "authored-decision-practice",
+      "practicalAssessment": false,
+      "locale": "en",
+      "localisationStatus": {
+        "en": "authored-draft",
+        "hi": "pending-review",
+        "sat": "pending-review"
+      },
+      "challengeType": "guided",
+      "teachBack": "Which cue mattered most, what action would you avoid, and when would you ask for help?",
+      "contextExamples": {
+        "School": "Student awareness: recognise danger and get a responsible adult. Adult treatment and equipment response are outside this path.",
+        "College": "Use the campus response plan. Adult casualty examples apply to adults, not a paediatric emergency.",
+        "Workplace": "Know the site alarm, assembly point and designated responder. Follow employer procedures and the limits of your training.",
+        "Home and community": "Give a precise address or landmark to emergency responders. Keep yourself and bystanders clear of hazards."
+      },
+      "transferScenarioIds": [
+        "laboratory-evacuation",
+        "home-kitchen-transfer",
+        "workplace-handover"
+      ]
+    },
+    {
+      "id": "school-fire-help",
+      "course": "fire",
+      "title": "Leave safely with your class",
+      "audience": "awareness",
+      "setting": "school",
+      "casualtyAge": null,
+      "reviewStatus": "draft",
+      "reviewer": null,
+      "prerequisites": [
+        "Read the introduction"
+      ],
+      "objectives": [
+        "Follow the school evacuation plan",
+        "Use a safe alternate exit",
+        "Report missing people without re-entry"
+      ],
+      "steps": [
+        {
+          "id": "alarm",
+          "title": "The alarm sounds",
+          "cue": "During class, the fire alarm starts. The teacher directs your group to leave.",
+          "question": "What should you do?",
+          "choices": [
+            {
+              "id": "alarm-2",
+              "text": "Go looking for an extinguisher",
+              "correct": false
+            },
+            {
+              "id": "alarm-0",
+              "text": "Follow the evacuation instructions and leave belongings",
+              "correct": true
+            },
+            {
+              "id": "alarm-1",
+              "text": "Finish the lesson first",
+              "correct": false
+            }
+          ],
+          "explanation": "This awareness path is about alerting, leaving and getting help. Children are not assigned firefighting tasks.",
+          "part": null,
+          "source": "https://www.usfa.fema.gov/prevention/home-fires/prepare-for-fire/home-fire-escape-plans/",
+          "safetyCritical": true,
+          "evidenceType": "decision",
+          "requiresObservation": false
+        },
+        {
+          "id": "blocked",
+          "title": "The usual exit is blocked",
+          "cue": "Your group’s usual route has smoke. A responsible adult directs you to a clear alternative.",
+          "question": "What is appropriate?",
+          "choices": [
+            {
+              "id": "blocked-0",
+              "text": "Use the safe alternative with the group",
+              "correct": true
+            },
+            {
+              "id": "blocked-1",
+              "text": "Push through the smoke",
+              "correct": false
+            },
+            {
+              "id": "blocked-2",
+              "text": "Separate from the group to collect a bag",
+              "correct": false
+            }
+          ],
+          "explanation": "Know more than one route. A route must be usable now, not simply familiar.",
+          "part": null,
+          "source": "https://www.usfa.fema.gov/prevention/home-fires/prepare-for-fire/home-fire-escape-plans/",
+          "safetyCritical": true,
+          "evidenceType": "decision",
+          "requiresObservation": false
+        },
+        {
+          "id": "count",
+          "title": "Reach the meeting point",
+          "cue": "A classmate is not accounted for.",
+          "question": "What should you do?",
+          "choices": [
+            {
+              "id": "count-1",
+              "text": "Return to search alone",
+              "correct": false
+            },
+            {
+              "id": "count-2",
+              "text": "Ask another student to re-enter",
+              "correct": false
+            },
+            {
+              "id": "count-0",
+              "text": "Tell the teacher the last place you saw them; stay out",
+              "correct": true
+            }
+          ],
+          "explanation": "Accountability gives responders useful information. Never re-enter to search or collect belongings.",
+          "part": null,
+          "source": "https://www.usfa.fema.gov/prevention/home-fires/prepare-for-fire/home-fire-escape-plans/",
+          "safetyCritical": false,
+          "evidenceType": "decision",
+          "requiresObservation": false
+        }
+      ],
+      "evidenceType": "authored-decision-practice",
+      "practicalAssessment": false,
+      "locale": "en",
+      "localisationStatus": {
+        "en": "authored-draft",
+        "hi": "pending-review",
+        "sat": "pending-review"
+      },
+      "challengeType": "guided",
+      "teachBack": "Which cue mattered most, what action would you avoid, and when would you ask for help?",
+      "contextExamples": {
+        "School": "Student awareness: recognise danger and get a responsible adult. Adult treatment and equipment response are outside this path.",
+        "College": "Use the campus response plan. Adult casualty examples apply to adults, not a paediatric emergency.",
+        "Workplace": "Know the site alarm, assembly point and designated responder. Follow employer procedures and the limits of your training.",
+        "Home and community": "Give a precise address or landmark to emergency responders. Keep yourself and bystanders clear of hazards."
+      },
+      "transferScenarioIds": [
+        "laboratory-evacuation",
+        "home-kitchen-transfer",
+        "workplace-handover"
+      ]
+    },
+    {
+      "id": "fainting-response",
+      "course": "first-aid",
+      "title": "Feeling faint or collapsing",
+      "audience": "adult",
+      "setting": "college",
+      "casualtyAge": "adult",
+      "reviewStatus": "draft",
+      "reviewer": null,
+      "prerequisites": [
+        "Adult response learning; physical skills require supervised instruction."
+      ],
+      "objectives": [
+        "Support a responsive person safely",
+        "Distinguish fainting from an unresponsive emergency",
+        "Recognise escalation cues"
+      ],
+      "steps": [
+        {
+          "id": "warning",
+          "title": "Act before a fall",
+          "cue": "At a college event, an adult says they feel faint. They are responsive and have no injury.",
+          "question": "What helps now?",
+          "choices": [
+            {
+              "id": "warning-0",
+              "text": "Help them lie down safely; raise their legs slightly if possible",
+              "correct": true
+            },
+            {
+              "id": "warning-1",
+              "text": "Make them walk it off",
+              "correct": false
+            },
+            {
+              "id": "warning-2",
+              "text": "Keep them standing in the queue",
+              "correct": false
+            }
+          ],
+          "explanation": "Reduce the chance of a fall. Allow space and fresh air; reassure them.",
+          "source": "https://www.sja.org.uk/first-aid-advice/fainting/",
+          "part": null,
+          "safetyCritical": true,
+          "evidenceType": "decision",
+          "requiresObservation": false
+        },
+        {
+          "id": "recover",
+          "title": "Reassess before moving",
+          "cue": "They feel better while lying down.",
+          "question": "What next?",
+          "choices": [
+            {
+              "id": "recover-0",
+              "text": "Stay nearby and help them sit up slowly when ready",
+              "correct": true
+            },
+            {
+              "id": "recover-1",
+              "text": "Pull them straight to their feet",
+              "correct": false
+            },
+            {
+              "id": "recover-2",
+              "text": "Leave them alone immediately",
+              "correct": false
+            }
+          ],
+          "explanation": "Recovery should be gradual. Continuing symptoms or loss of response changes the plan.",
+          "source": "https://www.sja.org.uk/first-aid-advice/fainting/",
+          "part": null,
+          "safetyCritical": true,
+          "evidenceType": "decision",
+          "requiresObservation": false
+        },
+        {
+          "id": "not-faint",
+          "title": "Do not assume a diagnosis",
+          "cue": "Another adult collapses and remains unresponsive. Their breathing is abnormal.",
+          "question": "Should you wait for a faint to pass?",
+          "choices": [
+            {
+              "id": "not-faint-0",
+              "text": "No; get emergency help and follow the adult collapse response",
+              "correct": true
+            },
+            {
+              "id": "not-faint-1",
+              "text": "Yes; all faints recover unaided",
+              "correct": false
+            },
+            {
+              "id": "not-faint-2",
+              "text": "Give a drink to wake them",
+              "correct": false
+            }
+          ],
+          "explanation": "Persistent unresponsiveness needs an airway and breathing assessment, not a guess about fainting.",
+          "source": "https://www.sja.org.uk/first-aid-advice/fainting/",
+          "part": null,
+          "safetyCritical": true,
+          "evidenceType": "decision",
+          "requiresObservation": false
+        },
+        {
+          "id": "red-flags",
+          "title": "Recognise a serious change",
+          "cue": "The adult reports chest pain after collapsing during exercise.",
+          "question": "What should you arrange?",
+          "choices": [
+            {
+              "id": "red-flags-0",
+              "text": "Emergency medical help now",
+              "correct": true
+            },
+            {
+              "id": "red-flags-1",
+              "text": "Only rest until tomorrow",
+              "correct": false
+            },
+            {
+              "id": "red-flags-2",
+              "text": "Immediate return to exercise",
+              "correct": false
+            }
+          ],
+          "explanation": "Chest pain or collapse during exercise is a warning sign. A person who has fainted should receive medical assessment.",
+          "source": "https://www.nhs.uk/symptoms/fainting/",
+          "part": null,
+          "safetyCritical": true,
+          "evidenceType": "decision",
+          "requiresObservation": false
+        }
+      ],
+      "evidenceType": "authored-decision-practice",
+      "practicalAssessment": false,
+      "locale": "en",
+      "localisationStatus": {
+        "en": "authored-draft",
+        "hi": "pending-review",
+        "sat": "pending-review"
+      },
+      "challengeType": "guided",
+      "teachBack": "Which cue changed your decision, what would you avoid, and what would you tell the responder?",
+      "contextExamples": {
+        "School": "Student awareness: recognise danger and get a responsible adult. Adult treatment and equipment response are outside this path.",
+        "College": "Use the campus response plan. Adult casualty examples apply to adults, not a paediatric emergency.",
+        "Workplace": "Know the site alarm, assembly point and designated responder. Follow employer procedures and the limits of your training.",
+        "Home and community": "Give a precise address or landmark to emergency responders. Keep yourself and bystanders clear of hazards."
+      },
+      "transferScenarioIds": [
+        "heat-illness",
+        "minor-wound-care"
+      ]
+    },
+    {
+      "id": "heat-illness",
+      "course": "first-aid",
+      "title": "Heat illness: cool and escalate",
+      "audience": "adult",
+      "setting": "workplace",
+      "casualtyAge": "adult",
+      "reviewStatus": "draft",
+      "reviewer": null,
+      "prerequisites": [
+        "Adult response learning; physical skills require supervised instruction."
+      ],
+      "objectives": [
+        "Recognise heat-related illness",
+        "Start cooling without delaying emergency help",
+        "Adapt when alertness changes"
+      ],
+      "steps": [
+        {
+          "id": "early",
+          "title": "Stop the exposure",
+          "cue": "An adult outdoors is dizzy, sweaty and nauseated after heavy work. They answer clearly.",
+          "question": "What is the safer first action?",
+          "choices": [
+            {
+              "id": "early-0",
+              "text": "Stop work and help them reach a cool place safely",
+              "correct": true
+            },
+            {
+              "id": "early-1",
+              "text": "Finish the shift first",
+              "correct": false
+            },
+            {
+              "id": "early-2",
+              "text": "Leave them in direct sun",
+              "correct": false
+            }
+          ],
+          "explanation": "Heat illness can worsen. Cooling and observation start promptly; seek medical advice if concerned.",
+          "source": "https://www.sja.org.uk/first-aid-advice/heat-exhaustion/",
+          "part": null,
+          "safetyCritical": true,
+          "evidenceType": "decision",
+          "requiresObservation": false
+        },
+        {
+          "id": "cool",
+          "title": "Begin simple cooling",
+          "cue": "They are resting in shade, fully alert and able to swallow.",
+          "question": "What can you do?",
+          "choices": [
+            {
+              "id": "cool-0",
+              "text": "Loosen unnecessary clothing, cool skin and offer water",
+              "correct": true
+            },
+            {
+              "id": "cool-1",
+              "text": "Wrap them in a heavy dry blanket",
+              "correct": false
+            },
+            {
+              "id": "cool-2",
+              "text": "Offer alcohol",
+              "correct": false
+            }
+          ],
+          "explanation": "Use cool water with fanning; a wrapped cold pack can help. Stay with them.",
+          "source": "https://www.nhs.uk/conditions/heat-exhaustion-heatstroke/",
+          "part": null,
+          "safetyCritical": true,
+          "evidenceType": "decision",
+          "requiresObservation": false
+        },
+        {
+          "id": "change",
+          "title": "Escalate immediately",
+          "cue": "They become confused and cannot coordinate movements.",
+          "question": "What changes?",
+          "choices": [
+            {
+              "id": "change-0",
+              "text": "Call emergency help now and keep cooling",
+              "correct": true
+            },
+            {
+              "id": "change-1",
+              "text": "Wait for a timer before calling",
+              "correct": false
+            },
+            {
+              "id": "change-2",
+              "text": "Ask them to drive home",
+              "correct": false
+            }
+          ],
+          "explanation": "Confusion or loss of coordination can signal heatstroke. Do not wait for a fixed interval when serious signs appear.",
+          "source": "https://www.nhs.uk/conditions/heat-exhaustion-heatstroke/",
+          "part": null,
+          "safetyCritical": true,
+          "evidenceType": "decision",
+          "requiresObservation": false
+        },
+        {
+          "id": "swallow",
+          "title": "Protect the airway",
+          "cue": "The adult is now unresponsive while help is on the way.",
+          "question": "Should you pour water into their mouth?",
+          "choices": [
+            {
+              "id": "swallow-0",
+              "text": "No; reassess breathing and follow the unresponsive-person response",
+              "correct": true
+            },
+            {
+              "id": "swallow-1",
+              "text": "Yes, force them to drink",
+              "correct": false
+            },
+            {
+              "id": "swallow-2",
+              "text": "Give tablets by mouth",
+              "correct": false
+            }
+          ],
+          "explanation": "Do not force oral fluid into an unresponsive person. Monitor breathing and follow emergency-dispatch instructions.",
+          "source": "https://www.sja.org.uk/first-aid-advice/heatstroke/",
+          "part": null,
+          "safetyCritical": true,
+          "evidenceType": "decision",
+          "requiresObservation": false
+        },
+        {
+          "id": "handover",
+          "title": "Describe the timeline",
+          "cue": "A responder arrives at the outdoor site.",
+          "question": "What is useful?",
+          "choices": [
+            {
+              "id": "handover-0",
+              "text": "Exposure, symptoms, changes, cooling and time of emergency call",
+              "correct": true
+            },
+            {
+              "id": "handover-1",
+              "text": "A confident diagnosis based on the app",
+              "correct": false
+            },
+            {
+              "id": "handover-2",
+              "text": "Only their clothing colour",
+              "correct": false
+            }
+          ],
+          "explanation": "Report what you observed and did, including deterioration; do not substitute an app label for assessment.",
+          "source": "https://www.sja.org.uk/first-aid-advice/duties-and-responsibilities-of-first-aiders/",
+          "part": null,
+          "safetyCritical": false,
+          "evidenceType": "decision",
+          "requiresObservation": false
+        }
+      ],
+      "evidenceType": "authored-decision-practice",
+      "practicalAssessment": false,
+      "locale": "en",
+      "localisationStatus": {
+        "en": "authored-draft",
+        "hi": "pending-review",
+        "sat": "pending-review"
+      },
+      "challengeType": "guided",
+      "teachBack": "Which cue changed your decision, what would you avoid, and what would you tell the responder?",
+      "contextExamples": {
+        "School": "Student awareness: recognise danger and get a responsible adult. Adult treatment and equipment response are outside this path.",
+        "College": "Use the campus response plan. Adult casualty examples apply to adults, not a paediatric emergency.",
+        "Workplace": "Know the site alarm, assembly point and designated responder. Follow employer procedures and the limits of your training.",
+        "Home and community": "Give a precise address or landmark to emergency responders. Keep yourself and bystanders clear of hazards."
+      },
+      "transferScenarioIds": [
+        "fainting-response",
+        "minor-wound-care"
+      ]
+    },
+    {
+      "id": "sprain-support",
+      "course": "first-aid",
+      "title": "An injured ankle: support and seek help",
+      "audience": "adult",
+      "setting": "college",
+      "casualtyAge": "adult",
+      "reviewStatus": "draft",
+      "reviewer": null,
+      "prerequisites": [
+        "Adult response learning; physical skills require supervised instruction."
+      ],
+      "objectives": [
+        "Avoid worsening an injury",
+        "Choose protected cooling",
+        "Identify injury red flags"
+      ],
+      "steps": [
+        {
+          "id": "stop",
+          "title": "Protect the injury",
+          "cue": "An adult twists an ankle during college sport.",
+          "question": "What should happen first?",
+          "choices": [
+            {
+              "id": "stop-0",
+              "text": "Stop activity and support the injury comfortably",
+              "correct": true
+            },
+            {
+              "id": "stop-1",
+              "text": "Run to test it",
+              "correct": false
+            },
+            {
+              "id": "stop-2",
+              "text": "Twist it back forcefully",
+              "correct": false
+            }
+          ],
+          "explanation": "Pain is a reason to stop, not a challenge to push through. Do not assume the injury is only a sprain.",
+          "source": "https://www.sja.org.uk/first-aid-advice/sprains-and-strains/",
+          "part": null,
+          "safetyCritical": true,
+          "evidenceType": "decision",
+          "requiresObservation": false
+        },
+        {
+          "id": "cold",
+          "title": "Use a barrier",
+          "cue": "A cold pack is available.",
+          "question": "How would you use it for comfort?",
+          "choices": [
+            {
+              "id": "cold-0",
+              "text": "Wrap it; do not place ice directly on skin",
+              "correct": true
+            },
+            {
+              "id": "cold-1",
+              "text": "Press bare ice onto skin",
+              "correct": false
+            },
+            {
+              "id": "cold-2",
+              "text": "Use a hot pack immediately",
+              "correct": false
+            }
+          ],
+          "explanation": "A cloth barrier protects skin. This lesson does not prescribe a rehabilitation or medication plan.",
+          "source": "https://www.nhs.uk/conditions/sprains-and-strains/",
+          "part": null,
+          "safetyCritical": true,
+          "evidenceType": "decision",
+          "requiresObservation": false
+        },
+        {
+          "id": "review",
+          "title": "Escalate the uncertainty",
+          "cue": "The adult cannot bear weight and swelling is increasing.",
+          "question": "What next?",
+          "choices": [
+            {
+              "id": "review-0",
+              "text": "Arrange urgent medical assessment",
+              "correct": true
+            },
+            {
+              "id": "review-1",
+              "text": "Walk repeatedly to prove it is minor",
+              "correct": false
+            },
+            {
+              "id": "review-2",
+              "text": "Continue sport after a short pause",
+              "correct": false
+            }
+          ],
+          "explanation": "Marked pain, worsening swelling or inability to bear weight needs assessment.",
+          "source": "https://www.nhs.uk/conditions/sprains-and-strains/",
+          "part": null,
+          "safetyCritical": true,
+          "evidenceType": "decision",
+          "requiresObservation": false
+        },
+        {
+          "id": "urgent",
+          "title": "Recognise an emergency",
+          "cue": "The foot is numb and cold, and the ankle looks deformed.",
+          "question": "What is safest?",
+          "choices": [
+            {
+              "id": "urgent-0",
+              "text": "Get emergency medical help; support without straightening",
+              "correct": true
+            },
+            {
+              "id": "urgent-1",
+              "text": "Realign it yourself",
+              "correct": false
+            },
+            {
+              "id": "urgent-2",
+              "text": "Wait several days",
+              "correct": false
+            }
+          ],
+          "explanation": "Deformity or impaired sensation/circulation can accompany serious injury. Leave diagnosis and reduction to professionals.",
+          "source": "https://www.nhs.uk/conditions/sprains-and-strains/",
+          "part": null,
+          "safetyCritical": true,
+          "evidenceType": "decision",
+          "requiresObservation": false
+        }
+      ],
+      "evidenceType": "authored-decision-practice",
+      "practicalAssessment": false,
+      "locale": "en",
+      "localisationStatus": {
+        "en": "authored-draft",
+        "hi": "pending-review",
+        "sat": "pending-review"
+      },
+      "challengeType": "guided",
+      "teachBack": "Which cue changed your decision, what would you avoid, and what would you tell the responder?",
+      "contextExamples": {
+        "School": "Student awareness: recognise danger and get a responsible adult. Adult treatment and equipment response are outside this path.",
+        "College": "Use the campus response plan. Adult casualty examples apply to adults, not a paediatric emergency.",
+        "Workplace": "Know the site alarm, assembly point and designated responder. Follow employer procedures and the limits of your training.",
+        "Home and community": "Give a precise address or landmark to emergency responders. Keep yourself and bystanders clear of hazards."
+      },
+      "transferScenarioIds": [
+        "heat-illness",
+        "fainting-response",
+        "minor-wound-care"
+      ]
+    },
+    {
+      "id": "minor-wound-care",
+      "course": "first-aid",
+      "title": "A small cut: clean, cover, reassess",
+      "audience": "adult",
+      "setting": "home",
+      "casualtyAge": "adult",
+      "reviewStatus": "draft",
+      "reviewer": null,
+      "prerequisites": [
+        "Adult response learning; physical skills require supervised instruction."
+      ],
+      "objectives": [
+        "Separate a minor cut from uncontrolled bleeding",
+        "Reduce contamination",
+        "Know when assessment is needed"
+      ],
+      "steps": [
+        {
+          "id": "scope",
+          "title": "Check whether it is minor",
+          "cue": "An adult has a small superficial kitchen cut. There is no embedded object.",
+          "question": "What comes before cleaning?",
+          "choices": [
+            {
+              "id": "scope-0",
+              "text": "Control bleeding with clean direct pressure",
+              "correct": true
+            },
+            {
+              "id": "scope-1",
+              "text": "Scrub while it is bleeding freely",
+              "correct": false
+            },
+            {
+              "id": "scope-2",
+              "text": "Apply household powder",
+              "correct": false
+            }
+          ],
+          "explanation": "This pathway is for small wounds. Persistent or severe bleeding belongs in the emergency bleeding response.",
+          "source": "https://www.sja.org.uk/first-aid-advice/cuts-and-grazes/",
+          "part": null,
+          "safetyCritical": true,
+          "evidenceType": "decision",
+          "requiresObservation": false
+        },
+        {
+          "id": "clean",
+          "title": "Clean with care",
+          "cue": "Bleeding has stopped. You have washed your hands.",
+          "question": "What next?",
+          "choices": [
+            {
+              "id": "clean-0",
+              "text": "Rinse the cut with clean running water, then cover with a sterile dressing",
+              "correct": true
+            },
+            {
+              "id": "clean-1",
+              "text": "Rub soil onto it",
+              "correct": false
+            },
+            {
+              "id": "clean-2",
+              "text": "Leave food residue inside",
+              "correct": false
+            }
+          ],
+          "explanation": "Clean the surrounding skin carefully and keep the dressing clean and dry.",
+          "source": "https://www.nhs.uk/conditions/cuts-and-grazes/",
+          "part": null,
+          "safetyCritical": true,
+          "evidenceType": "decision",
+          "requiresObservation": false
+        },
+        {
+          "id": "object",
+          "title": "Change the plan",
+          "cue": "A different wound contains a shard of glass.",
+          "question": "What should you avoid?",
+          "choices": [
+            {
+              "id": "object-0",
+              "text": "Do not pull it out; seek urgent medical care",
+              "correct": true
+            },
+            {
+              "id": "object-1",
+              "text": "Remove it with kitchen tweezers",
+              "correct": false
+            },
+            {
+              "id": "object-2",
+              "text": "Push it deeper",
+              "correct": false
+            }
+          ],
+          "explanation": "An embedded object is outside routine minor-cut care. Avoid pressure directly on the object.",
+          "source": "https://www.sja.org.uk/first-aid-advice/cuts-and-grazes/",
+          "part": null,
+          "safetyCritical": true,
+          "evidenceType": "decision",
+          "requiresObservation": false
+        },
+        {
+          "id": "followup",
+          "title": "Spot a worsening wound",
+          "cue": "Later the area becomes increasingly red, swollen and painful, with pus.",
+          "question": "What should happen?",
+          "choices": [
+            {
+              "id": "followup-0",
+              "text": "Arrange prompt medical assessment",
+              "correct": true
+            },
+            {
+              "id": "followup-1",
+              "text": "Ignore it because the cut was small",
+              "correct": false
+            },
+            {
+              "id": "followup-2",
+              "text": "Use leftover antibiotics",
+              "correct": false
+            }
+          ],
+          "explanation": "Infection signs need assessment. Dirty wounds or bites may need additional treatment, including a tetanus-risk review.",
+          "source": "https://www.nhs.uk/conditions/cuts-and-grazes/",
+          "part": null,
+          "safetyCritical": true,
+          "evidenceType": "decision",
+          "requiresObservation": false
+        }
+      ],
+      "evidenceType": "authored-decision-practice",
+      "practicalAssessment": false,
+      "locale": "en",
+      "localisationStatus": {
+        "en": "authored-draft",
+        "hi": "pending-review",
+        "sat": "pending-review"
+      },
+      "challengeType": "guided",
+      "teachBack": "Which cue changed your decision, what would you avoid, and what would you tell the responder?",
+      "contextExamples": {
+        "School": "Student awareness: recognise danger and get a responsible adult. Adult treatment and equipment response are outside this path.",
+        "College": "Use the campus response plan. Adult casualty examples apply to adults, not a paediatric emergency.",
+        "Workplace": "Know the site alarm, assembly point and designated responder. Follow employer procedures and the limits of your training.",
+        "Home and community": "Give a precise address or landmark to emergency responders. Keep yourself and bystanders clear of hazards."
+      },
+      "transferScenarioIds": [
+        "heat-illness",
+        "fainting-response"
+      ]
+    },
+    {
+      "id": "school-injury-help",
+      "course": "first-aid",
+      "title": "School: recognise injury and get help",
+      "audience": "awareness",
+      "setting": "school",
+      "casualtyAge": "adult",
+      "reviewStatus": "draft",
+      "reviewer": null,
+      "prerequisites": [
+        "Awareness: get a responsible adult; do not practise treatment on another person."
+      ],
+      "objectives": [
+        "Get an adult promptly",
+        "Give a clear location and observation",
+        "Avoid unsupervised treatment"
+      ],
+      "steps": [
+        {
+          "id": "space",
+          "title": "Make room for help",
+          "cue": "At sports day, an adult visitor falls and holds their ankle.",
+          "question": "What can a student do safely?",
+          "choices": [
+            {
+              "id": "space-0",
+              "text": "Tell a teacher and keep the approach clear",
+              "correct": true
+            },
+            {
+              "id": "space-1",
+              "text": "Try to straighten the ankle",
+              "correct": false
+            },
+            {
+              "id": "space-2",
+              "text": "Ask them to run again",
+              "correct": false
+            }
+          ],
+          "explanation": "School awareness teaches help-seeking. Physical treatment is for an appropriately trained responder.",
+          "source": "https://www.sja.org.uk/first-aid-advice/duties-and-responsibilities-of-first-aiders/",
+          "part": null,
+          "safetyCritical": true,
+          "evidenceType": "decision",
+          "requiresObservation": false
+        },
+        {
+          "id": "message",
+          "title": "Give useful information",
+          "cue": "The teacher cannot see the casualty yet.",
+          "question": "Which message is useful?",
+          "choices": [
+            {
+              "id": "message-0",
+              "text": "An adult fell beside the west gate and cannot stand",
+              "correct": true
+            },
+            {
+              "id": "message-1",
+              "text": "There is something somewhere",
+              "correct": false
+            },
+            {
+              "id": "message-2",
+              "text": "The app diagnosed a broken bone",
+              "correct": false
+            }
+          ],
+          "explanation": "Describe the location and what you observed; avoid diagnosis. This case uses an adult, not a child treatment protocol.",
+          "source": "https://www.sja.org.uk/first-aid-advice/duties-and-responsibilities-of-first-aiders/",
+          "part": null,
+          "safetyCritical": false,
+          "evidenceType": "decision",
+          "requiresObservation": false
+        },
+        {
+          "id": "change",
+          "title": "Report deterioration",
+          "cue": "The adult stops responding while the teacher is arriving.",
+          "question": "What do you do?",
+          "choices": [
+            {
+              "id": "change-0",
+              "text": "Tell the teacher immediately and follow emergency instructions",
+              "correct": true
+            },
+            {
+              "id": "change-1",
+              "text": "Give them a drink",
+              "correct": false
+            },
+            {
+              "id": "change-2",
+              "text": "Film them instead of seeking help",
+              "correct": false
+            }
+          ],
+          "explanation": "A change in responsiveness is urgent. Get emergency help; do not give anything by mouth.",
+          "source": "https://www.sja.org.uk/first-aid-advice/fainting/",
+          "part": null,
+          "safetyCritical": true,
+          "evidenceType": "decision",
+          "requiresObservation": false
+        }
+      ],
+      "evidenceType": "authored-decision-practice",
+      "practicalAssessment": false,
+      "locale": "en",
+      "localisationStatus": {
+        "en": "authored-draft",
+        "hi": "pending-review",
+        "sat": "pending-review"
+      },
+      "challengeType": "transfer",
+      "teachBack": "Which cue changed your decision, what would you avoid, and what would you tell the responder?",
+      "contextExamples": {
+        "School": "Student awareness: recognise danger and get a responsible adult. Adult treatment and equipment response are outside this path.",
+        "College": "Use the campus response plan. Adult casualty examples apply to adults, not a paediatric emergency.",
+        "Workplace": "Know the site alarm, assembly point and designated responder. Follow employer procedures and the limits of your training.",
+        "Home and community": "Give a precise address or landmark to emergency responders. Keep yourself and bystanders clear of hazards."
+      },
+      "transferScenarioIds": []
+    },
+    {
+      "id": "laboratory-evacuation",
+      "course": "fire",
+      "title": "Laboratory: unknown substance, clear exit",
+      "audience": "awareness",
+      "setting": "college",
+      "casualtyAge": "not-applicable",
+      "reviewStatus": "draft",
+      "reviewer": null,
+      "prerequisites": [
+        "Awareness: get a responsible adult; do not practise treatment on another person."
+      ],
+      "objectives": [
+        "Recognise uncertainty as a stop condition",
+        "Use the lab evacuation plan",
+        "Share useful hazard information"
+      ],
+      "steps": [
+        {
+          "id": "unknown",
+          "title": "Respect an unknown hazard",
+          "cue": "During a college demonstration, liquid spills and a flame appears. You do not know the substance.",
+          "question": "What is the safe priority?",
+          "choices": [
+            {
+              "id": "unknown-0",
+              "text": "Alert the instructor and evacuate according to the lab plan",
+              "correct": true
+            },
+            {
+              "id": "unknown-1",
+              "text": "Pour water on it to identify it",
+              "correct": false
+            },
+            {
+              "id": "unknown-2",
+              "text": "Bring the nearest extinguisher without checking",
+              "correct": false
+            }
+          ],
+          "explanation": "Unknown material can make a response unsafe. Students should not improvise spill or fire control.",
+          "source": "https://www.acs.org/about/governance/committees/chemical-safety/publications-resources/guide-for-chemical-spill-response.html",
+          "part": null,
+          "safetyCritical": true,
+          "evidenceType": "decision",
+          "requiresObservation": false
+        },
+        {
+          "id": "route",
+          "title": "Choose the safe route",
+          "cue": "The normal exit has smoke nearby. A signed alternative is clear.",
+          "question": "What should you do?",
+          "choices": [
+            {
+              "id": "route-0",
+              "text": "Use the clear alternative; do not move toward the hazard",
+              "correct": true
+            },
+            {
+              "id": "route-1",
+              "text": "Push through smoke to the familiar door",
+              "correct": false
+            },
+            {
+              "id": "route-2",
+              "text": "Return for a bag",
+              "correct": false
+            }
+          ],
+          "explanation": "An exit route must lead away from danger. Follow local evacuation instructions and report the blocked route.",
+          "source": "https://www.osha.gov/laws-regs/regulations/standardnumber/1910/1910.37",
+          "part": null,
+          "safetyCritical": true,
+          "evidenceType": "decision",
+          "requiresObservation": false
+        },
+        {
+          "id": "information",
+          "title": "Give facts from safety",
+          "cue": "You are outside with the instructor.",
+          "question": "What can you report?",
+          "choices": [
+            {
+              "id": "information-0",
+              "text": "Bench location, observed spill and any label already known",
+              "correct": true
+            },
+            {
+              "id": "information-1",
+              "text": "Go back to collect the container",
+              "correct": false
+            },
+            {
+              "id": "information-2",
+              "text": "Invent the chemical name",
+              "correct": false
+            }
+          ],
+          "explanation": "Give responders information already available. Do not re-enter to investigate or retrieve a safety sheet.",
+          "source": "https://www.acs.org/about/governance/committees/chemical-safety/publications-resources/guide-for-chemical-spill-response.html",
+          "part": null,
+          "safetyCritical": true,
+          "evidenceType": "decision",
+          "requiresObservation": false
+        },
+        {
+          "id": "account",
+          "title": "Stay available",
+          "cue": "The instructor is checking the class list.",
+          "question": "What is helpful?",
+          "choices": [
+            {
+              "id": "account-0",
+              "text": "Report to the assembly point and identify who was last seen inside",
+              "correct": true
+            },
+            {
+              "id": "account-1",
+              "text": "Leave without telling anyone",
+              "correct": false
+            },
+            {
+              "id": "account-2",
+              "text": "Start an independent search inside",
+              "correct": false
+            }
+          ],
+          "explanation": "Local emergency plans coordinate evacuation and accountability. Stay out until authorised instructions permit return.",
+          "source": "https://www.osha.gov/laws-regs/regulations/standardnumber/1910/1910.38",
+          "part": null,
+          "safetyCritical": true,
+          "evidenceType": "decision",
+          "requiresObservation": false
+        }
+      ],
+      "evidenceType": "authored-decision-practice",
+      "practicalAssessment": false,
+      "locale": "en",
+      "localisationStatus": {
+        "en": "authored-draft",
+        "hi": "pending-review",
+        "sat": "pending-review"
+      },
+      "challengeType": "transfer",
+      "teachBack": "Which cue changed your decision, what would you avoid, and what would you tell the responder?",
+      "contextExamples": {
+        "School": "Student awareness: recognise danger and get a responsible adult. Adult treatment and equipment response are outside this path.",
+        "College": "Use the campus response plan. Adult casualty examples apply to adults, not a paediatric emergency.",
+        "Workplace": "Know the site alarm, assembly point and designated responder. Follow employer procedures and the limits of your training.",
+        "Home and community": "Give a precise address or landmark to emergency responders. Keep yourself and bystanders clear of hazards."
+      },
+      "transferScenarioIds": [
+        "home-kitchen-transfer",
+        "workplace-handover"
+      ]
+    },
+    {
+      "id": "home-kitchen-transfer",
+      "course": "fire",
+      "title": "Kitchen: when the obvious tool is wrong",
+      "audience": "awareness",
+      "setting": "home",
+      "casualtyAge": "not-applicable",
+      "reviewStatus": "draft",
+      "reviewer": null,
+      "prerequisites": [
+        "Awareness: get a responsible adult; do not practise treatment on another person."
+      ],
+      "objectives": [
+        "Recognise cooking-oil risk",
+        "Avoid unsafe improvised agents",
+        "Choose evacuation over possessions"
+      ],
+      "steps": [
+        {
+          "id": "oil",
+          "title": "Identify the fuel",
+          "cue": "Oil is burning in a pan at home. You are not trained to deal with it.",
+          "question": "What should you do?",
+          "choices": [
+            {
+              "id": "oil-0",
+              "text": "Warn others, get out and call emergency help; do not move the pan",
+              "correct": true
+            },
+            {
+              "id": "oil-1",
+              "text": "Carry the pan to the sink",
+              "correct": false
+            },
+            {
+              "id": "oil-2",
+              "text": "Pour water into it",
+              "correct": false
+            }
+          ],
+          "explanation": "Water can spread burning oil. Keep clear rather than attempting an improvised response.",
+          "source": "https://www.london-fire.gov.uk/safety/the-home/cooking/pan-fires/",
+          "part": null,
+          "safetyCritical": true,
+          "evidenceType": "decision",
+          "requiresObservation": false
+        },
+        {
+          "id": "switch",
+          "title": "Do not reach through flames",
+          "cue": "A switch is beyond the burning pan.",
+          "question": "Should you reach over to turn it off?",
+          "choices": [
+            {
+              "id": "switch-0",
+              "text": "No; leave if turning it off is unsafe",
+              "correct": true
+            },
+            {
+              "id": "switch-1",
+              "text": "Yes, shutdown is always first",
+              "correct": false
+            },
+            {
+              "id": "switch-2",
+              "text": "Use a towel to reach through flames",
+              "correct": false
+            }
+          ],
+          "explanation": "Only turn off heat if safe. Do not let shutdown delay escape.",
+          "source": "https://www.london-fire.gov.uk/safety/the-home/cooking/pan-fires/",
+          "part": null,
+          "safetyCritical": true,
+          "evidenceType": "decision",
+          "requiresObservation": false
+        },
+        {
+          "id": "outside",
+          "title": "Stay out",
+          "cue": "A phone remains on the kitchen counter.",
+          "question": "What next?",
+          "choices": [
+            {
+              "id": "outside-0",
+              "text": "Stay outside and arrange the emergency call from safety",
+              "correct": true
+            },
+            {
+              "id": "outside-1",
+              "text": "Run back for the phone",
+              "correct": false
+            },
+            {
+              "id": "outside-2",
+              "text": "Ask a child to retrieve it",
+              "correct": false
+            }
+          ],
+          "explanation": "A possession is not a reason to re-enter a burning room.",
+          "source": "https://www.london-fire.gov.uk/safety/the-home/cooking/pan-fires/",
+          "part": null,
+          "safetyCritical": true,
+          "evidenceType": "decision",
+          "requiresObservation": false
+        }
+      ],
+      "evidenceType": "authored-decision-practice",
+      "practicalAssessment": false,
+      "locale": "en",
+      "localisationStatus": {
+        "en": "authored-draft",
+        "hi": "pending-review",
+        "sat": "pending-review"
+      },
+      "challengeType": "transfer",
+      "teachBack": "Which cue changed your decision, what would you avoid, and what would you tell the responder?",
+      "contextExamples": {
+        "School": "Student awareness: recognise danger and get a responsible adult. Adult treatment and equipment response are outside this path.",
+        "College": "Use the campus response plan. Adult casualty examples apply to adults, not a paediatric emergency.",
+        "Workplace": "Know the site alarm, assembly point and designated responder. Follow employer procedures and the limits of your training.",
+        "Home and community": "Give a precise address or landmark to emergency responders. Keep yourself and bystanders clear of hazards."
+      },
+      "transferScenarioIds": [
+        "laboratory-evacuation",
+        "workplace-handover"
+      ]
+    },
+    {
+      "id": "workplace-handover",
+      "course": "fire",
+      "title": "Workplace: authorisation, equipment and handover",
+      "audience": "adult",
+      "setting": "workplace",
+      "casualtyAge": "not-applicable",
+      "reviewStatus": "draft",
+      "reviewer": null,
+      "prerequisites": [
+        "Adult response learning; physical skills require supervised instruction."
+      ],
+      "objectives": [
+        "Check response authority and equipment condition",
+        "Keep an escape route",
+        "Communicate after withdrawal"
+      ],
+      "steps": [
+        {
+          "id": "role",
+          "title": "Read your role correctly",
+          "cue": "A factory alarm sounds. Your site plan assigns you evacuation, not firefighting.",
+          "question": "Does app practice authorise extinguisher use?",
+          "choices": [
+            {
+              "id": "role-0",
+              "text": "No; evacuate and follow the site plan",
+              "correct": true
+            },
+            {
+              "id": "role-1",
+              "text": "Yes; finishing a simulation authorises it",
+              "correct": false
+            },
+            {
+              "id": "role-2",
+              "text": "Only if you can name the fire class",
+              "correct": false
+            }
+          ],
+          "explanation": "Workplace duties and hands-on training determine the role. Simulation completion changes neither.",
+          "source": "https://www.osha.gov/laws-regs/regulations/standardnumber/1910/1910.157",
+          "part": null,
+          "safetyCritical": true,
+          "evidenceType": "decision",
+          "requiresObservation": false
+        },
+        {
+          "id": "condition",
+          "title": "Inspect before relying on it",
+          "cue": "In a supervised practice drill, the selected extinguisher has a damaged hose.",
+          "question": "What is the right decision?",
+          "choices": [
+            {
+              "id": "condition-0",
+              "text": "Do not use it; report the defect and use approved replacement arrangements",
+              "correct": true
+            },
+            {
+              "id": "condition-1",
+              "text": "Ignore the damage",
+              "correct": false
+            },
+            {
+              "id": "condition-2",
+              "text": "Repair the hose during the drill",
+              "correct": false
+            }
+          ],
+          "explanation": "A damaged unit cannot be assumed serviceable. Follow the equipment instructions and site maintenance process.",
+          "source": "https://www.osha.gov/laws-regs/regulations/standardnumber/1910/1910.157",
+          "part": null,
+          "safetyCritical": true,
+          "evidenceType": "decision",
+          "requiresObservation": false
+        },
+        {
+          "id": "label",
+          "title": "Do not guess compatibility",
+          "cue": "Another unit has an unreadable agent/rating label.",
+          "question": "Can colour alone prove it is suitable?",
+          "choices": [
+            {
+              "id": "label-0",
+              "text": "No; treat suitability as unknown and follow the site procedure",
+              "correct": true
+            },
+            {
+              "id": "label-1",
+              "text": "Yes; all red cylinders are interchangeable",
+              "correct": false
+            },
+            {
+              "id": "label-2",
+              "text": "Yes; use it on any fire",
+              "correct": false
+            }
+          ],
+          "explanation": "A label and approved hazard-specific procedure are needed; appearance alone is insufficient.",
+          "source": "https://www.osha.gov/laws-regs/regulations/standardnumber/1910/1910.157",
+          "part": null,
+          "safetyCritical": true,
+          "evidenceType": "decision",
+          "requiresObservation": false
+        },
+        {
+          "id": "blocked",
+          "title": "Preserve your exit",
+          "cue": "In the drill, smoke is now between you and your planned exit.",
+          "question": "What changes?",
+          "choices": [
+            {
+              "id": "blocked-0",
+              "text": "Stop the response and withdraw by a safe route",
+              "correct": true
+            },
+            {
+              "id": "blocked-1",
+              "text": "Finish discharging before moving",
+              "correct": false
+            },
+            {
+              "id": "blocked-2",
+              "text": "Move closer to the fire",
+              "correct": false
+            }
+          ],
+          "explanation": "Escape conditions can change. Do not continue a response that compromises escape.",
+          "source": "https://www.osha.gov/laws-regs/regulations/standardnumber/1910/1910.37",
+          "part": null,
+          "safetyCritical": true,
+          "evidenceType": "decision",
+          "requiresObservation": false
+        },
+        {
+          "id": "handover",
+          "title": "Report without returning",
+          "cue": "At assembly, a coworker is missing and you know their last location.",
+          "question": "What should you pass on?",
+          "choices": [
+            {
+              "id": "handover-0",
+              "text": "Tell the responsible responder the location and missing-person information; stay out",
+              "correct": true
+            },
+            {
+              "id": "handover-1",
+              "text": "Re-enter to confirm before reporting",
+              "correct": false
+            },
+            {
+              "id": "handover-2",
+              "text": "Declare everyone safe",
+              "correct": false
+            }
+          ],
+          "explanation": "Give the response lead facts and uncertainties. Search/rescue and critical plant shutdown are assigned roles.",
+          "source": "https://www.osha.gov/laws-regs/regulations/standardnumber/1910/1910.38",
+          "part": null,
+          "safetyCritical": true,
+          "evidenceType": "decision",
+          "requiresObservation": false
+        }
+      ],
+      "evidenceType": "authored-decision-practice",
+      "practicalAssessment": false,
+      "locale": "en",
+      "localisationStatus": {
+        "en": "authored-draft",
+        "hi": "pending-review",
+        "sat": "pending-review"
+      },
+      "challengeType": "transfer",
+      "teachBack": "Which cue changed your decision, what would you avoid, and what would you tell the responder?",
+      "contextExamples": {
+        "School": "Student awareness: recognise danger and get a responsible adult. Adult treatment and equipment response are outside this path.",
+        "College": "Use the campus response plan. Adult casualty examples apply to adults, not a paediatric emergency.",
+        "Workplace": "Know the site alarm, assembly point and designated responder. Follow employer procedures and the limits of your training.",
+        "Home and community": "Give a precise address or landmark to emergency responders. Keep yourself and bystanders clear of hazards."
+      },
+      "transferScenarioIds": [
+        "laboratory-evacuation",
+        "home-kitchen-transfer"
+      ]
+    }
+  ],
+  "plannedChapters": [
+    "Paediatric and infant response",
+    "Adapted choking techniques",
+    "Supervised CPR and AED skill assessment",
+    "Supervised bleeding-control equipment practice",
+    "Chemical and electrical burn response"
+  ]
+}

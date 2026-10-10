@@ -1,0 +1,38 @@
+com.narvyn.suraksha.AndroidBackAndLearningTest:........
+com.narvyn.suraksha.ArRecoveryTest:....
+com.narvyn.suraksha.RoomMissionFlowTest:
+Error in fireMissionRequiresSceneGesturesAndPersistsMeasuredSweep(com.narvyn.suraksha.RoomMissionFlowTest):
+org.junit.ComparisonFailure: expected:<[SWEEP]> but was:<[AIM]>
+	at org.junit.Assert.assertEquals(Assert.java:117)
+	at org.junit.Assert.assertEquals(Assert.java:146)
+	at com.narvyn.suraksha.RoomMissionFlowTest.fireMissionRequiresSceneGesturesAndPersistsMeasuredSweep(RoomMissionFlowTest.kt:47)
+....
+com.narvyn.suraksha.RoomRecallFlowTest:..
+Error in fireRecallCompletesWithNoRequestedHints(com.narvyn.suraksha.RoomRecallFlowTest):
+org.junit.ComparisonFailure: {"version":2,"module":"fire","phase":"SWEEP","completed":false,"progress":0.20000000298023224,"overallProgress":0.5199999809265137,"released":false,"evacuationOnly":false,"lastInterruption":null,"events":[{"id":"alarm","phase":"ALARM","at":2003245,"accepted":true,"reason":"intentional-control"},{"id":"select-clear-exit","phase":"EXIT","at":2004274,"accepted":true,"reason":"intentional-control"},{"id":"select-suitable-extinguisher","phase":"EQUIPMENT","at":2005378,"accepted":true,"reason":"intentional-control"},{"id":"pin-drag","phase":"PIN","at":2007204,"accepted":true,"reason":"intentional-control"},{"id":"base-alignment","phase":"AIM","at":2010637,"accepted":true,"reason":"virtual-measurement"},{"id":"release","phase":"SWEEP","at":2011657,"accepted":true,"reason":"intentional-control"}],"measurements":[{"kind":"base-alignment","startedAt":2010260,"completedAt":2010637,"durationMs":377,"samples":4,"maxGapMs":146,"bins":[]}],"scenario":{"simulated":true,"catalogVersion":1,"role":"scenario-authorised","realAuthorisationGranted":false,"explosionRisk":false,"equipment":"scenario-suitable-selected","retreatPath":"scenario-clear-selected","missingPerson":"scenario-colleague-unaccounted-for","reentryAuthorised":false},"result":{"complete":false,"certifiable":false,"practical":"not-assessed","outcome":"in-progress"}} expected:<[WITHDRAW]> but was:<[SWEEP]>
+	at org.junit.Assert.assertEquals(Assert.java:117)
+	at com.narvyn.suraksha.RoomRecallFlowTest.fireRecallCompletesWithNoRequestedHints$lambda$52$lambda$41(RoomRecallFlowTest.kt:86)
+	at com.narvyn.suraksha.RoomRecallFlowTest$$ExternalSyntheticLambda5.invoke(D8$$SyntheticClass:0)
+	at com.narvyn.suraksha.RoomRecallFlowTest.gesture(RoomRecallFlowTest.kt:33)
+	at com.narvyn.suraksha.RoomRecallFlowTest.fireRecallCompletesWithNoRequestedHints(RoomRecallFlowTest.kt:86)
+
+com.narvyn.suraksha.LearningWorkspaceTest:.....
+com.narvyn.suraksha.SkillPracticeStoreTest:.
+
+Time: 388.343
+There were 2 failures:
+1) fireMissionRequiresSceneGesturesAndPersistsMeasuredSweep(com.narvyn.suraksha.RoomMissionFlowTest)
+org.junit.ComparisonFailure: expected:<[SWEEP]> but was:<[AIM]>
+	at org.junit.Assert.assertEquals(Assert.java:117)
+	at org.junit.Assert.assertEquals(Assert.java:146)
+	at com.narvyn.suraksha.RoomMissionFlowTest.fireMissionRequiresSceneGesturesAndPersistsMeasuredSweep(RoomMissionFlowTest.kt:47)
+2) fireRecallCompletesWithNoRequestedHints(com.narvyn.suraksha.RoomRecallFlowTest)
+org.junit.ComparisonFailure: {"version":2,"module":"fire","phase":"SWEEP","completed":false,"progress":0.20000000298023224,"overallProgress":0.5199999809265137,"released":false,"evacuationOnly":false,"lastInterruption":null,"events":[{"id":"alarm","phase":"ALARM","at":2003245,"accepted":true,"reason":"intentional-control"},{"id":"select-clear-exit","phase":"EXIT","at":2004274,"accepted":true,"reason":"intentional-control"},{"id":"select-suitable-extinguisher","phase":"EQUIPMENT","at":2005378,"accepted":true,"reason":"intentional-control"},{"id":"pin-drag","phase":"PIN","at":2007204,"accepted":true,"reason":"intentional-control"},{"id":"base-alignment","phase":"AIM","at":2010637,"accepted":true,"reason":"virtual-measurement"},{"id":"release","phase":"SWEEP","at":2011657,"accepted":true,"reason":"intentional-control"}],"measurements":[{"kind":"base-alignment","startedAt":2010260,"completedAt":2010637,"durationMs":377,"samples":4,"maxGapMs":146,"bins":[]}],"scenario":{"simulated":true,"catalogVersion":1,"role":"scenario-authorised","realAuthorisationGranted":false,"explosionRisk":false,"equipment":"scenario-suitable-selected","retreatPath":"scenario-clear-selected","missingPerson":"scenario-colleague-unaccounted-for","reentryAuthorised":false},"result":{"complete":false,"certifiable":false,"practical":"not-assessed","outcome":"in-progress"}} expected:<[WITHDRAW]> but was:<[SWEEP]>
+	at org.junit.Assert.assertEquals(Assert.java:117)
+	at com.narvyn.suraksha.RoomRecallFlowTest.fireRecallCompletesWithNoRequestedHints$lambda$52$lambda$41(RoomRecallFlowTest.kt:86)
+	at com.narvyn.suraksha.RoomRecallFlowTest$$ExternalSyntheticLambda5.invoke(D8$$SyntheticClass:0)
+	at com.narvyn.suraksha.RoomRecallFlowTest.gesture(RoomRecallFlowTest.kt:33)
+	at com.narvyn.suraksha.RoomRecallFlowTest.fireRecallCompletesWithNoRequestedHints(RoomRecallFlowTest.kt:86)
+
+FAILURES!!!
+Tests run: 26,  Failures: 2

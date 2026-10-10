@@ -1,0 +1,1098 @@
+{
+  "version": "transfer-1",
+  "reviewStatus": "draft",
+  "objectives": [
+    {
+      "id": "fire-readiness",
+      "module": "fire",
+      "title": [
+        "Paper-store response",
+        "कागज़ भंडार में प्रतिक्रिया"
+      ],
+      "recognise": "Before using Unit A, what evidence matters?",
+      "decide": "Smoke now threatens the escape route.",
+      "do": "Stop, withdraw and raise the alarm",
+      "refuseOrEscalate": "Reject unmet prerequisites and escalate beyond the assigned role.",
+      "misconception": "Use the nearest unit without inspection",
+      "observableEvidence": "Recorded recognition and decision choices; screen simulation only.",
+      "remediation": "Replay the decision and retry this objective in a new practice record.",
+      "sourceId": "fire",
+      "contentVersion": "transfer-1",
+      "reviewer": null,
+      "reviewStatus": "draft",
+      "procedureSteps": [
+        "fire-alarm",
+        "fire-authorisation",
+        "fire-label"
+      ]
+    },
+    {
+      "id": "fire-inspection",
+      "module": "fire",
+      "title": [
+        "Hidden fault at the switchboard",
+        "स्विचबोर्ड पर छिपी खराबी"
+      ],
+      "recognise": "The suitable-labelled unit has a damaged hose.",
+      "decide": "No verified serviceable suitable unit remains.",
+      "do": "Withdraw and notify designated responders",
+      "refuseOrEscalate": "Reject unmet prerequisites and escalate beyond the assigned role.",
+      "misconception": "Cover the damage and use it",
+      "observableEvidence": "Recorded recognition and decision choices; screen simulation only.",
+      "remediation": "Replay the decision and retry this objective in a new practice record.",
+      "sourceId": "fire",
+      "contentVersion": "transfer-1",
+      "reviewer": null,
+      "reviewStatus": "draft",
+      "procedureSteps": [
+        "fire-hose",
+        "fire-gauge",
+        "fire-pin",
+        "fire-aim",
+        "fire-squeeze",
+        "fire-sweep-left",
+        "fire-sweep-right",
+        "fire-sweep-return"
+      ]
+    },
+    {
+      "id": "fire-uncertainty",
+      "module": "fire",
+      "title": [
+        "Uncertain liquid and agent",
+        "अज्ञात द्रव और माध्यम"
+      ],
+      "recognise": "Can sand be assumed suitable?",
+      "decide": "The material and rating remain unknown.",
+      "do": "Raise the alarm and withdraw",
+      "refuseOrEscalate": "Reject unmet prerequisites and escalate beyond the assigned role.",
+      "misconception": "Assume sand works for every liquid",
+      "observableEvidence": "Recorded recognition and decision choices; screen simulation only.",
+      "remediation": "Replay the decision and retry this objective in a new practice record.",
+      "sourceId": "fire",
+      "contentVersion": "transfer-1",
+      "reviewer": null,
+      "reviewStatus": "draft",
+      "procedureSteps": [
+        "fire-service",
+        "fire-withdraw",
+        "fire-exit",
+        "fire-assembly",
+        "fire-handover"
+      ]
+    },
+    {
+      "id": "gas-team",
+      "module": "gas",
+      "title": [
+        "Outside attendant check",
+        "बाहरी निगरानी की जाँच"
+      ],
+      "recognise": "Where is the attendant positioned?",
+      "decide": "The team has not tested its withdrawal signal.",
+      "do": "Check communication before the simulated next stage",
+      "refuseOrEscalate": "Reject unmet prerequisites and escalate beyond the assigned role.",
+      "misconception": "Inside alongside the entrant",
+      "observableEvidence": "Recorded recognition and decision choices; screen simulation only.",
+      "remediation": "Replay the decision and retry this objective in a new practice record.",
+      "sourceId": "gas",
+      "contentVersion": "transfer-1",
+      "reviewer": null,
+      "reviewStatus": "draft",
+      "procedureSteps": [
+        "gas-ppe",
+        "gas-attendant",
+        "gas-communication"
+      ]
+    },
+    {
+      "id": "gas-uncertainty",
+      "module": "gas",
+      "title": [
+        "Incomplete monitoring information",
+        "अधूरी निगरानी जानकारी"
+      ],
+      "recognise": "What does SIM establish?",
+      "decide": "Instrument condition and entry prerequisites remain unconfirmed.",
+      "do": "Refuse entry and escalate missing information",
+      "refuseOrEscalate": "Reject unmet prerequisites and escalate beyond the assigned role.",
+      "misconception": "That the real air is safe",
+      "observableEvidence": "Recorded recognition and decision choices; screen simulation only.",
+      "remediation": "Replay the decision and retry this objective in a new practice record.",
+      "sourceId": "gas",
+      "contentVersion": "transfer-1",
+      "reviewer": null,
+      "reviewStatus": "draft",
+      "procedureSteps": [
+        "gas-boundary",
+        "gas-instrument",
+        "gas-permit",
+        "gas-isolation",
+        "gas-atmosphere",
+        "gas-rescue",
+        "gas-refuse-entry",
+        "gas-record",
+        "gas-contact-loss",
+        "gas-handover"
+      ]
+    },
+    {
+      "id": "machinery-isolation",
+      "module": "machinery",
+      "title": [
+        "Stored-energy recognition",
+        "संग्रहित ऊर्जा पहचान"
+      ],
+      "recognise": "Is the stop control enough?",
+      "decide": "The pressure-release verification record is missing.",
+      "do": "Hold the task and request the authorised verification",
+      "refuseOrEscalate": "Reject unmet prerequisites and escalate beyond the assigned role.",
+      "misconception": "Yes; a stopped press has no energy",
+      "observableEvidence": "Recorded recognition and decision choices; screen simulation only.",
+      "remediation": "Replay the decision and retry this objective in a new practice record.",
+      "sourceId": "machinery",
+      "contentVersion": "transfer-1",
+      "reviewer": null,
+      "reviewStatus": "draft",
+      "procedureSteps": [
+        "mach-stored",
+        "mach-verify"
+      ]
+    },
+    {
+      "id": "machinery-condition",
+      "module": "machinery",
+      "title": [
+        "Missing conveyor guard",
+        "कन्वेयर की सुरक्षा गायब"
+      ],
+      "recognise": "What observation matters?",
+      "decide": "The guard cannot be restored by the learner.",
+      "do": "Stop and report to the authorised team",
+      "refuseOrEscalate": "Reject unmet prerequisites and escalate beyond the assigned role.",
+      "misconception": "The supervisor wants a fast finish",
+      "observableEvidence": "Recorded recognition and decision choices; screen simulation only.",
+      "remediation": "Replay the decision and retry this objective in a new practice record.",
+      "sourceId": "machinery",
+      "contentVersion": "transfer-1",
+      "reviewer": null,
+      "reviewStatus": "draft",
+      "procedureSteps": []
+    },
+    {
+      "id": "machinery-handover",
+      "module": "machinery",
+      "title": [
+        "Uncertain shift handover",
+        "अधूरी शिफ्ट जानकारी"
+      ],
+      "recognise": "Does a shift change permit lock removal?",
+      "decide": "Restart is requested before protection continuity is confirmed.",
+      "do": "Keep the task stopped and obtain authorised handover checks",
+      "refuseOrEscalate": "Reject unmet prerequisites and escalate beyond the assigned role.",
+      "misconception": "Yes; the previous worker has gone home",
+      "observableEvidence": "Recorded recognition and decision choices; screen simulation only.",
+      "remediation": "Replay the decision and retry this objective in a new practice record.",
+      "sourceId": "machinery",
+      "contentVersion": "transfer-1",
+      "reviewer": null,
+      "reviewStatus": "draft",
+      "procedureSteps": [
+        "mach-restart",
+        "mach-role",
+        "mach-sources",
+        "mach-notify",
+        "mach-isolate",
+        "mach-lock",
+        "mach-shift",
+        "mach-report"
+      ]
+    },
+    {
+      "id": "ppe-selection",
+      "module": "ppe",
+      "title": [
+        "Dust-task limitations",
+        "धूल कार्य की सीमाएँ"
+      ],
+      "recognise": "Can choosing the right virtual respirator establish fit?",
+      "decide": "The task assessment specifies controls beyond PPE.",
+      "do": "Check the required controls and supervision as well",
+      "refuseOrEscalate": "Reject unmet prerequisites and escalate beyond the assigned role.",
+      "misconception": "Yes; the phone image proves a seal",
+      "observableEvidence": "Recorded recognition and decision choices; screen simulation only.",
+      "remediation": "Replay the decision and retry this objective in a new practice record.",
+      "sourceId": "ppe",
+      "contentVersion": "transfer-1",
+      "reviewer": null,
+      "reviewStatus": "draft",
+      "procedureSteps": []
+    },
+    {
+      "id": "ppe-inspection",
+      "module": "ppe",
+      "title": [
+        "Damaged strap inspection",
+        "खराब पट्टे का निरीक्षण"
+      ],
+      "recognise": "Which fault must be recognised?",
+      "decide": "What is the appropriate simulated decision?",
+      "do": "Reject the damaged item and obtain the approved replacement",
+      "refuseOrEscalate": "Reject unmet prerequisites and escalate beyond the assigned role.",
+      "misconception": "The item colour is unfashionable",
+      "observableEvidence": "Recorded recognition and decision choices; screen simulation only.",
+      "remediation": "Replay the decision and retry this objective in a new practice record.",
+      "sourceId": "ppe",
+      "contentVersion": "transfer-1",
+      "reviewer": null,
+      "reviewStatus": "draft",
+      "procedureSteps": []
+    },
+    {
+      "id": "ppe-uncertainty",
+      "module": "ppe",
+      "title": [
+        "Uncertain steel-task protection",
+        "इस्पात कार्य की अनिश्चित सुरक्षा"
+      ],
+      "recognise": "Do individually selected items guarantee a suitable combination?",
+      "decide": "The required guidance is still unavailable.",
+      "do": "Stop the task and ask the authorised supervisor",
+      "refuseOrEscalate": "Reject unmet prerequisites and escalate beyond the assigned role.",
+      "misconception": "Yes; more items always mean more protection",
+      "observableEvidence": "Recorded recognition and decision choices; screen simulation only.",
+      "remediation": "Replay the decision and retry this objective in a new practice record.",
+      "sourceId": "ppe",
+      "contentVersion": "transfer-1",
+      "reviewer": null,
+      "reviewStatus": "draft",
+      "procedureSteps": [
+        "ppe-compatible",
+        "ppe-hazard",
+        "ppe-label",
+        "ppe-crack",
+        "ppe-eye",
+        "ppe-glove",
+        "ppe-change",
+        "ppe-store"
+      ]
+    },
+    {
+      "id": "emergency-route",
+      "module": "emergency",
+      "title": [
+        "Clear route and muster",
+        "खुला रास्ता और एकत्र स्थल"
+      ],
+      "recognise": "Which information determines this drill route?",
+      "decide": "At assembly, someone is unaccounted for.",
+      "do": "Report the missing-person information to the responsible person",
+      "refuseOrEscalate": "Reject unmet prerequisites and escalate beyond the assigned role.",
+      "misconception": "The route memorised in a previous arrangement",
+      "observableEvidence": "Recorded recognition and decision choices; screen simulation only.",
+      "remediation": "Replay the decision and retry this objective in a new practice record.",
+      "sourceId": "emergency",
+      "contentVersion": "transfer-1",
+      "reviewer": null,
+      "reviewStatus": "draft",
+      "procedureSteps": [
+        "em-route",
+        "em-assembly"
+      ]
+    },
+    {
+      "id": "emergency-accountability",
+      "module": "emergency",
+      "title": [
+        "Unconfirmed missing-person report",
+        "अपुष्ट लापता व्यक्ति की जानकारी"
+      ],
+      "recognise": "What should the handover distinguish?",
+      "decide": "Does concern permit an untrained entry search?",
+      "do": "No; withdraw, report and hand over to designated responders",
+      "refuseOrEscalate": "Reject unmet prerequisites and escalate beyond the assigned role.",
+      "misconception": "Guess the colleague location confidently",
+      "observableEvidence": "Recorded recognition and decision choices; screen simulation only.",
+      "remediation": "Replay the decision and retry this objective in a new practice record.",
+      "sourceId": "emergency",
+      "contentVersion": "transfer-1",
+      "reviewer": null,
+      "reviewStatus": "draft",
+      "procedureSteps": [
+        "em-missing",
+        "em-scene",
+        "em-alert",
+        "em-support",
+        "em-rumour",
+        "em-log"
+      ]
+    }
+  ],
+  "scenarios": [
+    {
+      "id": "fire-paper",
+      "module": "fire",
+      "title": [
+        "Paper-store response",
+        "कागज़ भंडार में प्रतिक्रिया"
+      ],
+      "condition": "normal",
+      "context": "Small authored paper fire; trained responder; escape route clear; training Unit A label specifically covers this scenario.",
+      "objectiveId": "fire-readiness",
+      "reviewStatus": "draft",
+      "sourceId": "fire",
+      "questions": [
+        {
+          "id": "fire-paper-inspect",
+          "prompt": "Before using Unit A, what evidence matters?",
+          "choices": [
+            {
+              "id": "check",
+              "label": "Inspect its scenario label and condition",
+              "correct": true
+            },
+            {
+              "id": "skip",
+              "label": "Use the nearest unit without inspection",
+              "correct": false
+            }
+          ],
+          "explanation": "A label and serviceable condition matter as well as the hazard and role. This Unit A is an authored example, not a universal rating.",
+          "critical": true
+        },
+        {
+          "id": "fire-paper-decide",
+          "prompt": "Smoke now threatens the escape route.",
+          "choices": [
+            {
+              "id": "act",
+              "label": "Stop, withdraw and raise the alarm",
+              "correct": true
+            },
+            {
+              "id": "unsafe",
+              "label": "Continue because the fire began small",
+              "correct": false
+            }
+          ],
+          "explanation": "An initially suitable response becomes unsuitable when conditions worsen. Safe withdrawal is a successful decision.",
+          "critical": true
+        }
+      ]
+    },
+    {
+      "id": "fire-electrical",
+      "module": "fire",
+      "title": [
+        "Hidden fault at the switchboard",
+        "स्विचबोर्ड पर छिपी खराबी"
+      ],
+      "condition": "abnormal",
+      "context": "Authored energised electrical fire; water unit W; suitable-labelled simulation unit C has a visibly damaged hose.",
+      "objectiveId": "fire-inspection",
+      "reviewStatus": "draft",
+      "sourceId": "fire",
+      "questions": [
+        {
+          "id": "fire-electrical-inspect",
+          "prompt": "The suitable-labelled unit has a damaged hose.",
+          "choices": [
+            {
+              "id": "check",
+              "label": "Reject it and report the damage",
+              "correct": true
+            },
+            {
+              "id": "skip",
+              "label": "Cover the damage and use it",
+              "correct": false
+            }
+          ],
+          "explanation": "A nominally suitable label does not make damaged equipment serviceable. Water is not the alternative for this energised scenario.",
+          "critical": true
+        },
+        {
+          "id": "fire-electrical-decide",
+          "prompt": "No verified serviceable suitable unit remains.",
+          "choices": [
+            {
+              "id": "act",
+              "label": "Withdraw and notify designated responders",
+              "correct": true
+            },
+            {
+              "id": "unsafe",
+              "label": "Use water unit W to avoid delay",
+              "correct": false
+            }
+          ],
+          "explanation": "Do not improvise a replacement agent when the scenario prerequisites fail. The app never authorises real firefighting.",
+          "critical": true
+        }
+      ]
+    },
+    {
+      "id": "fire-liquid",
+      "module": "fire",
+      "title": [
+        "Uncertain liquid and agent",
+        "अज्ञात द्रव और माध्यम"
+      ],
+      "condition": "uncertain",
+      "context": "Authored spill fire; material identity and agent rating missing; sand and an unlabelled unit are offered.",
+      "objectiveId": "fire-uncertainty",
+      "reviewStatus": "draft",
+      "sourceId": "fire",
+      "questions": [
+        {
+          "id": "fire-liquid-inspect",
+          "prompt": "Can sand be assumed suitable?",
+          "choices": [
+            {
+              "id": "check",
+              "label": "Request the material and approved agent information",
+              "correct": true
+            },
+            {
+              "id": "skip",
+              "label": "Assume sand works for every liquid",
+              "correct": false
+            }
+          ],
+          "explanation": "Agent suitability depends on material and equipment context. The missing label and material cannot be supplied by guesswork.",
+          "critical": true
+        },
+        {
+          "id": "fire-liquid-decide",
+          "prompt": "The material and rating remain unknown.",
+          "choices": [
+            {
+              "id": "act",
+              "label": "Raise the alarm and withdraw",
+              "correct": true
+            },
+            {
+              "id": "unsafe",
+              "label": "Test the unknown unit near the fire",
+              "correct": false
+            }
+          ],
+          "explanation": "Missing information is a valid reason to refuse. No universal agent or distance is taught.",
+          "critical": true
+        }
+      ]
+    },
+    {
+      "id": "gas-team",
+      "module": "gas",
+      "title": [
+        "Outside attendant check",
+        "बाहरी निगरानी की जाँच"
+      ],
+      "condition": "normal",
+      "context": "Authored training permit lists an authorised entrant, an outside attendant, verified isolation and monitoring. No actual entry occurs.",
+      "objectiveId": "gas-team",
+      "reviewStatus": "draft",
+      "sourceId": "gas",
+      "questions": [
+        {
+          "id": "gas-team-inspect",
+          "prompt": "Where is the attendant positioned?",
+          "choices": [
+            {
+              "id": "check",
+              "label": "Outside, performing assigned monitoring and communication duties",
+              "correct": true
+            },
+            {
+              "id": "skip",
+              "label": "Inside alongside the entrant",
+              "correct": false
+            }
+          ],
+          "explanation": "The attendant role is outside the space and must retain the assigned duties. This is simulated role recognition.",
+          "critical": true
+        },
+        {
+          "id": "gas-team-decide",
+          "prompt": "The team has not tested its withdrawal signal.",
+          "choices": [
+            {
+              "id": "act",
+              "label": "Check communication before the simulated next stage",
+              "correct": true
+            },
+            {
+              "id": "unsafe",
+              "label": "Assume the team will hear shouting",
+              "correct": false
+            }
+          ],
+          "explanation": "A documented plan still needs the required communication checks. Simulation completion never grants an entry permit.",
+          "critical": true
+        }
+      ]
+    },
+    {
+      "id": "gas-radio",
+      "module": "gas",
+      "title": [
+        "Communication interruption",
+        "संचार में बाधा"
+      ],
+      "condition": "abnormal",
+      "context": "Authored team communication fails; the entry supervisor and designated rescue contact are available outside.",
+      "objectiveId": "gas-team",
+      "reviewStatus": "draft",
+      "sourceId": "gas",
+      "questions": [
+        {
+          "id": "gas-radio-inspect",
+          "prompt": "What has changed?",
+          "choices": [
+            {
+              "id": "check",
+              "label": "A required communication control has failed",
+              "correct": true
+            },
+            {
+              "id": "skip",
+              "label": "Silence proves the entrant is safe",
+              "correct": false
+            }
+          ],
+          "explanation": "Loss of communication is changing information, not evidence that all is well.",
+          "critical": true
+        },
+        {
+          "id": "gas-radio-decide",
+          "prompt": "A simulated colleague collapses inside.",
+          "choices": [
+            {
+              "id": "act",
+              "label": "Raise the alarm and summon designated rescue; do not enter untrained",
+              "correct": true
+            },
+            {
+              "id": "unsafe",
+              "label": "Enter alone immediately",
+              "correct": false
+            }
+          ],
+          "explanation": "A rushed untrained entry rescue can create another casualty. The drill rewards reporting and staying within role.",
+          "critical": true
+        }
+      ]
+    },
+    {
+      "id": "gas-meter",
+      "module": "gas",
+      "title": [
+        "Incomplete monitoring information",
+        "अधूरी निगरानी जानकारी"
+      ],
+      "condition": "uncertain",
+      "context": "Virtual meter shows SIM; required instrument checks and monitoring interpretation are absent.",
+      "objectiveId": "gas-uncertainty",
+      "reviewStatus": "draft",
+      "sourceId": "gas",
+      "questions": [
+        {
+          "id": "gas-meter-inspect",
+          "prompt": "What does SIM establish?",
+          "choices": [
+            {
+              "id": "check",
+              "label": "Only a simulated training cue; no actual atmosphere measurement",
+              "correct": true
+            },
+            {
+              "id": "skip",
+              "label": "That the real air is safe",
+              "correct": false
+            }
+          ],
+          "explanation": "The phone cannot measure gas or oxygen. The display is not calibrated safety evidence.",
+          "critical": true
+        },
+        {
+          "id": "gas-meter-decide",
+          "prompt": "Instrument condition and entry prerequisites remain unconfirmed.",
+          "choices": [
+            {
+              "id": "act",
+              "label": "Refuse entry and escalate missing information",
+              "correct": true
+            },
+            {
+              "id": "unsafe",
+              "label": "Enter because there is no smell",
+              "correct": false
+            }
+          ],
+          "explanation": "Smell cannot confirm safety. Missing verified prerequisites remain a stop condition.",
+          "critical": true
+        }
+      ]
+    },
+    {
+      "id": "machine-energy",
+      "module": "machinery",
+      "title": [
+        "Stored-energy recognition",
+        "संग्रहित ऊर्जा पहचान"
+      ],
+      "condition": "normal",
+      "context": "Authored press procedure identifies electrical supply and stored hydraulic energy. Authorised personnel perform isolation.",
+      "objectiveId": "machinery-isolation",
+      "reviewStatus": "draft",
+      "sourceId": "machinery",
+      "questions": [
+        {
+          "id": "machine-energy-inspect",
+          "prompt": "Is the stop control enough?",
+          "choices": [
+            {
+              "id": "check",
+              "label": "No; the identified sources require authorised isolation and verification",
+              "correct": true
+            },
+            {
+              "id": "skip",
+              "label": "Yes; a stopped press has no energy",
+              "correct": false
+            }
+          ],
+          "explanation": "A stopped machine can retain energy. The authored inventory is specific to this example.",
+          "critical": true
+        },
+        {
+          "id": "machine-energy-decide",
+          "prompt": "The pressure-release verification record is missing.",
+          "choices": [
+            {
+              "id": "act",
+              "label": "Hold the task and request the authorised verification",
+              "correct": true
+            },
+            {
+              "id": "unsafe",
+              "label": "Clear the jam because power is off",
+              "correct": false
+            }
+          ],
+          "explanation": "Do not invent a release technique. Verification follows the exact approved machinery procedure.",
+          "critical": true
+        }
+      ]
+    },
+    {
+      "id": "machine-guard",
+      "module": "machinery",
+      "title": [
+        "Missing conveyor guard",
+        "कन्वेयर की सुरक्षा गायब"
+      ],
+      "condition": "abnormal",
+      "context": "Authored conveyor has an exposed pinch point and missing guard; a supervisor requests speed.",
+      "objectiveId": "machinery-condition",
+      "reviewStatus": "draft",
+      "sourceId": "machinery",
+      "questions": [
+        {
+          "id": "machine-guard-inspect",
+          "prompt": "What observation matters?",
+          "choices": [
+            {
+              "id": "check",
+              "label": "The missing guard exposes an unsafe condition",
+              "correct": true
+            },
+            {
+              "id": "skip",
+              "label": "The supervisor wants a fast finish",
+              "correct": false
+            }
+          ],
+          "explanation": "Production pressure does not erase a missing safeguard.",
+          "critical": true
+        },
+        {
+          "id": "machine-guard-decide",
+          "prompt": "The guard cannot be restored by the learner.",
+          "choices": [
+            {
+              "id": "act",
+              "label": "Stop and report to the authorised team",
+              "correct": true
+            },
+            {
+              "id": "unsafe",
+              "label": "Bypass the guard for one cycle",
+              "correct": false
+            }
+          ],
+          "explanation": "The learner works within their role. The app provides no maintenance authority.",
+          "critical": true
+        }
+      ]
+    },
+    {
+      "id": "machine-handover",
+      "module": "machinery",
+      "title": [
+        "Uncertain shift handover",
+        "अधूरी शिफ्ट जानकारी"
+      ],
+      "condition": "uncertain",
+      "context": "Authored isolation lock remains; incoming shift has no verified handover record or lock-removal authority.",
+      "objectiveId": "machinery-handover",
+      "reviewStatus": "draft",
+      "sourceId": "machinery",
+      "questions": [
+        {
+          "id": "machine-handover-inspect",
+          "prompt": "Does a shift change permit lock removal?",
+          "choices": [
+            {
+              "id": "check",
+              "label": "No; protection and responsibility must be transferred under the approved process",
+              "correct": true
+            },
+            {
+              "id": "skip",
+              "label": "Yes; the previous worker has gone home",
+              "correct": false
+            }
+          ],
+          "explanation": "A new shift does not itself establish lock-removal authority.",
+          "critical": true
+        },
+        {
+          "id": "machine-handover-decide",
+          "prompt": "Restart is requested before protection continuity is confirmed.",
+          "choices": [
+            {
+              "id": "act",
+              "label": "Keep the task stopped and obtain authorised handover checks",
+              "correct": true
+            },
+            {
+              "id": "unsafe",
+              "label": "Restart and document the handover later",
+              "correct": false
+            }
+          ],
+          "explanation": "The original isolation must not be bypassed to meet a schedule. The drill does not specify a live removal procedure.",
+          "critical": true
+        }
+      ]
+    },
+    {
+      "id": "ppe-task",
+      "module": "ppe",
+      "title": [
+        "Dust-task limitations",
+        "धूल कार्य की सीमाएँ"
+      ],
+      "condition": "normal",
+      "context": "Authored coal/mica task has a specified protection set; its respirator requires specialist fit testing not confirmed by this phone.",
+      "objectiveId": "ppe-selection",
+      "reviewStatus": "draft",
+      "sourceId": "ppe",
+      "questions": [
+        {
+          "id": "ppe-task-inspect",
+          "prompt": "Can choosing the right virtual respirator establish fit?",
+          "choices": [
+            {
+              "id": "check",
+              "label": "No; separately validated fit testing remains necessary",
+              "correct": true
+            },
+            {
+              "id": "skip",
+              "label": "Yes; the phone image proves a seal",
+              "correct": false
+            }
+          ],
+          "explanation": "Virtual selection checks recognition, not a real fit or exposure measurement.",
+          "critical": true
+        },
+        {
+          "id": "ppe-task-decide",
+          "prompt": "The task assessment specifies controls beyond PPE.",
+          "choices": [
+            {
+              "id": "act",
+              "label": "Check the required controls and supervision as well",
+              "correct": true
+            },
+            {
+              "id": "unsafe",
+              "label": "Treat PPE as removal of all dust risk",
+              "correct": false
+            }
+          ],
+          "explanation": "PPE has limits. The scenario refers to its actual task assessment rather than inventing exposure limits.",
+          "critical": true
+        }
+      ]
+    },
+    {
+      "id": "ppe-damage",
+      "module": "ppe",
+      "title": [
+        "Damaged strap inspection",
+        "खराब पट्टे का निरीक्षण"
+      ],
+      "condition": "abnormal",
+      "context": "Authored protection item has a damaged strap; an undamaged approved replacement is available.",
+      "objectiveId": "ppe-inspection",
+      "reviewStatus": "draft",
+      "sourceId": "ppe",
+      "questions": [
+        {
+          "id": "ppe-damage-inspect",
+          "prompt": "Which fault must be recognised?",
+          "choices": [
+            {
+              "id": "check",
+              "label": "The strap damage affects the condition check",
+              "correct": true
+            },
+            {
+              "id": "skip",
+              "label": "The item colour is unfashionable",
+              "correct": false
+            }
+          ],
+          "explanation": "Inspection focuses on a meaningful condition defect rather than cosmetic preference.",
+          "critical": true
+        },
+        {
+          "id": "ppe-damage-decide",
+          "prompt": "What is the appropriate simulated decision?",
+          "choices": [
+            {
+              "id": "act",
+              "label": "Reject the damaged item and obtain the approved replacement",
+              "correct": true
+            },
+            {
+              "id": "unsafe",
+              "label": "Tie a knot and assume equivalent protection",
+              "correct": false
+            }
+          ],
+          "explanation": "Improvised repair is not a verified replacement. Use the equipment-specific approved process.",
+          "critical": true
+        }
+      ]
+    },
+    {
+      "id": "ppe-compatibility",
+      "module": "ppe",
+      "title": [
+        "Uncertain steel-task protection",
+        "इस्पात कार्य की अनिश्चित सुरक्षा"
+      ],
+      "condition": "uncertain",
+      "context": "Authored steel task combines noise and heat; item compatibility and fitting guidance are missing.",
+      "objectiveId": "ppe-uncertainty",
+      "reviewStatus": "draft",
+      "sourceId": "ppe",
+      "questions": [
+        {
+          "id": "ppe-compatibility-inspect",
+          "prompt": "Do individually selected items guarantee a suitable combination?",
+          "choices": [
+            {
+              "id": "check",
+              "label": "No; compatibility and fit information are required",
+              "correct": true
+            },
+            {
+              "id": "skip",
+              "label": "Yes; more items always mean more protection",
+              "correct": false
+            }
+          ],
+          "explanation": "Protection items can affect one another. Missing compatibility cannot be inferred.",
+          "critical": true
+        },
+        {
+          "id": "ppe-compatibility-decide",
+          "prompt": "The required guidance is still unavailable.",
+          "choices": [
+            {
+              "id": "act",
+              "label": "Stop the task and ask the authorised supervisor",
+              "correct": true
+            },
+            {
+              "id": "unsafe",
+              "label": "Proceed using an unverified combination",
+              "correct": false
+            }
+          ],
+          "explanation": "The drill rewards refusal when required protection information is absent.",
+          "critical": true
+        }
+      ]
+    },
+    {
+      "id": "emergency-route",
+      "module": "emergency",
+      "title": [
+        "Clear route and muster",
+        "खुला रास्ता और एकत्र स्थल"
+      ],
+      "condition": "normal",
+      "context": "Authored map marks route A clear and a designated assembly point; the learner has an evacuation role only.",
+      "objectiveId": "emergency-route",
+      "reviewStatus": "draft",
+      "sourceId": "emergency",
+      "questions": [
+        {
+          "id": "emergency-route-inspect",
+          "prompt": "Which information determines this drill route?",
+          "choices": [
+            {
+              "id": "check",
+              "label": "The current designated clear route on this authored map",
+              "correct": true
+            },
+            {
+              "id": "skip",
+              "label": "The route memorised in a previous arrangement",
+              "correct": false
+            }
+          ],
+          "explanation": "Transfer means reading current cues. The virtual map is not real-site navigation.",
+          "critical": true
+        },
+        {
+          "id": "emergency-route-decide",
+          "prompt": "At assembly, someone is unaccounted for.",
+          "choices": [
+            {
+              "id": "act",
+              "label": "Report the missing-person information to the responsible person",
+              "correct": true
+            },
+            {
+              "id": "unsafe",
+              "label": "Leave assembly and search inside",
+              "correct": false
+            }
+          ],
+          "explanation": "Accountability and reporting stay within the learner’s role.",
+          "critical": true
+        }
+      ]
+    },
+    {
+      "id": "emergency-blocked",
+      "module": "emergency",
+      "title": [
+        "Changed evacuation route",
+        "बदला निकासी रास्ता"
+      ],
+      "condition": "abnormal",
+      "context": "Authored route A becomes blocked; route B is currently marked designated and clear.",
+      "objectiveId": "emergency-route",
+      "reviewStatus": "draft",
+      "sourceId": "emergency",
+      "questions": [
+        {
+          "id": "emergency-blocked-inspect",
+          "prompt": "What changed from the earlier arrangement?",
+          "choices": [
+            {
+              "id": "check",
+              "label": "The previous route is now blocked",
+              "correct": true
+            },
+            {
+              "id": "skip",
+              "label": "Nothing; A was clear before",
+              "correct": false
+            }
+          ],
+          "explanation": "Old route information is stale. Inspect the current arrangement.",
+          "critical": true
+        },
+        {
+          "id": "emergency-blocked-decide",
+          "prompt": "How should the simulated route decision change?",
+          "choices": [
+            {
+              "id": "act",
+              "label": "Select designated clear route B and follow the drill plan",
+              "correct": true
+            },
+            {
+              "id": "unsafe",
+              "label": "Continue towards blocked A",
+              "correct": false
+            }
+          ],
+          "explanation": "The exercise tests changed cues rather than memorised button positions.",
+          "critical": true
+        }
+      ]
+    },
+    {
+      "id": "emergency-uncertain",
+      "module": "emergency",
+      "title": [
+        "Unconfirmed missing-person report",
+        "अपुष्ट लापता व्यक्ति की जानकारी"
+      ],
+      "condition": "uncertain",
+      "context": "Authored incident report contains a last-seen location but no confirmed safe entry route; designated responders receive the report.",
+      "objectiveId": "emergency-accountability",
+      "reviewStatus": "draft",
+      "sourceId": "emergency",
+      "questions": [
+        {
+          "id": "emergency-uncertain-inspect",
+          "prompt": "What should the handover distinguish?",
+          "choices": [
+            {
+              "id": "check",
+              "label": "Observed last-seen facts from assumptions",
+              "correct": true
+            },
+            {
+              "id": "skip",
+              "label": "Guess the colleague location confidently",
+              "correct": false
+            }
+          ],
+          "explanation": "Uncertainty must stay visible in a responder handover.",
+          "critical": true
+        },
+        {
+          "id": "emergency-uncertain-decide",
+          "prompt": "Does concern permit an untrained entry search?",
+          "choices": [
+            {
+              "id": "act",
+              "label": "No; withdraw, report and hand over to designated responders",
+              "correct": true
+            },
+            {
+              "id": "unsafe",
+              "label": "Yes; enter without the required role or route",
+              "correct": false
+            }
+          ],
+          "explanation": "Compassion does not create rescue authorisation. Safe escalation is a successful outcome.",
+          "critical": true
+        }
+      ]
+    }
+  ]
+}

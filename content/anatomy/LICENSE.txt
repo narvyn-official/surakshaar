@@ -1,0 +1,9 @@
+BodyParts3D, © The Database Center for Life Science licensed under CC Attribution 4.0 International
+
+CC BY 4.0 International: https://creativecommons.org/licenses/by/4.0/
+Dataset permission: https://dbarchive.biosciencedbc.jp/en/bodyparts3d/lic.html
+Licence update checked 2026-10-10.
+Selected structures; original low-resolution OBJ triangulation converted to metre-based position/normal buffers; named structures grouped without remeshing. Original CT pose retained.
+No endorsement is implied.
+
+EXCEPTION: FMA7309.meshpack and FMA7310.meshpack are derivatives of separately downloaded BodyParts3D 4.3 lung assets under CC BY-SA 2.1 Japan. See LICENSE-LUNGS.txt; the default CC BY 4.0 notice does not replace their ShareAlike terms.

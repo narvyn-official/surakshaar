@@ -1,0 +1,213 @@
+package com.narvyn.suraksha
+
+import android.app.Activity
+import android.app.Instrumentation
+import android.content.Intent
+import android.view.View
+import android.view.ViewGroup
+import android.widget.Button
+import android.widget.ScrollView
+import android.graphics.Rect
+import android.widget.TextView
+import androidx.test.core.app.ActivityScenario
+import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.action.ViewActions.click
+import androidx.test.espresso.matcher.ViewMatchers.*
+import androidx.test.espresso.matcher.RootMatchers.isDialog
+import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.platform.app.InstrumentationRegistry
+import org.hamcrest.Matchers.allOf
+import org.hamcrest.Matchers.equalTo
+import org.junit.Assert.*
+import org.junit.Test
+import org.junit.Assume.assumeTrue
+import org.junit.runner.RunWith
+import java.util.concurrent.atomic.AtomicReference
+
+/** Native explicit paging/clicks; also runnable with system font_scale=2.0. No camera is opened. */
+@RunWith(AndroidJUnit4::class)
+class MainNavigationTest {
+    private val instrumentation get()=InstrumentationRegistry.getInstrumentation()
+    private val context get()=instrumentation.targetContext
+    private fun all(view:View):List<View> = listOf(view)+(if(view is ViewGroup)(0 until view.childCount).flatMap{all(view.getChildAt(it))}else emptyList())
+    private fun shot(name:String){
+        val scale=context.resources.configuration.fontScale
+        java.io.File(context.getExternalFilesDir(null),"nav-060-$name-$scale.png").outputStream().use{instrumentation.uiAutomation.takeScreenshot().compress(android.graphics.Bitmap.CompressFormat.PNG,100,it)}
+    }
+    private fun reveal()=revealOnPage()
+    private fun tag(value:String)=withTagValue(equalTo<Any>(value))
+    private fun clickTag(value:String){if(value in listOf("main-lesson-next","main-lesson-previous"))onView(tag(value)).perform(click())else onView(tag(value)).perform(reveal(),click())}
+    private fun courseAction(text:String){clickTag("main-course-actions");onView(withText(text)).inRoot(isDialog()).perform(revealOnPage(),click())}
+    private fun back(){onView(tag("main-back")).perform(click())}
+    private fun openModule(id:String){
+        clickTag("main-nav-home")
+        onView(allOf(isAssignableFrom(Button::class.java),withText(if(Store(context).use{it.hi})"सीखने की लाइब्रेरी"else"Learning library"))).perform(reveal(),click())
+        val expected=Curriculum(context).modules.map{"legacy-${it.getString("id")}"}.toSet()
+        onView(tag("main-page-library")).check { view,error ->
+            if(error!=null)throw error
+            assertEquals("The learning library must retain every industrial module",expected,all(requireNotNull(view)).mapNotNull{it.tag as? String}.filter{it.startsWith("legacy-")}.toSet())
+        }
+        clickTag("legacy-$id")
+    }
+    private fun assertPage(s:ActivityScenario<MainActivity>,page:String){
+        s.onActivity { a -> assertNotNull(all(a.window.decorView).singleOrNull{it.tag=="main-page-$page"}) }
+    }
+    private fun assertReadableControls(a:MainActivity){
+        all(a.window.decorView).filterIsInstance<Button>().filter{it.isShown && it.width>0}.forEach { b ->
+            assertTrue("Small target: ${b.text}",b.width>=a.dp(48) && b.height>=a.dp(48))
+            if(b.text.isBlank()) {
+                assertFalse("Icon button needs an accessible name",b.contentDescription.isNullOrBlank())
+                b.compoundDrawables.filterNotNull().forEach { icon ->
+                    assertTrue("Clipped icon",icon.bounds.width()<=b.width-b.paddingLeft-b.paddingRight && icon.bounds.height()<=b.height-b.paddingTop-b.paddingBottom)
+                }
+                return@forEach
+            }
+            val layout=b.layout ?: return@forEach
+            assertTrue("Clipped label: ${b.text}",layout.height<=b.height-b.compoundPaddingTop-b.compoundPaddingBottom+2)
+            assertTrue("Ellipsized label: ${b.text}",(0 until layout.lineCount).all{layout.getEllipsisCount(it)==0})
+        }
+    }
+
+    /** No routine home swipe on a normal portrait phone; large-font runs keep overflow accessible. */
+    @Test fun normalFontHomeAndPrimaryActionsFitWithoutDownwardScrolling(){
+        assumeTrue("Large fonts use explicit content parts",context.resources.configuration.fontScale<=1.05f)
+        assumeTrue("Viewport contract is for portrait phones",context.resources.configuration.orientation==android.content.res.Configuration.ORIENTATION_PORTRAIT)
+        val oldHi=Store(context).use{it.hi}
+        try { for(hi in listOf(false,true)) {
+            Store(context).use{it.hi=hi}
+            ActivityScenario.launch(MainActivity::class.java).use { scenario ->
+                instrumentation.waitForIdleSync()
+                scenario.onActivity { activity ->
+                    val views=all(activity.window.decorView)
+                    val panel=views.filterIsInstance<PagedPanel>().single()
+                    assertEquals("Home must be a single screen",1,panel.pageCount)
+                    assertTrue("No swipe scrolling",views.none{it is ScrollView})
+                    val library=views.filterIsInstance<Button>().single{it.text.toString()==if(hi)"सीखने की लाइब्रेरी"else"Learning library"}
+                    val controls=listOf(library)+listOf("course-fire","course-first-aid","main-nav-home","main-nav-records","main-nav-courses")
+                        .map{tag->views.single{it.tag==tag}}
+                    for(control in controls) {
+                        val visible=Rect()
+                        assertTrue("Control is not visible: ${control.tag}",control.getLocalVisibleRect(visible))
+                        assertTrue("Control needs scrolling or is clipped: ${control.tag}",visible.width()>=control.width-1 && visible.height()>=control.height-1)
+                    }
+                    assertReadableControls(activity)
+                }
+            }
+        }} finally { Store(context).use{it.hi=oldHi} }
+    }
+
+    @Test fun lessonsArePacedAndPositionSurvivesRecreationInBothLanguages(){
+        val oldHi=Store(context).use{it.hi}
+        val before=Store(context).use{it.attempts().map{a->a.toString()}}
+        val modules=Curriculum(context).modules
+        try { for(hi in listOf(false,true)) {
+            Store(context).use{it.hi=hi}
+            ActivityScenario.launch(MainActivity::class.java).use { s ->
+                s.onActivity { a ->
+                    val views=all(a.window.decorView)
+                    assertEquals("Home presents Fire and First Aid; the library retains earlier courses",setOf("course-fire","course-first-aid"),views.mapNotNull{it.tag as? String}.filter{it.startsWith("course-")}.toSet())
+                    assertNotNull(views.filterIsInstance<Button>().singleOrNull{it.text.toString()==if(hi)"सीखने की लाइब्रेरी"else"Learning library"})
+                    assertTrue("Home should not repeat equipment previews",all(a.window.decorView).none{it is SceneView})
+                    assertReadableControls(a)
+                }
+                shot(if(hi)"home-hi"else"home-en")
+                openModule("fire");assertPage(s,"module");shot(if(hi)"module-hi"else"module-en")
+                val lessons=modules.first{it.getString("id")=="fire"}.getJSONArray("lessons").objects()
+                s.onActivity { a ->
+                    val texts=all(a.window.decorView).filterIsInstance<TextView>().map{it.text.toString()}
+                    assertTrue(lessons.none{it.local("body",hi) in texts})
+                    assertTrue(texts.contains(if(hi)"पाठ्यक्रम क्रियाएँ और अभ्यास विकल्प"else"Course actions & practice options"))
+                }
+                courseAction(if(Store(context).use{it.hi})"पाठ पढ़ें या सुनें"else"Read or listen to lessons")
+                fun assertLesson(index:Int){
+                    s.onActivity { a ->
+                        val content=all(a.window.decorView).filterIsInstance<TextView>().single{it.tag=="main-lesson-content"}
+                        assertEquals(lessons[index].local("body",hi),content.text.toString())
+                        assertTrue(all(a.window.decorView).filterIsInstance<TextView>().any{it.isAccessibilityHeading && it.text.toString()==lessons[index].local("title",hi)})
+                        assertReadableControls(a)
+                    }
+                }
+                assertLesson(0);shot(if(hi)"lesson-hi"else"lesson-en");clickTag("main-lesson-next");assertLesson(1)
+                s.recreate();assertPage(s,"lesson");assertLesson(1)
+                clickTag("main-lesson-previous");assertLesson(0)
+                lessons.indices.forEach { index -> assertLesson(index);clickTag("main-lesson-next") }
+                assertPage(s,"module");back();assertPage(s,"library");back();assertPage(s,"home")
+            }
+        }} finally { Store(context).use{it.hi=oldHi} }
+        assertEquals("Reading must not create assessment evidence",before,Store(context).use{it.attempts().map{a->a.toString()}})
+    }
+
+    @Test fun readingBookmarkSurvivesFreshLaunchAndUsesOnlyCurrentLearnerAndVersion(){
+        val prefs=context.getSharedPreferences("lesson-bookmarks",0)
+        val saved=prefs.all.toMap()
+        val oldHi=Store(context).use{it.hi}
+        val key=Store(context).use{"${it.workerId}:${Curriculum(context).version}:fire"}
+        try {
+            Store(context).use{it.hi=false};prefs.edit().clear().commit()
+            ActivityScenario.launch(MainActivity::class.java).use { s ->
+                openModule("fire");courseAction(if(Store(context).use{it.hi})"पाठ पढ़ें या सुनें"else"Read or listen to lessons");clickTag("main-lesson-next")
+                assertEquals(1,prefs.getInt(key,-1))
+            }
+            fun assertPosition(index:Int){ActivityScenario.launch(MainActivity::class.java).use{s->
+                openModule("fire");courseAction(if(Store(context).use{it.hi})"पाठ पढ़ें या सुनें"else"Read or listen to lessons")
+                s.onActivity{a->assertEquals(Curriculum(context).module("fire").getJSONArray("lessons").getJSONObject(index).local("body",false),all(a.window.decorView).filterIsInstance<TextView>().single{it.tag=="main-lesson-content"}.text.toString())}
+            }}
+            assertPosition(1)
+            prefs.edit().remove(key).putInt("other-learner:${Curriculum(context).version}:fire",1).putInt(key.replace(Curriculum(context).version,"old-curriculum"),1).commit()
+            assertPosition(0)
+        } finally {prefs.edit().clear().apply();val e=prefs.edit();saved.forEach{(k,v)->if(v is Int)e.putInt(k,v)};e.commit();Store(context).use{it.hi=oldHi}}
+    }
+
+    @Test fun roomActionsLaunchTheCorrectGuidedMission(){
+        val oldHi=Store(context).use{it.hi}
+        val captured=AtomicReference<Intent?>()
+        val monitor=object:Instrumentation.ActivityMonitor(){
+            override fun onStartActivity(intent:Intent):Instrumentation.ActivityResult? {
+                if(intent.component?.className==RoomMissionActivity::class.java.name){
+                    captured.set(Intent(intent));return Instrumentation.ActivityResult(Activity.RESULT_CANCELED,null)
+                }
+                return null
+            }
+        }
+        instrumentation.addMonitor(monitor)
+        try {
+            Store(context).use{it.hi=false}
+            ActivityScenario.launch(MainActivity::class.java).use { s ->
+                for(id in listOf("fire","gas")) {
+                    captured.set(null);openModule(id);courseAction("More practice options");onView(withText("Start immersive AR mission")).perform(revealOnPage(),click())
+                    val intent=captured.get() ?: error("Room actions entry did not launch a room mission")
+                    assertEquals(id,intent.getStringExtra("moduleId"))
+                    assertTrue(intent.getBooleanExtra("guided",false));assertTrue(intent.getBooleanExtra("camera",false))
+                    assertFalse(intent.getBooleanExtra("recall",true))
+                    assertPage(s,"practice");back();assertPage(s,"module");back();assertPage(s,"library");back();assertPage(s,"home")
+                }
+                captured.set(null);openModule("machinery");courseAction(if(Store(context).use{it.hi})"पाठ पढ़ें या सुनें"else"Read or listen to lessons");assertPage(s,"lesson")
+                assertNull("Other modules must not enter a fire/gas room mission",captured.get())
+            }
+        } finally { instrumentation.removeMonitor(monitor);Store(context).use{it.hi=oldHi} }
+    }
+
+    @Test fun secondaryPracticeAndRecordRoutesReturnToTheirParent(){
+        val oldHi=Store(context).use{it.hi}
+        try { for(hi in listOf(false,true)) {
+            fun t(en:String,h:String)=if(hi)h else en
+            Store(context).use{it.hi=hi}
+            ActivityScenario.launch(MainActivity::class.java).use { s ->
+                openModule("gas");courseAction(t("More practice options","अभ्यास के और विकल्प"));assertPage(s,"practice")
+                s.onActivity { a ->
+                    val texts=all(a.window.decorView).filterIsInstance<TextView>().map{it.text.toString()}
+                    assertTrue(texts.contains(t("Practise the full procedure","पूरी प्रक्रिया का अभ्यास करें")))
+                    assertTrue(texts.contains(t("Remember, then do · AR challenge","याद करके करें · AR अभ्यास")))
+                    assertReadableControls(a)
+                }
+                back();assertPage(s,"module")
+                onView(withText(t("Progress","प्रगति"))).perform(click());assertPage(s,"records")
+                onView(withText(t("Earlier records & credentials","पुराने रिकॉर्ड और प्रमाणपत्र"))).perform(reveal(),click());assertPage(s,"legacy-records")
+                onView(withText(t("Verify a QR record","QR रिकॉर्ड जाँचें"))).perform(reveal(),click());assertPage(s,"verify")
+                back();assertPage(s,"legacy-records")
+                clickTag("main-profile");onView(withText(t("Help & settings","मदद और सेटिंग"))).inRoot(isDialog()).perform(revealOnPage(),click());assertPage(s,"help")
+                onView(withText(t("Home","होम"))).perform(click());assertPage(s,"home")
+            }
+        }} finally { Store(context).use{it.hi=oldHi} }
+    }
+}

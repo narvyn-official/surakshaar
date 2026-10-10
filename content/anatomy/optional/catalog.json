@@ -1,0 +1,19 @@
+{
+  "id": "body-detail",
+  "version": "bodyparts3d-4.0-mobile3-detail",
+  "archive": "anatomy/optional/body-detail.zip",
+  "bytes": 8556418,
+  "sha256": "7e85acb0410ed117cfde4aaa7b3a69f7ffc15759346afe26dfd2fa676c4e9e6b",
+  "unpackedBytes": 8541378,
+  "manifestSha256": "f150dad7dbd9b1358a7bb72a3d89cf2e740f1b00e6eca3a0f2166700b93bda75",
+  "title": "Detailed anatomy",
+  "description": "Install the bundled detailed model for closer exploration. Uses more storage and memory; clinical review remains pending.",
+  "partCount": 117,
+  "triangleCount": 471068,
+  "compatibleBaseVersion": "bodyparts3d-4.0-mobile3-balanced",
+  "maxPartBoundsDeltaMetres": 0.005156993865966797,
+  "licences": [
+    "CC-BY-4.0",
+    "CC-BY-SA-2.1-JP"
+  ]
+}

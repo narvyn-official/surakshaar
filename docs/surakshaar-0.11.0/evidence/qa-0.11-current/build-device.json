@@ -1,0 +1,8 @@
+{
+  "capturedAtUtc": "2026-10-04T17:14:10.128019+00:00",
+  "scope": "Emulator-only native regression; not physical AR proof",
+  "serial": "emulator-5554",
+  "model": "sdk_gphone64_arm64",
+  "api": "36",
+  "apkSha256": "8ae6e5b4def056a083823b63c9c764e29f8181a180d1386f40696b384d3b45c3"
+}

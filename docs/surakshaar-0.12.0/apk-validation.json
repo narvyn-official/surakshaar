@@ -1,0 +1,36 @@
+{
+  "courses": 2,
+  "scenarios": 12,
+  "steps": 62,
+  "draftScenarios": [
+    "adult-collapse",
+    "school-help",
+    "escape-first",
+    "extinguisher-check",
+    "bleeding-control",
+    "thermal-burn",
+    "recovery-monitor",
+    "adult-choking",
+    "seizure-safety",
+    "fracture-support",
+    "agent-choice",
+    "school-fire-help"
+  ],
+  "status": "structural-validation-passed",
+  "productionApproval": false,
+  "manifestSha256": "ec1608c0dba97c9d118d9380c8e1f53a2f78cf09e666c4a13972020164095697",
+  "catalogSha256": "c043ca7e74524e25e72a7f272739746826dd4da4baf6e0bdf00f6047caca2493",
+  "curriculumSha256": "ebaae0b6cbfae944c231344c041838e2d840ce50da7b65a32c779903717c857f",
+  "anatomyVersion": "bodyparts3d-4.0-mobile2",
+  "anatomyParts": 68,
+  "licencesByPart": {
+    "CC-BY-4.0": 66,
+    "CC-BY-SA-2.1-JP": 2
+  },
+  "geometryBytes": 3258733,
+  "decodedGeometryBytes": 14284192,
+  "triangles": 198384,
+  "evidenceBoundary": "Packaging and authored-data checks only; no expert review, device AR, usability or clinical effectiveness claim.",
+  "apkSha256": "6492c376eaeaccbd9f829ae60d8489233d63e018a43abb99b87762567809c7d6",
+  "apkBytes": 18295106
+}

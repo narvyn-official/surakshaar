@@ -1,0 +1,70 @@
+{
+  "date": "2026-10-04T16:47:59.349Z",
+  "origin": "http://localhost:5173",
+  "scope": "Local synthetic accounts; provider disabled; no real credentials or safety approval",
+  "checks": [
+    {
+      "name": "Unauthenticated rejected",
+      "status": "Pass",
+      "evidence": 401
+    },
+    {
+      "name": "Unlinked learner rejected",
+      "status": "Pass",
+      "evidence": 403
+    },
+    {
+      "name": "Both cross-account directions rejected",
+      "status": "Pass",
+      "evidence": 403
+    },
+    {
+      "name": "Strict request schema rejects extra fields",
+      "status": "Pass",
+      "evidence": 400
+    },
+    {
+      "name": "Question length enforced",
+      "status": "Pass",
+      "evidence": 400
+    },
+    {
+      "name": "Authenticated product reference, no provider",
+      "status": "Pass",
+      "evidence": "supported"
+    },
+    {
+      "name": "Unapproved safety source blocked",
+      "status": "Pass",
+      "evidence": "review-required"
+    },
+    {
+      "name": "Privilege injection refused",
+      "status": "Pass",
+      "evidence": "unsafe-request"
+    },
+    {
+      "name": "Code-switching conflict clarified",
+      "status": "Pass",
+      "evidence": "conflicting-procedures"
+    },
+    {
+      "name": "Concurrent minute budget caps at ten",
+      "status": "Pass",
+      "evidence": {
+        "accepted": 10,
+        "limited": 2
+      }
+    },
+    {
+      "name": "Hourly cost budget enforced",
+      "status": "Pass",
+      "evidence": 429
+    },
+    {
+      "name": "Suspended centre denied before tutor",
+      "status": "Pass",
+      "evidence": 403
+    }
+  ]
+}

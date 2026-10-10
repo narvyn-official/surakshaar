@@ -1,0 +1,1 @@
+Reliability integration passed: concurrent imports and issuance, immutable conflicts, single audit events, password policy, neutral recovery, atomic reset/replay/expiry and outstanding-link invalidation, session revocation and new login. No external email sent.

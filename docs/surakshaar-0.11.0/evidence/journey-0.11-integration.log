@@ -1,0 +1,13 @@
+✔ return destinations preserve local intent and reject redirect escapes (0.86775ms)
+✔ all five scenario histories replay and remain non-certifying (6.069209ms)
+✔ reject forged outcomes, event skips, wrong learner and rewritten history (1.51375ms)
+✔ approval rubric cannot accept an unchecked review (0.622291ms)
+Journey integration PASS: enrolment, profile/account isolation, duplicate/stale sync, replay validation, course readiness, correction cycle, independent rubric approval, wallet, printable certificate, public privacy and revocation.
+ℹ tests 4
+ℹ suites 0
+ℹ pass 4
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2972.610958

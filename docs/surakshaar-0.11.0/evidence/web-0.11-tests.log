@@ -1,0 +1,50 @@
+
+> surakshaar-admin@0.10.0 test
+> tsx --test tests/*.test.ts
+
+✔ government-pilot role matrix separates training, administration and certification (1.356792ms)
+✔ JSON accepts objects and same-origin native/browser requests (47.690125ms)
+✔ rejects cross-origin, malformed JSON, primitives and unsupported media (3.501333ms)
+✔ bounds UTF-8 bytes and cancels a streamed oversized request (3.918375ms)
+✔ latest failure replaces earlier pass; practice cannot inflate coverage (2.132625ms)
+✔ all available latest assessments required and revoked credentials excluded (13.746292ms)
+✔ CSV preserves quoting and neutralizes spreadsheet formulas (1.551583ms)
+✔ machinery critical failure overrides a high numerical score (3.106208ms)
+✔ archived content accepts its modules but rejects a new module or unknown version (0.793083ms)
+✔ PPE has its own analytics label, critical gate and version scope (1.147542ms)
+✔ all five current domains are required for complete coverage (0.922792ms)
+✔ an emergency critical error cannot be averaged into a pass (0.282833ms)
+✔ 0.3.0 replays its four archived domains and cannot claim emergency evidence (0.557959ms)
+✔ expired and unrecorded credentials are excluded as the clock advances (0.241959ms)
+✔ learning/MFA migrations preserve existing review decisions and legacy policy (22.993875ms)
+✔ return destinations preserve local intent and reject redirect escapes (1.503292ms)
+✔ all five scenario histories replay and remain non-certifying (9.974667ms)
+✔ reject forged outcomes, event skips, wrong learner and rewritten history (1.967792ms)
+✔ approval rubric cannot accept an unchecked review (0.687334ms)
+✔ recovery mail requires secure configured delivery (0.931875ms)
+✔ reset delivery uses trusted base and fragment, and never follows redirects (31.755375ms)
+✔ legacy and v2 fire/gas journals stay noncertifying, including incomplete and evacuation-only (11.3835ms)
+✔ reject owner, version, forged certification, unknown fields and missing or reordered actions (6.047875ms)
+✔ virtual measurements bind to events and cannot fabricate timing or sweep coverage (2.352375ms)
+✔ requested cues stay ordered, phase-bound and separate from guided practice (1.049ms)
+✔ bounded envelopes reject oversized history, duplicate IDs and unknown schema (9.026125ms)
+✔ new completion appends to incomplete snapshot, while changed identity or prior history conflicts (13.016916ms)
+✔ SQLite guard atomically rejects stale-parent forks without losing the previously imported snapshot (1.702792ms)
+✔ all 81 supplied cases answer or clarify within the source boundary (16.519ms)
+✔ injection, assessment answer and cross-learner requests never call a provider (0.530375ms)
+✔ missing context, code-switching, transcription errors and conflicting procedures safely clarify (4.334833ms)
+✔ provider cannot invent prose, citations or select outside retrieved scope (2.653833ms)
+✔ Hindi support is stated honestly and Santali is not silently substituted (0.306625ms)
+✔ provider HTTP output is untrusted, bounded and cannot smuggle document instructions (26.037875ms)
+✔ an unresponsive provider is bounded and cannot hold the tutor indefinitely (3003.907083ms)
+✔ legacy has no assumed expiry; exact boundary expires (1.7075ms)
+✔ issuance needs an explicit, future, valid integer date (0.4865ms)
+✔ revocation wins and unrecorded/expired dates never become active (0.237291ms)
+ℹ tests 38
+ℹ suites 0
+ℹ pass 38
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 3495.355541

@@ -1,0 +1,18 @@
+{
+  "jvm": {
+    "tests": 261,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "testClasses": 40,
+  "lint": {
+    "Error": 0,
+    "Warning": 54,
+    "Information": 0
+  },
+  "apk": "artifacts/surakshaar-0.13.0/surakshaar-0.13.0-dev-debug.apk",
+  "bytes": 28531851,
+  "sha256": "706425d93e82cb11d9d32f29dbdbb0aa4bda33aa76483344423ff84d9d301ec1",
+  "productionApproval": false
+}

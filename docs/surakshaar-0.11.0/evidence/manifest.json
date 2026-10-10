@@ -1,0 +1,186 @@
+{
+  "publishedOn": "2026-10-05",
+  "build": "0.11.0-dev/code 24",
+  "apkSha256": "8ae6e5b4def056a083823b63c9c764e29f8181a180d1386f40696b384d3b45c3",
+  "scope": "Selected synthetic local test evidence. Local filesystem prefixes are redacted; no private runtime configs, accounts, inbox messages or databases are published. Earlier failed-build evidence remains explicitly identified in the verification report.",
+  "files": [
+    {
+      "path": "android-0.11-build.log",
+      "sha256": "75f6b25f100cd4344a4bbdfc82744653c05ccbbb902ac1d79a812d18edd4c5e9",
+      "sourcePathRedacted": true,
+      "whitespaceNormalized": false
+    },
+    {
+      "path": "web-0.11-check.log",
+      "sha256": "a275b43492ab486b154ad7e0339cd503081f7cd6b3b7cdfa70c1c4ec17516a84",
+      "sourcePathRedacted": false,
+      "whitespaceNormalized": true
+    },
+    {
+      "path": "tutor-0.11-integration.json",
+      "sha256": "86b27e6d6ae149c4210d675927df8d38f6714ddf9f0437b705326370fe116876",
+      "sourcePathRedacted": false,
+      "whitespaceNormalized": false
+    },
+    {
+      "path": "qa-0.11-current-summary.log",
+      "sha256": "a32c66d1cd6eb8787702370ca09d469273d6faaf6b8f42d6e0a4ce92daf2f624",
+      "sourcePathRedacted": false,
+      "whitespaceNormalized": false
+    },
+    {
+      "path": "qa-0.11-current/build-device.json",
+      "sha256": "b685046be72a5955cca408d4fbb07d706c6c128abe5954c82842effc8fd3000c",
+      "sourcePathRedacted": false,
+      "whitespaceNormalized": false
+    },
+    {
+      "path": "qa-0.11-current/ordinary.log",
+      "sha256": "2644be1ae46a8e26bf2d94a49cbe1651960a1edd73b43f46f45f389748b45d67",
+      "sourcePathRedacted": false,
+      "whitespaceNormalized": false
+    },
+    {
+      "path": "signing-0.11-debug.log",
+      "sha256": "b9ec05c3acf676a4c916bd8dca25fd69b42e9a22ba097160548ffb2758f7d44e",
+      "sourcePathRedacted": true,
+      "whitespaceNormalized": false
+    },
+    {
+      "path": "upgrade-0.11/seed.log",
+      "sha256": "9dd946eb1430ed89fea3a6e54f35bc4eb64fd3114257e1578e9c336a0d36152c",
+      "sourcePathRedacted": false,
+      "whitespaceNormalized": true
+    },
+    {
+      "path": "upgrade-0.11/verify.log",
+      "sha256": "802b6bdbf1091675a240e6c00f6f3f70e52d1771e857da9dea8930f2e22787cd",
+      "sourcePathRedacted": false,
+      "whitespaceNormalized": true
+    },
+    {
+      "path": "journey-0.11-integration.log",
+      "sha256": "9155d4cedb5f097f6593d270ab3e85dda7dcf47272325229220734b042cd8cf1",
+      "sourcePathRedacted": false,
+      "whitespaceNormalized": false
+    },
+    {
+      "path": "auth-0.11-integration.log",
+      "sha256": "c477d0a4cc1467e80b04bfff73e309cb391799d9b867c2182ff8a2d920db164a",
+      "sourcePathRedacted": false,
+      "whitespaceNormalized": false
+    },
+    {
+      "path": "mfa-0.11-integration.log",
+      "sha256": "5e8ca6626e12242b5f0ee102e5036a89e025aa49d14c4fac8c594f13157ee51f",
+      "sourcePathRedacted": false,
+      "whitespaceNormalized": false
+    },
+    {
+      "path": "reliability-0.11-integration.log",
+      "sha256": "5b8c104707bc3f3e766091bb390421eafc32eff32f67d918a008798b4446eb5a",
+      "sourcePathRedacted": false,
+      "whitespaceNormalized": false
+    },
+    {
+      "path": "room-journals-0.11-integration.log",
+      "sha256": "c881bb09a76a6e859d83e5c346b670bfe027b490223bd8f46eadbebd0fc63600",
+      "sourcePathRedacted": false,
+      "whitespaceNormalized": false
+    },
+    {
+      "path": "startup-0.11-host.json",
+      "sha256": "4a38f16a93a22012be4f6b78ffc926399ead2735c6d70a45c80402d85091ca88",
+      "sourcePathRedacted": false,
+      "whitespaceNormalized": false
+    },
+    {
+      "path": "qa-0.11-current/renders/ordinary/workspace-011-home.png",
+      "sha256": "f9ad9fd58f75a57b8076dacdca63c0cd363c83951e7fa8ea9b418101e58f3c1c",
+      "sourcePathRedacted": false
+    },
+    {
+      "path": "qa-0.11-current/renders/ordinary/workspace-011-courses.png",
+      "sha256": "2bc011d64b87c0779a4e0eadc631ee736c7130b45852cd41cdd1fe723f2b01f3",
+      "sourcePathRedacted": false
+    },
+    {
+      "path": "qa-0.11-current/renders/ordinary/workspace-011-transfer-feedback.png",
+      "sha256": "bc84105fc8351f04af65587e07c0ffb81a42ddf11fb79722f75fee47b0ada8c2",
+      "sourcePathRedacted": false
+    },
+    {
+      "path": "qa-0.11-current/renders/ordinary/workspace-011-question-reference.png",
+      "sha256": "d9decbad2ce653924307c5a6e3839fd7089b1c40c21fee6ce61abbb3e8a69262",
+      "sourcePathRedacted": false
+    },
+    {
+      "path": "qa-0.11-current/renders/large-text/workspace-011-home.png",
+      "sha256": "27afebcdefcdbcd72fed9ca4ad853ab7d5ef25f1d1f3205cb79b6852664b5e6e",
+      "sourcePathRedacted": false
+    },
+    {
+      "path": "qa-0.11-current/renders/large-text/workspace-011-transfer-feedback.png",
+      "sha256": "f4eef6f69d3efc4541851ffb639b6868ce0f6b577ca0e88eef724ec7b130be3b",
+      "sourcePathRedacted": false
+    },
+    {
+      "path": "qa-0.11-current/renders/large-text/workspace-011-replay.png",
+      "sha256": "604653a1895682270becbbd6e00e4ffea6dd97374a1e3e29f9506e57c60ab284",
+      "sourcePathRedacted": false
+    },
+    {
+      "path": "qa-0.11-current/renders/large-text/workspace-011-question-reference.png",
+      "sha256": "16da8c5e031c5bfaeca4ed9939665aa375e26e06c65908387f2dd2fef708965a",
+      "sourcePathRedacted": false
+    },
+    {
+      "path": "qa-0.11-recovery-check/ordinary.log",
+      "sha256": "992c99263a923ab5b7869426f47ada0d24f68a67a92b9086058bc3431ce96ea6",
+      "sourcePathRedacted": false,
+      "whitespaceNormalized": false
+    },
+    {
+      "path": "emulator-swiftshader-0.11-gfxinfo.txt",
+      "sha256": "c39599323c868e6f0d059d811eda5e766b5d3eec8ad50e38efa0aca6af4cc2e0",
+      "sourcePathRedacted": false,
+      "whitespaceNormalized": true
+    },
+    {
+      "path": "device-0.11-current.json",
+      "sha256": "d09663451949e07e31c469a9d21cc1a88d6a209878beea5f7f2b16661936d249",
+      "sourcePathRedacted": false,
+      "whitespaceNormalized": false
+    },
+    {
+      "path": "qa-0.11-current/large-text.log",
+      "sha256": "50b555549cd816989494a87a289308bbeb9caadfc653fde9ee8dcf05787ba1f4",
+      "sourcePathRedacted": false,
+      "whitespaceNormalized": false
+    },
+    {
+      "path": "qa-0.11-current/placement.log",
+      "sha256": "9175361b9c49b1d7282128912002227866a6a499d8e7359b71c399650c9636c3",
+      "sourcePathRedacted": false,
+      "whitespaceNormalized": false
+    },
+    {
+      "path": "qa-0.11-current/workspace.log",
+      "sha256": "79b44437c0adabe2674060c69314753cd2b1b99d117005c063f2f638b629bc2e",
+      "sourcePathRedacted": false,
+      "whitespaceNormalized": false
+    },
+    {
+      "path": "qa-0.11-current/thermal.log",
+      "sha256": "2dc20fb555697e9a56035caf184f9ae159e0ec3b7861bb9c63d161cf72a0154d",
+      "sourcePathRedacted": false,
+      "whitespaceNormalized": false
+    },
+    {
+      "path": "web-0.11-tests.log",
+      "sha256": "3834fe3d9ecf89ec9b2d9d9a226f35227b5265046e0c1a474e0633321dcc2d0f",
+      "sourcePathRedacted": false,
+      "whitespaceNormalized": false
+    }
+  ]
+}

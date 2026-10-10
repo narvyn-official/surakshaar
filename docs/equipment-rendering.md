@@ -1,0 +1,21 @@
+# Equipment illustration renderer
+
+The 0.3.0 renderer uses original procedural geometry shared by the offline equipment viewer and ARCore placement. It has no downloaded model, texture or font dependency. Coordinates are metres in a rigid anchor frame. Geometry is prepared once per renderer, with all components of a model batched into one triangle draw call.
+
+Rounded vessel profiles, bevelled housings, curved tubes and smooth ellipsoid normals replace the previous flat blocks. The extinguisher includes shoulder/base, valve, lever, retaining ring, hose, nozzle, illustrative gauge and label geometry. The detector includes protective housing, sensor openings, controls, screws, rear clip and a display marked `SIM`. Machinery includes rollers behind a separate guard grid, fasteners, vents and control details. PPE includes a shaped helmet, reinforcement ridge, suspension adjuster, framed lenses, arms, hinges and ear cushions.
+
+A GLES2 fragment shader uses interpolated normals, camera-relative highlights, material roughness, metallic tint, Fresnel-like edge response, hemisphere illumination and a fixed key/fill light. Paint, metal, rubber and reflective lens materials therefore respond differently as the view turns. This is a lightweight illustrative shader, **not a physically based renderer**: it has no HDR environment reflections, refraction, real-world occlusion or cast-shadow pass. Lenses are opaque reflective approximations, not physically transparent glass. No pressure or gas values are represented as operational readings.
+
+The AR path configures ambient-intensity light estimation and reuses its color-correction allocation. Valid estimates are smoothed and bounded for readability; invalid estimates keep the last usable lighting. Directional light remains synthetic. Camera-position-dependent highlights are shared by AR and the viewer. This implementation follows the API division described in [Google's ARCore lighting-estimation guide](https://developers.google.com/ar/develop/java/lighting-estimation/developer-guide), checked 14 September 2026. The shader targets the GLSL ES 1.00 / GLES2 compatibility profile listed in the [Khronos OpenGL ES registry](https://registry.khronos.org/OpenGL/index_es.php).
+
+The offline viewer supports drag rotation and tilt, pinch zoom, accessible rotation/zoom buttons, and bilingual component-inspection dialogs. Camera controls persist across activity recreation. Inspection explains recognition and limitations; it does not authorise operating or servicing equipment.
+
+Visual realism still needs validation against approved site equipment, competent safety review and representative Android hardware. Manufacturer-specific photogrammetry or authored PBR assets would be a later, separately reviewed step. Better shading alone does not establish dimensional accuracy, practical competence or operational suitability.
+
+App 0.3.1 adds [staged recognition practice](component-practice.md) with the same meshes, fixed viewing angles and projected callouts. This is currently camera-free; the callouts are not a real-equipment detector or mesh manipulation system.
+
+App 0.4.0 adds an original emergency station: a detailed generic reporting radio with simulated display, a closed first-aid case and an assembly marker. It is used in the offline viewer, AR decision station and component-recognition practice. It cannot transmit a report, locate people, assess a route or teach treatment.
+
+App 0.4.1 reuses the fire geometry for optional [camera component recognition](camera-component-practice.md). No asset, shader or physical-fidelity claims change in this increment.
+
+App 0.4.3 makes the offline inspection page scrollable, preserving the model viewport at large text sizes and in landscape. Native tilt controls and a readable view-state summary supplement rotation/zoom and gestures. Meshes and shaders remain unchanged; see [accessibility scope](accessibility.md).

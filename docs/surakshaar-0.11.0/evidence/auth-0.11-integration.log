@@ -1,0 +1,1 @@
+Independent auth integration passed: signup/signin, forged provider cookie rejected, invitation possession, one-time use, roles, revocation, CSRF, password change, session revocation.

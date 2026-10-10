@@ -1,0 +1,36 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <uses-permission android:name="android.permission.CAMERA" />
+    <!-- ARCore's native IMU rate request needs this on Android 12+. Without it,
+         the tested Samsung/AR Services combination remained at 6.25 Hz. -->
+    <uses-permission android:name="android.permission.HIGH_SAMPLING_RATE_SENSORS" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-feature android:name="android.hardware.camera" android:required="false" />
+    <uses-feature android:name="android.hardware.camera.ar" android:required="false" />
+    <queries>
+        <intent><action android:name="android.intent.action.TTS_SERVICE" /></intent>
+    </queries>
+    <application android:enableOnBackInvokedCallback="true" android:label="@string/app_name" android:theme="@style/AppTheme" android:icon="@drawable/ic_launcher" android:allowBackup="false" android:supportsRtl="true" android:usesCleartextTraffic="false">
+        <meta-data android:name="com.google.ar.core" android:value="optional" />
+        <activity android:name=".MainActivity" android:exported="true" android:windowSoftInputMode="adjustResize">
+            <intent-filter><action android:name="android.intent.action.MAIN" /><category android:name="android.intent.category.LAUNCHER" /></intent-filter>
+        </activity>
+        <activity android:name=".LaunchCourseActivity" android:exported="false" />
+        <activity android:name=".LearningScenarioActivity" android:exported="false" />
+        <activity android:name=".AnatomyActivity" android:exported="false" />
+        <activity android:name=".OfflineContentActivity" android:exported="false" />
+        <activity android:name=".FirstAidBayActivity" android:exported="false" />
+        <activity android:name=".LearnerCentreActivity" android:exported="false" />
+        <activity android:name=".SkillPracticeActivity" android:exported="false" />
+        <activity android:name=".DecisionReplayActivity" android:exported="false" />
+        <activity android:name=".QuestionGuideActivity" android:exported="false" android:windowSoftInputMode="adjustResize" />
+        <activity android:name=".DemonstrationActivity" android:exported="false" />
+        <activity android:name=".AdminActivity" android:exported="false" android:windowSoftInputMode="adjustResize" />
+        <activity android:name=".RoomMissionActivity" android:exported="false" />
+        <activity android:name=".ProcedureActivity" android:exported="false" />
+        <activity android:name=".WorkerProfilesActivity" android:exported="false" />
+        <activity android:name=".ComponentPracticeActivity" android:exported="false" />
+        <activity android:name=".RecallActivity" android:exported="false" />
+        <activity android:name=".EquipmentActivity" android:exported="false" />
+        <activity android:name=".ArActivity" android:exported="false" android:screenOrientation="portrait" />
+    </application>
+</manifest>

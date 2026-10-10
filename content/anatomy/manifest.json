@@ -1,0 +1,4773 @@
+{
+  "version": "bodyparts3d-4.0-mobile3-balanced",
+  "source": "https://dbarchive.biosciencedbc.jp/en/bodyparts3d/download.html",
+  "licence": "CC-BY-4.0",
+  "licenceUrl": "https://dbarchive.biosciencedbc.jp/en/bodyparts3d/lic.html",
+  "attribution": "BodyParts3D, \u00a9 The Database Center for Life Science licensed under CC Attribution 4.0 International",
+  "sourceArchiveSha256": "40665852c49f218326590e204db91064a1ecfc3c6f8cbd7bbbcaac62c7cd409e",
+  "changes": "Selected structures; original low-resolution OBJ triangulation converted to metre-based position/normal buffers; named structures grouped without remeshing. Original CT pose retained. Blender 5.2 LTS decimation per semantic structure and smooth-normal regeneration; no remapping of labels. Detailed source geometry is reduced; qualified visual/anatomical review remains pending. Degenerate triangles removed; exceptional zero-length vertex normals use geometric face normals.",
+  "units": "metres",
+  "axes": "X anatomical left, Y superior, Z anterior",
+  "heightMetres": 1.7194712,
+  "reviewStatus": "Qualified anatomy review pending",
+  "limitations": [
+    "Single adult source anatomy; no child or infant model.",
+    "Low-resolution surfaces; no skin histology, injury simulation, rigging or validated physiological animation.",
+    "Skeletal system includes a remainder group; not every bone has an individual label.",
+    "Colour is illustrative; original scan-derived surfaces have no photographic texture.",
+    "No clinical assessment or certification.",
+    "Expanded regional muscle coverage is source-limited; grouped remnants are not individually labelled. This is not a complete anatomical atlas.",
+    "Lung surfaces are a separately licensed 4.3 subset in the 4.x coordinate system; qualified alignment and anatomical review remain pending."
+  ],
+  "parts": [
+    {
+      "id": "FMA7163",
+      "name": "skin",
+      "layer": "skin",
+      "file": "anatomy/FMA7163.meshpack",
+      "bytes": 800497,
+      "sha256": "c531c491b5c02a0df1dc106dc4e9950278461d595bcb1741068bee47a15e93d5",
+      "vertices": 108000,
+      "bounds": [
+        -0.33355244994163513,
+        -0.00018532149260863662,
+        -0.14605304598808289,
+        0.33349016308784485,
+        1.7193713188171387,
+        0.14606943726539612
+      ],
+      "colour": [
+        0.55,
+        0.33,
+        0.21
+      ],
+      "sourceElements": [
+        "FJ2810"
+      ],
+      "explanation": "Skin \u2014 source-labelled adult anatomy. Left and right refer to the person, not the viewer. Detailed clinical interpretation is pending qualified review.",
+      "sourceTriangles": 203382,
+      "inputTriangles": 203382,
+      "triangles": 36000,
+      "exportCleanup": {
+        "droppedDegenerateTriangles": 0,
+        "faceNormalFallbackVertices": 0
+      }
+    },
+    {
+      "id": "FMA7485",
+      "name": "sternum",
+      "layer": "skeleton",
+      "file": "anatomy/FMA7485.meshpack",
+      "bytes": 32066,
+      "sha256": "440580f52ac4ade98177ddb82e9d850a768a8ce3184d5788469ec16c787a1b18",
+      "vertices": 5994,
+      "bounds": [
+        -0.026703966781497,
+        1.2421573400497437,
+        0.030065592378377914,
+        0.02806718461215496,
+        1.4034512042999268,
+        0.1131553202867508
+      ],
+      "colour": [
+        0.82,
+        0.78,
+        0.65
+      ],
+      "sourceElements": [
+        "FJ3153",
+        "FJ3178",
+        "FJ3290"
+      ],
+      "explanation": "The sternum is the breastbone at the front of the chest. It is a location landmark, not a measure of compression depth.",
+      "sourceTriangles": 8106,
+      "inputTriangles": 8106,
+      "triangles": 1998,
+      "exportCleanup": {
+        "droppedDegenerateTriangles": 0,
+        "faceNormalFallbackVertices": 0
+      }
+    },
+    {
+      "id": "FMA23130",
+      "name": "right humerus",
+      "layer": "skeleton",
+      "file": "anatomy/FMA23130.meshpack",
+      "bytes": 19405,
+      "sha256": "111525a37276d54a45248996663e98cf5ac114017be0657291c076d47a3423fa",
+      "vertices": 3648,
+      "bounds": [
+        -0.24025635421276093,
+        1.1071176528930664,
+        -0.049901820719242096,
+        -0.13929176330566406,
+        1.4145400524139404,
+        -0.00040694611379876733
+      ],
+      "colour": [
+        0.82,
+        0.78,
+        0.65
+      ],
+      "sourceElements": [
+        "FJ3368"
+      ],
+      "explanation": "Right humerus \u2014 source-labelled adult anatomy. Left and right refer to the person, not the viewer. Detailed clinical interpretation is pending qualified review.",
+      "sourceTriangles": 3784,
+      "inputTriangles": 3784,
+      "triangles": 1216,
+      "exportCleanup": {
+        "droppedDegenerateTriangles": 0,
+        "faceNormalFallbackVertices": 0
+      }
+    },
+    {
+      "id": "FMA23131",
+      "name": "left humerus",
+      "layer": "skeleton",
+      "file": "anatomy/FMA23131.meshpack",
+      "bytes": 19686,
+      "sha256": "aafc384554614c075299bda2290cb256a3bc1c8be32ce8de042d0cc728e35cb3",
+      "vertices": 3690,
+      "bounds": [
+        0.140639990568161,
+        1.1073440313339233,
+        -0.049872804433107376,
+        0.24152633547782898,
+        1.4146243333816528,
+        -0.00045665589277632535
+      ],
+      "colour": [
+        0.82,
+        0.78,
+        0.65
+      ],
+      "sourceElements": [
+        "FJ3262"
+      ],
+      "explanation": "Left humerus \u2014 source-labelled adult anatomy. Left and right refer to the person, not the viewer. Detailed clinical interpretation is pending qualified review.",
+      "sourceTriangles": 3844,
+      "inputTriangles": 3844,
+      "triangles": 1230,
+      "exportCleanup": {
+        "droppedDegenerateTriangles": 0,
+        "faceNormalFallbackVertices": 0
+      }
+    },
+    {
+      "id": "FMA24474",
+      "name": "right femur",
+      "layer": "skeleton",
+      "file": "anatomy/FMA24474.meshpack",
+      "bytes": 17199,
+      "sha256": "337d1611fc4e57779aa694a359bd608f5f7725e4180734c2e30c0195cc81305d",
+      "vertices": 3210,
+      "bounds": [
+        -0.14972476661205292,
+        0.44622036814689636,
+        -0.05112973973155022,
+        -0.0312613882124424,
+        0.91230708360672,
+        0.011522818356752396
+      ],
+      "colour": [
+        0.82,
+        0.78,
+        0.65
+      ],
+      "sourceElements": [
+        "FJ3365"
+      ],
+      "explanation": "Right femur \u2014 source-labelled adult anatomy. Left and right refer to the person, not the viewer. Detailed clinical interpretation is pending qualified review.",
+      "sourceTriangles": 3102,
+      "inputTriangles": 3102,
+      "triangles": 1070,
+      "exportCleanup": {
+        "droppedDegenerateTriangles": 0,
+        "faceNormalFallbackVertices": 0
+      }
+    },
+    {
+      "id": "FMA24475",
+      "name": "left femur",
+      "layer": "skeleton",
+      "file": "anatomy/FMA24475.meshpack",
+      "bytes": 17549,
+      "sha256": "476f65cbad5c0fa053ed9e0fdaa0a1ead6f0070635048e5c06e0ddd7e0fea5a9",
+      "vertices": 3276,
+      "bounds": [
+        0.03267550468444824,
+        0.446094810962677,
+        -0.051141973584890366,
+        0.15111316740512848,
+        0.9124617576599121,
+        0.011542090214788914
+      ],
+      "colour": [
+        0.82,
+        0.78,
+        0.65
+      ],
+      "sourceElements": [
+        "FJ3259"
+      ],
+      "explanation": "Left femur \u2014 source-labelled adult anatomy. Left and right refer to the person, not the viewer. Detailed clinical interpretation is pending qualified review.",
+      "sourceTriangles": 3204,
+      "inputTriangles": 3204,
+      "triangles": 1092,
+      "exportCleanup": {
+        "droppedDegenerateTriangles": 0,
+        "faceNormalFallbackVertices": 0
+      }
+    },
+    {
+      "id": "FMA23464",
+      "name": "right radius",
+      "layer": "skeleton",
+      "file": "anatomy/FMA23464.meshpack",
+      "bytes": 6350,
+      "sha256": "43f669681ecd19eb3b2c987f569709e4b742604c5a4303c0ab24b0df4c011e09",
+      "vertices": 1188,
+      "bounds": [
+        -0.27893105149269104,
+        0.883892834186554,
+        -0.0395638644695282,
+        -0.21906422078609467,
+        1.1132432222366333,
+        0.026140300557017326
+      ],
+      "colour": [
+        0.82,
+        0.78,
+        0.65
+      ],
+      "sourceElements": [
+        "FJ3349"
+      ],
+      "explanation": "Right radius \u2014 source-labelled adult anatomy. Left and right refer to the person, not the viewer. Detailed clinical interpretation is pending qualified review.",
+      "sourceTriangles": 672,
+      "inputTriangles": 672,
+      "triangles": 396,
+      "exportCleanup": {
+        "droppedDegenerateTriangles": 0,
+        "faceNormalFallbackVertices": 0
+      }
+    },
+    {
+      "id": "FMA23465",
+      "name": "left radius",
+      "layer": "skeleton",
+      "file": "anatomy/FMA23465.meshpack",
+      "bytes": 6094,
+      "sha256": "4c1b93e9a06b1497a9007b517ac4b6bff7affe93b300b85590ee691ef0210ece",
+      "vertices": 1140,
+      "bounds": [
+        0.22050438821315765,
+        0.8840230703353882,
+        -0.0392984002828598,
+        0.27965348958969116,
+        1.1131846904754639,
+        0.026661045849323273
+      ],
+      "colour": [
+        0.82,
+        0.78,
+        0.65
+      ],
+      "sourceElements": [
+        "FJ3277"
+      ],
+      "explanation": "Left radius \u2014 source-labelled adult anatomy. Left and right refer to the person, not the viewer. Detailed clinical interpretation is pending qualified review.",
+      "sourceTriangles": 632,
+      "inputTriangles": 632,
+      "triangles": 380,
+      "exportCleanup": {
+        "droppedDegenerateTriangles": 0,
+        "faceNormalFallbackVertices": 0
+      }
+    },
+    {
+      "id": "FMA24477",
+      "name": "right tibia",
+      "layer": "skeleton",
+      "file": "anatomy/FMA24477.meshpack",
+      "bytes": 11517,
+      "sha256": "69b321edee316b38edb44a95d4d7c2967b30622c4e4e7c171fe04dd5a797c2b1",
+      "vertices": 2142,
+      "bounds": [
+        -0.10884590446949005,
+        0.07205291837453842,
+        -0.04868139699101448,
+        -0.03456899896264076,
+        0.45215854048728943,
+        0.013947690837085247
+      ],
+      "colour": [
+        0.82,
+        0.78,
+        0.65
+      ],
+      "sourceElements": [
+        "FJ3387"
+      ],
+      "explanation": "Right tibia \u2014 source-labelled adult anatomy. Left and right refer to the person, not the viewer. Detailed clinical interpretation is pending qualified review.",
+      "sourceTriangles": 1664,
+      "inputTriangles": 1664,
+      "triangles": 714,
+      "exportCleanup": {
+        "droppedDegenerateTriangles": 0,
+        "faceNormalFallbackVertices": 0
+      }
+    },
+    {
+      "id": "FMA24478",
+      "name": "left tibia",
+      "layer": "skeleton",
+      "file": "anatomy/FMA24478.meshpack",
+      "bytes": 11581,
+      "sha256": "365503737a712e37680a778ea3639a0f6848e9d078e9a90e47de864216f619b2",
+      "vertices": 2166,
+      "bounds": [
+        0.03556779399514198,
+        0.07210377603769302,
+        -0.04865218698978424,
+        0.11026541143655777,
+        0.45218318700790405,
+        0.013747300021350384
+      ],
+      "colour": [
+        0.82,
+        0.78,
+        0.65
+      ],
+      "sourceElements": [
+        "FJ3282"
+      ],
+      "explanation": "Left tibia \u2014 source-labelled adult anatomy. Left and right refer to the person, not the viewer. Detailed clinical interpretation is pending qualified review.",
+      "sourceTriangles": 1692,
+      "inputTriangles": 1692,
+      "triangles": 722,
+      "exportCleanup": {
+        "droppedDegenerateTriangles": 0,
+        "faceNormalFallbackVertices": 0
+      }
+    },
+    {
+      "id": "FMA7480",
+      "name": "rib cage",
+      "layer": "skeleton",
+      "file": "anatomy/FMA7480.meshpack",
+      "bytes": 246498,
+      "sha256": "6ee17447b68eedd904e1ac04f7171ff5c7b197335fbba335a8e9ef62c7c3825d",
+      "vertices": 45930,
+      "bounds": [
+        -0.1365170180797577,
+        1.0861785411834717,
+        -0.09721750020980835,
+        0.13653644919395447,
+        1.448761224746704,
+        0.11241649091243744
+      ],
+      "colour": [
+        0.82,
+        0.78,
+        0.65
+      ],
+      "sourceElements": [
+        "FJ3225",
+        "FJ3226",
+        "FJ3227",
+        "FJ3228",
+        "FJ3229",
+        "FJ3230",
+        "FJ3231",
+        "FJ3232",
+        "FJ3233",
+        "FJ3234",
+        "FJ3235",
+        "FJ3236",
+        "FJ3239",
+        "FJ3242",
+        "FJ3245",
+        "FJ3248",
+        "FJ3251",
+        "FJ3254",
+        "FJ3255",
+        "FJ3330",
+        "FJ3331",
+        "FJ3332",
+        "FJ3333",
+        "FJ3334",
+        "FJ3335",
+        "FJ3336",
+        "FJ3337",
+        "FJ3338",
+        "FJ3339",
+        "FJ3340",
+        "FJ3341",
+        "FJ3342",
+        "FJ3343",
+        "FJ3344",
+        "FJ3345",
+        "FJ3346",
+        "FJ3347",
+        "FJ3348"
+      ],
+      "explanation": "Rib cage \u2014 source-labelled adult anatomy. Left and right refer to the person, not the viewer. Detailed clinical interpretation is pending qualified review.",
+      "sourceTriangles": 185986,
+      "inputTriangles": 185986,
+      "triangles": 15310,
+      "exportCleanup": {
+        "droppedDegenerateTriangles": 0,
+        "faceNormalFallbackVertices": 0
+      }
+    },
+    {
+      "id": "FMA13478",
+      "name": "vertebral column",
+      "layer": "skeleton",
+      "file": "anatomy/FMA13478.meshpack",
+      "bytes": 184356,
+      "sha256": "5421af9413e79bf9207893ccf46597cf891c31afa734fa5d144aa5d4d1a34cb5",
+      "vertices": 35307,
+      "bounds": [
+        -0.059079885482788086,
+        0.8609874248504639,
+        -0.10859356075525284,
+        0.058433834463357925,
+        1.559779167175293,
+        0.01547832228243351
+      ],
+      "colour": [
+        0.82,
+        0.78,
+        0.65
+      ],
+      "sourceElements": [
+        "FJ3154",
+        "FJ3155",
+        "FJ3156",
+        "FJ3157",
+        "FJ3158",
+        "FJ3159",
+        "FJ3160",
+        "FJ3161",
+        "FJ3162",
+        "FJ3163",
+        "FJ3164",
+        "FJ3165",
+        "FJ3166",
+        "FJ3167",
+        "FJ3168",
+        "FJ3169",
+        "FJ3170",
+        "FJ3171",
+        "FJ3172",
+        "FJ3173",
+        "FJ3174",
+        "FJ3175",
+        "FJ3176",
+        "FJ3177",
+        "FJ3202",
+        "FJ3203",
+        "FJ3204",
+        "FJ3205",
+        "FJ3206",
+        "FJ3207",
+        "FJ3208",
+        "FJ3209",
+        "FJ3210",
+        "FJ3211",
+        "FJ3212",
+        "FJ3213",
+        "FJ3214",
+        "FJ3215",
+        "FJ3216",
+        "FJ3217",
+        "FJ3218",
+        "FJ3219",
+        "FJ3220",
+        "FJ3221",
+        "FJ3222",
+        "FJ3223",
+        "FJ3224",
+        "FJ3393"
+      ],
+      "explanation": "Vertebral column \u2014 source-labelled adult anatomy. Left and right refer to the person, not the viewer. Detailed clinical interpretation is pending qualified review.",
+      "sourceTriangles": 124194,
+      "inputTriangles": 124194,
+      "triangles": 11769,
+      "exportCleanup": {
+        "droppedDegenerateTriangles": 2,
+        "faceNormalFallbackVertices": 0
+      }
+    },
+    {
+      "id": "FMA23881",
+      "name": "skeletal system",
+      "layer": "skeleton",
+      "file": "anatomy/FMA23881.meshpack",
+      "bytes": 439607,
+      "sha256": "b433b83a6295d66a1cc0ed9303ee2f56d7309ef27d5e2e66e671b996c07b5feb",
+      "vertices": 81024,
+      "bounds": [
+        -0.3232150673866272,
+        0.0074292924255132675,
+        -0.1188993826508522,
+        0.3245360553264618,
+        1.714240550994873,
+        0.13533137738704681
+      ],
+      "colour": [
+        0.82,
+        0.78,
+        0.65
+      ],
+      "sourceElements": [
+        "FJ1282",
+        "FJ1285",
+        "FJ1286",
+        "FJ1289",
+        "FJ1297",
+        "FJ1299",
+        "FJ1305",
+        "FJ1317",
+        "FJ1320",
+        "FJ1331",
+        "FJ1336",
+        "FJ1337",
+        "FJ1340",
+        "FJ1348",
+        "FJ1350",
+        "FJ1356",
+        "FJ1368",
+        "FJ1371",
+        "FJ1382",
+        "FJ2772",
+        "FJ3152",
+        "FJ3179",
+        "FJ3180",
+        "FJ3181",
+        "FJ3182",
+        "FJ3183",
+        "FJ3184",
+        "FJ3185",
+        "FJ3186",
+        "FJ3187",
+        "FJ3188",
+        "FJ3189",
+        "FJ3190",
+        "FJ3191",
+        "FJ3192",
+        "FJ3193",
+        "FJ3194",
+        "FJ3195",
+        "FJ3196",
+        "FJ3197",
+        "FJ3198",
+        "FJ3199",
+        "FJ3200",
+        "FJ3201",
+        "FJ3237",
+        "FJ3240",
+        "FJ3241",
+        "FJ3243",
+        "FJ3244",
+        "FJ3246",
+        "FJ3247",
+        "FJ3249",
+        "FJ3250",
+        "FJ3252",
+        "FJ3253",
+        "FJ3256",
+        "FJ3257",
+        "FJ3258",
+        "FJ3260",
+        "FJ3261",
+        "FJ3263",
+        "FJ3264",
+        "FJ3265",
+        "FJ3266",
+        "FJ3267",
+        "FJ3268",
+        "FJ3269",
+        "FJ3270",
+        "FJ3271",
+        "FJ3272",
+        "FJ3273",
+        "FJ3274",
+        "FJ3275",
+        "FJ3276",
+        "FJ3278",
+        "FJ3279",
+        "FJ3280",
+        "FJ3281",
+        "FJ3283",
+        "FJ3284",
+        "FJ3285",
+        "FJ3286",
+        "FJ3287",
+        "FJ3288",
+        "FJ3289",
+        "FJ3291",
+        "FJ3292",
+        "FJ3293",
+        "FJ3294",
+        "FJ3295",
+        "FJ3296",
+        "FJ3297",
+        "FJ3298",
+        "FJ3299",
+        "FJ3300",
+        "FJ3301",
+        "FJ3302",
+        "FJ3303",
+        "FJ3304",
+        "FJ3305",
+        "FJ3306",
+        "FJ3307",
+        "FJ3308",
+        "FJ3309",
+        "FJ3310",
+        "FJ3311",
+        "FJ3312",
+        "FJ3313",
+        "FJ3314",
+        "FJ3315",
+        "FJ3316",
+        "FJ3317",
+        "FJ3318",
+        "FJ3319",
+        "FJ3320",
+        "FJ3321",
+        "FJ3322",
+        "FJ3323",
+        "FJ3324",
+        "FJ3325",
+        "FJ3326",
+        "FJ3327",
+        "FJ3328",
+        "FJ3329",
+        "FJ3350",
+        "FJ3351",
+        "FJ3352",
+        "FJ3353",
+        "FJ3354",
+        "FJ3355",
+        "FJ3356",
+        "FJ3357",
+        "FJ3358",
+        "FJ3359",
+        "FJ3360",
+        "FJ3361",
+        "FJ3362",
+        "FJ3364",
+        "FJ3366",
+        "FJ3367",
+        "FJ3369",
+        "FJ3370",
+        "FJ3371",
+        "FJ3372",
+        "FJ3373",
+        "FJ3374",
+        "FJ3375",
+        "FJ3376",
+        "FJ3377",
+        "FJ3378",
+        "FJ3379",
+        "FJ3380",
+        "FJ3381",
+        "FJ3382",
+        "FJ3383",
+        "FJ3384",
+        "FJ3385",
+        "FJ3386",
+        "FJ3388",
+        "FJ3389",
+        "FJ3390",
+        "FJ3391",
+        "FJ3392",
+        "FJ3394",
+        "FJ3395"
+      ],
+      "explanation": "Skeletal system \u2014 source-labelled adult anatomy. Left and right refer to the person, not the viewer. Detailed clinical interpretation is pending qualified review.",
+      "sourceTriangles": 446143,
+      "inputTriangles": 446143,
+      "triangles": 27008,
+      "exportCleanup": {
+        "droppedDegenerateTriangles": 50,
+        "faceNormalFallbackVertices": 0
+      }
+    },
+    {
+      "id": "FMA7394",
+      "name": "trachea",
+      "layer": "organs",
+      "file": "anatomy/FMA7394.meshpack",
+      "bytes": 12199,
+      "sha256": "61d8c0b52ec0550fb1a25e2a154f2edc88eb02526814cfbab0c6de1e56a3f383",
+      "vertices": 2244,
+      "bounds": [
+        -0.01237550936639309,
+        1.3630529642105103,
+        -0.023451058194041252,
+        0.013531049713492393,
+        1.4734792709350586,
+        0.009297286160290241
+      ],
+      "colour": [
+        0.78,
+        0.7,
+        0.58
+      ],
+      "sourceElements": [
+        "FJ2541"
+      ],
+      "explanation": "The trachea carries air towards the lungs. This isolated view explains location; it does not establish whether a real airway is open.",
+      "sourceTriangles": 4996,
+      "inputTriangles": 4996,
+      "triangles": 748,
+      "exportCleanup": {
+        "droppedDegenerateTriangles": 0,
+        "faceNormalFallbackVertices": 0
+      }
+    },
+    {
+      "id": "FMA7309",
+      "name": "right lung",
+      "layer": "organs",
+      "file": "anatomy/FMA7309.meshpack",
+      "bytes": 67691,
+      "sha256": "f89c4e59926489788429925cf4caba0bbe2cb89a387e8747245083c63136688f",
+      "vertices": 12630,
+      "bounds": [
+        -0.12719784677028656,
+        1.1969561576843262,
+        -0.08418293297290802,
+        -0.005116656422615051,
+        1.4378938674926758,
+        0.09589672088623047
+      ],
+      "colour": [
+        0.68,
+        0.4,
+        0.43
+      ],
+      "sourceElements": [
+        "FJ6604",
+        "FJ6605",
+        "FJ6606",
+        "FJ6607",
+        "FJ6608",
+        "FJ6609",
+        "FJ6610",
+        "FJ6611",
+        "FJ6612"
+      ],
+      "explanation": "The right lung is on the person\u2019s right. This surface combines nine source parenchymal segments. It is static adult anatomy, not a breathing simulation. Abnormal gasping is not normal breathing.",
+      "sourceParts": [
+        {
+          "fj_id": "FJ6604",
+          "fma_id": "FMA27369",
+          "name": "Parenchyma of right apical bronchopulmonary segment",
+          "fileSha256": "1c7ce21579d68bfe40b634afe28fc1879119563b49f810a3f8be3487743c24ac"
+        },
+        {
+          "fj_id": "FJ6605",
+          "fma_id": "FMA27393",
+          "name": "Parenchyma of right posterior basal bronchopulmonary segment",
+          "fileSha256": "34e470e53185584a1426de78f5acc10010d15613ef4bd1b6f621f0c3b847b14d"
+        },
+        {
+          "fj_id": "FJ6606",
+          "fma_id": "FMA27371",
+          "name": "Parenchyma of right posterior bronchopulmonary segment",
+          "fileSha256": "93aed0947f6b07097b8ffa5919add13a43ac2ee28057fd71d1c33608dfe947db"
+        },
+        {
+          "fj_id": "FJ6607",
+          "fma_id": "FMA27373",
+          "name": "Parenchyma of right anterior bronchopulmonary segment",
+          "fileSha256": "6974afbef91d64cd79f72ce4610817d410070d1c3dbefbf45e4534618de0eb9e"
+        },
+        {
+          "fj_id": "FJ6608",
+          "fma_id": "FMA27452",
+          "name": "Parenchyma of lateral bronchopulmonary segment",
+          "fileSha256": "27532577854c67efca554e397a377f78028788f26b0f9a918ef2df5bc5279622"
+        },
+        {
+          "fj_id": "FJ6609",
+          "fma_id": "FMA27448",
+          "name": "Parenchyma of medial bronchopulmonary segment",
+          "fileSha256": "03b2794808796e8370c11263c7a9a599779b7bac72e58387414c3c60d7a3a7c3"
+        },
+        {
+          "fj_id": "FJ6610",
+          "fma_id": "FMA27385",
+          "name": "Parenchyma of right superior bronchopulmonary segment",
+          "fileSha256": "15d635ce8fd7c4ead1c9fe7d4c38ec33ce3187857c52fd83eea4b1d735a4b3c8"
+        },
+        {
+          "fj_id": "FJ6611",
+          "fma_id": "FMA27391",
+          "name": "Parenchyma of right anterior basal bronchopulmonary segment",
+          "fileSha256": "f07524ff4d25a2473e6137f1153255be9e1f0b5793467a65aa08f8325a6c4547"
+        },
+        {
+          "fj_id": "FJ6612",
+          "fma_id": "FMA27389",
+          "name": "Parenchyma of right lateral basal bronchopulmonary segment",
+          "fileSha256": "c92b62bcd36076479b00ae78cb094289cd68f54202f48389450f36db12500256"
+        }
+      ],
+      "sourceVersion": "4.3",
+      "source": "https://lifesciencedb.jp/bp3d/",
+      "licence": "CC-BY-SA-2.1-JP",
+      "licenceUrl": "https://creativecommons.org/licenses/by-sa/2.1/jp/",
+      "attribution": "BodyParts3D / Anatomography, \u00a9 Database Center for Life Science (DBCLS). CC BY-SA 2.1 Japan.",
+      "changes": "Nine original parenchymal segments grouped per lung, transformed from millimetres to metres in the unchanged shared body coordinate frame. Mobile decimation follows. No manual anatomical fitting.",
+      "sourceTriangles": 71286,
+      "inputTriangles": 71286,
+      "triangles": 4210,
+      "exportCleanup": {
+        "droppedDegenerateTriangles": 0,
+        "faceNormalFallbackVertices": 0
+      }
+    },
+    {
+      "id": "FMA7310",
+      "name": "left lung",
+      "layer": "organs",
+      "file": "anatomy/FMA7310.meshpack",
+      "bytes": 63747,
+      "sha256": "4c68084e3f66e0c5c862e11d8d6e6ee811efecfbe8caa607b9aa3fc4c962e8a0",
+      "vertices": 11901,
+      "bounds": [
+        0.0058926912024617195,
+        1.1945643424987793,
+        -0.0851743221282959,
+        0.12818050384521484,
+        1.4361884593963623,
+        0.09490548074245453
+      ],
+      "colour": [
+        0.68,
+        0.4,
+        0.43
+      ],
+      "sourceElements": [
+        "FJ6595",
+        "FJ6596",
+        "FJ6597",
+        "FJ6598",
+        "FJ6599",
+        "FJ6600",
+        "FJ6601",
+        "FJ6602",
+        "FJ6603"
+      ],
+      "explanation": "The left lung is on the person\u2019s left. This surface combines nine source parenchymal segments. It is static adult anatomy, not a breathing simulation. Abnormal gasping is not normal breathing.",
+      "sourceParts": [
+        {
+          "fj_id": "FJ6595",
+          "fma_id": "FMA27368",
+          "name": "Parenchyma of apicoposterior bronchopulmonary segment",
+          "fileSha256": "7ea4893b69f3939ab0759329314e82e08b8843cdd5284f495e72c152ba99c501"
+        },
+        {
+          "fj_id": "FJ6596",
+          "fma_id": "FMA27394",
+          "name": "Parenchyma of left posterior basal bronchopulmonary segment",
+          "fileSha256": "9118fad4b7ec3961f631e9c823bb2e26c3d0d4f22b7e4b84ca7a527ce3097bb2"
+        },
+        {
+          "fj_id": "FJ6597",
+          "fma_id": "FMA27368",
+          "name": "Parenchyma of apicoposterior bronchopulmonary segment",
+          "fileSha256": "cdb94282a4b2eff1f5382f3807413e277323b242878f77e81de8defba87aa6e0"
+        },
+        {
+          "fj_id": "FJ6598",
+          "fma_id": "FMA27374",
+          "name": "Parenchyma of left anterior bronchopulmonary segment",
+          "fileSha256": "bd5397777af624b53aec390f917b1943e993ca05523ccd052c3e2c0406a75523"
+        },
+        {
+          "fj_id": "FJ6599",
+          "fma_id": "FMA27375",
+          "name": "Parenchyma of superior lingular bronchopulmonary segment",
+          "fileSha256": "29ed36210a5c1c838f75392b1613a1be7cabf6a652f67cdc0885237ca8375a3a"
+        },
+        {
+          "fj_id": "FJ6600",
+          "fma_id": "FMA27376",
+          "name": "Parenchyma of inferior lingular bronchopulmonary segment",
+          "fileSha256": "75e86567fbaa11cc44a2b8762805634483ed65b2cce989f86cab4d6c5aa91daf"
+        },
+        {
+          "fj_id": "FJ6601",
+          "fma_id": "FMA27386",
+          "name": "Parenchyma of left superior bronchopulmonary segment",
+          "fileSha256": "c8b7c7829ce551fe05164dd3ec36219683ae835c4d2d5d208d80d5d7056cce4c"
+        },
+        {
+          "fj_id": "FJ6602",
+          "fma_id": "FMA27392",
+          "name": "Parenchyma of left anterior basal bronchopulmonary segment",
+          "fileSha256": "1e566045c052a67b15451bc8b19418c2002e0edd5a13d9888e508ce3e76306ef"
+        },
+        {
+          "fj_id": "FJ6603",
+          "fma_id": "FMA27390",
+          "name": "Parenchyma of left lateral basal bronchopulmonary segment",
+          "fileSha256": "31cb5ac0e564a3fc261454cc6bbf92f9209af0a4c8dc6a8ffd5f66aee7cdadf6"
+        }
+      ],
+      "sourceVersion": "4.3",
+      "source": "https://lifesciencedb.jp/bp3d/",
+      "licence": "CC-BY-SA-2.1-JP",
+      "licenceUrl": "https://creativecommons.org/licenses/by-sa/2.1/jp/",
+      "attribution": "BodyParts3D / Anatomography, \u00a9 Database Center for Life Science (DBCLS). CC BY-SA 2.1 Japan.",
+      "changes": "Nine original parenchymal segments grouped per lung, transformed from millimetres to metres in the unchanged shared body coordinate frame. Mobile decimation follows. No manual anatomical fitting.",
+      "sourceTriangles": 65087,
+      "inputTriangles": 65087,
+      "triangles": 3967,
+      "exportCleanup": {
+        "droppedDegenerateTriangles": 1,
+        "faceNormalFallbackVertices": 0
+      }
+    },
+    {
+      "id": "FMA7088",
+      "name": "heart",
+      "layer": "organs",
+      "file": "anatomy/FMA7088.meshpack",
+      "bytes": 86747,
+      "sha256": "8389d933587801270bbd511e4890b7cf7b4df9e876ecb99bd97cabd841b16f43",
+      "vertices": 16008,
+      "bounds": [
+        -0.03557699918746948,
+        1.2532398700714111,
+        -0.030696364119648933,
+        0.08004829287528992,
+        1.3576982021331787,
+        0.07574430108070374
+      ],
+      "colour": [
+        0.6,
+        0.19,
+        0.22
+      ],
+      "sourceElements": [
+        "FJ2417",
+        "FJ2418",
+        "FJ2419",
+        "FJ2420",
+        "FJ2421",
+        "FJ2422",
+        "FJ2423",
+        "FJ2424",
+        "FJ2425",
+        "FJ2426",
+        "FJ2427",
+        "FJ2429",
+        "FJ2430",
+        "FJ2431",
+        "FJ2432",
+        "FJ2433",
+        "FJ2434",
+        "FJ2435",
+        "FJ2436",
+        "FJ2437",
+        "FJ2438",
+        "FJ2439",
+        "FJ2631",
+        "FJ2632",
+        "FJ2633",
+        "FJ2634",
+        "FJ2635",
+        "FJ2636",
+        "FJ2637",
+        "FJ2638",
+        "FJ2639",
+        "FJ2640",
+        "FJ2641",
+        "FJ2642",
+        "FJ2643",
+        "FJ2644",
+        "FJ2645",
+        "FJ2646",
+        "FJ2647",
+        "FJ2648",
+        "FJ2649",
+        "FJ2650",
+        "FJ2651",
+        "FJ2652",
+        "FJ2653",
+        "FJ2654",
+        "FJ2655",
+        "FJ2656",
+        "FJ2667",
+        "FJ2668",
+        "FJ2670",
+        "FJ2671",
+        "FJ2672",
+        "FJ2673",
+        "FJ2674",
+        "FJ2675",
+        "FJ2676",
+        "FJ2677",
+        "FJ2692",
+        "FJ2693",
+        "FJ2694",
+        "FJ2695",
+        "FJ2696",
+        "FJ2697",
+        "FJ2698",
+        "FJ2699",
+        "FJ2700",
+        "FJ2714",
+        "FJ2715",
+        "FJ2716",
+        "FJ2717",
+        "FJ2718",
+        "FJ2719",
+        "FJ2720",
+        "FJ2721",
+        "FJ2722",
+        "FJ2723",
+        "FJ2724",
+        "FJ2727",
+        "FJ2728",
+        "FJ2729",
+        "FJ2731",
+        "FJ2737"
+      ],
+      "explanation": "The heart lies between the lungs, mostly behind the sternum. This static surface does not simulate a heart rhythm.",
+      "sourceTriangles": 102801,
+      "inputTriangles": 102801,
+      "triangles": 5336,
+      "exportCleanup": {
+        "droppedDegenerateTriangles": 2,
+        "faceNormalFallbackVertices": 0
+      }
+    },
+    {
+      "id": "FMA3734",
+      "name": "aorta",
+      "layer": "organs",
+      "file": "anatomy/FMA3734.meshpack",
+      "bytes": 19224,
+      "sha256": "c866298e3390484022a2dd0ad638a96b6406b7388f4db606e360fc1fcc8407fc",
+      "vertices": 3564,
+      "bounds": [
+        -0.006226985715329647,
+        1.0248786211013794,
+        -0.05556560680270195,
+        0.03541724011301994,
+        1.3953450918197632,
+        0.03664686158299446
+      ],
+      "colour": [
+        0.6,
+        0.16,
+        0.17
+      ],
+      "sourceElements": [
+        "FJ1931",
+        "FJ1932",
+        "FJ3411",
+        "FJ3413",
+        "FJ3427"
+      ],
+      "explanation": "Aorta \u2014 source-labelled adult anatomy. Left and right refer to the person, not the viewer. Detailed clinical interpretation is pending qualified review.",
+      "sourceTriangles": 10188,
+      "inputTriangles": 10188,
+      "triangles": 1188,
+      "exportCleanup": {
+        "droppedDegenerateTriangles": 0,
+        "faceNormalFallbackVertices": 0
+      }
+    },
+    {
+      "id": "FMA50801",
+      "name": "brain",
+      "layer": "organs",
+      "file": "anatomy/FMA50801.meshpack",
+      "bytes": 184847,
+      "sha256": "3b686354c61e1c90994ddeb148a04d73eedafb68bfd8233ad86b599e10445244",
+      "vertices": 33627,
+      "bounds": [
+        -0.0696575790643692,
+        1.5426462888717651,
+        -0.11134658753871918,
+        0.06969892978668213,
+        1.7093340158462524,
+        0.06980885565280914
+      ],
+      "colour": [
+        0.78,
+        0.63,
+        0.59
+      ],
+      "sourceElements": [
+        "FJ1730",
+        "FJ1731",
+        "FJ1732",
+        "FJ1733",
+        "FJ1738",
+        "FJ1739",
+        "FJ1740",
+        "FJ1743",
+        "FJ1744",
+        "FJ1745",
+        "FJ1746",
+        "FJ1747",
+        "FJ1748",
+        "FJ1749",
+        "FJ1750",
+        "FJ1751",
+        "FJ1758",
+        "FJ1759",
+        "FJ1760",
+        "FJ1762",
+        "FJ1767",
+        "FJ1769",
+        "FJ1770",
+        "FJ1775",
+        "FJ1779",
+        "FJ1780",
+        "FJ1781",
+        "FJ1783",
+        "FJ1784",
+        "FJ1785",
+        "FJ1786",
+        "FJ1787",
+        "FJ1788",
+        "FJ1789",
+        "FJ1790",
+        "FJ1791",
+        "FJ1792",
+        "FJ1795",
+        "FJ1797",
+        "FJ1798",
+        "FJ1800",
+        "FJ1801",
+        "FJ1806",
+        "FJ1807",
+        "FJ1808",
+        "FJ1810",
+        "FJ1814",
+        "FJ1817",
+        "FJ1822",
+        "FJ1826",
+        "FJ1828",
+        "FJ1830",
+        "FJ1831",
+        "FJ1833",
+        "FJ1834",
+        "FJ1835",
+        "FJ1836",
+        "FJ1841",
+        "FJ1842"
+      ],
+      "explanation": "The brain depends on circulation and oxygen. This model cannot diagnose injury or responsiveness.",
+      "sourceTriangles": 322255,
+      "inputTriangles": 322255,
+      "triangles": 11209,
+      "exportCleanup": {
+        "droppedDegenerateTriangles": 8,
+        "faceNormalFallbackVertices": 0
+      }
+    },
+    {
+      "id": "FMA7647",
+      "name": "spinal cord",
+      "layer": "organs",
+      "file": "anatomy/FMA7647.meshpack",
+      "bytes": 3516,
+      "sha256": "d0c640e3f15b5702a12a5c25c84fa7f034f6dbd1d165dc04e01f30a61f3d15a5",
+      "vertices": 642,
+      "bounds": [
+        -0.0011223158799111843,
+        1.5367189645767212,
+        -0.04891780763864517,
+        0.0011142108123749495,
+        1.572309136390686,
+        -0.03575975447893143
+      ],
+      "colour": [
+        0.8,
+        0.72,
+        0.59
+      ],
+      "sourceElements": [
+        "FJ1737"
+      ],
+      "explanation": "Spinal cord \u2014 source-labelled adult anatomy. Left and right refer to the person, not the viewer. Detailed clinical interpretation is pending qualified review.",
+      "sourceTriangles": 728,
+      "inputTriangles": 728,
+      "triangles": 214,
+      "exportCleanup": {
+        "droppedDegenerateTriangles": 0,
+        "faceNormalFallbackVertices": 0
+      }
+    },
+    {
+      "id": "FMA13295",
+      "name": "diaphragm",
+      "layer": "organs",
+      "file": "anatomy/FMA13295.meshpack",
+      "bytes": 67335,
+      "sha256": "8650076d886925988e0830b4ec5952d9e0dd9212ef263df8a93c6b66a3459004",
+      "vertices": 12312,
+      "bounds": [
+        -0.12147064507007599,
+        1.0638972520828247,
+        -0.07478032261133194,
+        0.12157582491636276,
+        1.2708015441894531,
+        0.10465522110462189
+      ],
+      "colour": [
+        0.61,
+        0.24,
+        0.25
+      ],
+      "sourceElements": [
+        "FJ3131"
+      ],
+      "explanation": "The diaphragm separates chest and abdomen and participates in breathing. This pack shows its shape without a physiological simulation.",
+      "sourceTriangles": 68517,
+      "inputTriangles": 68517,
+      "triangles": 4104,
+      "exportCleanup": {
+        "droppedDegenerateTriangles": 0,
+        "faceNormalFallbackVertices": 12
+      }
+    },
+    {
+      "id": "FMA7197",
+      "name": "liver",
+      "layer": "organs",
+      "file": "anatomy/FMA7197.meshpack",
+      "bytes": 131612,
+      "sha256": "ba61e2012570423b1cbc8d0c05e7fa13898ce86695e1a96653159381a74d2c11",
+      "vertices": 23964,
+      "bounds": [
+        -0.11434094607830048,
+        1.105904221534729,
+        -0.05736557021737099,
+        0.09505578130483627,
+        1.2612431049346924,
+        0.10172175616025925
+      ],
+      "colour": [
+        0.37,
+        0.16,
+        0.14
+      ],
+      "sourceElements": [
+        "FJ1883",
+        "FJ1893",
+        "FJ1913",
+        "FJ1914",
+        "FJ1916",
+        "FJ2386",
+        "FJ2404",
+        "FJ2405",
+        "FJ2409",
+        "FJ2415",
+        "FJ2416",
+        "FJ2816",
+        "FJ2818",
+        "FJ2819",
+        "FJ2820",
+        "FJ2821",
+        "FJ2822",
+        "FJ2823",
+        "FJ2824",
+        "FJ3071",
+        "FJ3072",
+        "FJ3073",
+        "FJ3074",
+        "FJ3075",
+        "FJ3076",
+        "FJ3077",
+        "FJ3081",
+        "FJ3083",
+        "FJ3086",
+        "FJ3088",
+        "FJ3089",
+        "FJ3090",
+        "FJ3091",
+        "FJ3092",
+        "FJ3093",
+        "FJ3095",
+        "FJ3096",
+        "FJ3102",
+        "FJ3103",
+        "FJ3104",
+        "FJ3105",
+        "FJ3106",
+        "FJ3107",
+        "FJ3108",
+        "FJ3109",
+        "FJ3110",
+        "FJ3111",
+        "FJ3112",
+        "FJ3113",
+        "FJ3114",
+        "FJ3115",
+        "FJ3116",
+        "FJ3117",
+        "FJ3122",
+        "FJ3123",
+        "FJ3124",
+        "FJ3125",
+        "FJ3126",
+        "FJ3127",
+        "FJ3128"
+      ],
+      "explanation": "Liver \u2014 source-labelled adult anatomy. Left and right refer to the person, not the viewer. Detailed clinical interpretation is pending qualified review.",
+      "sourceTriangles": 191180,
+      "inputTriangles": 191180,
+      "triangles": 7988,
+      "exportCleanup": {
+        "droppedDegenerateTriangles": 4,
+        "faceNormalFallbackVertices": 0
+      }
+    },
+    {
+      "id": "FMA7204",
+      "name": "right kidney",
+      "layer": "organs",
+      "file": "anatomy/FMA7204.meshpack",
+      "bytes": 7386,
+      "sha256": "16822a305634c9c3fe9465ba00ed52d555058fac83255f8e745646a735d13408",
+      "vertices": 1356,
+      "bounds": [
+        -0.0870426595211029,
+        1.0448870658874512,
+        -0.03607530891895294,
+        -0.030003583058714867,
+        1.1495137214660645,
+        0.011194360442459583
+      ],
+      "colour": [
+        0.49,
+        0.2,
+        0.17
+      ],
+      "sourceElements": [
+        "FJ3147"
+      ],
+      "explanation": "Right kidney \u2014 source-labelled adult anatomy. Left and right refer to the person, not the viewer. Detailed clinical interpretation is pending qualified review.",
+      "sourceTriangles": 2310,
+      "inputTriangles": 2310,
+      "triangles": 452,
+      "exportCleanup": {
+        "droppedDegenerateTriangles": 0,
+        "faceNormalFallbackVertices": 0
+      }
+    },
+    {
+      "id": "FMA7205",
+      "name": "left kidney",
+      "layer": "organs",
+      "file": "anatomy/FMA7205.meshpack",
+      "bytes": 8737,
+      "sha256": "7a514301c4ec6310a32940514727530e226157c0760bcc950d17af430c2aed69",
+      "vertices": 1602,
+      "bounds": [
+        0.033495109528303146,
+        1.0625795125961304,
+        -0.04101642221212387,
+        0.0909394696354866,
+        1.1686270236968994,
+        -0.0005653105909004807
+      ],
+      "colour": [
+        0.49,
+        0.2,
+        0.17
+      ],
+      "sourceElements": [
+        "FJ3145"
+      ],
+      "explanation": "Left kidney \u2014 source-labelled adult anatomy. Left and right refer to the person, not the viewer. Detailed clinical interpretation is pending qualified review.",
+      "sourceTriangles": 2982,
+      "inputTriangles": 2982,
+      "triangles": 534,
+      "exportCleanup": {
+        "droppedDegenerateTriangles": 0,
+        "faceNormalFallbackVertices": 0
+      }
+    },
+    {
+      "id": "FMA13375",
+      "name": "right pectoralis minor",
+      "layer": "muscles",
+      "file": "anatomy/FMA13375.meshpack",
+      "bytes": 16999,
+      "sha256": "498f8f4c7221c95fd9e781c4b245eb08b216b54fa3902df7e6a267a0c00cbff7",
+      "vertices": 3072,
+      "bounds": [
+        -0.12950293719768524,
+        1.2597180604934692,
+        -0.020614828914403915,
+        -0.06923119723796844,
+        1.4047918319702148,
+        0.07223634421825409
+      ],
+      "colour": [
+        0.5247352941176471,
+        0.18236764705882352,
+        0.1738941176470588
+      ],
+      "sourceElements": [
+        "FJ1456"
+      ],
+      "explanation": "Right pectoralis minor \u2014 source-labelled adult anatomy. Left and right refer to the person, not the viewer. Detailed clinical interpretation is pending qualified review.",
+      "sourceTriangles": 9464,
+      "inputTriangles": 9464,
+      "triangles": 1024,
+      "exportCleanup": {
+        "droppedDegenerateTriangles": 0,
+        "faceNormalFallbackVertices": 18
+      }
+    },
+    {
+      "id": "FMA13376",
+      "name": "left pectoralis minor",
+      "layer": "muscles",
+      "file": "anatomy/FMA13376.meshpack",
+      "bytes": 16924,
+      "sha256": "9ed6c4351e048e97defa1721884183a1158afdc10d19f127b9373702a6652da5",
+      "vertices": 3072,
+      "bounds": [
+        0.07052517682313919,
+        1.2597185373306274,
+        -0.02061161957681179,
+        0.13079717755317688,
+        1.404793381690979,
+        0.0722363293170929
+      ],
+      "colour": [
+        0.528264705882353,
+        0.18413235294117647,
+        0.17530588235294117
+      ],
+      "sourceElements": [
+        "FJ1456M"
+      ],
+      "explanation": "Left pectoralis minor \u2014 source-labelled adult anatomy. Left and right refer to the person, not the viewer. Detailed clinical interpretation is pending qualified review.",
+      "sourceTriangles": 9464,
+      "inputTriangles": 9464,
+      "triangles": 1024,
+      "exportCleanup": {
+        "droppedDegenerateTriangles": 0,
+        "faceNormalFallbackVertices": 30
+      }
+    },
+    {
+      "id": "FMA22328",
+      "name": "right gluteus maximus",
+      "layer": "muscles",
+      "file": "anatomy/FMA22328.meshpack",
+      "bytes": 6628,
+      "sha256": "91618cfe2f8cd87e3bd66345b5613d9f5a2279f23df0cc79f69438134dbe51e0",
+      "vertices": 1233,
+      "bounds": [
+        -0.14474430680274963,
+        0.7455192804336548,
+        -0.12072178721427917,
+        0.002333915326744318,
+        1.010443925857544,
+        -0.023110441863536835
+      ],
+      "colour": [
+        0.5332058823529412,
+        0.18660294117647058,
+        0.17728235294117647
+      ],
+      "sourceElements": [
+        "FJ1418"
+      ],
+      "explanation": "Right gluteus maximus \u2014 source-labelled adult anatomy. Left and right refer to the person, not the viewer. Detailed clinical interpretation is pending qualified review.",
+      "sourceTriangles": 2372,
+      "inputTriangles": 2372,
+      "triangles": 411,
+      "exportCleanup": {
+        "droppedDegenerateTriangles": 2,
+        "faceNormalFallbackVertices": 0
+      }
+    },
+    {
+      "id": "FMA22329",
+      "name": "left gluteus maximus",
+      "layer": "muscles",
+      "file": "anatomy/FMA22329.meshpack",
+      "bytes": 6653,
+      "sha256": "e53a2eee237692861b24282ce7aab530f05ec7b6dce120522fce72fe92f74081",
+      "vertices": 1233,
+      "bounds": [
+        -0.001039994298480451,
+        0.7455192804336548,
+        -0.12072179466485977,
+        0.14603804051876068,
+        1.010443925857544,
+        -0.023110391572117805
+      ],
+      "colour": [
+        0.5356764705882353,
+        0.18783823529411764,
+        0.17827058823529413
+      ],
+      "sourceElements": [
+        "FJ1418M"
+      ],
+      "explanation": "Left gluteus maximus \u2014 source-labelled adult anatomy. Left and right refer to the person, not the viewer. Detailed clinical interpretation is pending qualified review.",
+      "sourceTriangles": 2372,
+      "inputTriangles": 2372,
+      "triangles": 411,
+      "exportCleanup": {
+        "droppedDegenerateTriangles": 2,
+        "faceNormalFallbackVertices": 0
+      }
+    },
+    {
+      "id": "FMA22544",
+      "name": "right tibialis anterior",
+      "layer": "muscles",
+      "file": "anatomy/FMA22544.meshpack",
+      "bytes": 7155,
+      "sha256": "82a0a458b2e9f927816f629176b92efc87590f60bcbdf9efbc2e0df58e9ac83b",
+      "vertices": 1239,
+      "bounds": [
+        -0.11620769649744034,
+        0.04084281250834465,
+        -0.027634579688310623,
+        -0.06669644266366959,
+        0.43309882283210754,
+        0.04882429912686348
+      ],
+      "colour": [
+        0.5259705882352942,
+        0.18298529411764705,
+        0.17438823529411765
+      ],
+      "sourceElements": [
+        "FJ1439"
+      ],
+      "explanation": "Right tibialis anterior \u2014 source-labelled adult anatomy. Left and right refer to the person, not the viewer. Detailed clinical interpretation is pending qualified review.",
+      "sourceTriangles": 2503,
+      "inputTriangles": 2503,
+      "triangles": 413,
+      "exportCleanup": {
+        "droppedDegenerateTriangles": 4,
+        "faceNormalFallbackVertices": 0
+      }
+    },
+    {
+      "id": "FMA22545",
+      "name": "left tibialis anterior",
+      "layer": "muscles",
+      "file": "anatomy/FMA22545.meshpack",
+      "bytes": 7159,
+      "sha256": "c05c4ede9ac55e034e53e5c83605e9f552aecd0520a4c4fdb65083711e619cb3",
+      "vertices": 1239,
+      "bounds": [
+        0.06799045950174332,
+        0.04084281623363495,
+        -0.02763454057276249,
+        0.11750123649835587,
+        0.43309882283210754,
+        0.04882429912686348
+      ],
+      "colour": [
+        0.5367352941176471,
+        0.18836764705882353,
+        0.1786941176470588
+      ],
+      "sourceElements": [
+        "FJ1439M"
+      ],
+      "explanation": "Left tibialis anterior \u2014 source-labelled adult anatomy. Left and right refer to the person, not the viewer. Detailed clinical interpretation is pending qualified review.",
+      "sourceTriangles": 2503,
+      "inputTriangles": 2503,
+      "triangles": 413,
+      "exportCleanup": {
+        "droppedDegenerateTriangles": 4,
+        "faceNormalFallbackVertices": 0
+      }
+    },
+    {
+      "id": "FMA22558",
+      "name": "right soleus",
+      "layer": "muscles",
+      "file": "anatomy/FMA22558.meshpack",
+      "bytes": 10081,
+      "sha256": "acd3f1a4192042a96f439e611fd563d024fc80e4c1714760cd0d2eae294ff8ba",
+      "vertices": 1872,
+      "bounds": [
+        -0.11489932984113693,
+        0.11030368506908417,
+        -0.06866984814405441,
+        -0.03516879305243492,
+        0.4365105628967285,
+        -0.009751147590577602
+      ],
+      "colour": [
+        0.5370882352941176,
+        0.18854411764705883,
+        0.17883529411764706
+      ],
+      "sourceElements": [
+        "FJ1437"
+      ],
+      "explanation": "Right soleus \u2014 source-labelled adult anatomy. Left and right refer to the person, not the viewer. Detailed clinical interpretation is pending qualified review.",
+      "sourceTriangles": 4417,
+      "inputTriangles": 4417,
+      "triangles": 624,
+      "exportCleanup": {
+        "droppedDegenerateTriangles": 0,
+        "faceNormalFallbackVertices": 0
+      }
+    },
+    {
+      "id": "FMA22559",
+      "name": "left soleus",
+      "layer": "muscles",
+      "file": "anatomy/FMA22559.meshpack",
+      "bytes": 10134,
+      "sha256": "9c79ea8c047d702e89be8f15d9d21829c44c20ed0caed8c42484eeaabcde7be8",
+      "vertices": 1872,
+      "bounds": [
+        0.03646281361579895,
+        0.11030370742082596,
+        -0.0686698704957962,
+        0.116193488240242,
+        0.4365103244781494,
+        -0.009751103818416595
+      ],
+      "colour": [
+        0.5427352941176471,
+        0.19136764705882353,
+        0.18109411764705882
+      ],
+      "sourceElements": [
+        "FJ1437M"
+      ],
+      "explanation": "Left soleus \u2014 source-labelled adult anatomy. Left and right refer to the person, not the viewer. Detailed clinical interpretation is pending qualified review.",
+      "sourceTriangles": 4417,
+      "inputTriangles": 4417,
+      "triangles": 624,
+      "exportCleanup": {
+        "droppedDegenerateTriangles": 0,
+        "faceNormalFallbackVertices": 0
+      }
+    },
+    {
+      "id": "FMA33581",
+      "name": "ascending part of right trapezius",
+      "layer": "muscles",
+      "file": "anatomy/FMA33581.meshpack",
+      "bytes": 17706,
+      "sha256": "8e9119270260ebf7cc40abce67025dbb863950e79f913569339239d755918ce1",
+      "vertices": 3246,
+      "bounds": [
+        -0.1478300243616104,
+        1.1321837902069092,
+        -0.12539860606193542,
+        0.003803656669333577,
+        1.4211984872817993,
+        -0.053810663521289825
+      ],
+      "colour": [
+        0.5446764705882353,
+        0.19233823529411764,
+        0.18187058823529412
+      ],
+      "sourceElements": [
+        "FJ1520"
+      ],
+      "explanation": "Ascending part of right trapezius \u2014 source-labelled adult anatomy. Left and right refer to the person, not the viewer. Detailed clinical interpretation is pending qualified review.",
+      "sourceTriangles": 10522,
+      "inputTriangles": 10522,
+      "triangles": 1082,
+      "exportCleanup": {
+        "droppedDegenerateTriangles": 6,
+        "faceNormalFallbackVertices": 0
+      }
+    },
+    {
+      "id": "FMA33583",
+      "name": "ascending part of left trapezius",
+      "layer": "muscles",
+      "file": "anatomy/FMA33583.meshpack",
+      "bytes": 17818,
+      "sha256": "cfd48fd1232a2ff82e0064ae335818fd8a658f712e25fab1058670c29b182176",
+      "vertices": 3246,
+      "bounds": [
+        -0.002510504564270377,
+        1.1321834325790405,
+        -0.12543335556983948,
+        0.14912401139736176,
+        1.4211972951889038,
+        -0.05381052941083908
+      ],
+      "colour": [
+        0.5259705882352942,
+        0.18298529411764705,
+        0.17438823529411765
+      ],
+      "sourceElements": [
+        "FJ1520M"
+      ],
+      "explanation": "Ascending part of left trapezius \u2014 source-labelled adult anatomy. Left and right refer to the person, not the viewer. Detailed clinical interpretation is pending qualified review.",
+      "sourceTriangles": 10522,
+      "inputTriangles": 10522,
+      "triangles": 1082,
+      "exportCleanup": {
+        "droppedDegenerateTriangles": 6,
+        "faceNormalFallbackVertices": 0
+      }
+    },
+    {
+      "id": "FMA33584",
+      "name": "transverse part of right trapezius",
+      "layer": "muscles",
+      "file": "anatomy/FMA33584.meshpack",
+      "bytes": 10282,
+      "sha256": "a881b8742c78a1c37e14ae6d2efe6f3b11dc0b577e3b20ef263786dad6c773bc",
+      "vertices": 1884,
+      "bounds": [
+        -0.16268664598464966,
+        1.3818615674972534,
+        -0.11112617701292038,
+        0.004514089319854975,
+        1.460119605064392,
+        -0.03139863908290863
+      ],
+      "colour": [
+        0.540264705882353,
+        0.19013235294117647,
+        0.18010588235294117
+      ],
+      "sourceElements": [
+        "FJ1554"
+      ],
+      "explanation": "Transverse part of right trapezius \u2014 source-labelled adult anatomy. Left and right refer to the person, not the viewer. Detailed clinical interpretation is pending qualified review.",
+      "sourceTriangles": 4447,
+      "inputTriangles": 4447,
+      "triangles": 628,
+      "exportCleanup": {
+        "droppedDegenerateTriangles": 0,
+        "faceNormalFallbackVertices": 6
+      }
+    },
+    {
+      "id": "FMA33585",
+      "name": "transverse part of left trapezius",
+      "layer": "muscles",
+      "file": "anatomy/FMA33585.meshpack",
+      "bytes": 10311,
+      "sha256": "f47de888f76279bf0e74250ee778ce4398fc0982e6715b7a60947df5841f2834",
+      "vertices": 1884,
+      "bounds": [
+        -0.003220645245164633,
+        1.3818730115890503,
+        -0.11112618446350098,
+        0.16398084163665771,
+        1.4601155519485474,
+        -0.03139859810471535
+      ],
+      "colour": [
+        0.5429117647058824,
+        0.19145588235294117,
+        0.18116470588235292
+      ],
+      "sourceElements": [
+        "FJ1554M"
+      ],
+      "explanation": "Transverse part of left trapezius \u2014 source-labelled adult anatomy. Left and right refer to the person, not the viewer. Detailed clinical interpretation is pending qualified review.",
+      "sourceTriangles": 4447,
+      "inputTriangles": 4447,
+      "triangles": 628,
+      "exportCleanup": {
+        "droppedDegenerateTriangles": 0,
+        "faceNormalFallbackVertices": 12
+      }
+    },
+    {
+      "id": "FMA33586",
+      "name": "descending part of right trapezius",
+      "layer": "muscles",
+      "file": "anatomy/FMA33586.meshpack",
+      "bytes": 13863,
+      "sha256": "19058ab921017dee4afb55683445c1efb131f06b542677b7d7277cc87da4bbfe",
+      "vertices": 2550,
+      "bounds": [
+        -0.13054104149341583,
+        1.4187891483306885,
+        -0.09301822632551193,
+        0.004216466099023819,
+        1.5841412544250488,
+        4.614425415638834e-05
+      ],
+      "colour": [
+        0.5476764705882353,
+        0.19383823529411764,
+        0.1830705882352941
+      ],
+      "sourceElements": [
+        "FJ1521"
+      ],
+      "explanation": "Descending part of right trapezius \u2014 source-labelled adult anatomy. Left and right refer to the person, not the viewer. Detailed clinical interpretation is pending qualified review.",
+      "sourceTriangles": 7101,
+      "inputTriangles": 7101,
+      "triangles": 850,
+      "exportCleanup": {
+        "droppedDegenerateTriangles": 0,
+        "faceNormalFallbackVertices": 0
+      }
+    },
+    {
+      "id": "FMA33587",
+      "name": "descending part of left trapezius",
+      "layer": "muscles",
+      "file": "anatomy/FMA33587.meshpack",
+      "bytes": 13938,
+      "sha256": "cb91c07f7c445ffd39f263180a50ecd7e992004f3effb676e9ec6d998d7d33e1",
+      "vertices": 2550,
+      "bounds": [
+        -0.00292246718890965,
+        1.4187884330749512,
+        -0.0930766835808754,
+        0.13183169066905975,
+        1.5841399431228638,
+        4.618929233402014e-05
+      ],
+      "colour": [
+        0.5598529411764707,
+        0.1999264705882353,
+        0.18794117647058822
+      ],
+      "sourceElements": [
+        "FJ1521M"
+      ],
+      "explanation": "Descending part of left trapezius \u2014 source-labelled adult anatomy. Left and right refer to the person, not the viewer. Detailed clinical interpretation is pending qualified review.",
+      "sourceTriangles": 7101,
+      "inputTriangles": 7101,
+      "triangles": 850,
+      "exportCleanup": {
+        "droppedDegenerateTriangles": 0,
+        "faceNormalFallbackVertices": 0
+      }
+    },
+    {
+      "id": "FMA34680",
+      "name": "clavicular part of right deltoid",
+      "layer": "muscles",
+      "file": "anatomy/FMA34680.meshpack",
+      "bytes": 5215,
+      "sha256": "775900e89bb7470b8af664661d144906ed4ef85d45c432e04da4e33584ee2bbd",
+      "vertices": 1188,
+      "bounds": [
+        -0.20296764373779297,
+        1.287662148475647,
+        -0.024719664826989174,
+        -0.08794037252664566,
+        1.433389663696289,
+        0.02066774107515812
+      ],
+      "colour": [
+        0.518029411764706,
+        0.17901470588235294,
+        0.17121176470588234
+      ],
+      "sourceElements": [
+        "FJ1468"
+      ],
+      "explanation": "Clavicular part of right deltoid \u2014 source-labelled adult anatomy. Left and right refer to the person, not the viewer. Detailed clinical interpretation is pending qualified review.",
+      "sourceTriangles": 2206,
+      "inputTriangles": 2206,
+      "triangles": 396,
+      "exportCleanup": {
+        "droppedDegenerateTriangles": 0,
+        "faceNormalFallbackVertices": 0
+      }
+    },
+    {
+      "id": "FMA34681",
+      "name": "clavicular part of left deltoid",
+      "layer": "muscles",
+      "file": "anatomy/FMA34681.meshpack",
+      "bytes": 5215,
+      "sha256": "208278416983b311f10afaf8665c9f8b904acca0c6ee1d599bf6a7cec85b2c75",
+      "vertices": 1188,
+      "bounds": [
+        0.08923424780368805,
+        1.2876640558242798,
+        -0.0247196052223444,
+        0.20425976812839508,
+        1.433389663696289,
+        0.020667489618062973
+      ],
+      "colour": [
+        0.5344411764705883,
+        0.1872205882352941,
+        0.17777647058823529
+      ],
+      "sourceElements": [
+        "FJ1468M"
+      ],
+      "explanation": "Clavicular part of left deltoid \u2014 source-labelled adult anatomy. Left and right refer to the person, not the viewer. Detailed clinical interpretation is pending qualified review.",
+      "sourceTriangles": 2206,
+      "inputTriangles": 2206,
+      "triangles": 396,
+      "exportCleanup": {
+        "droppedDegenerateTriangles": 0,
+        "faceNormalFallbackVertices": 0
+      }
+    },
+    {
+      "id": "FMA34682",
+      "name": "acromial part of right deltoid",
+      "layer": "muscles",
+      "file": "anatomy/FMA34682.meshpack",
+      "bytes": 4541,
+      "sha256": "3cccb459110b297eadeafe085d3c1b99451c9d7435677d2d351593e4fe3cecfb",
+      "vertices": 846,
+      "bounds": [
+        -0.22624091804027557,
+        1.2830668687820435,
+        -0.06007210537791252,
+        -0.14612942934036255,
+        1.4272512197494507,
+        0.0028215425554662943
+      ],
+      "colour": [
+        0.5227941176470589,
+        0.1813970588235294,
+        0.17311764705882352
+      ],
+      "sourceElements": [
+        "FJ1467"
+      ],
+      "explanation": "Acromial part of right deltoid \u2014 source-labelled adult anatomy. Left and right refer to the person, not the viewer. Detailed clinical interpretation is pending qualified review.",
+      "sourceTriangles": 1297,
+      "inputTriangles": 1297,
+      "triangles": 282,
+      "exportCleanup": {
+        "droppedDegenerateTriangles": 0,
+        "faceNormalFallbackVertices": 0
+      }
+    },
+    {
+      "id": "FMA34683",
+      "name": "acromial part of left deltoid",
+      "layer": "muscles",
+      "file": "anatomy/FMA34683.meshpack",
+      "bytes": 4565,
+      "sha256": "df522db1a7e4fca0e96f3acae9fdf346e6133f7a7149290530ba2c562a02b6eb",
+      "vertices": 846,
+      "bounds": [
+        0.14741934835910797,
+        1.2830625772476196,
+        -0.060072239488363266,
+        0.2275344878435135,
+        1.4272412061691284,
+        0.0028208517469465733
+      ],
+      "colour": [
+        0.5183823529411765,
+        0.17919117647058824,
+        0.17135294117647057
+      ],
+      "sourceElements": [
+        "FJ1467M"
+      ],
+      "explanation": "Acromial part of left deltoid \u2014 source-labelled adult anatomy. Left and right refer to the person, not the viewer. Detailed clinical interpretation is pending qualified review.",
+      "sourceTriangles": 1297,
+      "inputTriangles": 1297,
+      "triangles": 282,
+      "exportCleanup": {
+        "droppedDegenerateTriangles": 0,
+        "faceNormalFallbackVertices": 0
+      }
+    },
+    {
+      "id": "FMA34684",
+      "name": "spinal part of right deltoid",
+      "layer": "muscles",
+      "file": "anatomy/FMA34684.meshpack",
+      "bytes": 5716,
+      "sha256": "b52c1ce9608ee59b1411ecf564e68a6924724e38b9bf506b9cb9fe68a8b6dc53",
+      "vertices": 1080,
+      "bounds": [
+        -0.21854734420776367,
+        1.2659920454025269,
+        -0.0980425775051117,
+        -0.08311598002910614,
+        1.4181878566741943,
+        -0.02155984938144684
+      ],
+      "colour": [
+        0.5356764705882353,
+        0.18783823529411764,
+        0.17827058823529413
+      ],
+      "sourceElements": [
+        "FJ1513"
+      ],
+      "explanation": "Spinal part of right deltoid \u2014 source-labelled adult anatomy. Left and right refer to the person, not the viewer. Detailed clinical interpretation is pending qualified review.",
+      "sourceTriangles": 1883,
+      "inputTriangles": 1883,
+      "triangles": 360,
+      "exportCleanup": {
+        "droppedDegenerateTriangles": 0,
+        "faceNormalFallbackVertices": 6
+      }
+    },
+    {
+      "id": "FMA34685",
+      "name": "spinal part of left deltoid",
+      "layer": "muscles",
+      "file": "anatomy/FMA34685.meshpack",
+      "bytes": 5729,
+      "sha256": "c2a3326c8853e2dedb2d5975d7051f464c7b9884a515930b4928ab0a19bfc0b4",
+      "vertices": 1080,
+      "bounds": [
+        0.08440990746021271,
+        1.266136646270752,
+        -0.0980425775051117,
+        0.21984151005744934,
+        1.4181921482086182,
+        -0.021559851244091988
+      ],
+      "colour": [
+        0.5617941176470589,
+        0.2008970588235294,
+        0.18871764705882352
+      ],
+      "sourceElements": [
+        "FJ1513M"
+      ],
+      "explanation": "Spinal part of left deltoid \u2014 source-labelled adult anatomy. Left and right refer to the person, not the viewer. Detailed clinical interpretation is pending qualified review.",
+      "sourceTriangles": 1883,
+      "inputTriangles": 1883,
+      "triangles": 360,
+      "exportCleanup": {
+        "droppedDegenerateTriangles": 0,
+        "faceNormalFallbackVertices": 6
+      }
+    },
+    {
+      "id": "FMA34690",
+      "name": "clavicular part of right pectoralis major",
+      "layer": "muscles",
+      "file": "anatomy/FMA34690.meshpack",
+      "bytes": 5839,
+      "sha256": "57613f980a30b5e97bdf9483833cb5269e674f152cdee315869f463c86488747",
+      "vertices": 1062,
+      "bounds": [
+        -0.1936970204114914,
+        1.3127938508987427,
+        -0.01844298653304577,
+        -0.025632143020629883,
+        1.4139052629470825,
+        0.04435686022043228
+      ],
+      "colour": [
+        0.5266764705882353,
+        0.18333823529411764,
+        0.1746705882352941
+      ],
+      "sourceElements": [
+        "FJ1447"
+      ],
+      "explanation": "Clavicular part of right pectoralis major \u2014 source-labelled adult anatomy. Left and right refer to the person, not the viewer. Detailed clinical interpretation is pending qualified review.",
+      "sourceTriangles": 1837,
+      "inputTriangles": 1837,
+      "triangles": 354,
+      "exportCleanup": {
+        "droppedDegenerateTriangles": 0,
+        "faceNormalFallbackVertices": 12
+      }
+    },
+    {
+      "id": "FMA34691",
+      "name": "clavicular part of left pectoralis major",
+      "layer": "muscles",
+      "file": "anatomy/FMA34691.meshpack",
+      "bytes": 5838,
+      "sha256": "76df75a88072a4c9f2baff8717206d1891f46077c944375839c4c0d39876d18a",
+      "vertices": 1062,
+      "bounds": [
+        0.02696320228278637,
+        1.3127914667129517,
+        -0.01844264753162861,
+        0.19499005377292633,
+        1.4139052629470825,
+        0.04435687139630318
+      ],
+      "colour": [
+        0.5206764705882353,
+        0.18033823529411766,
+        0.17227058823529412
+      ],
+      "sourceElements": [
+        "FJ1447M"
+      ],
+      "explanation": "Clavicular part of left pectoralis major \u2014 source-labelled adult anatomy. Left and right refer to the person, not the viewer. Detailed clinical interpretation is pending qualified review.",
+      "sourceTriangles": 1837,
+      "inputTriangles": 1837,
+      "triangles": 354,
+      "exportCleanup": {
+        "droppedDegenerateTriangles": 0,
+        "faceNormalFallbackVertices": 0
+      }
+    },
+    {
+      "id": "FMA37684",
+      "name": "short head of right biceps brachii",
+      "layer": "muscles",
+      "file": "anatomy/FMA37684.meshpack",
+      "bytes": 5502,
+      "sha256": "77e6a145a8e423c4551c8cce54c1f35628b2b8f531d0d36c47be81021f34d356",
+      "vertices": 1062,
+      "bounds": [
+        -0.21166619658470154,
+        1.1436558961868286,
+        -0.024846650660037994,
+        -0.1353812962770462,
+        1.4052107334136963,
+        0.008648793213069439
+      ],
+      "colour": [
+        0.5347941176470589,
+        0.18739705882352942,
+        0.1779176470588235
+      ],
+      "sourceElements": [
+        "FJ1512"
+      ],
+      "explanation": "Short head of right biceps brachii \u2014 source-labelled adult anatomy. Left and right refer to the person, not the viewer. Detailed clinical interpretation is pending qualified review.",
+      "sourceTriangles": 1849,
+      "inputTriangles": 1849,
+      "triangles": 354,
+      "exportCleanup": {
+        "droppedDegenerateTriangles": 0,
+        "faceNormalFallbackVertices": 0
+      }
+    },
+    {
+      "id": "FMA37685",
+      "name": "short head of left biceps brachii",
+      "layer": "muscles",
+      "file": "anatomy/FMA37685.meshpack",
+      "bytes": 5502,
+      "sha256": "8580412c67ab57941a595ac92eec3a3edf9579a7554a6e35f4e941138632a32f",
+      "vertices": 1062,
+      "bounds": [
+        0.13667534291744232,
+        1.1436558961868286,
+        -0.024846715852618217,
+        0.2129601538181305,
+        1.405208706855774,
+        0.008648830465972424
+      ],
+      "colour": [
+        0.5446764705882353,
+        0.19233823529411764,
+        0.18187058823529412
+      ],
+      "sourceElements": [
+        "FJ1512M"
+      ],
+      "explanation": "Short head of left biceps brachii \u2014 source-labelled adult anatomy. Left and right refer to the person, not the viewer. Detailed clinical interpretation is pending qualified review.",
+      "sourceTriangles": 1849,
+      "inputTriangles": 1849,
+      "triangles": 354,
+      "exportCleanup": {
+        "droppedDegenerateTriangles": 0,
+        "faceNormalFallbackVertices": 0
+      }
+    },
+    {
+      "id": "FMA37686",
+      "name": "long head of right biceps brachii",
+      "layer": "muscles",
+      "file": "anatomy/FMA37686.meshpack",
+      "bytes": 4758,
+      "sha256": "994b2fcdf9ca66d7e45544e10d9cb1c5cf8d80b0a7f6e4677026069134e50eee",
+      "vertices": 888,
+      "bounds": [
+        -0.22927260398864746,
+        1.0721818208694458,
+        -0.03304312005639076,
+        -0.1347825974225998,
+        1.4176983833312988,
+        0.008436092175543308
+      ],
+      "colour": [
+        0.5517352941176471,
+        0.19586764705882354,
+        0.18469411764705881
+      ],
+      "sourceElements": [
+        "FJ1478"
+      ],
+      "explanation": "Long head of right biceps brachii \u2014 source-labelled adult anatomy. Left and right refer to the person, not the viewer. Detailed clinical interpretation is pending qualified review.",
+      "sourceTriangles": 1425,
+      "inputTriangles": 1425,
+      "triangles": 296,
+      "exportCleanup": {
+        "droppedDegenerateTriangles": 2,
+        "faceNormalFallbackVertices": 0
+      }
+    },
+    {
+      "id": "FMA37687",
+      "name": "long head of left biceps brachii",
+      "layer": "muscles",
+      "file": "anatomy/FMA37687.meshpack",
+      "bytes": 4752,
+      "sha256": "a2924fc38705d5df2231a115343c43b5278907fa77a2d82d33d66e6eaa3c9b4c",
+      "vertices": 888,
+      "bounds": [
+        0.13607601821422577,
+        1.0721819400787354,
+        -0.03304324299097061,
+        0.2305665910243988,
+        1.417698621749878,
+        0.00843644980341196
+      ],
+      "colour": [
+        0.5289705882352942,
+        0.18448529411764705,
+        0.17558823529411763
+      ],
+      "sourceElements": [
+        "FJ1478M"
+      ],
+      "explanation": "Long head of left biceps brachii \u2014 source-labelled adult anatomy. Left and right refer to the person, not the viewer. Detailed clinical interpretation is pending qualified review.",
+      "sourceTriangles": 1425,
+      "inputTriangles": 1425,
+      "triangles": 296,
+      "exportCleanup": {
+        "droppedDegenerateTriangles": 2,
+        "faceNormalFallbackVertices": 0
+      }
+    },
+    {
+      "id": "FMA37695",
+      "name": "medial head of right triceps brachii",
+      "layer": "muscles",
+      "file": "anatomy/FMA37695.meshpack",
+      "bytes": 3443,
+      "sha256": "185c6c382b366aba9ab8af609a0f268a5d9121e3e6fe3267c37e331b083bbab6",
+      "vertices": 630,
+      "bounds": [
+        -0.22643497586250305,
+        1.1074140071868896,
+        -0.05424092337489128,
+        -0.16660186648368835,
+        1.334051251411438,
+        -0.028730912134051323
+      ],
+      "colour": [
+        0.5445,
+        0.19225,
+        0.1818
+      ],
+      "sourceElements": [
+        "FJ1480"
+      ],
+      "explanation": "Medial head of right triceps brachii \u2014 source-labelled adult anatomy. Left and right refer to the person, not the viewer. Detailed clinical interpretation is pending qualified review.",
+      "sourceTriangles": 831,
+      "inputTriangles": 831,
+      "triangles": 210,
+      "exportCleanup": {
+        "droppedDegenerateTriangles": 0,
+        "faceNormalFallbackVertices": 0
+      }
+    },
+    {
+      "id": "FMA37696",
+      "name": "medial head of left triceps brachii",
+      "layer": "muscles",
+      "file": "anatomy/FMA37696.meshpack",
+      "bytes": 3455,
+      "sha256": "de61b24284ea9fed048b932856822f3a5e0236b2bf8e31fd83a7e586df84b94f",
+      "vertices": 630,
+      "bounds": [
+        0.1678963303565979,
+        1.1073657274246216,
+        -0.05424099788069725,
+        0.22772839665412903,
+        1.334051251411438,
+        -0.028730835765600204
+      ],
+      "colour": [
+        0.528264705882353,
+        0.18413235294117647,
+        0.17530588235294117
+      ],
+      "sourceElements": [
+        "FJ1480M"
+      ],
+      "explanation": "Medial head of left triceps brachii \u2014 source-labelled adult anatomy. Left and right refer to the person, not the viewer. Detailed clinical interpretation is pending qualified review.",
+      "sourceTriangles": 831,
+      "inputTriangles": 831,
+      "triangles": 210,
+      "exportCleanup": {
+        "droppedDegenerateTriangles": 0,
+        "faceNormalFallbackVertices": 0
+      }
+    },
+    {
+      "id": "FMA37697",
+      "name": "lateral head of right triceps brachii",
+      "layer": "muscles",
+      "file": "anatomy/FMA37697.meshpack",
+      "bytes": 7135,
+      "sha256": "94b15e22208a3c7cf27948e72fffd529177c7081e230740ab5d5ac6fc416b8d0",
+      "vertices": 1326,
+      "bounds": [
+        -0.22712166607379913,
+        1.1140496730804443,
+        -0.08056644350290298,
+        -0.1738090068101883,
+        1.3702515363693237,
+        -0.03178492560982704
+      ],
+      "colour": [
+        0.5360294117647059,
+        0.18801470588235294,
+        0.17841176470588235
+      ],
+      "sourceElements": [
+        "FJ1477"
+      ],
+      "explanation": "Lateral head of right triceps brachii \u2014 source-labelled adult anatomy. Left and right refer to the person, not the viewer. Detailed clinical interpretation is pending qualified review.",
+      "sourceTriangles": 2604,
+      "inputTriangles": 2604,
+      "triangles": 442,
+      "exportCleanup": {
+        "droppedDegenerateTriangles": 0,
+        "faceNormalFallbackVertices": 0
+      }
+    },
+    {
+      "id": "FMA37698",
+      "name": "lateral head of left triceps brachii",
+      "layer": "muscles",
+      "file": "anatomy/FMA37698.meshpack",
+      "bytes": 7147,
+      "sha256": "a257ba2106a8f2dd5c3845ac47ead69b41d56d5f2d9ab0cbc66ed09df8b249d3",
+      "vertices": 1326,
+      "bounds": [
+        0.17510299384593964,
+        1.114045262336731,
+        -0.08056669682264328,
+        0.2284155637025833,
+        1.3702515363693237,
+        -0.03178495913743973
+      ],
+      "colour": [
+        0.5570294117647059,
+        0.19851470588235295,
+        0.18681176470588234
+      ],
+      "sourceElements": [
+        "FJ1477M"
+      ],
+      "explanation": "Lateral head of left triceps brachii \u2014 source-labelled adult anatomy. Left and right refer to the person, not the viewer. Detailed clinical interpretation is pending qualified review.",
+      "sourceTriangles": 2604,
+      "inputTriangles": 2604,
+      "triangles": 442,
+      "exportCleanup": {
+        "droppedDegenerateTriangles": 0,
+        "faceNormalFallbackVertices": 0
+      }
+    },
+    {
+      "id": "FMA37699",
+      "name": "long head of right triceps brachii",
+      "layer": "muscles",
+      "file": "anatomy/FMA37699.meshpack",
+      "bytes": 5188,
+      "sha256": "9a778a6f08ef106d0131818e3c746d57fa149319cc16b3fd677457af39d55eb7",
+      "vertices": 960,
+      "bounds": [
+        -0.21545976400375366,
+        1.1129562854766846,
+        -0.08184707909822464,
+        -0.13405518233776093,
+        1.3779854774475098,
+        -0.03637752681970596
+      ],
+      "colour": [
+        0.5360294117647059,
+        0.18801470588235294,
+        0.17841176470588235
+      ],
+      "sourceElements": [
+        "FJ1479"
+      ],
+      "explanation": "Long head of right triceps brachii \u2014 source-labelled adult anatomy. Left and right refer to the person, not the viewer. Detailed clinical interpretation is pending qualified review.",
+      "sourceTriangles": 1587,
+      "inputTriangles": 1587,
+      "triangles": 320,
+      "exportCleanup": {
+        "droppedDegenerateTriangles": 0,
+        "faceNormalFallbackVertices": 0
+      }
+    },
+    {
+      "id": "FMA37700",
+      "name": "long head of left triceps brachii",
+      "layer": "muscles",
+      "file": "anatomy/FMA37700.meshpack",
+      "bytes": 5180,
+      "sha256": "ddb34230ebb09fa4ab99cea3f7c81ee3f488b1d15816994989c06a2579253bd7",
+      "vertices": 960,
+      "bounds": [
+        0.13535013794898987,
+        1.1129547357559204,
+        -0.08184686303138733,
+        0.21675345301628113,
+        1.3779854774475098,
+        -0.03637736290693283
+      ],
+      "colour": [
+        0.5231470588235294,
+        0.18157352941176472,
+        0.17325882352941177
+      ],
+      "sourceElements": [
+        "FJ1479M"
+      ],
+      "explanation": "Long head of left triceps brachii \u2014 source-labelled adult anatomy. Left and right refer to the person, not the viewer. Detailed clinical interpretation is pending qualified review.",
+      "sourceTriangles": 1587,
+      "inputTriangles": 1587,
+      "triangles": 320,
+      "exportCleanup": {
+        "droppedDegenerateTriangles": 0,
+        "faceNormalFallbackVertices": 0
+      }
+    },
+    {
+      "id": "FMA38928",
+      "name": "right rectus femoris",
+      "layer": "muscles",
+      "file": "anatomy/FMA38928.meshpack",
+      "bytes": 11945,
+      "sha256": "f64ceb83707cbf62026d6c1c3fca981ef9c459c15899414c24dc3df60d94ed85",
+      "vertices": 2202,
+      "bounds": [
+        -0.15368729829788208,
+        0.39246106147766113,
+        -0.01694839634001255,
+        -0.06220331788063049,
+        0.9493004083633423,
+        0.05176447704434395
+      ],
+      "colour": [
+        0.5469705882352942,
+        0.19348529411764706,
+        0.18278823529411764
+      ],
+      "sourceElements": [
+        "FJ1433"
+      ],
+      "explanation": "Right rectus femoris \u2014 source-labelled adult anatomy. Left and right refer to the person, not the viewer. Detailed clinical interpretation is pending qualified review.",
+      "sourceTriangles": 5688,
+      "inputTriangles": 5688,
+      "triangles": 734,
+      "exportCleanup": {
+        "droppedDegenerateTriangles": 0,
+        "faceNormalFallbackVertices": 0
+      }
+    },
+    {
+      "id": "FMA38929",
+      "name": "left rectus femoris",
+      "layer": "muscles",
+      "file": "anatomy/FMA38929.meshpack",
+      "bytes": 11893,
+      "sha256": "939b5d37b7cf0d73d5204f14e4af885e8acafbfeaa69b3bac4a5fa6d53799ff6",
+      "vertices": 2202,
+      "bounds": [
+        0.06349744647741318,
+        0.39246079325675964,
+        -0.0169483944773674,
+        0.15498130023479462,
+        0.9493002891540527,
+        0.05176486819982529
+      ],
+      "colour": [
+        0.5250882352941176,
+        0.18254411764705883,
+        0.17403529411764707
+      ],
+      "sourceElements": [
+        "FJ1433M"
+      ],
+      "explanation": "Left rectus femoris \u2014 source-labelled adult anatomy. Left and right refer to the person, not the viewer. Detailed clinical interpretation is pending qualified review.",
+      "sourceTriangles": 5688,
+      "inputTriangles": 5688,
+      "triangles": 734,
+      "exportCleanup": {
+        "droppedDegenerateTriangles": 0,
+        "faceNormalFallbackVertices": 0
+      }
+    },
+    {
+      "id": "FMA38930",
+      "name": "right vastus lateralis",
+      "layer": "muscles",
+      "file": "anatomy/FMA38930.meshpack",
+      "bytes": 13500,
+      "sha256": "9aeb03e984783046df1814926d627c6866c09437404e3fb6f37efe7044db481d",
+      "vertices": 2448,
+      "bounds": [
+        -0.1589004248380661,
+        0.3962291479110718,
+        -0.04345347359776497,
+        -0.08346045762300491,
+        0.8667887449264526,
+        0.03607313334941864
+      ],
+      "colour": [
+        0.5508529411764707,
+        0.19542647058823528,
+        0.18434117647058823
+      ],
+      "sourceElements": [
+        "FJ1442"
+      ],
+      "explanation": "Right vastus lateralis \u2014 source-labelled adult anatomy. Left and right refer to the person, not the viewer. Detailed clinical interpretation is pending qualified review.",
+      "sourceTriangles": 6688,
+      "inputTriangles": 6688,
+      "triangles": 816,
+      "exportCleanup": {
+        "droppedDegenerateTriangles": 0,
+        "faceNormalFallbackVertices": 6
+      }
+    },
+    {
+      "id": "FMA38931",
+      "name": "left vastus lateralis",
+      "layer": "muscles",
+      "file": "anatomy/FMA38931.meshpack",
+      "bytes": 13513,
+      "sha256": "e447a2bfed11b341f27d290d9a52fe879491b3da72207d237f486f27079985ed",
+      "vertices": 2448,
+      "bounds": [
+        0.08475464582443237,
+        0.39622896909713745,
+        -0.043453458696603775,
+        0.16019529104232788,
+        0.8667888045310974,
+        0.03607327863574028
+      ],
+      "colour": [
+        0.5370882352941176,
+        0.18854411764705883,
+        0.17883529411764706
+      ],
+      "sourceElements": [
+        "FJ1442M"
+      ],
+      "explanation": "Left vastus lateralis \u2014 source-labelled adult anatomy. Left and right refer to the person, not the viewer. Detailed clinical interpretation is pending qualified review.",
+      "sourceTriangles": 6688,
+      "inputTriangles": 6688,
+      "triangles": 816,
+      "exportCleanup": {
+        "droppedDegenerateTriangles": 0,
+        "faceNormalFallbackVertices": 6
+      }
+    },
+    {
+      "id": "FMA45874",
+      "name": "abdominal part of right pectoralis major",
+      "layer": "muscles",
+      "file": "anatomy/FMA45874.meshpack",
+      "bytes": 5084,
+      "sha256": "74ab6fed8ee5fa8085ebdce41fe953317247111a4f92b4d3292564f6522b2de1",
+      "vertices": 942,
+      "bounds": [
+        -0.18008321523666382,
+        1.1829344034194946,
+        -0.01899406872689724,
+        -0.047662291675806046,
+        1.3556288480758667,
+        0.1128779798746109
+      ],
+      "colour": [
+        0.5367352941176471,
+        0.18836764705882353,
+        0.1786941176470588
+      ],
+      "sourceElements": [
+        "FJ1446"
+      ],
+      "explanation": "Abdominal part of right pectoralis major \u2014 source-labelled adult anatomy. Left and right refer to the person, not the viewer. Detailed clinical interpretation is pending qualified review.",
+      "sourceTriangles": 1534,
+      "inputTriangles": 1534,
+      "triangles": 314,
+      "exportCleanup": {
+        "droppedDegenerateTriangles": 0,
+        "faceNormalFallbackVertices": 0
+      }
+    },
+    {
+      "id": "FMA45875",
+      "name": "abdominal part of left pectoralis major",
+      "layer": "muscles",
+      "file": "anatomy/FMA45875.meshpack",
+      "bytes": 5072,
+      "sha256": "28a5eaa352441d6a4973acda4e12034d45406074246bec9be95f726315794f7a",
+      "vertices": 942,
+      "bounds": [
+        0.04895634949207306,
+        1.1829344034194946,
+        -0.018992822617292404,
+        0.18137723207473755,
+        1.3556286096572876,
+        0.11287792772054672
+      ],
+      "colour": [
+        0.5339117647058824,
+        0.18695588235294117,
+        0.17756470588235293
+      ],
+      "sourceElements": [
+        "FJ1446M"
+      ],
+      "explanation": "Abdominal part of left pectoralis major \u2014 source-labelled adult anatomy. Left and right refer to the person, not the viewer. Detailed clinical interpretation is pending qualified review.",
+      "sourceTriangles": 1534,
+      "inputTriangles": 1534,
+      "triangles": 314,
+      "exportCleanup": {
+        "droppedDegenerateTriangles": 0,
+        "faceNormalFallbackVertices": 0
+      }
+    },
+    {
+      "id": "FMA45957",
+      "name": "medial head of right gastrocnemius",
+      "layer": "muscles",
+      "file": "anatomy/FMA45957.meshpack",
+      "bytes": 9241,
+      "sha256": "8d42a52d262e40a785e2899e3487298ac6ae0290736e188d8c611f2d6a3e935a",
+      "vertices": 1701,
+      "bounds": [
+        -0.07360900938510895,
+        0.20059438049793243,
+        -0.08706460893154144,
+        -0.020724138244986534,
+        0.5101599097251892,
+        -0.00819352362304926
+      ],
+      "colour": [
+        0.5226176470588235,
+        0.18130882352941177,
+        0.17304705882352941
+      ],
+      "sourceElements": [
+        "FJ1397"
+      ],
+      "explanation": "Medial head of right gastrocnemius \u2014 source-labelled adult anatomy. Left and right refer to the person, not the viewer. Detailed clinical interpretation is pending qualified review.",
+      "sourceTriangles": 3841,
+      "inputTriangles": 3841,
+      "triangles": 567,
+      "exportCleanup": {
+        "droppedDegenerateTriangles": 2,
+        "faceNormalFallbackVertices": 0
+      }
+    },
+    {
+      "id": "FMA45958",
+      "name": "medial head of left gastrocnemius",
+      "layer": "muscles",
+      "file": "anatomy/FMA45958.meshpack",
+      "bytes": 9287,
+      "sha256": "39730bbe162825ca3612c70515bed9272ab8b8e81997f2ea7004cbc259282c32",
+      "vertices": 1701,
+      "bounds": [
+        0.02201814018189907,
+        0.20059466361999512,
+        -0.08706463873386383,
+        0.07490299642086029,
+        0.5101601481437683,
+        -0.008193563669919968
+      ],
+      "colour": [
+        0.5496176470588235,
+        0.19480882352941176,
+        0.18384705882352942
+      ],
+      "sourceElements": [
+        "FJ1397M"
+      ],
+      "explanation": "Medial head of left gastrocnemius \u2014 source-labelled adult anatomy. Left and right refer to the person, not the viewer. Detailed clinical interpretation is pending qualified review.",
+      "sourceTriangles": 3841,
+      "inputTriangles": 3841,
+      "triangles": 567,
+      "exportCleanup": {
+        "droppedDegenerateTriangles": 2,
+        "faceNormalFallbackVertices": 0
+      }
+    },
+    {
+      "id": "FMA45960",
+      "name": "lateral head of right gastrocnemius",
+      "layer": "muscles",
+      "file": "anatomy/FMA45960.meshpack",
+      "bytes": 7957,
+      "sha256": "02fe141d0d7b93cff07adb4f92dbb63e644fc4791a74a45bfb272234a8320280",
+      "vertices": 1470,
+      "bounds": [
+        -0.1162705197930336,
+        0.21085581183433533,
+        -0.09507165849208832,
+        -0.06045389920473099,
+        0.5011267066001892,
+        -0.020165158435702324
+      ],
+      "colour": [
+        0.5602058823529412,
+        0.2001029411764706,
+        0.18808235294117645
+      ],
+      "sourceElements": [
+        "FJ1394"
+      ],
+      "explanation": "Lateral head of right gastrocnemius \u2014 source-labelled adult anatomy. Left and right refer to the person, not the viewer. Detailed clinical interpretation is pending qualified review.",
+      "sourceTriangles": 3052,
+      "inputTriangles": 3052,
+      "triangles": 490,
+      "exportCleanup": {
+        "droppedDegenerateTriangles": 0,
+        "faceNormalFallbackVertices": 0
+      }
+    },
+    {
+      "id": "FMA45961",
+      "name": "lateral head of left gastrocnemius",
+      "layer": "muscles",
+      "file": "anatomy/FMA45961.meshpack",
+      "bytes": 8000,
+      "sha256": "67291a2a90884c487801146cd2da3e69a457b0c09ffba6c4974d67b906dfd8dd",
+      "vertices": 1470,
+      "bounds": [
+        0.06174785643815994,
+        0.21085581183433533,
+        -0.09507168084383011,
+        0.11756441742181778,
+        0.501126766204834,
+        -0.020165225490927696
+      ],
+      "colour": [
+        0.5441470588235294,
+        0.1920735294117647,
+        0.18165882352941176
+      ],
+      "sourceElements": [
+        "FJ1394M"
+      ],
+      "explanation": "Lateral head of left gastrocnemius \u2014 source-labelled adult anatomy. Left and right refer to the person, not the viewer. Detailed clinical interpretation is pending qualified review.",
+      "sourceTriangles": 3052,
+      "inputTriangles": 3052,
+      "triangles": 490,
+      "exportCleanup": {
+        "droppedDegenerateTriangles": 0,
+        "faceNormalFallbackVertices": 0
+      }
+    },
+    {
+      "id": "FMA79979",
+      "name": "sternocostal part of right pectoralis major",
+      "layer": "muscles",
+      "file": "anatomy/FMA79979.meshpack",
+      "bytes": 13829,
+      "sha256": "6bd60f546de056b23bf25ff4e2f2db8fa6f060658782633b63de564fcf58c3d3",
+      "vertices": 2550,
+      "bounds": [
+        -0.187101349234581,
+        1.2189558744430542,
+        -0.019767699763178825,
+        -0.0038736271671950817,
+        1.3920389413833618,
+        0.1182004064321518
+      ],
+      "colour": [
+        0.5535,
+        0.19675,
+        0.18539999999999998
+      ],
+      "sourceElements": [
+        "FJ1464"
+      ],
+      "explanation": "Sternocostal part of right pectoralis major \u2014 source-labelled adult anatomy. Left and right refer to the person, not the viewer. Detailed clinical interpretation is pending qualified review.",
+      "sourceTriangles": 7110,
+      "inputTriangles": 7110,
+      "triangles": 850,
+      "exportCleanup": {
+        "droppedDegenerateTriangles": 0,
+        "faceNormalFallbackVertices": 0
+      }
+    },
+    {
+      "id": "FMA79980",
+      "name": "sternocostal part of left pectoralis major",
+      "layer": "muscles",
+      "file": "anatomy/FMA79980.meshpack",
+      "bytes": 13769,
+      "sha256": "94c6befdf7ec066930e31826321024bbd84d8852814d53c33e731bba47fb1154",
+      "vertices": 2550,
+      "bounds": [
+        0.005167797207832336,
+        1.2189552783966064,
+        -0.019767699763178825,
+        0.18839511275291443,
+        1.392039179801941,
+        0.11820059269666672
+      ],
+      "colour": [
+        0.5619705882352941,
+        0.20098529411764707,
+        0.18878823529411765
+      ],
+      "sourceElements": [
+        "FJ1464M"
+      ],
+      "explanation": "Sternocostal part of left pectoralis major \u2014 source-labelled adult anatomy. Left and right refer to the person, not the viewer. Detailed clinical interpretation is pending qualified review.",
+      "sourceTriangles": 7110,
+      "inputTriangles": 7110,
+      "triangles": 850,
+      "exportCleanup": {
+        "droppedDegenerateTriangles": 0,
+        "faceNormalFallbackVertices": 0
+      }
+    },
+    {
+      "id": "FMA13336",
+      "name": "right external oblique",
+      "layer": "muscles",
+      "file": "anatomy/FMA13336.meshpack",
+      "bytes": 84582,
+      "sha256": "5266728da1bc98a01d6fbaf70c3fc5798b6eed76256a6783a3287e1327b325cf",
+      "vertices": 15207,
+      "bounds": [
+        -0.1400192230939865,
+        0.8718443512916565,
+        -0.0637952983379364,
+        -0.0028692225459963083,
+        1.289003849029541,
+        0.11783459037542343
+      ],
+      "colour": [
+        0.5538529411764707,
+        0.1969264705882353,
+        0.18554117647058824
+      ],
+      "sourceElements": [
+        "FJ1452"
+      ],
+      "explanation": "Right external oblique \u2014 source-labelled adult anatomy. Left and right refer to the person, not the viewer. Detailed clinical interpretation is pending qualified review.",
+      "sourceTriangles": 111809,
+      "inputTriangles": 111809,
+      "triangles": 5069,
+      "exportCleanup": {
+        "droppedDegenerateTriangles": 6,
+        "faceNormalFallbackVertices": 0
+      }
+    },
+    {
+      "id": "FMA13337",
+      "name": "left external oblique",
+      "layer": "muscles",
+      "file": "anatomy/FMA13337.meshpack",
+      "bytes": 84631,
+      "sha256": "e0f6b254b5a2702ee0e53e01009a5bd90a1dfb7c553d0de90d37dbe55e89b1b2",
+      "vertices": 15207,
+      "bounds": [
+        0.004163227044045925,
+        0.8718440532684326,
+        -0.06388585269451141,
+        0.14131325483322144,
+        1.2890031337738037,
+        0.11783546954393387
+      ],
+      "colour": [
+        0.5355000000000001,
+        0.18775,
+        0.1782
+      ],
+      "sourceElements": [
+        "FJ1452M"
+      ],
+      "explanation": "Left external oblique \u2014 source-labelled adult anatomy. Left and right refer to the person, not the viewer. Detailed clinical interpretation is pending qualified review.",
+      "sourceTriangles": 111809,
+      "inputTriangles": 111809,
+      "triangles": 5069,
+      "exportCleanup": {
+        "droppedDegenerateTriangles": 6,
+        "faceNormalFallbackVertices": 0
+      }
+    },
+    {
+      "id": "FMA13398",
+      "name": "right serratus anterior",
+      "layer": "muscles",
+      "file": "anatomy/FMA13398.meshpack",
+      "bytes": 49078,
+      "sha256": "2f83b402190b17673d5427e2f3248b9adf77d52fa40d0dd12437b2e6636426b5",
+      "vertices": 8970,
+      "bounds": [
+        -0.14360311627388,
+        1.1560078859329224,
+        -0.10583363473415375,
+        -0.05710413679480553,
+        1.4261691570281982,
+        0.05686388537287712
+      ],
+      "colour": [
+        0.5346176470588235,
+        0.18730882352941178,
+        0.1778470588235294
+      ],
+      "sourceElements": [
+        "FJ1459"
+      ],
+      "explanation": "Right serratus anterior \u2014 source-labelled adult anatomy. Left and right refer to the person, not the viewer. Detailed clinical interpretation is pending qualified review.",
+      "sourceTriangles": 49209,
+      "inputTriangles": 49209,
+      "triangles": 2990,
+      "exportCleanup": {
+        "droppedDegenerateTriangles": 0,
+        "faceNormalFallbackVertices": 0
+      }
+    },
+    {
+      "id": "FMA13399",
+      "name": "left serratus anterior",
+      "layer": "muscles",
+      "file": "anatomy/FMA13399.meshpack",
+      "bytes": 49149,
+      "sha256": "b089aa9f81c853bfd4e1d68b879f0e0bca200b7468421c30b7ee438d8adf7bc3",
+      "vertices": 8970,
+      "bounds": [
+        0.0583968311548233,
+        1.1560101509094238,
+        -0.10583234578371048,
+        0.1452326774597168,
+        1.4261687994003296,
+        0.05686626583337784
+      ],
+      "colour": [
+        0.5568529411764707,
+        0.1984264705882353,
+        0.18674117647058822
+      ],
+      "sourceElements": [
+        "FJ1459M"
+      ],
+      "explanation": "Left serratus anterior \u2014 source-labelled adult anatomy. Left and right refer to the person, not the viewer. Detailed clinical interpretation is pending qualified review.",
+      "sourceTriangles": 49209,
+      "inputTriangles": 49209,
+      "triangles": 2990,
+      "exportCleanup": {
+        "droppedDegenerateTriangles": 0,
+        "faceNormalFallbackVertices": 6
+      }
+    },
+    {
+      "id": "FMA13408",
+      "name": "right sternocleidomastoid",
+      "layer": "muscles",
+      "file": "anatomy/FMA13408.meshpack",
+      "bytes": 17538,
+      "sha256": "072bcf49e386d1292edd41681e00fbfd9dbcb2125223db75c529c608fac9a142",
+      "vertices": 3243,
+      "bounds": [
+        -0.062369901686906815,
+        1.3800595998764038,
+        -0.06346608698368073,
+        0.062040671706199646,
+        1.5810753107070923,
+        0.056226667016744614
+      ],
+      "colour": [
+        0.5535,
+        0.19675,
+        0.18539999999999998
+      ],
+      "sourceElements": [
+        "FJ1595"
+      ],
+      "explanation": "Right sternocleidomastoid \u2014 source-labelled adult anatomy. Left and right refer to the person, not the viewer. Detailed clinical interpretation is pending qualified review.",
+      "sourceTriangles": 10342,
+      "inputTriangles": 10342,
+      "triangles": 1081,
+      "exportCleanup": {
+        "droppedDegenerateTriangles": 2,
+        "faceNormalFallbackVertices": 0
+      }
+    },
+    {
+      "id": "FMA13409",
+      "name": "left sternocleidomastoid",
+      "layer": "muscles",
+      "file": "anatomy/FMA13409.meshpack",
+      "bytes": 17466,
+      "sha256": "bfd448fc764caa6d5209168f0ed9cc2661e078fa8f698b5d1cf96fc1e0cf124d",
+      "vertices": 3228,
+      "bounds": [
+        0.0011958441464230418,
+        1.3801193237304688,
+        -0.06324557214975357,
+        0.06228530406951904,
+        1.5811519622802734,
+        0.05616789311170578
+      ],
+      "colour": [
+        0.5446764705882353,
+        0.19233823529411764,
+        0.18187058823529412
+      ],
+      "sourceElements": [
+        "FJ1573"
+      ],
+      "explanation": "Left sternocleidomastoid \u2014 source-labelled adult anatomy. Left and right refer to the person, not the viewer. Detailed clinical interpretation is pending qualified review.",
+      "sourceTriangles": 10224,
+      "inputTriangles": 10224,
+      "triangles": 1076,
+      "exportCleanup": {
+        "droppedDegenerateTriangles": 0,
+        "faceNormalFallbackVertices": 0
+      }
+    },
+    {
+      "id": "FMA22330",
+      "name": "right gluteus medius",
+      "layer": "muscles",
+      "file": "anatomy/FMA22330.meshpack",
+      "bytes": 8522,
+      "sha256": "3b8e4cd6755456d337237ec62ad2e1ec1f227d9ce767c7dc5d2b55fd4e707a58",
+      "vertices": 1566,
+      "bounds": [
+        -0.14917390048503876,
+        0.8668601512908936,
+        -0.08407129347324371,
+        -0.0589284710586071,
+        1.028741717338562,
+        0.0011542858555912971
+      ],
+      "colour": [
+        0.5376176470588235,
+        0.18880882352941178,
+        0.1790470588235294
+      ],
+      "sourceElements": [
+        "FJ1419"
+      ],
+      "explanation": "Right gluteus medius \u2014 source-labelled adult anatomy. Left and right refer to the person, not the viewer. Detailed clinical interpretation is pending qualified review.",
+      "sourceTriangles": 3356,
+      "inputTriangles": 3356,
+      "triangles": 522,
+      "exportCleanup": {
+        "droppedDegenerateTriangles": 0,
+        "faceNormalFallbackVertices": 6
+      }
+    },
+    {
+      "id": "FMA22331",
+      "name": "left gluteus medius",
+      "layer": "muscles",
+      "file": "anatomy/FMA22331.meshpack",
+      "bytes": 8579,
+      "sha256": "309da635c78fdfad2c48f68f566814201d05257d681bf116302d1a7de8fbbb26",
+      "vertices": 1566,
+      "bounds": [
+        0.060222357511520386,
+        0.8668601512908936,
+        -0.08407129347324371,
+        0.15046696364879608,
+        1.0287418365478516,
+        0.0011543618747964501
+      ],
+      "colour": [
+        0.5573823529411766,
+        0.19869117647058823,
+        0.18695294117647057
+      ],
+      "sourceElements": [
+        "FJ1419M"
+      ],
+      "explanation": "Left gluteus medius \u2014 source-labelled adult anatomy. Left and right refer to the person, not the viewer. Detailed clinical interpretation is pending qualified review.",
+      "sourceTriangles": 3356,
+      "inputTriangles": 3356,
+      "triangles": 522,
+      "exportCleanup": {
+        "droppedDegenerateTriangles": 0,
+        "faceNormalFallbackVertices": 6
+      }
+    },
+    {
+      "id": "FMA22332",
+      "name": "right gluteus minimus",
+      "layer": "muscles",
+      "file": "anatomy/FMA22332.meshpack",
+      "bytes": 9800,
+      "sha256": "6abf20866a47074a5382c35732d92abd58aca0333ec88c481a0db7651648615b",
+      "vertices": 1812,
+      "bounds": [
+        -0.14433500170707703,
+        0.8613322377204895,
+        -0.054316699504852295,
+        -0.06705113500356674,
+        1.001473307609558,
+        0.001723933033645153
+      ],
+      "colour": [
+        0.5496176470588235,
+        0.19480882352941176,
+        0.18384705882352942
+      ],
+      "sourceElements": [
+        "FJ1420"
+      ],
+      "explanation": "Right gluteus minimus \u2014 source-labelled adult anatomy. Left and right refer to the person, not the viewer. Detailed clinical interpretation is pending qualified review.",
+      "sourceTriangles": 4208,
+      "inputTriangles": 4208,
+      "triangles": 604,
+      "exportCleanup": {
+        "droppedDegenerateTriangles": 0,
+        "faceNormalFallbackVertices": 0
+      }
+    },
+    {
+      "id": "FMA22333",
+      "name": "left gluteus minimus",
+      "layer": "muscles",
+      "file": "anatomy/FMA22333.meshpack",
+      "bytes": 9835,
+      "sha256": "3e040ed2fa73b64725b310bfcfaff4db3f5f7987cc051e96a789ff4e341a69fc",
+      "vertices": 1812,
+      "bounds": [
+        0.06834504008293152,
+        0.8613321185112,
+        -0.054316673427820206,
+        0.14562861621379852,
+        1.001473307609558,
+        0.0017243768088519573
+      ],
+      "colour": [
+        0.5586176470588236,
+        0.19930882352941176,
+        0.1874470588235294
+      ],
+      "sourceElements": [
+        "FJ1420M"
+      ],
+      "explanation": "Left gluteus minimus \u2014 source-labelled adult anatomy. Left and right refer to the person, not the viewer. Detailed clinical interpretation is pending qualified review.",
+      "sourceTriangles": 4208,
+      "inputTriangles": 4208,
+      "triangles": 604,
+      "exportCleanup": {
+        "droppedDegenerateTriangles": 0,
+        "faceNormalFallbackVertices": 0
+      }
+    },
+    {
+      "id": "FMA22354",
+      "name": "right sartorius",
+      "layer": "muscles",
+      "file": "anatomy/FMA22354.meshpack",
+      "bytes": 8432,
+      "sha256": "c1c6d7486d3372bc23c6744d3bbdc2330b0db773cbe2a8c028b3b326bae3df33",
+      "vertices": 1590,
+      "bounds": [
+        -0.13030122220516205,
+        0.35273078083992004,
+        -0.01650652475655079,
+        -0.019946392625570297,
+        0.9799228310585022,
+        0.04044288024306297
+      ],
+      "colour": [
+        0.522264705882353,
+        0.18113235294117647,
+        0.17290588235294116
+      ],
+      "sourceElements": [
+        "FJ1434"
+      ],
+      "explanation": "Right sartorius \u2014 source-labelled adult anatomy. Left and right refer to the person, not the viewer. Detailed clinical interpretation is pending qualified review.",
+      "sourceTriangles": 3434,
+      "inputTriangles": 3434,
+      "triangles": 530,
+      "exportCleanup": {
+        "droppedDegenerateTriangles": 0,
+        "faceNormalFallbackVertices": 12
+      }
+    },
+    {
+      "id": "FMA22355",
+      "name": "left sartorius",
+      "layer": "muscles",
+      "file": "anatomy/FMA22355.meshpack",
+      "bytes": 8392,
+      "sha256": "06a9b5d156177e874ff412a2e9a04f421dcc1a12a3b3c9cdb3d686f6e605cff9",
+      "vertices": 1590,
+      "bounds": [
+        0.02124045044183731,
+        0.3527306318283081,
+        -0.016506481915712357,
+        0.1315952092409134,
+        0.9799228310585022,
+        0.04044264927506447
+      ],
+      "colour": [
+        0.5197941176470589,
+        0.1798970588235294,
+        0.1719176470588235
+      ],
+      "sourceElements": [
+        "FJ1434M"
+      ],
+      "explanation": "Left sartorius \u2014 source-labelled adult anatomy. Left and right refer to the person, not the viewer. Detailed clinical interpretation is pending qualified review.",
+      "sourceTriangles": 3434,
+      "inputTriangles": 3434,
+      "triangles": 530,
+      "exportCleanup": {
+        "droppedDegenerateTriangles": 0,
+        "faceNormalFallbackVertices": 12
+      }
+    },
+    {
+      "id": "FMA22358",
+      "name": "right semitendinosus",
+      "layer": "muscles",
+      "file": "anatomy/FMA22358.meshpack",
+      "bytes": 7381,
+      "sha256": "08435bb7dc1d984c73ff630d27ea39e51a460cb512a8dcff80a3d3055518450f",
+      "vertices": 1362,
+      "bounds": [
+        -0.06747930496931076,
+        0.36098527908325195,
+        -0.07615388184785843,
+        -0.02628237009048462,
+        0.8417981863021851,
+        -0.0023204132448881865
+      ],
+      "colour": [
+        0.5480294117647059,
+        0.19401470588235295,
+        0.18321176470588235
+      ],
+      "sourceElements": [
+        "FJ1436"
+      ],
+      "explanation": "Right semitendinosus \u2014 source-labelled adult anatomy. Left and right refer to the person, not the viewer. Detailed clinical interpretation is pending qualified review.",
+      "sourceTriangles": 2712,
+      "inputTriangles": 2712,
+      "triangles": 454,
+      "exportCleanup": {
+        "droppedDegenerateTriangles": 0,
+        "faceNormalFallbackVertices": 0
+      }
+    },
+    {
+      "id": "FMA22359",
+      "name": "left semitendinosus",
+      "layer": "muscles",
+      "file": "anatomy/FMA22359.meshpack",
+      "bytes": 7383,
+      "sha256": "1a68567a63bc072cd53e789be4df8bdeedc6106125cfcde55104f119dc12fd36",
+      "vertices": 1362,
+      "bounds": [
+        0.02757631056010723,
+        0.36098527908325195,
+        -0.07615389674901962,
+        0.0687733143568039,
+        0.8417981863021851,
+        -0.0023203962482511997
+      ],
+      "colour": [
+        0.525264705882353,
+        0.18263235294117647,
+        0.17410588235294117
+      ],
+      "sourceElements": [
+        "FJ1436M"
+      ],
+      "explanation": "Left semitendinosus \u2014 source-labelled adult anatomy. Left and right refer to the person, not the viewer. Detailed clinical interpretation is pending qualified review.",
+      "sourceTriangles": 2712,
+      "inputTriangles": 2712,
+      "triangles": 454,
+      "exportCleanup": {
+        "droppedDegenerateTriangles": 0,
+        "faceNormalFallbackVertices": 0
+      }
+    },
+    {
+      "id": "FMA22448",
+      "name": "right semimembranosus",
+      "layer": "muscles",
+      "file": "anatomy/FMA22448.meshpack",
+      "bytes": 10498,
+      "sha256": "fe6955e5b35fa8d6edd4c38436456326a09cbbbd0d3873d90ba1168214fe914e",
+      "vertices": 1926,
+      "bounds": [
+        -0.07061070948839188,
+        0.3938291668891907,
+        -0.06358493864536285,
+        -0.01262767892330885,
+        0.832480788230896,
+        0.0027670091949403286
+      ],
+      "colour": [
+        0.5587941176470589,
+        0.19939705882352943,
+        0.1875176470588235
+      ],
+      "sourceElements": [
+        "FJ1435"
+      ],
+      "explanation": "Right semimembranosus \u2014 source-labelled adult anatomy. Left and right refer to the person, not the viewer. Detailed clinical interpretation is pending qualified review.",
+      "sourceTriangles": 4612,
+      "inputTriangles": 4612,
+      "triangles": 642,
+      "exportCleanup": {
+        "droppedDegenerateTriangles": 0,
+        "faceNormalFallbackVertices": 0
+      }
+    },
+    {
+      "id": "FMA22449",
+      "name": "left semimembranosus",
+      "layer": "muscles",
+      "file": "anatomy/FMA22449.meshpack",
+      "bytes": 10507,
+      "sha256": "fe07e32d61e533ce7c42db578eca9493dbf83ed8d99677124a9814425efa67a9",
+      "vertices": 1926,
+      "bounds": [
+        0.01392166968435049,
+        0.39382925629615784,
+        -0.06358497589826584,
+        0.0719047337770462,
+        0.8324808478355408,
+        0.002767192432656884
+      ],
+      "colour": [
+        0.540264705882353,
+        0.19013235294117647,
+        0.18010588235294117
+      ],
+      "sourceElements": [
+        "FJ1435M"
+      ],
+      "explanation": "Left semimembranosus \u2014 source-labelled adult anatomy. Left and right refer to the person, not the viewer. Detailed clinical interpretation is pending qualified review.",
+      "sourceTriangles": 4612,
+      "inputTriangles": 4612,
+      "triangles": 642,
+      "exportCleanup": {
+        "droppedDegenerateTriangles": 0,
+        "faceNormalFallbackVertices": 0
+      }
+    },
+    {
+      "id": "FMA22456",
+      "name": "right adductor longus",
+      "layer": "muscles",
+      "file": "anatomy/FMA22456.meshpack",
+      "bytes": 7228,
+      "sha256": "191ff0d73eadd733ea189e78920df129d570a2007c7382e7763dc0741f0d5ed9",
+      "vertices": 1332,
+      "bounds": [
+        -0.09353839606046677,
+        0.5882453918457031,
+        -0.011263227090239525,
+        -0.016411354765295982,
+        0.8776729702949524,
+        0.036220379173755646
+      ],
+      "colour": [
+        0.5263235294117647,
+        0.18316176470588236,
+        0.17452941176470588
+      ],
+      "sourceElements": [
+        "FJ1402"
+      ],
+      "explanation": "Right adductor longus \u2014 source-labelled adult anatomy. Left and right refer to the person, not the viewer. Detailed clinical interpretation is pending qualified review.",
+      "sourceTriangles": 2616,
+      "inputTriangles": 2616,
+      "triangles": 444,
+      "exportCleanup": {
+        "droppedDegenerateTriangles": 0,
+        "faceNormalFallbackVertices": 0
+      }
+    },
+    {
+      "id": "FMA22457",
+      "name": "left adductor longus",
+      "layer": "muscles",
+      "file": "anatomy/FMA22457.meshpack",
+      "bytes": 7215,
+      "sha256": "89c3f9aacb0c7328d8ff1569081c359ad957b2a2b4d120d05c53f14fa26d471b",
+      "vertices": 1332,
+      "bounds": [
+        0.017705479636788368,
+        0.588245689868927,
+        -0.01126318983733654,
+        0.09483234584331512,
+        0.8776727914810181,
+        0.036219678819179535
+      ],
+      "colour": [
+        0.5556176470588235,
+        0.19780882352941176,
+        0.1862470588235294
+      ],
+      "sourceElements": [
+        "FJ1402M"
+      ],
+      "explanation": "Left adductor longus \u2014 source-labelled adult anatomy. Left and right refer to the person, not the viewer. Detailed clinical interpretation is pending qualified review.",
+      "sourceTriangles": 2616,
+      "inputTriangles": 2616,
+      "triangles": 444,
+      "exportCleanup": {
+        "droppedDegenerateTriangles": 0,
+        "faceNormalFallbackVertices": 0
+      }
+    },
+    {
+      "id": "FMA22459",
+      "name": "right adductor magnus",
+      "layer": "muscles",
+      "file": "anatomy/FMA22459.meshpack",
+      "bytes": 12369,
+      "sha256": "69efc25aadcf20a323f5c5b9d2d532b72324bcc929e3a2c35deccea4d3eae8fb",
+      "vertices": 2274,
+      "bounds": [
+        -0.1117195263504982,
+        0.4579295814037323,
+        -0.04666239023208618,
+        -0.013163184747099876,
+        0.8554690480232239,
+        0.012365278787910938
+      ],
+      "colour": [
+        0.5565,
+        0.19825,
+        0.1866
+      ],
+      "sourceElements": [
+        "FJ1403"
+      ],
+      "explanation": "Right adductor magnus \u2014 source-labelled adult anatomy. Left and right refer to the person, not the viewer. Detailed clinical interpretation is pending qualified review.",
+      "sourceTriangles": 5972,
+      "inputTriangles": 5972,
+      "triangles": 758,
+      "exportCleanup": {
+        "droppedDegenerateTriangles": 0,
+        "faceNormalFallbackVertices": 0
+      }
+    },
+    {
+      "id": "FMA22460",
+      "name": "left adductor magnus",
+      "layer": "muscles",
+      "file": "anatomy/FMA22460.meshpack",
+      "bytes": 12359,
+      "sha256": "a2d169a53875ec6a62bd0aeece86bc42d79c9a19626e2d1ddc05ef9ce436b6ea",
+      "vertices": 2274,
+      "bounds": [
+        0.014457219280302525,
+        0.4579300880432129,
+        -0.046662360429763794,
+        0.11301366984844208,
+        0.8554689884185791,
+        0.012364460155367851
+      ],
+      "colour": [
+        0.5621470588235294,
+        0.2010735294117647,
+        0.18885882352941175
+      ],
+      "sourceElements": [
+        "FJ1403M"
+      ],
+      "explanation": "Left adductor magnus \u2014 source-labelled adult anatomy. Left and right refer to the person, not the viewer. Detailed clinical interpretation is pending qualified review.",
+      "sourceTriangles": 5972,
+      "inputTriangles": 5972,
+      "triangles": 758,
+      "exportCleanup": {
+        "droppedDegenerateTriangles": 0,
+        "faceNormalFallbackVertices": 0
+      }
+    },
+    {
+      "id": "FMA32544",
+      "name": "right supraspinatus",
+      "layer": "muscles",
+      "file": "anatomy/FMA32544.meshpack",
+      "bytes": 3603,
+      "sha256": "b7afd97ef8d5aa45da7fe695eb317f1a686867baed1edba7a426001eddf9802d",
+      "vertices": 654,
+      "bounds": [
+        -0.18793965876102448,
+        1.3856087923049927,
+        -0.08786101639270782,
+        -0.06325662136077881,
+        1.4205669164657593,
+        -0.008862392045557499
+      ],
+      "colour": [
+        0.5370882352941176,
+        0.18854411764705883,
+        0.17883529411764706
+      ],
+      "sourceElements": [
+        "FJ1506"
+      ],
+      "explanation": "Right supraspinatus \u2014 source-labelled adult anatomy. Left and right refer to the person, not the viewer. Detailed clinical interpretation is pending qualified review.",
+      "sourceTriangles": 877,
+      "inputTriangles": 877,
+      "triangles": 218,
+      "exportCleanup": {
+        "droppedDegenerateTriangles": 0,
+        "faceNormalFallbackVertices": 0
+      }
+    },
+    {
+      "id": "FMA32545",
+      "name": "left supraspinatus",
+      "layer": "muscles",
+      "file": "anatomy/FMA32545.meshpack",
+      "bytes": 3608,
+      "sha256": "fc143f97883a6b7cd19545b7751da1c32be989ae79bee17fb2d8ea9f5a9c3101",
+      "vertices": 654,
+      "bounds": [
+        0.06455065310001373,
+        1.385613203048706,
+        -0.08786089718341827,
+        0.18923544883728027,
+        1.420575737953186,
+        -0.008862460032105446
+      ],
+      "colour": [
+        0.5196176470588235,
+        0.17980882352941177,
+        0.1718470588235294
+      ],
+      "sourceElements": [
+        "FJ1506M"
+      ],
+      "explanation": "Left supraspinatus \u2014 source-labelled adult anatomy. Left and right refer to the person, not the viewer. Detailed clinical interpretation is pending qualified review.",
+      "sourceTriangles": 877,
+      "inputTriangles": 877,
+      "triangles": 218,
+      "exportCleanup": {
+        "droppedDegenerateTriangles": 0,
+        "faceNormalFallbackVertices": 0
+      }
+    },
+    {
+      "id": "FMA32547",
+      "name": "right infraspinatus muscle",
+      "layer": "muscles",
+      "file": "anatomy/FMA32547.meshpack",
+      "bytes": 3517,
+      "sha256": "c7134e65ef8d5cd6edb269b535696dd8b6c47f83ac3e14471b7db8ec87e20465",
+      "vertices": 648,
+      "bounds": [
+        -0.18843583762645721,
+        1.285111427307129,
+        -0.1044338271021843,
+        -0.05989930406212807,
+        1.4087512493133545,
+        -0.023879945278167725
+      ],
+      "colour": [
+        0.5459117647058824,
+        0.19295588235294117,
+        0.18236470588235293
+      ],
+      "sourceElements": [
+        "FJ1500"
+      ],
+      "explanation": "Right infraspinatus muscle \u2014 source-labelled adult anatomy. Left and right refer to the person, not the viewer. Detailed clinical interpretation is pending qualified review.",
+      "sourceTriangles": 866,
+      "inputTriangles": 866,
+      "triangles": 216,
+      "exportCleanup": {
+        "droppedDegenerateTriangles": 0,
+        "faceNormalFallbackVertices": 0
+      }
+    },
+    {
+      "id": "FMA32548",
+      "name": "left infraspinatus muscle",
+      "layer": "muscles",
+      "file": "anatomy/FMA32548.meshpack",
+      "bytes": 3528,
+      "sha256": "91248c5bfa4295c343eb22738b91f89bb10f5f552ac93176b28640a61eed084a",
+      "vertices": 648,
+      "bounds": [
+        0.06119339540600777,
+        1.285111427307129,
+        -0.1044338271021843,
+        0.18949900567531586,
+        1.4087512493133545,
+        -0.023932727053761482
+      ],
+      "colour": [
+        0.5441470588235294,
+        0.1920735294117647,
+        0.18165882352941176
+      ],
+      "sourceElements": [
+        "FJ1500M"
+      ],
+      "explanation": "Left infraspinatus muscle \u2014 source-labelled adult anatomy. Left and right refer to the person, not the viewer. Detailed clinical interpretation is pending qualified review.",
+      "sourceTriangles": 866,
+      "inputTriangles": 866,
+      "triangles": 216,
+      "exportCleanup": {
+        "droppedDegenerateTriangles": 0,
+        "faceNormalFallbackVertices": 0
+      }
+    },
+    {
+      "id": "FMA32551",
+      "name": "right teres major",
+      "layer": "muscles",
+      "file": "anatomy/FMA32551.meshpack",
+      "bytes": 4018,
+      "sha256": "ab8f85bebe78355f0ac48bca9ebe04928a2735844206a38676d9fcb19131c548",
+      "vertices": 732,
+      "bounds": [
+        -0.17123804986476898,
+        1.2678734064102173,
+        -0.10236279666423798,
+        -0.08560339361429214,
+        1.3632092475891113,
+        -0.021144267171621323
+      ],
+      "colour": [
+        0.5220882352941176,
+        0.18104411764705883,
+        0.17283529411764706
+      ],
+      "sourceElements": [
+        "FJ1507"
+      ],
+      "explanation": "Right teres major \u2014 source-labelled adult anatomy. Left and right refer to the person, not the viewer. Detailed clinical interpretation is pending qualified review.",
+      "sourceTriangles": 1032,
+      "inputTriangles": 1032,
+      "triangles": 244,
+      "exportCleanup": {
+        "droppedDegenerateTriangles": 0,
+        "faceNormalFallbackVertices": 6
+      }
+    },
+    {
+      "id": "FMA32552",
+      "name": "left teres major",
+      "layer": "muscles",
+      "file": "anatomy/FMA32552.meshpack",
+      "bytes": 4018,
+      "sha256": "1a4c6c9ac304ec3d649cb37623b8c5e654bc7a64a4ec957450b68d79b10375ba",
+      "vertices": 732,
+      "bounds": [
+        0.0868978500366211,
+        1.26787531375885,
+        -0.10236214101314545,
+        0.17253205180168152,
+        1.3632092475891113,
+        -0.021144215017557144
+      ],
+      "colour": [
+        0.5501470588235294,
+        0.1950735294117647,
+        0.18405882352941175
+      ],
+      "sourceElements": [
+        "FJ1507M"
+      ],
+      "explanation": "Left teres major \u2014 source-labelled adult anatomy. Left and right refer to the person, not the viewer. Detailed clinical interpretation is pending qualified review.",
+      "sourceTriangles": 1032,
+      "inputTriangles": 1032,
+      "triangles": 244,
+      "exportCleanup": {
+        "droppedDegenerateTriangles": 0,
+        "faceNormalFallbackVertices": 6
+      }
+    },
+    {
+      "id": "FMA32553",
+      "name": "right teres minor",
+      "layer": "muscles",
+      "file": "anatomy/FMA32553.meshpack",
+      "bytes": 2524,
+      "sha256": "fef2e34bff0cbd795d7682662ef441062a1aa3b6420b23b12edf21c28a7f1af0",
+      "vertices": 456,
+      "bounds": [
+        -0.18996649980545044,
+        1.2985202074050903,
+        -0.08835748583078384,
+        -0.10443034023046494,
+        1.3949416875839233,
+        -0.020402368158102036
+      ],
+      "colour": [
+        0.5609117647058823,
+        0.20045588235294118,
+        0.18836470588235293
+      ],
+      "sourceElements": [
+        "FJ1508"
+      ],
+      "explanation": "Right teres minor \u2014 source-labelled adult anatomy. Left and right refer to the person, not the viewer. Detailed clinical interpretation is pending qualified review.",
+      "sourceTriangles": 506,
+      "inputTriangles": 506,
+      "triangles": 152,
+      "exportCleanup": {
+        "droppedDegenerateTriangles": 0,
+        "faceNormalFallbackVertices": 0
+      }
+    },
+    {
+      "id": "FMA32554",
+      "name": "left teres minor",
+      "layer": "muscles",
+      "file": "anatomy/FMA32554.meshpack",
+      "bytes": 2516,
+      "sha256": "f07aba81a71202c45d107ffe23a1f4a4b09bede5509857bfc3504f02c6d9386c",
+      "vertices": 456,
+      "bounds": [
+        0.10572432726621628,
+        1.2985204458236694,
+        -0.08835775405168533,
+        0.1912609487771988,
+        1.3949975967407227,
+        -0.02040286362171173
+      ],
+      "colour": [
+        0.5579117647058824,
+        0.19895588235294118,
+        0.18716470588235293
+      ],
+      "sourceElements": [
+        "FJ1508M"
+      ],
+      "explanation": "Left teres minor \u2014 source-labelled adult anatomy. Left and right refer to the person, not the viewer. Detailed clinical interpretation is pending qualified review.",
+      "sourceTriangles": 506,
+      "inputTriangles": 506,
+      "triangles": 152,
+      "exportCleanup": {
+        "droppedDegenerateTriangles": 0,
+        "faceNormalFallbackVertices": 0
+      }
+    },
+    {
+      "id": "FMA37665",
+      "name": "right coracobrachialis",
+      "layer": "muscles",
+      "file": "anatomy/FMA37665.meshpack",
+      "bytes": 2324,
+      "sha256": "b8e3519625c70b1bf18671baa5c6eb925c2cbe0e2786e1f4416beeba6e7b427c",
+      "vertices": 420,
+      "bounds": [
+        -0.1886911392211914,
+        1.248482584953308,
+        -0.03382129967212677,
+        -0.1296030431985855,
+        1.4058884382247925,
+        0.0050893002189695835
+      ],
+      "colour": [
+        0.5538529411764707,
+        0.1969264705882353,
+        0.18554117647058824
+      ],
+      "sourceElements": [
+        "FJ1488"
+      ],
+      "explanation": "Right coracobrachialis \u2014 source-labelled adult anatomy. Left and right refer to the person, not the viewer. Detailed clinical interpretation is pending qualified review.",
+      "sourceTriangles": 442,
+      "inputTriangles": 442,
+      "triangles": 140,
+      "exportCleanup": {
+        "droppedDegenerateTriangles": 0,
+        "faceNormalFallbackVertices": 0
+      }
+    },
+    {
+      "id": "FMA37666",
+      "name": "left coracobrachialis",
+      "layer": "muscles",
+      "file": "anatomy/FMA37666.meshpack",
+      "bytes": 2325,
+      "sha256": "b627fb9d8d22d3c68b887d8b5f8005c6d26fe731726785ff2fcbe4cd7173316c",
+      "vertices": 420,
+      "bounds": [
+        0.1308971494436264,
+        1.2484827041625977,
+        -0.03382129967212677,
+        0.18998496234416962,
+        1.4058884382247925,
+        0.0050893002189695835
+      ],
+      "colour": [
+        0.5296764705882353,
+        0.18483823529411764,
+        0.1758705882352941
+      ],
+      "sourceElements": [
+        "FJ1488M"
+      ],
+      "explanation": "Left coracobrachialis \u2014 source-labelled adult anatomy. Left and right refer to the person, not the viewer. Detailed clinical interpretation is pending qualified review.",
+      "sourceTriangles": 442,
+      "inputTriangles": 442,
+      "triangles": 140,
+      "exportCleanup": {
+        "droppedDegenerateTriangles": 0,
+        "faceNormalFallbackVertices": 0
+      }
+    },
+    {
+      "id": "FMA37668",
+      "name": "right brachialis",
+      "layer": "muscles",
+      "file": "anatomy/FMA37668.meshpack",
+      "bytes": 5392,
+      "sha256": "64f93190bfeee879c99f02e927e1055c4b1ef1816deef101c3b089c0cd497e73",
+      "vertices": 1020,
+      "bounds": [
+        -0.23453985154628754,
+        1.0733399391174316,
+        -0.03975493460893631,
+        -0.17624570429325104,
+        1.298119068145752,
+        -0.014275145716965199
+      ],
+      "colour": [
+        0.5487352941176471,
+        0.19436764705882353,
+        0.1834941176470588
+      ],
+      "sourceElements": [
+        "FJ1486"
+      ],
+      "explanation": "Right brachialis \u2014 source-labelled adult anatomy. Left and right refer to the person, not the viewer. Detailed clinical interpretation is pending qualified review.",
+      "sourceTriangles": 1742,
+      "inputTriangles": 1742,
+      "triangles": 340,
+      "exportCleanup": {
+        "droppedDegenerateTriangles": 0,
+        "faceNormalFallbackVertices": 0
+      }
+    },
+    {
+      "id": "FMA37669",
+      "name": "left brachialis",
+      "layer": "muscles",
+      "file": "anatomy/FMA37669.meshpack",
+      "bytes": 5410,
+      "sha256": "7e91aded1e887994e6da832bfa3e44385b2dab96e3b0ad31d3eef25deffaf49c",
+      "vertices": 1020,
+      "bounds": [
+        0.17753966152668,
+        1.073339819908142,
+        -0.03975500911474228,
+        0.2358337640762329,
+        1.2980765104293823,
+        -0.014275040477514267
+      ],
+      "colour": [
+        0.5420294117647059,
+        0.19101470588235295,
+        0.18081176470588234
+      ],
+      "sourceElements": [
+        "FJ1486M"
+      ],
+      "explanation": "Left brachialis \u2014 source-labelled adult anatomy. Left and right refer to the person, not the viewer. Detailed clinical interpretation is pending qualified review.",
+      "sourceTriangles": 1742,
+      "inputTriangles": 1742,
+      "triangles": 340,
+      "exportCleanup": {
+        "droppedDegenerateTriangles": 0,
+        "faceNormalFallbackVertices": 0
+      }
+    },
+    {
+      "id": "FMA38486",
+      "name": "right brachioradialis",
+      "layer": "muscles",
+      "file": "anatomy/FMA38486.meshpack",
+      "bytes": 10778,
+      "sha256": "d82f2b1d88670ad767b3c4f2e2f0b6689b1ed65a7fd353162fc849fa3daba169",
+      "vertices": 1992,
+      "bounds": [
+        -0.27990493178367615,
+        0.8882608413696289,
+        -0.04481980577111244,
+        -0.20783472061157227,
+        1.2254254817962646,
+        0.022094735875725746
+      ],
+      "colour": [
+        0.5196176470588235,
+        0.17980882352941177,
+        0.1718470588235294
+      ],
+      "sourceElements": [
+        "FJ1487"
+      ],
+      "explanation": "Right brachioradialis \u2014 source-labelled adult anatomy. Left and right refer to the person, not the viewer. Detailed clinical interpretation is pending qualified review.",
+      "sourceTriangles": 4874,
+      "inputTriangles": 4874,
+      "triangles": 664,
+      "exportCleanup": {
+        "droppedDegenerateTriangles": 0,
+        "faceNormalFallbackVertices": 0
+      }
+    },
+    {
+      "id": "FMA38487",
+      "name": "left brachioradialis",
+      "layer": "muscles",
+      "file": "anatomy/FMA38487.meshpack",
+      "bytes": 10807,
+      "sha256": "9f70330364a225363d747c2cbb4cec13ccac9e00f416e8e9c67cabf028f590f8",
+      "vertices": 1992,
+      "bounds": [
+        0.20912879705429077,
+        0.8882609009742737,
+        -0.04481876268982887,
+        0.28119945526123047,
+        1.2254256010055542,
+        0.022094791755080223
+      ],
+      "colour": [
+        0.5295000000000001,
+        0.18475,
+        0.17579999999999998
+      ],
+      "sourceElements": [
+        "FJ1487M"
+      ],
+      "explanation": "Left brachioradialis \u2014 source-labelled adult anatomy. Left and right refer to the person, not the viewer. Detailed clinical interpretation is pending qualified review.",
+      "sourceTriangles": 4874,
+      "inputTriangles": 4874,
+      "triangles": 664,
+      "exportCleanup": {
+        "droppedDegenerateTriangles": 0,
+        "faceNormalFallbackVertices": 0
+      }
+    },
+    {
+      "id": "FMA38932",
+      "name": "right vastus medialis",
+      "layer": "muscles",
+      "file": "anatomy/FMA38932.meshpack",
+      "bytes": 10516,
+      "sha256": "bf4d34ea52c523ec520d3552f8483c00a50b198b4e23d32fadec3087cba51e23",
+      "vertices": 1908,
+      "bounds": [
+        -0.10473176091909409,
+        0.4185435473918915,
+        -0.011503183282911777,
+        -0.03410326689481735,
+        0.8159752488136292,
+        0.04616266489028931
+      ],
+      "colour": [
+        0.5219117647058824,
+        0.1809558823529412,
+        0.17276470588235293
+      ],
+      "sourceElements": [
+        "FJ1443"
+      ],
+      "explanation": "Right vastus medialis \u2014 source-labelled adult anatomy. Left and right refer to the person, not the viewer. Detailed clinical interpretation is pending qualified review.",
+      "sourceTriangles": 4552,
+      "inputTriangles": 4552,
+      "triangles": 636,
+      "exportCleanup": {
+        "droppedDegenerateTriangles": 0,
+        "faceNormalFallbackVertices": 0
+      }
+    },
+    {
+      "id": "FMA38933",
+      "name": "left vastus medialis",
+      "layer": "muscles",
+      "file": "anatomy/FMA38933.meshpack",
+      "bytes": 10457,
+      "sha256": "f8edd1e95a6276e3cb128d9dbda2c63a0e1ec6e7e2462b37a0a8c441caba3f24",
+      "vertices": 1908,
+      "bounds": [
+        0.035397376865148544,
+        0.4185434579849243,
+        -0.011503137648105621,
+        0.10602575540542603,
+        0.8159752488136292,
+        0.046171970665454865
+      ],
+      "colour": [
+        0.5256176470588235,
+        0.18280882352941177,
+        0.1742470588235294
+      ],
+      "sourceElements": [
+        "FJ1443M"
+      ],
+      "explanation": "Left vastus medialis \u2014 source-labelled adult anatomy. Left and right refer to the person, not the viewer. Detailed clinical interpretation is pending qualified review.",
+      "sourceTriangles": 4552,
+      "inputTriangles": 4552,
+      "triangles": 636,
+      "exportCleanup": {
+        "droppedDegenerateTriangles": 0,
+        "faceNormalFallbackVertices": 0
+      }
+    },
+    {
+      "id": "FMA38934",
+      "name": "right vastus intermedius",
+      "layer": "muscles",
+      "file": "anatomy/FMA38934.meshpack",
+      "bytes": 9965,
+      "sha256": "d60cdb5c2b4c52150bf2abfd9ae3ecaf3c20b227c3d2dc33e5b363a6f08d9ebc",
+      "vertices": 1824,
+      "bounds": [
+        -0.1322721242904663,
+        0.42058366537094116,
+        -0.024499159306287766,
+        -0.07563306391239166,
+        0.8478584289550781,
+        0.03407648950815201
+      ],
+      "colour": [
+        0.5280882352941176,
+        0.18404411764705883,
+        0.17523529411764704
+      ],
+      "sourceElements": [
+        "FJ1441"
+      ],
+      "explanation": "Right vastus intermedius \u2014 source-labelled adult anatomy. Left and right refer to the person, not the viewer. Detailed clinical interpretation is pending qualified review.",
+      "sourceTriangles": 4260,
+      "inputTriangles": 4260,
+      "triangles": 608,
+      "exportCleanup": {
+        "droppedDegenerateTriangles": 0,
+        "faceNormalFallbackVertices": 0
+      }
+    },
+    {
+      "id": "FMA38935",
+      "name": "left vastus intermedius",
+      "layer": "muscles",
+      "file": "anatomy/FMA38935.meshpack",
+      "bytes": 9944,
+      "sha256": "831ce6035b153a3ef43df7944ac252080ef655c6624c05cc456d196e73f7ca72",
+      "vertices": 1824,
+      "bounds": [
+        0.07692716270685196,
+        0.42058372497558594,
+        -0.024499403312802315,
+        0.13356654345989227,
+        0.8478584885597229,
+        0.03407641872763634
+      ],
+      "colour": [
+        0.5289705882352942,
+        0.18448529411764705,
+        0.17558823529411763
+      ],
+      "sourceElements": [
+        "FJ1441M"
+      ],
+      "explanation": "Left vastus intermedius \u2014 source-labelled adult anatomy. Left and right refer to the person, not the viewer. Detailed clinical interpretation is pending qualified review.",
+      "sourceTriangles": 4260,
+      "inputTriangles": 4260,
+      "triangles": 608,
+      "exportCleanup": {
+        "droppedDegenerateTriangles": 0,
+        "faceNormalFallbackVertices": 0
+      }
+    },
+    {
+      "id": "FMA45888",
+      "name": "long head of right biceps femoris",
+      "layer": "muscles",
+      "file": "anatomy/FMA45888.meshpack",
+      "bytes": 11113,
+      "sha256": "191c9133e7f43f3a6e3850a4b00f737fdb0758f5c4a5007c2d244ae401990aad",
+      "vertices": 2058,
+      "bounds": [
+        -0.12624719738960266,
+        0.40657371282577515,
+        -0.08231857419013977,
+        -0.04805660620331764,
+        0.8427183628082275,
+        -0.02886173687875271
+      ],
+      "colour": [
+        0.5314411764705883,
+        0.1857205882352941,
+        0.17657647058823528
+      ],
+      "sourceElements": [
+        "FJ1395"
+      ],
+      "explanation": "Long head of right biceps femoris \u2014 source-labelled adult anatomy. Left and right refer to the person, not the viewer. Detailed clinical interpretation is pending qualified review.",
+      "sourceTriangles": 5110,
+      "inputTriangles": 5110,
+      "triangles": 686,
+      "exportCleanup": {
+        "droppedDegenerateTriangles": 0,
+        "faceNormalFallbackVertices": 0
+      }
+    },
+    {
+      "id": "FMA45889",
+      "name": "long head of left biceps femoris",
+      "layer": "muscles",
+      "file": "anatomy/FMA45889.meshpack",
+      "bytes": 11150,
+      "sha256": "a1ce3707997438d5312c2579ae6016e82419846520f235878cd004fa1d418103",
+      "vertices": 2058,
+      "bounds": [
+        0.04935046285390854,
+        0.4065733253955841,
+        -0.08231861144304276,
+        0.12754106521606445,
+        0.8427183032035828,
+        -0.0288617555052042
+      ],
+      "colour": [
+        0.5351470588235294,
+        0.1875735294117647,
+        0.17805882352941177
+      ],
+      "sourceElements": [
+        "FJ1395M"
+      ],
+      "explanation": "Long head of left biceps femoris \u2014 source-labelled adult anatomy. Left and right refer to the person, not the viewer. Detailed clinical interpretation is pending qualified review.",
+      "sourceTriangles": 5110,
+      "inputTriangles": 5110,
+      "triangles": 686,
+      "exportCleanup": {
+        "droppedDegenerateTriangles": 0,
+        "faceNormalFallbackVertices": 0
+      }
+    },
+    {
+      "id": "FMA45891",
+      "name": "short head of right biceps femoris",
+      "layer": "muscles",
+      "file": "anatomy/FMA45891.meshpack",
+      "bytes": 5521,
+      "sha256": "70e1da05c277fa2559de7928c8d1cbd1c6c63ca23c3d8a461320fc204b7459c8",
+      "vertices": 1014,
+      "bounds": [
+        -0.11693201214075089,
+        0.40626510977745056,
+        -0.049822937697172165,
+        -0.08037801831960678,
+        0.7248339056968689,
+        -0.013375598937273026
+      ],
+      "colour": [
+        0.5277352941176471,
+        0.18386764705882352,
+        0.17509411764705882
+      ],
+      "sourceElements": [
+        "FJ1444"
+      ],
+      "explanation": "Short head of right biceps femoris \u2014 source-labelled adult anatomy. Left and right refer to the person, not the viewer. Detailed clinical interpretation is pending qualified review.",
+      "sourceTriangles": 1728,
+      "inputTriangles": 1728,
+      "triangles": 338,
+      "exportCleanup": {
+        "droppedDegenerateTriangles": 0,
+        "faceNormalFallbackVertices": 0
+      }
+    },
+    {
+      "id": "FMA45892",
+      "name": "short head of left biceps femoris",
+      "layer": "muscles",
+      "file": "anatomy/FMA45892.meshpack",
+      "bytes": 5552,
+      "sha256": "07a0002cfa2ffbd11daea3ce43f34110bd20d1ac4a7623219d99acd0d324574f",
+      "vertices": 1014,
+      "bounds": [
+        0.08167197555303574,
+        0.40626510977745056,
+        -0.049822814762592316,
+        0.1182260513305664,
+        0.7248340249061584,
+        -0.013375533744692802
+      ],
+      "colour": [
+        0.5535,
+        0.19675,
+        0.18539999999999998
+      ],
+      "sourceElements": [
+        "FJ1444M"
+      ],
+      "explanation": "Short head of left biceps femoris \u2014 source-labelled adult anatomy. Left and right refer to the person, not the viewer. Detailed clinical interpretation is pending qualified review.",
+      "sourceTriangles": 1728,
+      "inputTriangles": 1728,
+      "triangles": 338,
+      "exportCleanup": {
+        "droppedDegenerateTriangles": 0,
+        "faceNormalFallbackVertices": 0
+      }
+    },
+    {
+      "id": "FMA9616",
+      "name": "Additional source muscle of head",
+      "layer": "muscles",
+      "file": "anatomy/FMA9616.meshpack",
+      "bytes": 87419,
+      "sha256": "cd701b024b0fa07ef6720fd76860296243bb8d5529a9599ed274a6e0fdbbaf05",
+      "vertices": 16062,
+      "bounds": [
+        -0.04350819066166878,
+        1.5033962726593018,
+        -0.012528229504823685,
+        0.043505266308784485,
+        1.6151182651519775,
+        0.06551066786050797
+      ],
+      "colour": [
+        0.5563235294117648,
+        0.19816176470588237,
+        0.1865294117647059
+      ],
+      "sourceElements": [
+        "FJ1294",
+        "FJ1295",
+        "FJ1304",
+        "FJ1306",
+        "FJ1308",
+        "FJ1322",
+        "FJ1323",
+        "FJ1345",
+        "FJ1346",
+        "FJ1355",
+        "FJ1357",
+        "FJ1359",
+        "FJ1373",
+        "FJ1374",
+        "FJ2738",
+        "FJ2739",
+        "FJ2741",
+        "FJ2748",
+        "FJ2750",
+        "FJ2751",
+        "FJ2753",
+        "FJ2760",
+        "FJ2762"
+      ],
+      "explanation": "Additional source muscle of head \u2014 source-labelled adult anatomy. Left and right refer to the person, not the viewer. Detailed clinical interpretation is pending qualified review.",
+      "sourceTriangles": 120613,
+      "inputTriangles": 120613,
+      "triangles": 5354,
+      "exportCleanup": {
+        "droppedDegenerateTriangles": 0,
+        "faceNormalFallbackVertices": 0
+      }
+    },
+    {
+      "id": "FMA9617",
+      "name": "Additional source muscle of neck",
+      "layer": "muscles",
+      "file": "anatomy/FMA9617.meshpack",
+      "bytes": 171112,
+      "sha256": "0d4c2228976df3583d7cbda7c851b107129c473e9887d4dbf1dbea3f148e1235",
+      "vertices": 31407,
+      "bounds": [
+        -0.1465839147567749,
+        1.3798437118530273,
+        -0.07465312629938126,
+        0.14618559181690216,
+        1.577792763710022,
+        0.07294002920389175
+      ],
+      "colour": [
+        0.5609117647058823,
+        0.20045588235294118,
+        0.18836470588235293
+      ],
+      "sourceElements": [
+        "FJ1555",
+        "FJ1556",
+        "FJ1558",
+        "FJ1559",
+        "FJ1560",
+        "FJ1562",
+        "FJ1565",
+        "FJ1570",
+        "FJ1571",
+        "FJ1572",
+        "FJ1574",
+        "FJ1575",
+        "FJ1576",
+        "FJ1577",
+        "FJ1578",
+        "FJ1579",
+        "FJ1580",
+        "FJ1583",
+        "FJ1586",
+        "FJ1587",
+        "FJ1592",
+        "FJ1593",
+        "FJ1594",
+        "FJ1596",
+        "FJ1597",
+        "FJ1598",
+        "FJ1599",
+        "FJ2740",
+        "FJ2742",
+        "FJ2743",
+        "FJ2745",
+        "FJ2746",
+        "FJ2747",
+        "FJ2752",
+        "FJ2754",
+        "FJ2755",
+        "FJ2757",
+        "FJ2758",
+        "FJ2759",
+        "FJ2778",
+        "FJ2780",
+        "FJ2782",
+        "FJ2784",
+        "FJ2785",
+        "FJ2788",
+        "FJ2796",
+        "FJ2798",
+        "FJ2800",
+        "FJ2802",
+        "FJ2803",
+        "FJ2806",
+        "FJ2809"
+      ],
+      "explanation": "Additional source muscle of neck \u2014 source-labelled adult anatomy. Left and right refer to the person, not the viewer. Detailed clinical interpretation is pending qualified review.",
+      "sourceTriangles": 338894,
+      "inputTriangles": 338894,
+      "triangles": 10469,
+      "exportCleanup": {
+        "droppedDegenerateTriangles": 2,
+        "faceNormalFallbackVertices": 0
+      }
+    },
+    {
+      "id": "FMA9619",
+      "name": "Additional source muscle of thorax",
+      "layer": "muscles",
+      "file": "anatomy/FMA9619.meshpack",
+      "bytes": 227068,
+      "sha256": "3bd79e4ea918b45ee896f1e1a6eb804a3cd60523a2d40f8a1833d6eb253c5c12",
+      "vertices": 43218,
+      "bounds": [
+        -0.13487060368061066,
+        1.0912057161331177,
+        -0.09709431231021881,
+        0.13619893789291382,
+        1.4431910514831543,
+        0.10849595814943314
+      ],
+      "colour": [
+        0.5538529411764707,
+        0.1969264705882353,
+        0.18554117647058824
+      ],
+      "sourceElements": [
+        "FJ1451",
+        "FJ1451M",
+        "FJ1454",
+        "FJ1454M",
+        "FJ1455",
+        "FJ1455M",
+        "FJ1461",
+        "FJ1461M"
+      ],
+      "explanation": "Additional source muscle of thorax \u2014 source-labelled adult anatomy. Left and right refer to the person, not the viewer. Detailed clinical interpretation is pending qualified review.",
+      "sourceTriangles": 559980,
+      "inputTriangles": 559980,
+      "triangles": 14406,
+      "exportCleanup": {
+        "droppedDegenerateTriangles": 16,
+        "faceNormalFallbackVertices": 0
+      }
+    },
+    {
+      "id": "FMA9621",
+      "name": "Additional source muscle of upper limb",
+      "layer": "muscles",
+      "file": "anatomy/FMA9621.meshpack",
+      "bytes": 79709,
+      "sha256": "fe90d59a5c0ad059b76e3a752df5bd0fe5e6cdb2c1365ad2334c19cf34b78d80",
+      "vertices": 16872,
+      "bounds": [
+        -0.3186803162097931,
+        0.7447723150253296,
+        -0.10700038820505142,
+        0.31997451186180115,
+        1.545911192893982,
+        0.08635518699884415
+      ],
+      "colour": [
+        0.5515588235294118,
+        0.1957794117647059,
+        0.1846235294117647
+      ],
+      "sourceElements": [
+        "FJ1460",
+        "FJ1460M",
+        "FJ1466",
+        "FJ1466M",
+        "FJ1469",
+        "FJ1469M",
+        "FJ1470",
+        "FJ1470M",
+        "FJ1472",
+        "FJ1472M",
+        "FJ1475",
+        "FJ1475M",
+        "FJ1482",
+        "FJ1482M",
+        "FJ1483",
+        "FJ1483M",
+        "FJ1484",
+        "FJ1484M",
+        "FJ1485",
+        "FJ1485M",
+        "FJ1489",
+        "FJ1489M",
+        "FJ1490",
+        "FJ1490M",
+        "FJ1491",
+        "FJ1491M",
+        "FJ1492",
+        "FJ1492M",
+        "FJ1493",
+        "FJ1493M",
+        "FJ1494",
+        "FJ1494M",
+        "FJ1495",
+        "FJ1495M",
+        "FJ1496",
+        "FJ1496M",
+        "FJ1497",
+        "FJ1497M",
+        "FJ1498",
+        "FJ1498M",
+        "FJ1499",
+        "FJ1499M",
+        "FJ1501",
+        "FJ1501M",
+        "FJ1502",
+        "FJ1502M",
+        "FJ1503",
+        "FJ1503M",
+        "FJ1504",
+        "FJ1504M",
+        "FJ1505",
+        "FJ1505M",
+        "FJ1517",
+        "FJ1517M",
+        "FJ1532",
+        "FJ1532M",
+        "FJ1536",
+        "FJ1536M",
+        "FJ1537",
+        "FJ1537M"
+      ],
+      "explanation": "Additional source muscle of upper limb \u2014 source-labelled adult anatomy. Left and right refer to the person, not the viewer. Detailed clinical interpretation is pending qualified review.",
+      "sourceTriangles": 136530,
+      "inputTriangles": 136530,
+      "triangles": 5624,
+      "exportCleanup": {
+        "droppedDegenerateTriangles": 152,
+        "faceNormalFallbackVertices": 0
+      }
+    },
+    {
+      "id": "FMA9622",
+      "name": "Additional source muscle of lower limb",
+      "layer": "muscles",
+      "file": "anatomy/FMA9622.meshpack",
+      "bytes": 77101,
+      "sha256": "cfaf2467c7a0e10d014896d1fe82dd2da80c2a4b087aa008cf01459cf89ef950",
+      "vertices": 15396,
+      "bounds": [
+        -0.16487941145896912,
+        0.006180711556226015,
+        -0.08865750581026077,
+        0.16617365181446075,
+        1.0358518362045288,
+        0.12361805140972137
+      ],
+      "colour": [
+        0.5250882352941176,
+        0.18254411764705883,
+        0.17403529411764707
+      ],
+      "sourceElements": [
+        "FJ1383",
+        "FJ1383M",
+        "FJ1384",
+        "FJ1384M",
+        "FJ1385",
+        "FJ1385M",
+        "FJ1386",
+        "FJ1386M",
+        "FJ1387",
+        "FJ1387M",
+        "FJ1388",
+        "FJ1388M",
+        "FJ1389",
+        "FJ1389M",
+        "FJ1390",
+        "FJ1390M",
+        "FJ1391",
+        "FJ1391M",
+        "FJ1399",
+        "FJ1399M",
+        "FJ1400",
+        "FJ1400M",
+        "FJ1401",
+        "FJ1401M",
+        "FJ1404",
+        "FJ1404M",
+        "FJ1406",
+        "FJ1406M",
+        "FJ1407",
+        "FJ1407M",
+        "FJ1408",
+        "FJ1408M",
+        "FJ1409",
+        "FJ1409M",
+        "FJ1410",
+        "FJ1410M",
+        "FJ1411",
+        "FJ1411M",
+        "FJ1412",
+        "FJ1412M",
+        "FJ1413",
+        "FJ1413M",
+        "FJ1414",
+        "FJ1414M",
+        "FJ1415",
+        "FJ1415M",
+        "FJ1416",
+        "FJ1416M",
+        "FJ1417",
+        "FJ1417M",
+        "FJ1421",
+        "FJ1421M",
+        "FJ1422",
+        "FJ1422M",
+        "FJ1425",
+        "FJ1425M",
+        "FJ1426",
+        "FJ1426M",
+        "FJ1427",
+        "FJ1427M",
+        "FJ1428",
+        "FJ1428M",
+        "FJ1429",
+        "FJ1429M",
+        "FJ1430",
+        "FJ1430M",
+        "FJ1432",
+        "FJ1432M",
+        "FJ1438",
+        "FJ1438M",
+        "FJ1440",
+        "FJ1440M"
+      ],
+      "explanation": "Additional source muscle of lower limb \u2014 source-labelled adult anatomy. Left and right refer to the person, not the viewer. Detailed clinical interpretation is pending qualified review.",
+      "sourceTriangles": 117222,
+      "inputTriangles": 117222,
+      "triangles": 5132,
+      "exportCleanup": {
+        "droppedDegenerateTriangles": 48,
+        "faceNormalFallbackVertices": 0
+      }
+    },
+    {
+      "id": "FMA19086",
+      "name": "Additional source muscle of pelvis",
+      "layer": "muscles",
+      "file": "anatomy/FMA19086.meshpack",
+      "bytes": 12772,
+      "sha256": "739392585075c236e737edd978d2cb6e2cddbfcd21d1e860ec7d35e90017c58a",
+      "vertices": 2346,
+      "bounds": [
+        -0.048057667911052704,
+        0.8660978078842163,
+        -0.0921003669500351,
+        0.04939929395914078,
+        0.906802237033844,
+        -0.0625147894024849
+      ],
+      "colour": [
+        0.5415,
+        0.19075,
+        0.18059999999999998
+      ],
+      "sourceElements": [
+        "FJ1449M",
+        "FJ2542",
+        "FJ2547"
+      ],
+      "explanation": "Additional source muscle of pelvis \u2014 source-labelled adult anatomy. Left and right refer to the person, not the viewer. Detailed clinical interpretation is pending qualified review.",
+      "sourceTriangles": 6256,
+      "inputTriangles": 6256,
+      "triangles": 782,
+      "exportCleanup": {
+        "droppedDegenerateTriangles": 0,
+        "faceNormalFallbackVertices": 0
+      }
+    },
+    {
+      "id": "FMA22594",
+      "name": "Additional source muscle of vertebral column",
+      "layer": "muscles",
+      "file": "anatomy/FMA22594.meshpack",
+      "bytes": 135082,
+      "sha256": "afa9358ae5881d9f96ec2652dbe6a9a0769569764a92029f610f7548a54378e4",
+      "vertices": 27405,
+      "bounds": [
+        -0.11412418633699417,
+        0.8127008676528931,
+        -0.1099860742688179,
+        0.11541766673326492,
+        1.5770983695983887,
+        0.02035808563232422
+      ],
+      "colour": [
+        0.537264705882353,
+        0.18863235294117647,
+        0.17890588235294116
+      ],
+      "sourceElements": [
+        "FJ1431",
+        "FJ1431M",
+        "FJ1522",
+        "FJ1522M",
+        "FJ1524",
+        "FJ1524M",
+        "FJ1525",
+        "FJ1525M",
+        "FJ1526",
+        "FJ1526M",
+        "FJ1527",
+        "FJ1527M",
+        "FJ1528",
+        "FJ1528M",
+        "FJ1533",
+        "FJ1533M",
+        "FJ1534",
+        "FJ1534M",
+        "FJ1535",
+        "FJ1535M",
+        "FJ1538",
+        "FJ1538M",
+        "FJ1539",
+        "FJ1539M",
+        "FJ1540",
+        "FJ1540M",
+        "FJ1541",
+        "FJ1541M",
+        "FJ1542",
+        "FJ1542M",
+        "FJ1543",
+        "FJ1543M",
+        "FJ1544",
+        "FJ1544M",
+        "FJ1545",
+        "FJ1545M",
+        "FJ1546",
+        "FJ1546M",
+        "FJ1547",
+        "FJ1547M",
+        "FJ1548",
+        "FJ1548M",
+        "FJ1551",
+        "FJ1551M",
+        "FJ1561",
+        "FJ1563",
+        "FJ1564",
+        "FJ1566",
+        "FJ1567",
+        "FJ1568",
+        "FJ1569",
+        "FJ1582",
+        "FJ1584",
+        "FJ1585",
+        "FJ1588",
+        "FJ1589",
+        "FJ1590",
+        "FJ1591"
+      ],
+      "explanation": "Additional source muscle of vertebral column \u2014 source-labelled adult anatomy. Left and right refer to the person, not the viewer. Detailed clinical interpretation is pending qualified review.",
+      "sourceTriangles": 281686,
+      "inputTriangles": 281686,
+      "triangles": 9135,
+      "exportCleanup": {
+        "droppedDegenerateTriangles": 24,
+        "faceNormalFallbackVertices": 0
+      }
+    }
+  ],
+  "coverage": {
+    "muscleSourceElements": 362,
+    "muscleGroups": 93,
+    "anatomicalProportions": "Original scan coordinate frame retained; no cosmetic reshaping or mirrored replacement anatomy."
+  },
+  "additionalSources": [
+    {
+      "sourceVersion": "4.3",
+      "source": "https://lifesciencedb.jp/bp3d/",
+      "mappingSource": "https://lifesciencedb.jp/bp3d/get-info.cgi?version=4.3&cmd=concept-objfiles-list",
+      "downloadEndpoint": "https://lifesciencedb.jp/bp3d/download.cgi",
+      "downloadSha256": "914e4adc4ccc5f5bad5751d04c382e1fcac78081005f1b5a455fb06eeb930ced",
+      "licence": "CC-BY-SA-2.1-JP",
+      "licenceUrl": "https://creativecommons.org/licenses/by-sa/2.1/jp/",
+      "licenceEvidence": "https://lifesciencedb.jp/bp3d/info_en/index.html",
+      "attribution": "BodyParts3D / Anatomography, \u00a9 Database Center for Life Science (DBCLS). CC BY-SA 2.1 Japan."
+    }
+  ],
+  "quality": "balanced",
+  "triangleBudgets": {
+    "skin": 36000,
+    "skeleton": 63000,
+    "muscles": 110000,
+    "organs": 40000
+  },
+  "triangleCount": 248058
+}
