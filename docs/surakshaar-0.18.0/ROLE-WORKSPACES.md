@@ -30,7 +30,7 @@ This release gives each account a role-specific starting point, navigation, summ
 
 ## Android
 
-Version code 35 opens an authenticated account’s native role dashboard at launch and after sign-in. Guest launch still opens offline learning. The native dashboard uses the same authorised summary endpoint and supports institute selection, access recovery, refresh and sign-out. Operational roles do not get learner actions.
+Version code 35 opens an authenticated account’s native role dashboard at launch and after sign-in. Guest launch still opens offline learning. Signed-in learners can recover to offline practice if the role service is unavailable; the last role is only a presentation hint and is cleared on account change. The native dashboard uses the same authorised summary endpoint and supports institute selection, access recovery, refresh and sign-out. Operational roles do not get learner actions.
 
 Native learning, coursework review and compatible existing administration tasks open their native screens. Platform configuration, content governance, audit, institution awards and other web-only tasks open their corresponding browser route. The browser has a separate sign-in session, including MFA; native cookies are never copied into a URL. Full native implementations of those web tools are not claimed.
 
