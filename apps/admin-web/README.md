@@ -1,4 +1,6 @@
-# Spatial Studio web release · 0.16.0-rc.1
+# Spatial Studio web release · 0.17.0-rc.1
+
+See [institutional workflows and remaining work](../../docs/surakshaar-0.17.0/IMPLEMENTATION-CHECKLIST.md) and [role operations](../../docs/surakshaar-0.17.0/OPERATIONS.md).
 
 The selected light design includes public learning, a dedicated spatial scene for every current lesson step, detailed equipment/anatomy inspection, 55-step procedure rehearsal and optional compatible-browser WebXR placement. The release target is standard Next.js standalone with private SQLite storage, single instance, behind HTTPS. Read [the deployment guide](../../docs/surakshaar-0.16.0/DEPLOYMENT.md) and [verification](../../docs/surakshaar-0.16.0/VERIFICATION.md). Use `npm run build` and `npm run release:package`; the package never includes local configuration, data or signing keys.
 

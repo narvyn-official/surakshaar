@@ -25,7 +25,7 @@ Legend: **Implemented** = working code exists; **Partial** = important parts rem
 | Local procedure author / independent review / withdrawal | Implemented | Author submits; independent appointed reviewer records qualification/scope; approved-only learner library on web and Android. |
 | Qualified content / translation approval | External gate | Software cannot supply real reviewer approval |
 | Approved reference identity versions | Implemented | Encrypted adult references, attended approval, expiry/replacement/withdrawal; no automated face matching. |
-| Disclosed snapshots and private evidence | Implemented; deployment pending | Entry, random foreground snapshots and mandatory final frame; encrypted storage, challenge/replay controls, private examiner access. |
+| Disclosed snapshots and private evidence | Implemented and deployed | Entry, random foreground snapshots and mandatory final frame; encrypted storage, challenge/replay controls, private examiner access. |
 | Reference pinned to each attempt | Implemented | Only approved current enrolment reference starts a session; immutable pinned ID used during review. |
 | Review, reasons and appeal | Implemented | Formative evidence review and independent identity appeal |
 | Face matching and liveness | External gate | No configured/validated provider; manual identity review remains available |
@@ -46,7 +46,7 @@ Legend: **Implemented** = working code exists; **Partial** = important parts rem
 | Offsite recovery / production alerts / load targets | External gate | Local restore evidence exists; destination and representative load remain unvalidated |
 | Legal / child / biometric governance | External gate | Requires deployment-specific legal and institutional review |
 | AR-vs-video trial / retention / field effectiveness | External gate | Must collect real pilot evidence; no lives-saved or accident-reduction claims |
-| Role login handover | In progress | Controlled demonstration institute and 13 account types; passwords private, staff MFA required; existing accounts preserved. |
+| Role login handover | Implemented and verified | Thirteen separate demonstration accounts; all password sign-ins checked; privileged MFA enrolment required. Private handover excluded from Git and public assets. |
 
 ## Acceptance for changes in this delivery
 
@@ -60,7 +60,7 @@ Legend: **Implemented** = working code exists; **Partial** = important parts rem
 
 ## Verification and final status
 
-Local verification: 136 web unit tests; type checking, ESLint, production build and portable worker checks; 89 institutional HTTP assertions; identity lifecycle regression; 314 Android JVM tests and signed release build. Browser checks cover 14 role pages at 1440/390/320 CSS px, policy publication, CSV import, local procedure submission and public verification. Additional coursework and deployment checks are recorded in the release report.
+Local verification: 136 web unit tests; type checking, ESLint, production build and portable worker checks; 89 institutional HTTP assertions; identity lifecycle regression; 314 Android JVM tests and signed release build. Browser checks cover 15 role pages at 1440/390/320 CSS px, policy publication, CSV import, local procedure submission, examiner coursework feedback and public verification. Additional coursework and deployment checks are recorded in the release report.
 
 ## Remaining implementation and external gates
 
@@ -73,3 +73,5 @@ Local verification: 136 web unit tests; type checking, ESLint, production build 
 - Legal/child/biometric governance, physical-phone AR acceptance, full accessibility audit and a measured AR-versus-video pilot remain release gates for real deployments.
 
 These items mean the complete architecture is **not finished or field-certified**. The release is a usable institutional pilot with the limits above, not a claim that every future feature is implemented.
+
+Production: web 0.17.0-rc.1 deployed on 11 October 2026, signed Android code 34 published with the release. Five additive migrations preserved the original 48 tables. See [deployment and evidence](DEPLOYED-2026-10-11.md).
