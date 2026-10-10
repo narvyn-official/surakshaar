@@ -1,6 +1,6 @@
 import { env } from "@/lib/runtime-env";
 import { headers } from "next/headers";
-import { permitted, type Role, type Permission } from "@/lib/access";
+import { permitted, roles, type Role, type Permission } from "@/lib/access";
 import { getAppUser, requireStaffMfa } from "@/lib/auth";
 export function db() {
   if (!env.DB) throw new Error("Training storage is unavailable.");
@@ -19,7 +19,7 @@ export async function access(permission: Permission = "read"): Promise<Access> {
   let role: Role = "admin";
   if (who !== user.userId) {
     const member = await db().prepare("SELECT role FROM team_members WHERE owner=? AND user_id=? AND active=1").bind(who, user.userId).first<{role: Role}>();
-    if (!member || !["admin", "trainer", "viewer", "certifier"].includes(member.role)) throw new Error("Forbidden workspace. Choose an approved workspace or join a centre.");
+    if (!member || !roles.includes(member.role)) throw new Error("Forbidden workspace. Choose an approved workspace or join a centre.");
     role = member.role;
   }
   await requireStaffMfa(user.userId);

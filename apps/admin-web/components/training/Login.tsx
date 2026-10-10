@@ -11,7 +11,7 @@ export default function Login({mode="login"}:{mode?:Mode}) {
  const [signup,setSignup]=useState(mode==='signup'),[busy,setBusy]=useState(false),[error,setError]=useState(''),[message,setMessage]=useState('');
  const pending=useRef(false);
  const [challenge,setChallenge]=useState(false),[backup,setBackup]=useState(false);
- const destination=()=>returnPath(new URLSearchParams(window.location.search).get('next'),['/learn','/identity','/identity-review'].includes(window.location.pathname)?window.location.pathname+window.location.hash:'/');
+ const destination=()=>returnPath(new URLSearchParams(window.location.search).get('next'),['/learn','/identity','/identity-review','/identity-enrolment','/institution-practice','/institution','/coursework','/awards','/institute-library','/learning-support'].includes(window.location.pathname)?window.location.pathname+window.location.search+window.location.hash:'/');
  const forgot=mode==='forgot',reset=mode==='reset';
  async function submit(e:React.FormEvent<HTMLFormElement>) {
   e.preventDefault();if(pending.current)return;pending.current=true;

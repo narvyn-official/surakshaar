@@ -91,7 +91,7 @@ private class CentreSheet(host:Activity,store:Store?,private val initialAssignme
         reviews.forEach{event->text("${event.getString("outcome")} · ${date(event.getLong("created_at"))}\n${event.getString("note")}")}
         val previous=reviews.firstOrNull()?.getString("id")
         if(learner){button(t("Request correction","सुधार का अनुरोध")){feedback(row,previous,true)};button(t("Withdraw sharing","साझा करना वापस लें")){confirm(t("Withdraw this record?","यह रिकॉर्ड वापस लें?"),t("Future centre access is removed. Previously exported copies cannot be recalled.","आगे का केंद्र प्रवेश हट जाएगा। पहले निर्यात की गई प्रतियाँ वापस नहीं आएँगी।")){request("/api/learning-enrolment",JSONObject().put("action","withdraw").put("workerId",store!!.workerId).put("owner",owner).put("submissionId",row.getString("id"))){detail(id)}}}}
-        else if(role in listOf("admin","trainer")&&row.getString("account_id")!=actorId)button(t("Add educator feedback","प्रशिक्षक प्रतिक्रिया जोड़ें"),true){feedback(row,previous,false)}
+        else if(role in listOf("admin","trainer","examiner","assessor")&&row.getString("account_id")!=actorId)button(t("Add educator feedback","प्रशिक्षक प्रतिक्रिया जोड़ें"),true){feedback(row,previous,false)}
         button(t("Export this shared record","यह साझा रिकॉर्ड निर्यात करें")){share(JSONObject().put("assignment",assignment.getJSONObject("catalogue")).put("evidence",evidence).put("feedback",JSONArray(reviews)).put("certifiable",false).toString(2),t("Shared formative record","साझा अभ्यास रिकॉर्ड"))}
         button(t("Back to assignment","कार्य पर वापस")){detail(id)}
     }

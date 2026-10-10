@@ -21,6 +21,7 @@ import {
   FileCheck2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { InstitutionWorkspace } from "@/components/training/InstitutionWorkspace";
 import { AdminPanel, type AdminSession } from "@/components/training/AdminPanel";
 import { RoomJournals } from "@/components/training/RoomJournals";
 import { WorkspaceShell, destinations } from "@/components/training/WorkspaceShell";
@@ -138,7 +139,7 @@ export default function Home() {
     try {
     const account = await api<AdminSession>("admin/session");
     setSession(account);
-    if (!account.current) { setRecords([]);setCredentials([]);setSelected(null);setActive(null);setRevoke(null);setVerification(null);setCoverage({returned:0,total:0,truncated:false});return; }
+    if (!account.current || ["author","reviewer"].includes(account.current.role)) { setRecords([]);setCredentials([]);setSelected(null);setActive(null);setRevoke(null);setVerification(null);setCoverage({returned:0,total:0,truncated:false});return; }
     const d = await api<{attempts:Row[];credentials:Credential[];coverage:{returned:number;total:number;truncated:boolean}}>("records");
     setRecords(d.attempts);
     if (d.coverage) setCoverage(d.coverage);
@@ -258,6 +259,7 @@ export default function Home() {
   const passed = records.filter(
     (r) => r.payload.kind === "assessment" && r.payload.result.passed,
   ).length;
+  if(session?.current&&["author","reviewer"].includes(session.current.role))return <InstitutionWorkspace/>;
   return (
     <>
       <WorkspaceShell session={session} active={tab} onNavigate={setTab} busy={busy} onRefresh={()=>run(load)} onWorkspace={id=>run(async()=>{await api("admin/session","POST",{owner:id});window.location.assign("/");})}>
@@ -297,6 +299,7 @@ export default function Home() {
           ))}
         </div>
         }
+        {session?.current&&<p className="notice"><a href="/institution">Institution organisation, policies and local content</a> · <a href="/awards">Institution learning records</a></p>}
         {session && (tab==="access"||!session.current) && <GovernancePanel onChange={load}/>}
         {session && !session.current && <p className="notice" role="status">Choose an approved workspace above, request centre approval, or join with your private invitation code. Your account remains signed in.</p>}
         {error && (

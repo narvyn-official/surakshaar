@@ -1,12 +1,13 @@
+import { requireInstitutionCapacity } from "@/lib/institution-store";
 import { freshUser } from "@/lib/auth";
 import { z } from "zod/v3";
 import { access, audit, db, failure, json, digest } from "@/lib/server";
 import { curriculum } from "@/lib/grading";
-import { assignmentStatus } from "@/lib/access";
+import { assignmentStatus, roles } from "@/lib/access";
 const id = z.string().uuid();
 const command = z.discriminatedUnion("action", [
   z.object({action:z.literal("settings"),name:z.string().trim().min(2).max(100),site:z.string().trim().max(150)}).strict(),
-  z.object({action:z.literal("member"),email:z.string().trim().email().max(254),role:z.enum(["admin","trainer","viewer","certifier"]),active:z.boolean()}).strict(),
+  z.object({action:z.literal("member"),email:z.string().trim().email().max(254),role:z.enum(roles),active:z.boolean()}).strict(),
   z.object({action:z.literal("worker"),id:id.optional(),androidId:id.optional(),name:z.string().trim().min(1).max(80),sector:z.enum(["Unspecified","Mining","Steel","Mica","Other"])}).strict(),
   z.object({action:z.literal("assign"),workerIds:z.array(id).min(1).max(100),moduleId:z.string().max(32),dueAt:z.number().int().positive().max(8640000000000000),note:z.string().trim().max(500)}).strict(),
   z.object({action:z.literal("cancel"),id,reason:z.string().trim().min(5).max(500)}).strict(),
@@ -30,6 +31,7 @@ export async function POST(request:Request) {
     const parsed=command.safeParse(await json(request));if(!parsed.success)throw new Error("Invalid form. Check required fields and limits.");
     const c=parsed.data,a=await access(c.action==='settings'||c.action==='member'?'admin':'write'),now=Date.now(),statements:D1PreparedStatement[]=[];
     let target='', invitation:string|undefined;
+    if(c.action==='assign'||c.action==='worker'&&!c.id)await requireInstitutionCapacity(a.owner,c.action==='worker'?1:0);
     if(c.action==='settings') {
       target=a.owner;statements.push(db().prepare("INSERT INTO training_centres(owner,name,site,updated_at) VALUES(?,?,?,?) ON CONFLICT(owner) DO UPDATE SET name=excluded.name,site=excluded.site,updated_at=excluded.updated_at").bind(a.owner,c.name,c.site,now));
     } else if(c.action==='member') {

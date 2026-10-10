@@ -113,6 +113,8 @@ class LearnerCentreActivity:Activity(){
         body.add(label(t("This phone: ${identity.name.ifBlank{"Learner"}}. Practice stays private until you choose to upload or share it.","यह फ़ोन: ${identity.name.ifBlank{"शिक्षार्थी"}}। अपलोड या साझा करने तक अभ्यास निजी रहता है।"),14f),bottom=12)
         body.add(action(t("Private practice & sync","निजी अभ्यास और सिंक")){LearningPracticeSyncDialog.show(this,identity)},bottom=8)
         body.add(action(t("Institution assignments","संस्था के अभ्यास कार्य"),false){LearningCentreDialog.showLearner(this,identity)},bottom=8)
+        body.add(action(t("Institution-issued records","संस्था द्वारा जारी रिकॉर्ड"),false){InstitutionRecordsDialog.show(this,identity)},bottom=8)
+        body.add(action(t("Reviewed local procedures","समीक्षित स्थानीय प्रक्रियाएँ"),false){InstitutionRecordsDialog.library(this,identity)},bottom=8)
         body.add(action(t("Join or manage institution","संस्था जोड़ें या प्रबंधित करें"),false){if(links.isEmpty())join()else chooseCentre()},bottom=8)
         body.add(action(t("Account security","खाता सुरक्षा"),false){security()},bottom=8)
         body.add(action(t("Assigned identity practice (browser)","पहचान सहित निर्धारित अभ्यास (ब्राउज़र)"),false){startActivity(Intent(Intent.ACTION_VIEW,Uri.parse(api.base+"/identity")))},top=10);logout()

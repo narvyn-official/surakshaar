@@ -1,10 +1,16 @@
-export type Role = "admin" | "trainer" | "viewer" | "certifier";
-export type Permission = "read" | "write" | "admin" | "certify" | "revoke";
+export const roles = ['admin','trainer','viewer','certifier','examiner','assessor','author','reviewer'] as const;
+export type Role = typeof roles[number];
+export type Permission = "workspace" | "read" | "write" | "admin" | "certify" | "revoke" | "review" | "identity" | "content" | "content-review";
 export function permitted(role: Role, permission: Permission) {
-  if (!["admin", "trainer", "viewer", "certifier"].includes(role)) return false;
-  if(permission==='read')return true;
-  if(permission==='certify')return role==='certifier';
-  if(permission==='revoke')return role==='certifier'||role==='admin';
+  if (!roles.includes(role)) return false;
+  if(permission==='workspace')return true;
+  if(permission==='content')return ['admin','trainer','author','reviewer'].includes(role);
+  if(permission==='content-review')return ['reviewer'].includes(role);
+  if(permission==='read')return !['author','reviewer'].includes(role);
+  if(permission==='review')return ['admin','trainer','examiner','assessor'].includes(role);
+  if(permission==='identity')return ['examiner','assessor'].includes(role);
+  if(permission==='certify')return role==='certifier'||role==='assessor';
+  if(permission==='revoke')return ['certifier','assessor','admin'].includes(role);
   if(permission==='admin')return role==='admin';
   return permission==='write'&&(role==='admin'||role==='trainer');
 }

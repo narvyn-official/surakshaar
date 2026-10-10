@@ -1,6 +1,7 @@
 'use client';
 import {useCallback,useEffect,useRef,useState} from 'react';
 import {requestJson} from '@/lib/client-api';
+import {PlatformSettings} from './PlatformSettings';
 import {SafetySources} from './SafetySources';
 import {EquipmentReferences} from './EquipmentReferences';
 import {Button} from '@/components/ui/button';
@@ -18,6 +19,7 @@ export function GovernancePanel({onChange}:{onChange:()=>Promise<void>}){
  {!operator&&(rows.length===0||rows.every(r=>r.status==='rejected'))&&<form className="admin-form" onSubmit={e=>{e.preventDefault();const f=new FormData(e.currentTarget);void save({action:'request',name:f.get('name'),site:f.get('site')})}}><label>Centre name<Input name="name" required minLength={2} maxLength={100}/></label><label>Site / organisation<Input name="site" required minLength={2} maxLength={150}/></label><Button disabled={busy}>Request centre approval</Button><p className="fine">Already invited? Use the account menu → Join a centre. An operator reviews new centres before any administrative access is granted.</p></form>}
  {rows.map(r=><article className="rounded-xl border p-4 my-4" key={r.owner}><h3>{r.name}</h3><p>{r.site}</p><p><strong>Status: {r.status}</strong></p>{r.reason&&<p>Review note: {r.reason}</p>}{operator&&<><p className="fine break-all">Applicant account: {r.owner}</p><form className="admin-form" onSubmit={e=>{e.preventDefault();const f=new FormData(e.currentTarget);void save({action:f.get('action'),owner:r.owner,reason:f.get('reason')})}}><label>Decision<select name="action">{r.status==='approved'?<option value="suspend">Suspend centre access</option>:r.status==='pending'?<><option value="approve">Approve centre</option><option value="reject">Reject application</option></>:r.status==='suspended'?<option value="approve">Restore approved centre</option>:<option value="reject">Await a new application</option>}</select></label><label>Review reason<Input name="reason" required minLength={10} maxLength={500}/></label><Button disabled={busy||r.status==='rejected'}>Record decision</Button></form></>}</article>)}
  {!rows.length&&operator&&<p>No centre applications yet.</p>}
+ {operator&&<PlatformSettings/>}
  {operator&&<details className="safety-source"><summary>Manage global Safety Updates sources</summary><SafetySources/><EquipmentReferences/></details>}
  </>}
  </section>

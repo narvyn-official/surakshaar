@@ -14,3 +14,24 @@
 .studio-segmented{flex-wrap:wrap;gap:6px}.studio-model .model-toolbar{flex-wrap:wrap}.studio-model .model-toolbar button{min-width:44px;min-height:44px}.model-toolbar button:last-child{width:auto;padding:0 12px;font-size:12px;font-weight:650}.model-ar{display:flex;gap:12px;align-items:center;padding:8px 18px 16px;flex-wrap:wrap}.model-ar small{font-size:11px;line-height:1.5;flex:1;min-width:150px;color:var(--studio-muted,#4b667b)}.model-ar-consent,.model-ar-status{margin:0 16px 16px;padding:14px;border:1px solid #aac6d8;border-radius:12px;background:#f9fcff;color:#18344c;font-size:13px;line-height:1.5}.model-ar-consent .studio-button{margin-right:10px}.studio-model.is-xr{position:fixed;inset:0;z-index:1000;background:transparent;border:0;display:flex;flex-direction:column}.is-xr .model-canvas{flex:1;visibility:hidden}.is-xr .model-topline,.is-xr .model-toolbar,.is-xr .model-ar,.is-xr .model-caption{background:#f4f9fc}.is-xr .model-ar-status{background:#f4f9fc}.model-ar button:disabled{opacity:.7;cursor:default}
 .studio-model{display:flex;flex-direction:column;min-height:550px}.studio-model .model-topline{position:relative;top:auto;left:auto;right:auto;margin:18px 20px 0;min-height:30px}.studio-model .model-canvas{position:relative;inset:auto;flex:1;min-height:330px;height:360px}.studio-model .model-toolbar{position:relative;bottom:auto;left:auto;transform:none;align-self:center;margin:8px 12px;justify-content:center;max-width:calc(100% - 24px)}.studio-model .model-caption{position:relative;bottom:auto;margin:0 8px 10px}.studio-model .model-ar{position:relative;z-index:2}.studio-segment{flex-wrap:wrap;gap:6px}.studio-segment button{flex:1 1 95px;min-height:44px;padding:7px}.studio-segmented{display:flex;flex-wrap:wrap;background:#e0ebf2;padding:5px;border-radius:8px}.studio-segmented button{min-height:44px;border:0;background:transparent;padding:8px 12px;color:#365971;border-radius:6px}.studio-segmented button[aria-pressed=true]{background:#fff;color:#075c9a}.is-xr .model-canvas{visibility:hidden;flex:1}.spatial-rehearsal>h2{margin:20px 0 12px}.spatial-rehearsal .studio-fine{margin-bottom:20px}.model-ar-consent{position:relative;z-index:3}.studio-model.is-xr .model-topline{margin:0;padding:16px}.studio-model.is-xr .model-toolbar{margin:8px auto}.studio-model.is-xr .model-ar{margin:0}.studio-model.is-xr .model-caption{display:none}@media(max-width:720px){.studio-model,.practice-explorer .studio-model{min-height:500px}.studio-model .model-canvas{height:300px;min-height:290px}.studio-model .model-topline{margin:12px 14px 0;font-size:10px}.studio-model .model-ar{padding:6px 14px 14px}.model-ar .studio-button{font-size:12px}.studio-segment button{flex-basis:85px}}
 .model-detail-select{display:grid;gap:5px;padding:3px 16px 10px;font-size:11px;color:#365971}.model-detail-select select{max-width:100%;min-width:0;min-height:44px;padding:6px 10px;border:1px solid #b3cbd9;border-radius:7px;background:#f9fcff;color:#18344c}.is-xr .model-detail-select{display:none}
+
+/* Institutional operations reuse the selected light Spatial Studio vocabulary. */
+.institution-workspace { max-width: 1200px; }
+.institution-links,.institution-tabs { display:flex; flex-wrap:wrap; gap:12px; margin-bottom:24px; }
+.institution-links a { text-decoration:underline; text-underline-offset:4px; padding:8px 0; }
+.institution-tabs button { padding:12px 18px; border:1px solid #cbd7d6; border-radius:24px; background:white; color:#233a3d; }
+.institution-tabs button[aria-current="page"] { background:#184e46; color:white; border-color:#184e46; }
+.institution-workspace > .practice-lesson { margin:20px 0; }
+.institution-workspace .practice-lesson { min-width:0; margin-bottom:20px; }
+.institution-workspace fieldset { display:grid; gap:16px; border:0; padding:0; min-width:0; }
+.institution-workspace legend { margin-bottom:16px; font-weight:600; }
+.institution-fields { display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr)); gap:16px; }
+.institution-list article { display:flex; justify-content:space-between; flex-wrap:wrap; gap:16px; border-top:1px solid #dce4e3; padding:18px 0; }
+.institution-list article > div { min-width:0; flex:1; }
+.institution-procedure { border-top:1px solid #dce4e3; padding:20px 0; }
+.institution-workspace summary { cursor:pointer; font-weight:600; padding:12px 0; }
+.institution-prose { white-space:pre-wrap; overflow-wrap:anywhere; }
+.institution-workspace textarea { min-height:100px; }
+.institution-workspace input[type="checkbox"] { width:20px; height:20px; margin-right:8px; vertical-align:middle; }
+.institution-workspace button:focus-visible,.institution-workspace a:focus-visible,.institution-workspace summary:focus-visible { outline:3px solid #20675a; outline-offset:4px; }
+@media(max-width:600px) { .institution-tabs button { flex:1 1 45%; } .institution-workspace .studio-heading h1 { font-size:2rem; } }

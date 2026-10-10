@@ -8,7 +8,7 @@ export const uuid = z.string().uuid();
 const stamp = z.number().int().nonnegative().safe();
 export const reviewOutcomes = ['reviewed', 'repeat-practice', 'needs-information'] as const;
 export const centreCommand = z.discriminatedUnion('action', [
-  z.object({action:z.literal('assign'), id:uuid, workerIds:z.array(uuid).min(1).max(20), courseId:z.enum(['fire','first-aid']), contentVersion:z.string().max(100), audience:z.enum(['school-awareness','adult-learning']), scenarioIds:z.array(z.string().max(100)).min(1).max(50), mode:z.enum(['guided','independent']), dueAt:stamp, note:z.string().trim().max(500)}).strict(),
+  z.object({action:z.literal('assign'), id:uuid, workerIds:z.array(uuid).min(1).max(200), courseId:z.enum(['fire','first-aid']), contentVersion:z.string().max(100), audience:z.enum(['school-awareness','adult-learning']), scenarioIds:z.array(z.string().max(100)).min(1).max(50), mode:z.enum(['guided','independent']), dueAt:stamp, note:z.string().trim().max(500)}).strict(),
   z.object({action:z.literal('cancel'), assignmentId:uuid, reason:z.string().trim().min(5).max(500)}).strict(),
   z.object({action:z.literal('review'), id:uuid, submissionId:z.string().regex(/^[a-f0-9]{64}$/), previousEventId:uuid.nullable(), outcome:z.enum(reviewOutcomes), note:z.string().trim().min(10).max(1000)}).strict(),
   z.object({action:z.literal('observe'), id:uuid, assignmentId:uuid, observedAt:stamp, setting:z.enum(['in-person-training','remote-simulation']), rubric:z.object({communication:z.boolean(),sequence:z.boolean(),safeDecisions:z.boolean()}).strict(), outcome:z.enum(['observed','further-practice']), note:z.string().trim().min(10).max(1000)}).strict(),

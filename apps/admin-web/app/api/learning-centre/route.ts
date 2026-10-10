@@ -1,4 +1,5 @@
 import {z} from 'zod';
+import {requireInstitutionCapacity,currentInstitutionPolicy} from '@/lib/institution-store';
 import {access,audit,db,digest,json} from '@/lib/server';
 import {centreCommand,validateAssignment,launchCatalogue,uuid,csvCell,assignmentProgress,type LaunchAssignment,type Submission} from '@/lib/learning-centre';
 import {assignmentView,launchAssignment,launchBudget,launchFailure,launchResponse} from '@/lib/learning-centre-store';
@@ -18,8 +19,10 @@ export async function GET(request:Request){try{
 }catch(error){return launchFailure(error)}}
 
 export async function POST(request:Request){try{
- const a=await access('write'),parsed=centreCommand.safeParse(await json(request,64000));if(!parsed.success)throw new Error('Invalid educator command. Check the fields and limits.');const c=parsed.data,now=Date.now();await launchBudget(a.user.userId);
+ const parsed=centreCommand.safeParse(await json(request,64000));if(!parsed.success)throw new Error('Invalid educator command. Check the fields and limits.');const c=parsed.data,a=await access(c.action==='review'?'review':'write'),now=Date.now();await launchBudget(a.user.userId);
  if(c.action==='assign'){
+  await requireInstitutionCapacity(a.owner);
+  if(c.audience==='school-awareness'&&(await currentInstitutionPolicy(a.owner)).policy.assessment==='snapshots')throw Error('Invalid assignment: a school awareness programme requires a policy without camera monitoring.');
   const snapshot=validateAssignment(c,now),statements:D1PreparedStatement[]=[],ids:string[]=[];
   for(const workerId of c.workerIds){
    if(!await db().prepare('SELECT id FROM workers WHERE owner=? AND id=?').bind(a.owner,workerId).first())throw new Error('No learner found in this centre.');

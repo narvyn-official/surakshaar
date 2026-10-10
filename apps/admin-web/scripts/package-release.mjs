@@ -25,6 +25,7 @@ cpSync(join(root,'content/anatomy/manifest.json'),join(target,'source/content/an
 const notices=[];function walk(dir){for(const name of readdirSync(dir)){const path=join(dir,name);if(lstatSync(path).isSymbolicLink())continue;if(statSync(path).isDirectory())walk(path);else if(/^(licen[cs]e|notice|copying)(\.|$)/i.test(name))notices.push(relative(web,path));}}walk(web);
 writeFileSync(join(target,'THIRD-PARTY-NOTICES.txt'),'Dependency and asset licence files retained inside web/:\n'+notices.join('\n')+'\n');
 writeFileSync(join(target,'BUILD.json'),JSON.stringify({version,builtAt:new Date().toISOString(),runtime:process.version,platform:process.platform,architecture:process.arch,hosted:false,contentReview:'pending',webRuntime:'Next.js standalone / SQLite single instance'},null,2));
-cpSync(join(root,'docs/surakshaar-0.16.0'),join(target,'docs'),{recursive:true});
+cpSync(join(root,'docs/surakshaar-0.16.0'),join(target,'docs/baseline-0.16.0'),{recursive:true});
+cpSync(join(root,'docs/surakshaar-0.17.0'),join(target,'docs/institution-0.17.0'),{recursive:true});
 execFileSync('tar',['-czf',join(target,`surakshaar-${version}-web.tar.gz`),'-C',target,'web','source','THIRD-PARTY-NOTICES.txt','BUILD.json','docs']);
 const archive=join(target,`surakshaar-${version}-web.tar.gz`);console.log(JSON.stringify({archive,sha256:createHash('sha256').update(readFileSync(archive)).digest('hex'),bytes:statSync(archive).size},null,2));
