@@ -1,6 +1,6 @@
 # Backend and institution release checkpoint — 10 October 2026
 
-Implemented in the shared working tree; **not deployed or published**.
+The native app is available as a development preview. The account service remains **local-only and is not deployed**.
 
 - Explicit multi-institution learner selection, tenant-scoped assignment/notification routes and state, and ambiguity rejection for older clients. Private source copies remain account-owned, with deliberate sharing to each institution.
 - Compact native institution home, readable assignment/review/observation controls, and a separate legacy industrial-record path. Encrypted legacy transfers now pin institution as well as account/server/profile; old unscoped queues require a deliberate reset of the transfer copy, retaining local evidence.
@@ -20,7 +20,7 @@ Verification:
 | Android focused session/queue/upload JVM checks | 21 passed before QR addition |
 | Current native QR and account source compile | Root's current APK + AndroidTest build passed |
 | Public verification UI | Chrome screenshot inspected; unavailable-link action exercised |
-| Signed-in native institution and QR workflow | Passed on API 36 emulator against the real local service: institution switching/isolation, cancelled consent, QR generation and bitmap decode, anonymous public verification, revocation and retained private source. Four screenshots inspected. See [native verification details](formative-record-sharing.md#native-verification--10-october-2026). |
+| Signed-in native institution and QR workflow | Passed on the published preview APK (`706425d9…`), API 36 emulator, against the real local service: institution switching/isolation, cancelled consent, QR generation and bitmap decode, anonymous public verification, revocation with correct timestamp and retained private source. Four screenshots retained; corrected timestamp visually inspected. See [native verification details](formative-record-sharing.md#native-verification--10-october-2026). |
 
 Migrations 0018 and 0019 were applied only to the local database after private backups. Earlier migrations 0014–0017 remain prerequisites. No industrial certificate prerequisites changed.
 

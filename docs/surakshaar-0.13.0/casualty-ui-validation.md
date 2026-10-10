@@ -38,6 +38,12 @@ APK `706425d93e82cb11d9d32f29dbdbb0aa4bda33aa76483344423ff84d9d301ec1` magnifies
 
 The good/damaged equipment screenshots were visually inspected: the operating-range versus low gauge needle and split hose are visible, without choice rings covering the unit. Evidence is `fire-inspection-706425.txt`, `fire-inspection-706425-build.json`, and the three `fire-*-screen-706425.png` screenshots in the same validation directory. This check covers standard portrait screen inspection. It does not establish camera-mode spatial selection, short-landscape Fire layout or large-text Fire dock accessibility.
 
+### Follow-up large-text baseline on the published preview
+
+The same `706425…` APK was then checked at 200% text. Portrait returned **OK (1 test)** in 9.631 seconds. Landscape failed in 4.157 seconds: the inspection viewport was 1536 × 433 pixels at density 2.625, its choices were only 66.3 pixels (25.3 dp) high, and the equipment region above the choices was 173 pixels (65.9 dp). The published preview therefore does **not** meet the 48 dp target or useful inspection-area checks in this landscape configuration. The failure is preserved in `fire-inspection-706425-landscape-2x.txt`; exact bounds are in `fire-CONDITION_CHECK-layout-landscape-2.0-706425.json`.
+
+Both screenshots were inspected. Landscape's extinguisher is too small for this inspection task, and its captions are cramped. At 200% portrait, the canvas status caption overlaps the extinguisher handle/gauge despite the target dimensions passing. The app source is being refined from these findings; the baseline is not evidence that the later fix passed. Test font scale was restored to 1.0.
+
 ## Related evidence and limits
 
 Narration's seven JVM cases and six native voice/language/Back/large-text checks are recorded in `narration-controls.md`. A separate four-case Fire/store/learning-journey batch passed on `7d8f348…`, including encrypted retry and centre/account mismatch rejection (`fire-institution-regressions.txt`).

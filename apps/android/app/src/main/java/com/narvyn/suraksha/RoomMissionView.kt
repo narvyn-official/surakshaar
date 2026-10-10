@@ -11,6 +11,8 @@ import android.os.PowerManager
 import android.util.Log
 import android.view.*
 import android.widget.FrameLayout
+import android.widget.Button
+import android.widget.LinearLayout
 import com.google.ar.core.*
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
@@ -29,6 +31,10 @@ class RoomMissionView(private val host:Activity, val module:String, val camera:B
     private data class Visual(val phase:String="ALARM",val progress:Float=0f,val held:Boolean=false,val showCues:Boolean=true,val explosionRisk:Boolean=false,val equipmentCondition:String="good",val routeChanged:Boolean=false)
     private val surface=GLSurfaceView(host)
     private val overlay=Overlay()
+    private val inspectionPanel=PagedPanel(host,hindi).apply{visibility=GONE;setBackgroundColor(Palette.canvas);tag="inspection-panel"}
+    private val inspectionButtons=mutableMapOf<String,Button>()
+    private var inspectionPhase=""
+    @Volatile private var inspectionModelArea=Pair(1,1)
     private val equipment=WorldEquipment()
     private val geometry=RoomMissionGeometry()
     private val gate=ComponentCameraGate()
@@ -125,20 +131,66 @@ class RoomMissionView(private val host:Activity, val module:String, val camera:B
     var onAction:(String)->Unit={}
     var onRelease:()->Unit={}
     var onCancel:()->Unit={}
-    val ready get()=foreground && image?.let { it.revision==revision && it.frameWidth==width && it.frameHeight==height && it.phase==visual.phase && it.placement==3 && it.tracked && (!camera || SystemClock.elapsedRealtime()-it.at in 0..150) }==true
+    private val inspectionLayoutReady get()=inspectionPanel.visibility!=VISIBLE||
+        (!inspectionPanel.isLayoutRequested&&inspectionPanel.content?.isLayoutRequested!=true&&
+            inspectionPanel.width==inspectionPanel.layoutParams.width&&inspectionPanel.height==inspectionPanel.layoutParams.height)
+    val ready get()=foreground && inspectionLayoutReady && image?.let { it.revision==revision && it.frameWidth==width && it.frameHeight==height && it.phase==visual.phase && it.placement==3 && it.tracked && (!camera || SystemClock.elapsedRealtime()-it.at in 0..150) }==true
     private fun t(en:String,hi:String)=if(hindi)hi else en
-    // Inspection answers are screen controls, not several competing rings on one small part.
-    private fun inspectionRowHeight()=maxOf(host.dp(48), (30f*resources.displayMetrics.scaledDensity+host.dp(16)).toInt())
-    private fun inspectionDockHeight()=(inspectionRowHeight()*3+host.dp(32)).coerceAtMost((h*.58f).toInt())
+    private fun syncInspectionDock(){
+        val phase=visual.phase
+        val enabled=module=="fire"&&RoomMissionChoices.isEquipmentInspection(phase)
+        inspectionPanel.visibility=if(enabled)VISIBLE else GONE
+        if(!enabled){inspectionPhase="";inspectionButtons.clear();return}
+        if(inspectionPhase!=phase){
+            inspectionPhase=phase;inspectionButtons.clear()
+            val content=host.column(8)
+            for(choice in RoomMissionChoices.forPhase(phase)){
+                val label=if(hindi)choice.hi else choice.en
+                val button=host.action(label,false,ActionRole.LEARN){
+                    if(ready&&visual.phase==phase&&(!camera||image?.targets?.containsKey(choice.action)==true))onAction(choice.action)
+                }.apply{tag="inspection:${choice.action}";contentDescription=label;textSize=14f;gravity=Gravity.CENTER_VERTICAL or Gravity.START;setPadding(host.dp(12),host.dp(8),host.dp(12),host.dp(8));minHeight=host.dp(48);minimumHeight=host.dp(48)}
+                inspectionButtons[choice.action]=button
+                content.addView(button,LinearLayout.LayoutParams(-1,-2).apply{bottomMargin=host.dp(6)})
+            }
+            inspectionPanel.setContent(content)
+        }
+        enableInspectionChoices()
+    }
+    private fun enableInspectionChoices(){
+        val available=ready
+        for((id,button)in inspectionButtons)button.isEnabled=available&&(!camera||image?.targets?.containsKey(id)==true)
+    }
+    private fun layoutInspectionDock(width:Int,height:Int){
+        if(width<=0||height<=0||inspectionPanel.visibility!=VISIBLE)return
+        val beside=height<host.dp(420)&&width>=host.dp(320)
+        val panelWidth=if(beside)minOf(host.dp(280),(width*.52f).toInt())else width
+        val content=inspectionPanel.content
+        content?.measure(MeasureSpec.makeMeasureSpec(panelWidth,MeasureSpec.EXACTLY),MeasureSpec.makeMeasureSpec(0,MeasureSpec.UNSPECIFIED))
+        val panelHeight=if(beside)height else minOf(content?.measuredHeight?:host.dp(180),(height*.58f).toInt())
+        inspectionModelArea=if(beside)Pair((width-panelWidth).coerceAtLeast(1),height)else Pair(width,(height-panelHeight).coerceAtLeast(1))
+        val gravity=if(beside)Gravity.END or Gravity.TOP else Gravity.BOTTOM
+        val previous=inspectionPanel.layoutParams as? LayoutParams
+        if(previous==null||previous.width!=panelWidth||previous.height!=panelHeight||previous.gravity!=gravity)
+            inspectionPanel.layoutParams=LayoutParams(panelWidth,panelHeight,gravity)
+    }
+    override fun onMeasure(widthMeasureSpec:Int,heightMeasureSpec:Int){
+        super.onMeasure(widthMeasureSpec,heightMeasureSpec)
+        if(inspectionPanel.visibility==VISIBLE){
+            // Resolve the weighted scene size before measuring the dock. Changing its
+            // params in onSizeChanged left the child measured for the previous height.
+            layoutInspectionDock(measuredWidth,measuredHeight)
+            super.onMeasure(widthMeasureSpec,heightMeasureSpec)
+        }
+    }
     init {
         surface.setEGLContextClientVersion(2);surface.setEGLConfigChooser(8,8,8,8,16,0)
         surface.preserveEGLContextOnPause=true;surface.tag="room-mission-surface"
         surface.importantForAccessibility=IMPORTANT_FOR_ACCESSIBILITY_NO
-        addView(surface,LayoutParams(-1,-1));addView(overlay,LayoutParams(-1,-1));overlay.setBackgroundColor(Palette.canvas)
+        addView(surface,LayoutParams(-1,-1));addView(overlay,LayoutParams(-1,-1));addView(inspectionPanel,LayoutParams(-1,host.dp(180),Gravity.BOTTOM));overlay.setBackgroundColor(Palette.canvas)
         surface.setRenderer(this);surface.renderMode=GLSurfaceView.RENDERMODE_WHEN_DIRTY;surface.onPause()
         overlay.contentDescription=t("Interactive mission scene. Use screen procedure for text controls.","इंटरैक्टिव मिशन दृश्य। लिखित नियंत्रणों के लिए स्क्रीन प्रक्रिया उपयोग करें।")
     }
-    fun update(phase:String,progress:Float,held:Boolean,showCues:Boolean=true,explosionRisk:Boolean=false,equipmentCondition:String="good",routeChanged:Boolean=false) { visual=Visual(phase,progress,held,showCues,explosionRisk,equipmentCondition,routeChanged);overlay.invalidate() }
+    fun update(phase:String,progress:Float,held:Boolean,showCues:Boolean=true,explosionRisk:Boolean=false,equipmentCondition:String="good",routeChanged:Boolean=false) { visual=Visual(phase,progress,held,showCues,explosionRisk,equipmentCondition,routeChanged);syncInspectionDock();overlay.invalidate() }
     fun place() { if(camera && canPlace)placement.set(true) }
     fun resume() {
         if(running || closed)return
@@ -299,14 +351,19 @@ class RoomMissionView(private val host:Activity, val module:String, val camera:B
                 if(frame.lightEstimate.state==LightEstimate.State.VALID){frame.lightEstimate.getColorCorrection(light,0);for(i in light.indices)light[i]=if(light[i].isFinite())light[i].coerceIn(.6f,1.4f)else 1f}
             }else {
                 if(module=="fire"&&RoomMissionChoices.isEquipmentInspection(state.phase)){
-                    val modelHeight=(h-inspectionDockHeight()).coerceAtLeast(1)
-                    val aspect=w.toFloat()/modelHeight
+                    val area=inspectionModelArea
+                    val modelWidth=area.first.coerceAtMost(w).coerceAtLeast(1)
+                    val modelHeight=area.second.coerceAtMost(h).coerceAtLeast(1)
+                    val aspect=modelWidth.toFloat()/modelHeight
                     val distance=maxOf(.82f,.42f/aspect)
                     eye=floatArrayOf(-.6f,.32f,distance)
                     Matrix.perspectiveM(projection,0,38f,aspect,.05f,30f)
-                    // Reserve the lower answer dock without changing source-model dimensions.
-                    val vertical=modelHeight.toFloat()/h;val offset=1f-vertical
-                    for(i in 0..3)projection[i*4+1]=projection[i*4+1]*vertical+projection[i*4+3]*offset
+                    // Fit the remaining scene rectangle without changing model dimensions.
+                    val horizontal=modelWidth.toFloat()/w;val vertical=modelHeight.toFloat()/h
+                    for(i in 0..3){
+                        projection[i*4]=projection[i*4]*horizontal+projection[i*4+3]*(horizontal-1f)
+                        projection[i*4+1]=projection[i*4+1]*vertical+projection[i*4+3]*(1f-vertical)
+                    }
                     Matrix.setLookAtM(view,0,eye[0],eye[1],eye[2],-.6f,.26f,0f,0f,1f,0f)
                 }else{
                     eye=floatArrayOf(0f,1.5f,3.7f);Matrix.perspectiveM(projection,0,if(w>h*1.4f)if(module=="fire")22f else 32f else 55f,w.toFloat()/h.coerceAtLeast(1),.05f,30f);Matrix.setLookAtM(view,0,eye[0],eye[1],eye[2],0f,.3f,-.5f,0f,1f,0f)
@@ -360,7 +417,7 @@ class RoomMissionView(private val host:Activity, val module:String, val camera:B
     private fun publish(value:Image){mailbox.set(value);if(posted.compareAndSet(false,true))post{posted.set(false);val next=mailbox.getAndSet(null)?:return@post;if(!foreground||next.revision!=revision)return@post
         val previous=image;image=next;overlay.background=null
         if(!next.tracked || (camera&&SystemClock.elapsedRealtime()-next.at>150)){down=null;gestureTarget=null;screenCursor=null}
-        onImage(next);overlay.invalidate()
+        onImage(next);enableInspectionChoices();overlay.invalidate()
         if(camera && next.tracked && next.placement==3 && next.at!=previous?.at && SystemClock.elapsedRealtime()-next.at in 0..150) {
             val cursor=if(camera)w/2f to h/2f else if(down!=null)screenCursor else null
             val point=cursor?.let{ray(it.first,it.second,next.inverse)}
@@ -431,7 +488,6 @@ class RoomMissionView(private val host:Activity, val module:String, val camera:B
                 // Captions identify virtual objects even during recall; they do not reveal scoring.
                 val choices=RoomMissionChoices.forPhase(state.phase)
                 if(module=="fire"&&RoomMissionChoices.isEquipmentInspection(state.phase)){
-                    drawInspectionChoices(c,choices,img)
                     return
                 }
                 choices.forEach{choice->img.targets[choice.action]?.let{point->
@@ -462,36 +518,6 @@ class RoomMissionView(private val host:Activity, val module:String, val camera:B
                     paint.style=Paint.Style.STROKE
                 }}
             }
-        }
-        private fun drawInspectionChoices(c:Canvas,choices:List<RoomMissionChoices.Choice>,img:Image){
-            val inset=host.dp(12).toFloat();val gap=host.dp(6).toFloat()
-            val row=minOf(inspectionRowHeight().toFloat(),(inspectionDockHeight()-host.dp(20))/3f)
-            val top=height-inset-choices.size*row-(choices.size-1)*gap
-            if(!camera){
-                paint.style=Paint.Style.FILL;paint.color=Palette.muted;paint.typeface=Typeface.DEFAULT
-                paint.textSize=12f*resources.displayMetrics.scaledDensity
-                c.drawText(t("3D inspection · magnified view","3D निरीक्षण · बड़ा दृश्य"),inset,host.dp(20).toFloat(),paint)
-            }
-            choices.forEachIndexed{index,choice->
-                // Camera mode still requires the associated virtual station to be visible.
-                if(camera&&choice.action !in img.targets)return@forEachIndexed
-                val bounds=RectF(inset,top+index*(row+gap),width-inset,top+index*(row+gap)+row)
-                choiceBounds[choice.action]=bounds
-                paint.style=Paint.Style.FILL;paint.color=0xfaffffff.toInt();c.drawRoundRect(bounds,host.dp(10).toFloat(),host.dp(10).toFloat(),paint)
-                paint.style=Paint.Style.STROKE;paint.strokeWidth=host.dp(1).toFloat();paint.color=Palette.line;c.drawRoundRect(bounds,host.dp(10).toFloat(),host.dp(10).toFloat(),paint)
-                paint.style=Paint.Style.FILL;paint.color=Palette.ink;paint.typeface=Typeface.DEFAULT_BOLD;paint.textSize=13f*resources.displayMetrics.scaledDensity
-                val label=if(hindi)choice.hi else choice.en
-                val available=bounds.width()-host.dp(24);val lines=mutableListOf<String>();var rest=label
-                repeat(2){if(rest.isNotEmpty()){
-                    val count=paint.breakText(rest,true,available,null).coerceAtLeast(1)
-                    val cut=if(count<rest.length)rest.lastIndexOf(' ',count).takeIf{it>0}?:count else count
-                    lines.add(rest.take(cut));rest=rest.drop(cut).trimStart()
-                }}
-                if(rest.isNotEmpty())lines[lines.lastIndex]=lines.last().dropLast(1)+"…"
-                val line=paint.fontSpacing;val first=bounds.centerY()-(lines.size-1)*line/2-(paint.fontMetrics.ascent+paint.fontMetrics.descent)/2
-                lines.forEachIndexed{i,text->c.drawText(text,bounds.left+host.dp(12),first+i*line,paint)}
-            }
-            paint.style=Paint.Style.STROKE
         }
         private fun choiceAt(x:Float,y:Float):String? {
             // A visible caption owns its hit target, even beside another object's marker.

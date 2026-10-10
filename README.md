@@ -1,10 +1,10 @@
-# SurakshaAr
+# SurakshaAR
 
-A **v0.13.0-dev development candidate** for accessible Android AR learning, focused on Fire Safety and First Aid for independent learners and institutions.
+A **v0.13.1-dev development preview** for accessible Android AR learning, focused on Fire Safety and First Aid for independent learners and institutions.
 
-**New repository:** [narvyn-official/surakshaar](https://github.com/narvyn-official/surakshaar). The latest development preview is available from [Releases](https://github.com/narvyn-official/surakshaar/releases). Historical links below refer to the earlier Suraksha Saathi repository.
+**New repository:** [narvyn-official/surakshaar](https://github.com/narvyn-official/surakshaar). [Download the v0.13.1 Android APK](https://github.com/narvyn-official/surakshaar/releases/download/v0.13.1-preview/surakshaar-0.13.1-dev-debug.apk) · Android 10+, debug-signed. [Release notes and checksums](https://github.com/narvyn-official/surakshaar/releases/tag/v0.13.1-preview). Historical links below refer to the earlier Suraksha Saathi repository.
 
-**Current working source: 0.13.0-dev / code 27.** It adds eight adult casualty situations, lying-body and injury-cue interaction, a dressing gesture, compact view/audio controls, two deeper Fire room journeys, institution-scoped records and revocable formative-practice QR sharing. The separate decision curriculum has 20 draft scenarios and 94 stages. See [current changes and release boundaries](docs/surakshaar-0.13.0/README.md) and [verification](docs/surakshaar-0.13.0/verification.md). Qualified content/language review, production configuration and complete physical-device acceptance remain open; this is not a production release.
+**Current working source: 0.13.1-dev / code 28.** This refinement adds accessible native Fire inspection controls, separate model space and enlarged-text portrait/landscape layouts. [0.13.1 changes](docs/surakshaar-0.13.1/README.md) · [build-specific verification](docs/surakshaar-0.13.1/verification.md). The included 0.13.0 foundation adds eight adult casualty situations, lying-body and injury-cue interaction, a dressing gesture, compact view/audio controls, two deeper Fire room journeys, institution-scoped records and revocable formative-practice QR sharing. The separate decision curriculum has 20 draft scenarios and 94 stages. See [current changes and release boundaries](docs/surakshaar-0.13.0/README.md) and [verification](docs/surakshaar-0.13.0/verification.md). Qualified content/language review, production configuration and complete physical-device acceptance remain open; this is not a production release.
 
 The retained v0.10.0 baseline added learner enrolment, MFA, course progress, five expanded sequences, encrypted retry sync, instructor observations and independent certification corrections/review. Its historical report is [here](docs/p0-p2-local-implementation.md); it is not proof for the current APK.
 
@@ -38,7 +38,7 @@ The [access and certification follow-up](docs/access-certification-review-2026-0
 - Android credential wallet with pinned-issuer signature verification offline, explicit expiry and legacy-date handling; renewal requires a new passed assessment.
 - Role-coloured Mineral Light controls with native ripple/focus feedback and a responsive trainer dashboard.
 
-**Pilot scope:** these are simulation learning records, not statutory safety certificates, identity verification, practical competence or permission to work. Santali is visibly pending native review. Samsung results cited above belong to earlier versions. Current candidate evidence is recorded separately in the 0.13.0 verification report; historical Samsung results are not proof for the new build.
+**Pilot scope:** these are simulation learning records, not statutory safety certificates, identity verification, practical competence or permission to work. Santali is visibly pending native review. Samsung results cited above belong to earlier versions. Current candidate evidence is recorded separately in the 0.13.1 verification report; historical Samsung results are not proof for the new build.
 
 ## Build Android
 
@@ -48,7 +48,7 @@ Install Android SDK platform/build tools 36 and a compatible JDK, then:
 bash scripts/build-android.sh
 ```
 
-The debug-signed APK is copied to `artifacts/surakshaar-0.13.0/surakshaar-0.13.0-dev-debug.apk`. Android Studio can open `apps/android`. The repository includes the Gradle wrapper. For a fresh clone, generate the pilot issuer before building if you want your own independently approved pilot credentials:
+The debug-signed APK is copied to `artifacts/surakshaar-0.13.1/surakshaar-0.13.1-dev-debug.apk`. Android Studio can open `apps/android`. The repository includes the Gradle wrapper. For a fresh clone, generate the pilot issuer before building if you want your own independently approved pilot credentials:
 
 ```sh
 node scripts/create-pilot-issuer.mjs

@@ -68,7 +68,7 @@ class RoomMissionActivity:Activity() {
         root.setOnApplyWindowInsetsListener{v,i->if(android.os.Build.VERSION.SDK_INT>=30){val b=i.getInsets(WindowInsets.Type.systemBars());v.setPadding(b.left,b.top,b.right,b.bottom)}else{v.setPadding(i.systemWindowInsetLeft,i.systemWindowInsetTop,i.systemWindowInsetRight,i.systemWindowInsetBottom)};i}
         val landscape=resources.configuration.orientation==android.content.res.Configuration.ORIENTATION_LANDSCAPE
         val header=LinearLayout(this).apply{orientation=LinearLayout.HORIZONTAL;gravity=Gravity.CENTER_VERTICAL;setPadding(dp(12),dp(8),dp(12),dp(8))}
-        header.addView(action("‹",false,ActionRole.NEUTRAL){leavePractice()}.apply{contentDescription=t("Save and return to learning","सहेजकर सीखने पर लौटें");textSize=26f;setPadding(0,0,0,0)},LinearLayout.LayoutParams(dp(48),dp(48)).apply{rightMargin=dp(8)})
+        header.addView(practiceTool("",PracticeIcon.BACK,t("Save and return to learning","सहेजकर सीखने पर लौटें")){leavePractice()},LinearLayout.LayoutParams(dp(48),dp(48)).apply{rightMargin=dp(8)})
         title=label("",18f,bold=true).apply{maxLines=1;ellipsize=android.text.TextUtils.TruncateAt.END;isAccessibilityHeading=true};header.addView(title,LinearLayout.LayoutParams(0,-2,1f))
         cueButton=action(t("Coach","मार्गदर्शन"),false,ActionRole.REVIEW){if(camera&&placementCount<3)placementHelp()else if(coaching.recall)requestCue()else showCoach()}
         val menu=action(t("Options","विकल्प"),false,ActionRole.NEUTRAL){options()}.apply{contentDescription=t("Options and saved missions","विकल्प और सहेजे मिशन");minHeight=dp(44);minimumHeight=dp(44)};header.addView(menu,LinearLayout.LayoutParams(-2,-2).apply{leftMargin=dp(8)})
@@ -341,8 +341,10 @@ class RoomMissionActivity:Activity() {
     private fun render(){
         lastPhase=mission.phase;lastPlaced=placementCount;lastTracked=tracking;lastCanPlace=scene.canPlace;lastRetry=scene.needsRetry
         lastPlacementLabel=scene.placementControlLabel
-        title.text=(if(coaching.recall)t("RECALL · ","याद करके · ")else "")+t(if(camera)"ROOM AR · " else "SCREEN MISSION · ",if(camera)"कमरा AR · " else "स्क्रीन मिशन · ")+t(if(module=="fire")"Fire response" else "Confined space",if(module=="fire")"अग्नि प्रतिक्रिया" else "बंद स्थान")
+        title.text=t(if(module=="fire")"Fire practice"else"Confined space",if(module=="fire")"अग्नि अभ्यास"else"बंद स्थान")+if(coaching.recall)t(" · Recall"," · याद करके")else if(camera)" · AR"else" · 3D"
         val phase=mission.phase
+        // Coach already provides this action; leave the inspection model more room.
+        control.visibility=if(safe&&!saveFailed&&!scene.needsRetry&&placementCount==3&&RoomMissionChoices.isEquipmentInspection(phase))View.GONE else View.VISIBLE
         prompt.text=if(camera&&placementCount<3)t(listOf("1 / 3 · Place the equipment station","2 / 3 · Place the virtual hazard","3 / 3 · Mark a clear withdrawal point")[placementCount],listOf("1 / 3 · उपकरण स्थल रखें","2 / 3 · काल्पनिक खतरा रखें","3 / 3 · खाली वापसी बिंदु रखें")[placementCount])else RoomMissionChoices.instruction(phase,identity.hi)?:when(phase){
             "ALARM"->t("Raise the alarm. Tap the red call point beside the extinguisher.","अलार्म दें। अग्निशामक के पास लाल बिंदु छुएँ।")
             "PIN"->t("Pull the pin. Drag outwards from the highlighted retaining ring.","पिन निकालें। चिह्नित पिन के छल्ले से बाहर की ओर खींचें।")
