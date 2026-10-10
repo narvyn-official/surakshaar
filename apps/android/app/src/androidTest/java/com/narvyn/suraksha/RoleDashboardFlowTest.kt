@@ -31,14 +31,14 @@ class RoleDashboardFlowTest {
     ActivityScenario.launch<RoleDashboardActivity>(Intent(context,RoleDashboardActivity::class.java)).use{scenario->
      var texts=listOf<String>();var ready=false
      for(attempt in 0..60){scenario.onActivity{a->texts=allText(a.window.decorView)};ready=texts.contains(expected.getJSONObject("context").getString("label"))&&texts.contains("Refresh dashboard");if(ready)break;Thread.sleep(100)}
-     assertTrue("Dashboard ready for $role",ready)
+     assertTrue("Dashboard ready for $role",ready);assertEquals(role,api.lastWorkspaceRole())
      val learning=RoleDashboardPolicy.learningRole(role)
      assertEquals(role,learning,texts.contains("Your learning tools"))
      assertEquals(role,!learning,texts.contains("Your responsibilities"))
      val actions=expected.getJSONArray("actions");for(i in 0 until actions.length())assertTrue("$role action visible",texts.contains(actions.getJSONObject(i).getString("title")))
      scenario.recreate()
     }
-    api.call("/api/auth/sign-out",JSONObject());api.clear()
+    api.call("/api/auth/sign-out",JSONObject());api.clear();assertEquals("",api.lastWorkspaceRole())
    }
   }finally{api.clear();val edit=prefs.edit().clear();saved.forEach{(k,v)->when(v){is String->edit.putString(k,v);is Boolean->edit.putBoolean(k,v)}};edit.commit();fixture.delete()}
  }

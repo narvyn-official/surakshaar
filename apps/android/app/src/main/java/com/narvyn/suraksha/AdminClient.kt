@@ -57,7 +57,10 @@ class AdminClient(private val context:Context) {
     }
     fun hasSession():Boolean { val jar=cookies();val now=System.currentTimeMillis();return jar.keys().asSequence().any{it.endsWith("session_token")&&jar.getJSONObject(it).optLong("expires",0)>now} }
     fun identityStamp()="${sessionGuard.capture()}:$base"
-    private fun clearTokens(){prefs.edit().remove("cookies").apply();sessionCookies=null;sessionOrigin=null}
+    // Presentation hint only: never authorises records or API operations.
+    fun lastWorkspaceRole()=prefs.getString("workspace_role","")?:""
+    fun rememberWorkspaceRole(role:String){prefs.edit().putString("workspace_role",role).apply()}
+    private fun clearTokens(){prefs.edit().remove("cookies").remove("workspace_role").apply();sessionCookies=null;sessionOrigin=null}
     fun clear(){sessionGuard.replace{clearTokens()}}
     fun call(path:String,body:JSONObject?=null,method:String=if(body==null)"GET" else "POST",expectedIdentity:String?=expectedRequest.get()):JSONObject {
         require(base.isNotBlank()){ "Connect your training centre server first." }
