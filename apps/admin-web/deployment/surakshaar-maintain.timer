@@ -1,0 +1,9 @@
+[Unit]
+Description=Hourly SurakshaAR evidence retention maintenance
+[Timer]
+OnCalendar=hourly
+Persistent=true
+RandomizedDelaySec=120
+Unit=surakshaar-maintain.service
+[Install]
+WantedBy=timers.target

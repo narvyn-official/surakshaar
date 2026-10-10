@@ -1,0 +1,16 @@
+[Unit]
+Description=SurakshaAR expired identity evidence cleanup
+[Service]
+Type=oneshot
+User=surakshaar
+Group=surakshaar
+WorkingDirectory=/opt/surakshaar/current
+EnvironmentFile=/etc/surakshaar/runtime.env
+ExecStart=/usr/bin/node scripts/maintain-node.mjs
+UMask=0077
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+ReadWritePaths=/var/lib/surakshaar
+MemoryMax=128M

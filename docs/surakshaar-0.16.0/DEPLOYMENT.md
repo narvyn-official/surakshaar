@@ -8,7 +8,7 @@ Spatial Studio light is the selected design. This is a locally built, signed rel
 - `surakshaar-0.16.0-rc.1-web.tar.gz`: Next.js standalone server, static/model assets, migrations, operations scripts, deployment templates and rebuildable web source.
 - `SHA256SUMS.txt`, `android-signature.txt`, `BUILD.json`, third-party notices and screenshots.
 
-The archive’s prebuilt web runtime was assembled on macOS ARM64. It was exercised locally with Node 24.20.0. For Linux deployment, rebuild from the included source on Linux (recommended) or use the included Docker recipe. The Docker daemon was unavailable here, so a Linux container build is not represented as tested. Use Node 24 LTS, at least 24.13.1. A single Node process owns a local persistent SQLite database. Do not put SQLite on an ephemeral/serverless filesystem, a shared network volume, or multiple web replicas.
+Check `BUILD.json` for the package platform. The original local `*-web.tar.gz` candidate was assembled on macOS ARM64 with Node 24.20.0. The published `*-web-linux-x64.tar.gz` package was rebuilt on GitHub Actions (Linux x64, Node 24.21.0) and tested on the VPS; it can run directly on the matching Linux host. For other hosts, rebuild from the included source or use the included Docker recipe. Docker packaging itself remains untested. See [the dated rollout report](DEPLOYED-2026-10-11.md). Use Node 24 LTS, at least 24.13.1. A single Node process owns a local persistent SQLite database. Do not put SQLite on an ephemeral/serverless filesystem, a shared network volume, or multiple web replicas.
 
 ## Configure the service
 
@@ -50,7 +50,7 @@ To bind a future APK to a known service, set `SURAKSHA_API_ORIGIN=https://your.a
 
 ## Data maintenance and recovery
 
-Run these through the host’s service scheduler with the private environment file (no automation was installed by this task):
+Run these through the host’s service scheduler with the private environment file. The existing VPS daily backup timer is preserved and an hourly `surakshaar-maintain.timer` now runs expiry cleanup; new hosts must configure their own schedules:
 
 ```sh
 # Daily verified online backup; scheduled copies retained 14 days.
@@ -71,7 +71,7 @@ Institutional monitored practice completes the current assigned scenario on the 
 
 Not shipped as completed features: Google/OTP/enterprise SSO, automated biometric matching, native background capture, concurrent front/rear capture, automated subscriptions/payments, PostgreSQL clustering, a reviewed full specialist curriculum, or production WebXR across browsers. The initial business model is institution-managed pilot/service onboarding; no money is collected by this release. These are explicit scope decisions, not hidden placeholder buttons. Native provides AR; the browser provides 3D learning and administration.
 
-Public launch still requires the operator’s final domain/hosting, sender delivery, issuer and operator setup, institutional privacy/support ownership, qualified clinical/fire/translation approval, and sustained supported-phone AR testing. The software cannot supply those approvals on the operator’s behalf.
+The evaluation web app is now deployed at the existing HTTPS preview hostname. Operational institutional launch still requires sender delivery if email recovery is enabled, issuer and operator setup, institutional privacy/support ownership, qualified clinical/fire/translation approval, and sustained supported-phone AR testing. The software cannot supply those approvals on the operator’s behalf.
 
 ## Spatial upgrade
 
