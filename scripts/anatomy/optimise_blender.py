@@ -5,7 +5,7 @@ import argparse,bpy,json,pathlib,sys,gzip,struct,hashlib,math
 from mathutils import Vector,Matrix
 parser=argparse.ArgumentParser(description=__doc__);parser.add_argument('root',type=pathlib.Path);parser.add_argument('--asset-dir',type=pathlib.Path);parser.add_argument('--review-dir',type=pathlib.Path);parser.add_argument('--profile',choices=['balanced','detail'],default='balanced');parser.add_argument('--skip-renders',action='store_true')
 args=parser.parse_args(sys.argv[sys.argv.index('--')+1:]);root=args.root;folder=args.asset_dir or root/'content/anatomy';manifest=json.loads((folder/'manifest.json').read_text())
-profile_budgets={'balanced':{'skin':36000,'skeleton':63000,'muscles':110000,'organs':40000},'detail':{'skin':72000,'skeleton':110000,'muscles':215000,'organs':75000}}
+profile_budgets={'balanced':{'skin':36000,'skeleton':63000,'muscles':110000,'organs':40000},'detail':{'skin':204000,'skeleton':210000,'muscles':390000,'organs':185000}}
 budgets=profile_budgets[args.profile]
 # Water-fill the layer budget, retaining complete smaller meshes before apportioning the remainder.
 targets={}
@@ -76,7 +76,7 @@ for part in manifest['parts']:
  mesh.materials.append(mat)
  obj['semantic_id']=part['id'];obj['layer']=part['layer'];obj.hide_render=part['layer']!='organs';obj.select_set(False)
  print(part['id'],original,'->',len(mesh.loop_triangles),'degenerate removed',dropped,'normal fallbacks',fallbacks,flush=True)
-manifest['version']='bodyparts3d-4.0-mobile3-'+args.profile
+manifest['version']='bodyparts3d-4.0-mobile4-'+args.profile
 manifest['quality']=args.profile
 manifest['triangleBudgets']=budgets
 manifest['triangleCount']=sum(p['vertices']//3 for p in manifest['parts'])

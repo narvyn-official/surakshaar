@@ -101,7 +101,7 @@ class ArRecoveryTest {
         Store(context).use { it.hi=false }
         ActivityScenario.launch(MainActivity::class.java).use { parent ->
             fun tap(text: String) { parent.onActivity { activity -> all(activity.window.decorView).filterIsInstance<TextView>().first { it.text.toString()==text }.performClick() };instrumentation.waitForIdleSync() }
-            tap("Learning library");tap(Curriculum(context).module("fire").local("title",false));tap("Course actions & practice options");onView(withText("More practice options")).inRoot(isDialog()).perform(revealOnPage(),click());tap("Guided practice");onView(withText("I’m in a safe area")).inRoot(isDialog()).perform(click())
+            tap("Learn");tap("Earlier industrial courses");tap(Curriculum(context).module("fire").local("title",false));tap("Course actions & practice options");onView(withText("More practice options")).inRoot(isDialog()).perform(revealOnPage(),click());tap("Guided practice");onView(withText("I’m in a safe area")).inRoot(isDialog()).perform(click())
             val latest=Store(context).use { it.attempts().first() };val id=latest.getString("id")
             val training=TrainingSession(latest.put("mode","arcore"),Curriculum(context).module("fire"))
             training.answer(training.current.getJSONArray("options").objects().first { !it.optBoolean("correct") }.getString("id"));Store(context).use { it.save(training) }

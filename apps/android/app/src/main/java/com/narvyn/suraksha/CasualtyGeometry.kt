@@ -57,22 +57,6 @@ internal object CasualtyMarkers {
         AnatomyPart("cue:$region","Simulated ${region.lowercase().replace('_',' ')} cue","cue","Authored simulation cue; tap to inspect.",
             floatArrayOf(c[0]-radius,c[1]-radius,c[2]-.005f,c[0]+radius,c[1]+radius,c[2]+.005f),floatArrayOf(.94f,.50f,.12f),values.toFloatArray())
     }}
-    /** A modesty drape keeps casualty practice separate from detailed external-anatomy study. */
-    val drape:AnatomyPart by lazy {
-        val v=mutableListOf<Float>()
-        // Wrap around the pelvis, including the underside, so rotating the view cannot
-        // expose the detailed external-anatomy mesh in ordinary casualty lessons.
-        fun point(angle:Double,y:Float)=floatArrayOf(.245f*cos(angle).toFloat(),y,.225f*sin(angle).toFloat())
-        fun vertex(p:FloatArray){v.addAll(p.toList());v.addAll(listOf(p[0]/.245f,0f,p[2]/.225f))}
-        for(i in 0 until 48){val a=i*2*PI/48;val b=(i+1)*2*PI/48
-            val p=point(a,.48f);val q=point(b,.48f);val r=point(b,1.03f);val t=point(a,1.03f)
-            for(c in listOf(p,q,r,p,r,t))vertex(c)
-            // Closed hem prevents visibility under the drape from a low camera angle.
-            for(c in listOf(floatArrayOf(0f,.48f,0f),q,p))vertex(c)
-        }
-        AnatomyPart("casualty-drape","Training modesty drape","equipment","Illustrative training drape.",floatArrayOf(-.245f,.48f,-.225f,.245f,1.03f,.225f),floatArrayOf(.23f,.44f,.52f),v.toFloatArray())
-    }
-
     val mat:AnatomyPart by lazy {
         val v=mutableListOf<Float>();val points=listOf(floatArrayOf(-.48f,.001f,.13f),floatArrayOf(.48f,.001f,.13f),floatArrayOf(.48f,.001f,-1.87f),floatArrayOf(-.48f,.001f,-1.87f))
         for(i in listOf(0,1,2,0,2,3)){v.addAll(points[i].toList());v.addAll(listOf(0f,1f,0f))}

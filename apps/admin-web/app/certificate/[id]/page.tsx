@@ -2,7 +2,7 @@ import {curriculum} from '@/lib/grading';
 import {getAppUser} from '@/lib/auth';
 import {access,db} from '@/lib/server';
 import {credentialView,verify} from '@/lib/credentials';
-import {env} from 'cloudflare:workers';
+import {env} from '@/lib/runtime-env';
 import QRCode from 'qrcode';
 import {PrintButton} from '@/components/training/PrintButton';
 export const dynamic='force-dynamic';

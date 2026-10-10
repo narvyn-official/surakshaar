@@ -13,6 +13,7 @@ internal class AnatomyData(val manifest:JSONObject,val parts:List<AnatomyPart>) 
     companion object {
         fun load(context:Context):AnatomyData {
             val store=AnatomyPackStore(context)
+            val preparationFallback=store.prepareDefaultQuality { Thread.currentThread().isInterrupted }
             val requested=store.requestedDetailed()
             store.activeDirectory()?.let { directory ->
                 runCatching { return loadPack({name->PackIntegrity.safeFile(directory,name).inputStream()},"manifest.json","Detailed") }
@@ -20,7 +21,9 @@ internal class AnatomyData(val manifest:JSONObject,val parts:List<AnatomyPart>) 
                 return loadPack({name->context.assets.open(name)},"anatomy/manifest.json","Balanced").also { it.manifest.put("qualityFallback","The detailed pack could not be verified. Balanced models are in use; reinstall the optional pack in Offline content.") }
             }
             if(requested){store.invalidate();return loadPack({name->context.assets.open(name)},"anatomy/manifest.json","Balanced").also { it.manifest.put("qualityFallback","The detailed pack is incomplete. Balanced models are in use; reinstall the optional pack in Offline content.") }}
-            return loadPack({name->context.assets.open(name)},"anatomy/manifest.json","Balanced")
+            return loadPack({name->context.assets.open(name)},"anatomy/manifest.json","Balanced").also { model ->
+                preparationFallback?.let { model.manifest.put("qualityFallback",it) }
+            }
         }
         private fun loadPack(open:(String)->java.io.InputStream,manifestPath:String,quality:String):AnatomyData {
             val manifest=JSONObject(open(manifestPath).use{String(PackIntegrity.readBounded(it,1_000_000),Charsets.UTF_8)})
@@ -40,7 +43,7 @@ internal class AnatomyData(val manifest:JSONObject,val parts:List<AnatomyPart>) 
                 buffer.position(4);val count=buffer.int;check(count in 3..1_000_000 && count%3==0 && raw.size==8+count*24)
                 val vertices=FloatArray(count*6);buffer.asFloatBuffer().get(vertices);check(vertices.all{it.isFinite()})
                 fun numbers(key:String)=p.getJSONArray(key).let{a->FloatArray(a.length()){a.getDouble(it).toFloat()}}
-                AnatomyPart(p.getString("id"),p.getString("name"),p.getString("layer"),p.getString("explanation"),numbers("bounds"),numbers("colour"),vertices)
+                AnatomyPart(p.getString("id"),p.getString("name"),p.getString("layer"),p.getString("explanation"),numbers("bounds"),numbers("colour"),vertices).let(AnatomyClothing::protectedSkin)
             }
             manifest.put("loadedQuality",quality)
             return AnatomyData(manifest,parts)

@@ -1,0 +1,58 @@
+{
+  "courses": 2,
+  "scenarios": 20,
+  "steps": 94,
+  "draftScenarios": [
+    "adult-collapse",
+    "school-help",
+    "escape-first",
+    "extinguisher-check",
+    "bleeding-control",
+    "thermal-burn",
+    "recovery-monitor",
+    "adult-choking",
+    "seizure-safety",
+    "fracture-support",
+    "agent-choice",
+    "school-fire-help",
+    "fainting-response",
+    "heat-illness",
+    "sprain-support",
+    "minor-wound-care",
+    "school-injury-help",
+    "laboratory-evacuation",
+    "home-kitchen-transfer",
+    "workplace-handover"
+  ],
+  "status": "structural-validation-passed",
+  "productionApproval": false,
+  "manifestSha256": "18bcfb566782debae0cddab65a2c9e0def1f8560ff54007c18ac3d034d564842",
+  "catalogSha256": "89ad926b3f4738261783309b8bcb2210135f31efba0dddb7a1a5f6767514681b",
+  "curriculumSha256": "11e63d4c6657ef9c7072bdc6dfb9dcaa2f1f39e43110e47d5987d0d5312e771a",
+  "anatomyVersion": "bodyparts3d-4.0-mobile3-balanced",
+  "anatomyParts": 117,
+  "licencesByPart": {
+    "CC-BY-4.0": 115,
+    "CC-BY-SA-2.1-JP": 2
+  },
+  "geometryBytes": 4208700,
+  "decodedGeometryBytes": 17861112,
+  "triangles": 248058,
+  "evidenceBoundary": "Packaging and authored-data checks only; no expert review, device AR, usability or clinical effectiveness claim.",
+  "optionalAnatomyPack": {
+    "id": "body-detail",
+    "version": "bodyparts3d-4.0-mobile4-detail",
+    "bytes": 17690952,
+    "sha256": "109d84e32bd21055154fabb9986f40104d598c4de5eddf41bfcf39e74062b920",
+    "manifestSha256": "171d124afe67a6d7495de0105ee364b4e7ca6a4909d121884350fd684016845d",
+    "parts": 117,
+    "triangles": 987482,
+    "licencesByPart": {
+      "CC-BY-4.0": 115,
+      "CC-BY-SA-2.1-JP": 2
+    },
+    "maxPartBoundsDeltaMetres": 0.005702853202819824
+  },
+  "apkSha256": "0a2877b11d9424232d36d6733ec56b0e208808053b490185929c23b346db19c8",
+  "apkBytes": 37803291
+}

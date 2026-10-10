@@ -22,8 +22,10 @@ internal object AnatomyMaterials {
     private val brain=AnatomySurfaceMaterial(.61f,.20f,.14f,.015f)
     private val polymer=AnatomySurfaceMaterial(.36f,.34f,0f,.006f)
     private val rubber=AnatomySurfaceMaterial(.86f,.08f,0f,.012f)
+    private val fabric=AnatomySurfaceMaterial(.94f,.055f,0f,.025f)
     private val display=AnatomySurfaceMaterial(.20f,.46f,0f,0f)
     fun forPart(part:AnatomyPart):AnatomySurfaceMaterial=when {
+        part.layer=="clothing"->fabric
         part.layer=="skin"->skin
         part.layer=="skeleton"->bone
         part.layer=="muscles"->muscle

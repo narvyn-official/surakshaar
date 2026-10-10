@@ -3,7 +3,7 @@
   "version": "0.11.0-dev",
   "private": true,
   "engines": {
-    "node": ">=22.13.0"
+    "node": ">=24.13.1"
   },
   "scripts": {
     "install:ci": "node scripts/install-ci.mjs",
@@ -13,7 +13,10 @@
     "lint": "eslint . --ignore-pattern dist --ignore-pattern .next",
     "db:generate": "drizzle-kit generate",
     "test": "tsx --test tests/*.test.ts",
-    "check": "npm test && tsc --noEmit && npm run lint && npm run build"
+    "check": "npm test && tsc --noEmit && npm run lint && npm run build",
+    "build:node": "SURAKSHA_RUNTIME=node vinext build",
+    "start:node": "node dist/standalone/server.js",
+    "db:migrate:node": "node scripts/migrate-node.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.7.0",

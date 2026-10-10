@@ -11,7 +11,7 @@ import kotlin.math.*
 /** Original procedural training illustrations, in metres. No operational readings or manufacturer claims. */
 class WorldEquipment {
  private data class Material(val color:FloatArray,val roughness:Float=.5f,val metal:Float=0f,val emission:Float=0f)
- private val red=Material(floatArrayOf(.72f,.025f,.045f),.27f)
+ private val red=Material(floatArrayOf(.72f,.025f,.045f),.36f)
  private val blue=Material(floatArrayOf(.075f,.22f,.52f),.34f)
  private val yellow=Material(floatArrayOf(.98f,.63f,.035f),.31f)
  private val rubber=Material(floatArrayOf(.026f,.039f,.05f),.86f)
@@ -21,11 +21,15 @@ class WorldEquipment {
  private val glass=Material(floatArrayOf(.14f,.39f,.48f),.12f,.25f)
  private val dark=Material(floatArrayOf(.10f,.15f,.20f),.49f)
  private val screen=Material(floatArrayOf(.43f,.75f,.57f),.28f,0f,.23f)
- private val scenes=mapOf("fire" to fire(),"gas" to gas(),"machinery" to machinery(),"ppe" to ppe(),"emergency" to emergency())
+ private val scenes=mutableMapOf<String,FloatBuffer>()
+ private fun mesh(module:String):FloatBuffer? = scenes[module] ?: when(module){
+  "fire"->fire();"gas"->gas();"machinery"->machinery();"ppe"->ppe();"emergency"->emergency();else->null
+ }?.also{scenes[module]=it}
+ private val label=EquipmentLabel()
  // Only the procedure view requests these meshes. Existing viewers keep their original buffers.
  private val procedureFire by lazy {
   buildMap<Int,FloatBuffer>{
-   put(0,scenes.getValue("fire"));put(1,fire(pinRemoved=true))
+   put(0,mesh("fire")!!);put(1,fire(pinRemoved=true))
    for(direction in -1..1)for(pressed in listOf(false,true)){
     val target=when(direction){-1->-.24f;1->.20f;else->-.12f}
     put(2+(direction+1)*2+if(pressed)1 else 0,fire(pinRemoved=true,aimX=target,pressed=pressed))
@@ -56,6 +60,7 @@ class WorldEquipment {
  fun create(){
   // Called once per new EGL context. Old names belong to the destroyed context, not this one.
   vertexBuffers.clear()
+  label.contextCreated()
   GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER,0)
   fun compile(type:Int,source:String):Int{val s=GLES20.glCreateShader(type);GLES20.glShaderSource(s,source);GLES20.glCompileShader(s);val ok=IntArray(1);GLES20.glGetShaderiv(s,GLES20.GL_COMPILE_STATUS,ok,0);check(ok[0]!=0){GLES20.glGetShaderInfoLog(s)};return s}
   val vertex=compile(GLES20.GL_VERTEX_SHADER,"""
@@ -97,7 +102,7 @@ class WorldEquipment {
  /** Anchor is rigid. Default calls retain one original mesh; procedures add a separate pre-baked scene mesh. */
  fun draw(vp:FloatArray,anchor:FloatArray,module:String,cameraPosition:FloatArray=defaultEye,lightCorrection:FloatArray=defaultLighting,completedActions:Set<String> = emptySet(),procedureMode:Boolean=false,clearDepth:Boolean=true){
   if(program==0)return
-  val original=scenes[module]?:return
+  val original=mesh(module)?:return
   val meshes=if(module=="fire" && "fire-damaged" in completedActions)listOf(damagedFire) else if(module=="fire" && (procedureMode || completedActions.isNotEmpty())){
    val pin="fire-pin" in completedActions;val aimed=pin && "fire-aim" in completedActions
    val pressed=aimed && "fire-squeeze" in completedActions && "fire-withdraw" !in completedActions
@@ -121,6 +126,7 @@ class WorldEquipment {
     for((location,offset) in listOf(position to 0,normal to 3,color to 6,surface to 9)){GLES20.glVertexAttribPointer(location,3,GLES20.GL_FLOAT,false,48,offset*4);GLES20.glEnableVertexAttribArray(location)}
     GLES20.glDrawArrays(GLES20.GL_TRIANGLES,0,mesh.capacity()/12)
    }
+   if(module=="fire")label.draw(mvp,lightCorrection)
   } finally {
    for(location in intArrayOf(position,normal,color,surface))GLES20.glDisableVertexAttribArray(location)
    // Camera renderers use client FloatBuffers, which require no array buffer to be bound.
@@ -146,9 +152,11 @@ class WorldEquipment {
  private fun fire(pinRemoved:Boolean=false,aimX:Float?=null,pressed:Boolean=false,damaged:Boolean=false):FloatBuffer=Builder().apply{
   base(this)
   // Turned vessel: rounded foot, cylindrical wall, shoulder and neck, not stacked flat cylinders.
-  lathe(0f,0f,0f,listOf(.039f to .051f,.044f to .069f,.061f to .082f,.095f to .085f,.365f to .085f,.39f to .080f,.410f to .061f,.424f to .029f,.439f to .026f),red)
+  lathe(0f,0f,0f,listOf(.039f to .051f,.041f to .060f,.045f to .068f,.051f to .075f,.061f to .081f,.077f to .084f,.095f to .085f,.355f to .085f,.371f to .084f,.385f to .081f,.397f to .075f,.406f to .065f,.414f to .049f,.421f to .033f,.429f to .026f,.439f to .026f),red,steps=80)
   lathe(0f,0f,0f,listOf(.040f to .058f,.046f to .075f,.059f to .077f),rubber)
   cylinder(0f,.439f,0f,.038f,.023f,brass)
+  // Machined collar and hose coupling remain separate from the enamel vessel.
+  for(i in 0..3)cylinder(0f,.433f+i*.003f,0f,.055f,.0015f,metal)
   box(0f,.463f,0f,.069f,.038f,.040f,.007f,brass)
   box(.033f,if(pressed).493f else .504f,0f,.138f,.018f,.030f,.005f,red,rz=if(pressed)4f else -8f)
   box(.042f,.480f,0f,.13f,.015f,.032f,.005f,rubber,rz=4f)
@@ -156,6 +164,8 @@ class WorldEquipment {
   if(!pinRemoved){
    rod(floatArrayOf(-.044f,.478f,.015f),floatArrayOf(.03f,.478f,.015f),.003f,metal)
    torus(-.055f,.478f,.015f,.019f,.0028f,metal)
+   tube(listOf(floatArrayOf(-.035f,.475f,.019f),floatArrayOf(-.018f,.494f,.018f),floatArrayOf(.008f,.485f,.018f)),.0018f,Material(floatArrayOf(.20f,.54f,.30f),.6f))
+   box(-.027f,.483f,.021f,.014f,.008f,.003f,.001f,Material(floatArrayOf(.20f,.54f,.30f),.6f))
   }
   if(aimX==null){
    if(damaged){
@@ -164,13 +174,16 @@ class WorldEquipment {
     tube(listOf(floatArrayOf(.19f,.30f,.035f),floatArrayOf(.138f,.240f,-.006f),floatArrayOf(.12f,.157f,-.006f)),.008f,rubber)
     rod(floatArrayOf(.16f,.35f,.015f),floatArrayOf(.17f,.343f,.025f),.002f,white)
     rod(floatArrayOf(.19f,.30f,.035f),floatArrayOf(.196f,.312f,.037f),.002f,white)
-   }else tube(listOf(floatArrayOf(.03f,.458f,-.006f),floatArrayOf(.092f,.466f,-.006f),floatArrayOf(.133f,.430f,-.006f),floatArrayOf(.142f,.346f,-.006f),floatArrayOf(.138f,.240f,-.006f),floatArrayOf(.12f,.157f,-.006f)),.008f,rubber)
+   }else hose(listOf(floatArrayOf(.03f,.458f,-.006f),floatArrayOf(.092f,.466f,-.006f),floatArrayOf(.133f,.430f,-.006f),floatArrayOf(.142f,.346f,-.006f),floatArrayOf(.138f,.240f,-.006f),floatArrayOf(.12f,.157f,-.006f)),.008f,rubber)
    rod(floatArrayOf(.12f,.17f,-.006f),floatArrayOf(.12f,.115f,-.006f),.014f,dark)
+   for(i in 0..6)cylinder(.12f,.119f+i*.006f,-.006f,.029f,.0015f,rubber)
+   cylinder(.12f,.112f,-.006f,.028f,.003f,metal)
+   cylinder(.12f,.110f,-.006f,.019f,.001f,rubber)
   }else{
    val nozzle=floatArrayOf(.14f,.23f,.15f);val target=floatArrayOf(aimX,.065f,-.27f)
    val delta=FloatArray(3){target[it]-nozzle[it]};val length=sqrt(delta.sumOf{(it*it).toDouble()}).toFloat()
    val tip=FloatArray(3){nozzle[it]+delta[it]*.075f/length}
-   tube(listOf(floatArrayOf(.03f,.458f,-.006f),floatArrayOf(.115f,.456f,.015f),floatArrayOf(.18f,.385f,.10f),floatArrayOf(.18f,.30f,.16f),nozzle),.008f,rubber)
+   hose(listOf(floatArrayOf(.03f,.458f,-.006f),floatArrayOf(.115f,.456f,.015f),floatArrayOf(.18f,.385f,.10f),floatArrayOf(.18f,.30f,.16f),nozzle),.008f,rubber)
    rod(nozzle,tip,.014f,dark)
    if(pressed){
     // Segmented pale rods are a symbolic discharge path, not particle/fluid physics or range guidance.
@@ -187,10 +200,7 @@ class WorldEquipment {
   for(i in 0..12){val a=(i*5+60)*PI/180;val x=cos(a).toFloat()*.013f;val y=sin(a).toFloat()*.013f;box(x,.455f+y,.0585f,.003f,.005f,.001f,0f,screen,rz=(i*5-30).toFloat())}
   for(i in 0..8){val a=(i*25+(-10))*PI/180;val x=cos(a).toFloat()*.013f;val y=sin(a).toFloat()*.013f;box(x,.455f+y,.058f,.0017f,.004f,.001f,0f,dark,rz=(i*25-100).toFloat())}
   rod(floatArrayOf(0f,.455f,.059f),if(damaged)floatArrayOf(-.013f,.450f,.059f)else floatArrayOf(0f,.468f,.059f),.0012f,red)
-  box(0f,.256f,.084f,.112f,.139f,.003f,.004f,white)
-  box(0f,.301f,.087f,.094f,.014f,.001f,0f,red)
-  for(i in 0..3)box(-.008f,.273f-i*.016f,.087f,.075f-i*.009f,.003f,.001f,0f,dark)
-  for(i in -1..1)box(i*.025f,.213f,.087f,.016f,.014f,.001f,.002f,blue)
+  // The curved, readable bilingual decal is drawn by EquipmentLabel at the same transform.
  }.finish()
  private fun gas(includeBarrier:Boolean=true):FloatBuffer=Builder().apply{
   base(this)
@@ -374,8 +384,7 @@ class WorldEquipment {
     for(i in 0 until us.lastIndex)for(j in 0 until vs.lastIndex){vertex(i,j);vertex(i+1,j);vertex(i+1,j+1);vertex(i,j);vertex(i+1,j+1);vertex(i,j+1)}
    }
   }
-  fun lathe(x:Float,y:Float,z:Float,profile:List<Pair<Float,Float>>,m:Material,rx:Float=0f,scaleZ:Float=1f){
-   val steps=40
+  fun lathe(x:Float,y:Float,z:Float,profile:List<Pair<Float,Float>>,m:Material,rx:Float=0f,scaleZ:Float=1f,steps:Int=40){
    fun vertex(r:Int,s:Int){val a=s*2*PI/steps;val before=profile[(r-1).coerceAtLeast(0)];val after=profile[(r+1).coerceAtMost(profile.lastIndex)];val dy=after.first-before.first;val dr=after.second-before.second;val p=profile[r]
     transformed(floatArrayOf(cos(a).toFloat()*p.second,p.first,sin(a).toFloat()*p.second*scaleZ),norm(floatArrayOf(cos(a).toFloat()*dy,-dr,sin(a).toFloat()*dy/scaleZ)),x,y,z,rx,0f,m)}
    for(r in 0 until profile.lastIndex)for(s in 0 until steps){vertex(r,s);vertex(r,s+1);vertex(r+1,s+1);vertex(r,s);vertex(r+1,s+1);vertex(r+1,s)}
@@ -389,6 +398,13 @@ class WorldEquipment {
    for(r in 0 until 12)for(s in 0 until 32){vertex(r,s);vertex(r,s+1);vertex(r+1,s+1);vertex(r,s);vertex(r+1,s+1);vertex(r+1,s)}
   }
   fun rod(a:FloatArray,b:FloatArray,r:Float,m:Material)=tube(listOf(a,b),r,m)
+  fun hose(path:List<FloatArray>,r:Float,m:Material){
+   val smooth=mutableListOf<FloatArray>()
+   for(i in 0 until path.lastIndex)for(step in 0 until 6){
+    val a=path[(i-1).coerceAtLeast(0)];val b=path[i];val c=path[i+1];val d=path[(i+2).coerceAtMost(path.lastIndex)];val t=step/6f
+    smooth.add(FloatArray(3){axis->.5f*((2*b[axis])+(-a[axis]+c[axis])*t+(2*a[axis]-5*b[axis]+4*c[axis]-d[axis])*t*t+(-a[axis]+3*b[axis]-3*c[axis]+d[axis])*t*t*t)})
+   };smooth.add(path.last());tube(smooth,r,m)
+  }
   fun tube(path:List<FloatArray>,r:Float,m:Material){
    val n=12
    fun cross(a:FloatArray,b:FloatArray)=floatArrayOf(a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0])

@@ -1,0 +1,7 @@
+<resources>
+    <item name="account_email" type="id" />
+    <item name="account_name" type="id" />
+    <item name="account_password" type="id" />
+    <item name="account_current_password" type="id" />
+    <item name="account_new_password" type="id" />
+</resources>

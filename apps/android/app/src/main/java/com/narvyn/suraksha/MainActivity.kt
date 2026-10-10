@@ -19,6 +19,7 @@ import java.util.*
 class MainActivity: Activity() {
     private lateinit var store: Store
     private lateinit var curriculum: Curriculum
+    private val learningCatalog by lazy{LearningCatalog(this)}
     private lateinit var body: LinearLayout
     private lateinit var pages: PagedPanel
     private var page="home"
@@ -49,6 +50,7 @@ class MainActivity: Activity() {
     private var authorisedStaff=false
     private var accessRevision=0
     private var learningOverlay:Dialog?=null
+    private val compactWorkspace get()=resources.configuration.screenWidthDp>=600&&resources.configuration.screenHeightDp<480
     private val hi get()=store.hi
     private fun t(en: String,hiText: String)=if(hi)hiText else en
 
@@ -63,7 +65,7 @@ class MainActivity: Activity() {
         narrator=TrainingNarrator(this){store.hi}
         render()
     }
-    override fun onResume(){super.onResume();if(::store.isInitialized && !store.isCurrentProfile()){narrator.clear();spokenLearningKey=null;store.close();store=Store(this);session=null;page="home";pageHistory.clear();lessonIndex=0;exportBytes=null;render()}else if(::store.isInitialized && page in listOf("records","module","home")) render();if(::store.isInitialized&&LearningSync.linked(this,store.workerId))LearningSync.schedule(this);refreshWorkspaceAccess()}
+    override fun onResume(){super.onResume();if(::store.isInitialized && !store.isCurrentProfile()){narrator.clear();spokenLearningKey=null;store.close();store=Store(this);session=null;page="home";pageHistory.clear();lessonIndex=0;exportBytes=null;render()}else if(::store.isInitialized && page in listOf("records","module","home","courses")) render();if(::store.isInitialized&&LearningSync.linked(this,store.workerId))LearningSync.schedule(this);refreshWorkspaceAccess()}
     override fun onSaveInstanceState(out: Bundle) {super.onSaveInstanceState(out);out.putStringArrayList("pageHistory",ArrayList(pageHistory));out.putString("page",page);out.putString("selected",selected);out.putInt("lessonIndex",lessonIndex);out.putString("session",session?.data?.getString("id"));out.putString("pendingExportId",pendingExportId);out.putString("pendingExportWorker",pendingExportWorker)}
     override fun onDestroy(){learningOverlay?.dismiss();learningOverlay=null;accessRevision++;accessJobs.shutdownNow();backNavigation.close();pauseSpeech();narrator.close();store.close();super.onDestroy()}
     override fun onPause(){learningOverlay?.dismiss();learningOverlay=null;pauseSpeech();super.onPause()}
@@ -79,10 +81,10 @@ class MainActivity: Activity() {
         if(spokenLearningKey==pair.first){narrator.automatic();return}
         spokenLearningKey=pair.first;speak(pair.second,true)
     }
-    private fun parentPage()=when(page){"training","lesson","practice"->"module";"verify"->"records";else->"home"}
+    private fun parentPage()=when(page){"training","lesson","practice"->"module";"verify","legacy-records"->"records";"library","module"->"courses";else->"home"}
     // API 33+ uses AppBackNavigation and PagedPanel callbacks; retain this fallback for API 29–32.
     @android.annotation.SuppressLint("GestureBackNavigation")
-    @Deprecated("Android 10–12 compatibility") override fun onBackPressed(){if(page!="home")navigateBack()else super.onBackPressed()}
+    @Deprecated("Android 10–12 compatibility") override fun onBackPressed(){if(page!="home"||(::pages.isInitialized&&pages.hasPrevious))navigateBack()else super.onBackPressed()}
     private fun navigateBack(){
         pauseSpeech()
         if(::pages.isInitialized&&pages.previousPage())return
@@ -104,9 +106,7 @@ class MainActivity: Activity() {
         root.setOnApplyWindowInsetsListener{v,i->if(android.os.Build.VERSION.SDK_INT>=30){val b=i.getInsets(WindowInsets.Type.systemBars());v.setPadding(b.left,b.top,b.right,b.bottom)}else{v.setPadding(i.systemWindowInsetLeft,i.systemWindowInsetTop,i.systemWindowInsetRight,i.systemWindowInsetBottom)};i}
         val header=LinearLayout(this).apply{gravity=Gravity.CENTER_VERTICAL;setPadding(dp(16),dp(4),dp(16),dp(4));setBackgroundColor(Palette.surface)}
         if(page in listOf("module","lesson","practice","training","verify","help","library","legacy-records")) {
-            header.addView(action("‹",false,role=ActionRole.NEUTRAL){navigateBack()}.apply {
-                tag="main-back";textSize=28f;contentDescription=t("Back","वापस");setPadding(0,0,0,0);minHeight=dp(48);minimumHeight=dp(48)
-            },LinearLayout.LayoutParams(dp(48),-2))
+            header.addView(practiceTool("",PracticeIcon.BACK,t("Back","वापस")){navigateBack()}.apply{tag="main-back"},LinearLayout.LayoutParams(dp(48),dp(48)))
         } else {
             header.addView(ImageView(this).apply{setImageDrawable(appIcon("shield"));importantForAccessibility=View.IMPORTANT_FOR_ACCESSIBILITY_NO},LinearLayout.LayoutParams(dp(28),dp(28)))
         }
@@ -119,21 +119,22 @@ class MainActivity: Activity() {
             setCompoundDrawables(appIcon("user",Palette.ink,22),null,null,null);setPadding(dp(13),dp(12),dp(13),dp(12));minHeight=dp(48);minimumHeight=dp(48)
         },LinearLayout.LayoutParams(dp(48),dp(48)).apply{marginStart=dp(6)})
         root.add(header)
-        body=column(18).apply{tag="main-page-$page"};pages=paged(body,hi).apply{onPageChanged={backNavigation.enabled(page!="home"||hasPrevious)}}
+        body=column(if(compactWorkspace&&page in listOf("home","courses"))10 else 18).apply{tag="main-page-$page"};pages=paged(body,hi).apply{onPageChanged={backNavigation.enabled(page!="home"||hasPrevious)}}
         root.addView(pages,LinearLayout.LayoutParams(-1,0,1f))
         when(page){"home"->home();"courses"->courses();"library"->library();"module"->module();"lesson"->lesson();"practice"->practiceOptions();"training"->training();"records"->records();"legacy-records"->legacyRecords();"help"->help();"verify"->verifyPage();else->home()}
-        body.accessibilityPaneTitle=when(page){"home"->t("Learning home","सीखने का होम");"lesson"->t("Lesson ${lessonIndex+1}","पाठ ${lessonIndex+1}");"practice"->t("Practice options","अभ्यास के विकल्प");"module"->curriculum.module(selected).local("title",hi);"training"->t("Training","प्रशिक्षण");"records"->t("My learning record","मेरा सीखने का रिकॉर्ड");"verify"->t("Verify a record","रिकॉर्ड जाँचें");else->t("Help","मदद")}
+        body.accessibilityPaneTitle=when(page){"home"->t("Learning home","सीखने का होम");"courses"->t("Course catalog","पाठ्यक्रम सूची");"library"->t("Industrial learning library","औद्योगिक सीखने की लाइब्रेरी");"lesson"->t("Lesson ${lessonIndex+1}","पाठ ${lessonIndex+1}");"practice"->t("Practice options","अभ्यास के विकल्प");"module"->curriculum.module(selected).local("title",hi);"training"->t("Training","प्रशिक्षण");"records"->t("My learning record","मेरा सीखने का रिकॉर्ड");"verify"->t("Verify a record","रिकॉर्ड जाँचें");else->t("Help","मदद")}
         if(page=="lesson")root.add(lessonNavigation())
         root.addView(View(this).apply{setBackgroundColor(Palette.line)},LinearLayout.LayoutParams(-1,dp(1)))
         val nav=LinearLayout(this).apply{setPadding(dp(16),dp(6),dp(16),dp(6));setBackgroundColor(Palette.surface);gravity=Gravity.CENTER_VERTICAL}
         listOf(Triple("home","Home","होम"),Triple("courses","Learn","सीखें"),Triple("records","Progress","प्रगति")).forEach{(dest,en,h)->
-            val active=page==dest||(dest=="courses"&&page in listOf("module","training","lesson","practice"))||(dest=="records"&&page=="verify")
+            val active=page==dest||(dest=="courses"&&page in listOf("module","training","lesson","practice","library"))||(dest=="records"&&page in listOf("verify","legacy-records"))
             nav.addView(action(t(en,h),false,role=ActionRole.NEUTRAL){go(dest)}.apply {
-                tag="main-nav-$dest";isSelected=active;textSize=12f;minHeight=dp(62);minimumHeight=dp(62)
+                tag="main-nav-$dest";isSelected=active;textSize=12f;minHeight=dp(if(compactWorkspace)48 else 62);minimumHeight=dp(if(compactWorkspace)48 else 62)
                 setPadding(dp(4),dp(6),dp(4),dp(6));compoundDrawablePadding=dp(3)
                 setTextColor(if(active)Palette.blue else Palette.muted)
                 background=android.graphics.drawable.RippleDrawable(android.content.res.ColorStateList.valueOf(0x18086f62),shape(if(active)Palette.soft else Palette.surface,16),null)
-                setCompoundDrawables(null,appIcon(if(dest in listOf("home","courses"))"learn"else dest,if(active)Palette.blue else Palette.muted,22),null,null)
+                val icon=if(dest=="home")homeIcon(if(active)Palette.blue else Palette.muted)else appIcon(if(dest=="courses")"learn"else dest,if(active)Palette.blue else Palette.muted,22)
+                if(compactWorkspace){setCompoundDrawables(icon,null,null,null);compoundDrawablePadding=dp(8)}else setCompoundDrawables(null,icon,null,null)
                 contentDescription=t(en,h)+if(active)t(", selected",", चयनित")else ""
             },LinearLayout.LayoutParams(0,-2,1f).apply{if(dest!="help")marginEnd=dp(8)})
         }
@@ -186,32 +187,109 @@ class MainActivity: Activity() {
         PageDialogBuilder(this).setTitle(t("Your learning profile","आपकी सीखने की प्रोफ़ाइल")).setMessage(t("Stored on this phone. No email or account required.","इस फ़ोन पर सुरक्षित। ईमेल या खाते की ज़रूरत नहीं।")).setView(form).setPositiveButton(t("Save","सहेजें")){_,_->store.name=field.text.toString().trim().take(80);store.sector=sectors[sector.selectedItemPosition];render()}.setNegativeButton(t("Cancel","रद्द करें"),null).show()
     }
     private fun launchCourse(id:String){startActivity(Intent(this,LaunchCourseActivity::class.java).putExtra("courseId",id))}
-    private fun home(){
-        title(t("Learn by doing","करके सीखें"),t("Explore, practise and understand.","खोजें, अभ्यास करें और समझें।"))
-        val launch=LearningCatalog(this)
+    private fun learningText(value:JSONObject,key:String)=if(hi)value.optString(key+"Hi").ifBlank{value.optString(key)}else value.optString(key)
+    private fun account(){startActivity(Intent(this,LearnerCentreActivity::class.java).putExtra(LearnerCentreActivity.EXTRA_DESTINATION,"account"))}
+    private data class HomePractice(val title:String,val course:String,val updatedAt:Long,val completed:Boolean,val resumable:Boolean,val detail:String,val intent:Intent)
+    /** Read-only summaries use validated current-content records belonging to the selected learner. */
+    private fun homePractices():List<HomePractice>{
+        val launch=learningCatalog
         val school=getSharedPreferences("learning-profile",MODE_PRIVATE).getString("context-${store.workerId}","")=="School"
-        val latest=LearningProgress(this,store.workerId).use{it.records()}.firstOrNull{record->!record.optBoolean("finished")&&record.optString("contentVersion")==launch.version&&(!school||launch.scenarios.firstOrNull{it.getString("id")==record.optString("scenarioId")}?.optString("audience")!="adult")}
-        val bay=if(school)null else SkillPracticeStore(this,store.workerId,"first-aid-bay.db").use{it.records()}.firstOrNull{!it.optBoolean("finished")&&!it.optBoolean("stopped")&&it.optString("contentVersion")==launch.version}
-        if(bay!=null&&(latest==null||bay.optLong("updatedAt")>latest.optLong("updatedAt")))body.add(action(t("Continue first-aid practice","प्राथमिक उपचार अभ्यास जारी रखें")){
-            startActivity(Intent(this,FirstAidBayActivity::class.java).putExtra("attemptId",bay.getString("id")))
-        }.apply{tag="main-continue"},bottom=14)
-        else if(latest!=null)body.add(action(t("Continue practice","अभ्यास जारी रखें")){
-            startActivity(Intent(this,LearningScenarioActivity::class.java).putExtra("scenarioId",latest.getString("scenarioId")))
-        }.apply{tag="main-continue"},bottom=14)
-        launchCards()
-        body.add(action(t("Learning library","सीखने की लाइब्रेरी"),false,ActionRole.NEUTRAL){go("library")},top=4)
+        val scenarios=launch.scenarios.associateBy{it.getString("id")}
+        val records=LearningProgress(this,store.workerId).use{it.records()}
+        // The scenario host resumes its newest unfinished record. Never promise an older one instead.
+        val resumable=records.filter{!it.optBoolean("finished")&&it.optString("contentVersion")==launch.version}.distinctBy{it.optString("scenarioId")}.map{it.optString("id")}.toSet()
+        val decisions=records.mapNotNull{r->runCatching{
+            val scenario=scenarios[r.getString("scenarioId")]?:return@runCatching null
+            if(school&&scenario.optString("audience")!="awareness")return@runCatching null
+            val a=LearningAttempt.restore(r,scenario,launch.version,store.workerId)
+            HomePractice(learningText(scenario,"title"),r.getString("courseId"),r.getLong("updatedAt"),a.finished,!a.finished&&r.getString("id") in resumable,
+                t("${a.index} of ${a.steps.size} steps complete","${a.steps.size} में से ${a.index} चरण पूरे"),
+                Intent(this,LearningScenarioActivity::class.java).putExtra("scenarioId",r.getString("scenarioId")))
+        }.getOrNull()}
+        val bays=if(school)emptyList()else SkillPracticeStore(this,store.workerId,"first-aid-bay.db").use{it.records()}.mapNotNull{r->runCatching{
+            val a=FirstAidBay.restore(r,store.workerId,launch.version)
+            HomePractice(a.title(hi),"first-aid",r.getLong("updatedAt"),a.finished,!a.finished&&!a.stopped,
+                t("${a.index} of ${a.steps.size} steps complete","${a.steps.size} में से ${a.index} चरण पूरे"),
+                Intent(this,FirstAidBayActivity::class.java).putExtra("attemptId",r.getString("id")))
+        }.getOrNull()}
+        val rooms=if(school)emptyList()else RoomMissionStore(this,store.workerId).use{it.records()}.filter{it.optString("module")=="fire"}.mapNotNull{r->runCatching{
+            require(r.getString("workerId")==store.workerId)
+            val a=RoomMission.restore(r.getJSONObject("mission"));val coaching=RoomCoaching.restore(r.getJSONObject("coaching"),"fire")
+            val camera=r.getString("mode")=="camera"
+            HomePractice(a.selectedScenario?.title(hi)?:t("Fire response practice","अग्नि प्रतिक्रिया अभ्यास"),"fire",r.getLong("updatedAt"),a.completed,!a.completed,
+                t(if(camera)"Camera AR · saved practice"else"3D · saved practice",if(camera)"कैमरा AR · सहेजा अभ्यास"else"3D · सहेजा अभ्यास"),
+                Intent(this,RoomMissionActivity::class.java).putExtra("moduleId","fire").putExtra("camera",camera)
+                    .putExtra("resumeId",r.getString("id")).putExtra("recall",coaching.recall).putExtra("explosionRisk",a.explosionRisk).putExtra("fireScenarioId",a.fireScenarioId))
+        }.getOrNull()}
+        return (decisions+bays+rooms).sortedByDescending{it.updatedAt}
     }
-    private fun launchCards(){
-        LearningCatalog(this).courses.forEach{course->
-            val id=course.getString("id");val accent=if(id=="fire")Palette.fire else Palette.teal
-            body.add(card().apply{
-                add(label(if(hi)if(id=="fire")"अग्नि सुरक्षा" else "प्राथमिक उपचार" else course.getString("title"),20f,Palette.ink,true).asHeading().apply{setCompoundDrawables(appIcon(course.getString("icon"),accent,28),null,null,null);compoundDrawablePadding=dp(10)},bottom=6)
-                add(label(course.getString("subtitle"),14f,Palette.muted),bottom=12)
-                add(action(t("Open course","पाठ्यक्रम खोलें"),false){launchCourse(id)}.apply{tag="course-$id";contentDescription="Open "+course.getString("title")})
-            },bottom=14)
+    private fun home(){
+        val history=homePractices();val next=history.firstOrNull{it.resumable}
+        if(!compactWorkspace)title(t("Your learning","आपकी सीख"))
+        if(!compactWorkspace&&store.name.isNotBlank())body.add(label(store.name,14f,Palette.muted).apply{tag="main-home-learner"},bottom=12)
+        val focus=column(if(compactWorkspace)10 else 14).apply{background=shape(Palette.tealBg,18);tag="main-home-focus"}
+        if(compactWorkspace&&store.name.isNotBlank())focus.add(label(store.name,12f,Palette.teal).apply{tag="main-home-learner"},bottom=4)
+        if(next==null){
+            focus.add(label(t(if(history.isEmpty())"Start your first practice"else"Ready for your next practice?",if(history.isEmpty())"अपना पहला अभ्यास शुरू करें"else"अगले अभ्यास के लिए तैयार?"),if(compactWorkspace)16f else 19f,Palette.ink,true).asHeading(),bottom=6)
+            if(!compactWorkspace)focus.add(label(t("Choose Fire Safety or First Aid in Learn.","सीखें में अग्नि सुरक्षा या प्राथमिक उपचार चुनें।"),14f,Palette.muted),bottom=12)
+            focus.add(action(t("Browse courses","पाठ्यक्रम देखें")){go("courses")}.apply{tag="main-browse-courses"})
+        }else{
+            if(!compactWorkspace)focus.add(label(t("CONTINUE LEARNING","सीखना जारी रखें"),12f,Palette.teal,true),bottom=6)
+            focus.add(label(next.title,if(compactWorkspace)16f else 19f,Palette.ink,true).asHeading().apply{tag="main-continue-title"},bottom=6)
+            focus.add(label(next.detail,14f,Palette.muted).apply{tag="main-continue-detail"},bottom=12)
+            focus.add(action(t("Resume practice","अभ्यास जारी रखें")){startActivity(next.intent)}.apply{tag="main-continue";contentDescription=t("Resume ","जारी रखें: ")+next.title})
+        }
+        val details=if(compactWorkspace)column()else body
+        if(!compactWorkspace)body.add(focus,bottom=14)
+        val completed=history.count{it.completed};val inProgress=history.count{it.resumable}
+        val summary=if(history.isEmpty())t("No practice saved yet","अभी कोई अभ्यास नहीं सहेजा गया")else t("$completed completed · $inProgress in progress","$completed पूरे · $inProgress जारी")
+        details.add(action(if(compactWorkspace)summary else t("Your progress","आपकी प्रगति")+"\n"+summary,false,ActionRole.REVIEW){go("records")}.apply{
+            tag="main-home-progress";contentDescription=t("Your progress. ","आपकी प्रगति। ")+summary;textSize=14f;gravity=Gravity.START or Gravity.CENTER_VERTICAL
+            setCompoundDrawables(appIcon("records",Palette.violet,22),null,null,null);compoundDrawablePadding=dp(10)
+        },bottom=12)
+        history.firstOrNull{it.completed}?.let{recent->
+            if(!compactWorkspace)details.add(label(t("LATEST COMPLETED PRACTICE","हाल में पूरा अभ्यास"),12f,Palette.muted,true),bottom=4)
+            details.add(label(if(compactWorkspace)t("Latest: ","हाल का: ")+recent.title else recent.title+" · "+date(recent.updatedAt),if(compactWorkspace)12f else 14f,Palette.ink).apply{tag="main-home-recent"},bottom=if(compactWorkspace)6 else 12)
+        }
+        val savedSignIn=AdminClient(this).hasSession()
+        details.add(action(t(if(savedSignIn)"Account & sync"else"Sign in or create account",if(savedSignIn)"खाता और सिंक"else"साइन इन या खाता बनाएँ"),false,ActionRole.NEUTRAL){account()}.apply{
+            tag="main-home-account";setCompoundDrawables(appIcon("user",Palette.ink,20),null,null,null);compoundDrawablePadding=dp(8)
+        },bottom=6)
+        val status=if(compactWorkspace)t(if(savedSignIn)"Saved sign-in"else"Offline learning available",if(savedSignIn)"साइन इन सहेजा है"else"ऑफ़लाइन सीखना उपलब्ध है")else t(if(savedSignIn)"Saved sign-in · learning works offline."else"Not signed in · learning works offline.",
+            if(savedSignIn)"साइन इन सहेजा है · सीखना ऑफ़लाइन चलता है।"else"साइन इन नहीं है · सीखना ऑफ़लाइन चलता है।")
+        details.add(label(status,12f,Palette.muted).apply{tag="main-home-account-status"})
+        if(compactWorkspace){
+            val row=LinearLayout(this).apply{orientation=LinearLayout.HORIZONTAL;gravity=Gravity.TOP;isBaselineAligned=false}
+            row.addView(focus,LinearLayout.LayoutParams(0,-2,1f).apply{marginEnd=dp(12)})
+            row.addView(details,LinearLayout.LayoutParams(0,-2,1f));body.add(row)
         }
     }
-    private fun courses(){title(t("Learn","सीखें"));launchCards();body.add(action(t("Earlier industrial courses","पुराने औद्योगिक पाठ्यक्रम"),false,ActionRole.NEUTRAL){go("library")})}
+    private fun launchCards(){
+        val row=if(compactWorkspace)LinearLayout(this).apply{orientation=LinearLayout.HORIZONTAL;isBaselineAligned=false}else null
+        learningCatalog.courses.forEachIndexed{index,course->
+            val id=course.getString("id");val accent=if(id=="fire")Palette.fire else Palette.teal
+            val item=card().apply{
+                tag="main-course-card-$id"
+                add(label(learningText(course,"title"),if(compactWorkspace)17f else 20f,Palette.ink,true).asHeading().apply{setCompoundDrawables(appIcon(course.getString("icon"),accent,28),null,null,null);compoundDrawablePadding=dp(10)},bottom=if(compactWorkspace)10 else 6)
+                if(!compactWorkspace)add(label(learningText(course,"subtitle"),14f,Palette.muted),bottom=12)
+                add(action(t("Open course","पाठ्यक्रम खोलें"),false){launchCourse(id)}.apply{tag="course-$id";contentDescription=t("Open ","खोलें: ")+learningText(course,"title")})
+            }
+            if(row==null)body.add(item,bottom=14)else row.addView(item,LinearLayout.LayoutParams(0,-2,1f).apply{if(index==0)marginEnd=dp(12)})
+        }
+        row?.let{body.add(it,bottom=10)}
+    }
+    private fun courses(){
+        if(!compactWorkspace)title(t("Learn","सीखें"),t("Choose a course to explore and practise.","समझने और अभ्यास के लिए पाठ्यक्रम चुनें।"))
+        launchCards();body.add(action(t("Earlier industrial courses","पुराने औद्योगिक पाठ्यक्रम"),false,ActionRole.NEUTRAL){go("library")}.apply{tag="main-learning-library"})
+    }
+    private fun homeIcon(colour:Int):android.graphics.drawable.Drawable=object:android.graphics.drawable.Drawable(){
+        private val pen=Paint(Paint.ANTI_ALIAS_FLAG).apply{color=colour;style=Paint.Style.STROKE;strokeWidth=1.7f;strokeCap=Paint.Cap.ROUND;strokeJoin=Paint.Join.ROUND}
+        override fun draw(canvas:Canvas){canvas.save();canvas.translate(bounds.left.toFloat(),bounds.top.toFloat());canvas.scale(bounds.width()/24f,bounds.height()/24f)
+            val outline=Path().apply{moveTo(3f,11f);lineTo(12f,3f);lineTo(21f,11f);moveTo(5f,10f);lineTo(5f,21f);lineTo(10f,21f);lineTo(10f,15f);lineTo(14f,15f);lineTo(14f,21f);lineTo(19f,21f);lineTo(19f,10f)};canvas.drawPath(outline,pen);canvas.restore()}
+        override fun setAlpha(alpha:Int){pen.alpha=alpha}
+        override fun setColorFilter(filter:ColorFilter?){pen.colorFilter=filter}
+        @Deprecated("Drawable opacity") override fun getOpacity()=PixelFormat.TRANSLUCENT
+    }.apply{setBounds(0,0,dp(22),dp(22))}
     private fun library(){
         title(t("Learning library","सीखने की लाइब्रेरी"),t("Earlier industrial courses and saved records remain available.","पुराने औद्योगिक पाठ्यक्रम और सहेजे रिकॉर्ड उपलब्ध हैं।"))
         curriculum.modules.forEach{m->val id=m.getString("id")

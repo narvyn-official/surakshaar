@@ -49,11 +49,11 @@ internal class AnatomyScene(private val host:Activity,val data:AnatomyData,val c
     private val equipment=if(bay)FirstAidEquipment.parts else emptyList()
     private val cueParts=if(bay)CasualtyMarkers.parts else emptyList()
     private val injuryParts=if(bay)CasualtyMarkers.injuryParts else emptyList()
-    private val drapeParts=if(bay)listOf(CasualtyMarkers.drape)else emptyList()
+    private val clothingParts=AnatomyClothing.parts
     private val matParts=if(bay)listOf(CasualtyMarkers.mat)else emptyList()
     private val skinParts=data.parts.filter{it.layer=="skin"}
     private val skinBounds=skinParts.first().bounds
-    private val renderer=AnatomyRenderer(data,equipment+cueParts+injuryParts+drapeParts+matParts)
+    private val renderer=AnatomyRenderer(data,equipment+cueParts+injuryParts+clothingParts+matParts)
     private val floorModel=FloatArray(16);private val floorMvp=FloatArray(16)
     private val release=ArSessionRelease()
     private var driver:NativeArDriver?=null
@@ -256,8 +256,9 @@ internal class AnatomyScene(private val host:Activity,val data:AnatomyData,val c
             renderer.draw(floorMvp,floorModel,matParts,null,if(camera).35f else 1f,c.skinTone,cameraPosition=eye)
         }
         renderer.draw(mvp,model,visible,if(c.equipmentPowered)FirstAidEquipment.DISPLAY else c.selected,if(preview).4f else 1f,c.skinTone,cameraPosition=eye)
-        if(bay&&c.layer=="skin")renderer.draw(mvp,model,drapeParts,null,if(preview).4f else 1f,c.skinTone,cameraPosition=eye)
         if(c.skinOverlay&&c.layer!="skin"&&!c.isolated)renderer.draw(mvp,model,skinParts,null,.15f,c.skinTone,cameraPosition=eye)
+        // Clothing is opaque in every layer, including translucent skin / AR placement.
+        renderer.draw(mvp,model,clothingParts,null,1f,c.skinTone,cameraPosition=eye)
         }catch(error:Exception){
             resetCueDwell();validAt=0;canPlace=false
             android.util.Log.e("AnatomyAR","Model rendering interrupted",error)
@@ -289,7 +290,8 @@ internal class AnatomyScene(private val host:Activity,val data:AnatomyData,val c
             if(cue!=null&&CasualtyMarkers.hit(cue,a,d)){
                 post{if(foreground&&controls==pickedControls&&interactionReady())onCuePicked(cue,if(camera)"ar-exploration"else"3d")};return@queueEvent
             }
-            val hit=visible.filter{it.layer!="cue-detail"}.mapNotNull{part->AnatomyPicking.distance(part.vertices,part.bounds,a,d)?.let{part to it}}.minByOrNull{it.second}?.first?:return@queueEvent
+            val hit=(visible.filter{it.layer!="cue-detail"}+clothingParts).mapNotNull{part->AnatomyPicking.distance(part.vertices,part.bounds,a,d)?.let{part to it}}.minByOrNull{it.second}?.first?:return@queueEvent
+            if(hit.layer=="clothing")return@queueEvent
             post{if(foreground){
                 val mode=if(camera)"ar-exploration" else "3d"
                 if(hit.layer=="cue")onCuePicked(hit.id.removePrefix("cue:"),mode)

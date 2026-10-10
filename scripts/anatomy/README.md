@@ -38,7 +38,10 @@ The lung source directory must include the downloaded `objs/`, its
 source hashes. Running only the base generator removes the lung augmentation;
 always run the complete sequence before distribution.
 
-The default balanced profile is capped at 249,000 triangles. To prepare both
+The balanced fallback profile is capped at 249,000 triangles. The detailed profile
+retains the complete 203,382-triangle source skin and budgets 210,000 skeletal,
+390,000 muscle and 185,000 organ triangles, capped at 1,000,000 total and 90 MB
+of decoded geometry. To prepare both
 qualities without rewriting assets while Android builds, stage the raw export,
 add the lung surfaces there, and copy that raw directory for each profile:
 
@@ -80,8 +83,20 @@ validator rejects it. Validate the APK itself after building:
 python3 scripts/validate_learning_release.py --apk apps/android/app/build/outputs/apk/debug/app-debug.apk --report /path/to/apk-validation.json
 ```
 
-The balanced pack is bundled; the detailed pack can be prepared from the included
-archive. The current exports are 248,058 and 471,068 triangles respectively.
+Both quality packs are bundled. The detailed archive is prepared on first model
+use by the background loader; an explicit Balanced choice remains respected.
+Failed preparation uses Balanced with a recovery message. The current exports
+are 248,058 and 987,482 triangles respectively (71,099,640 decoded detailed bytes).
+The optional archive is 17,690,952 bytes. The current source skin is retained
+without decimation in Detailed; finer silhouette and surface features come from
+the original mesh, rather than artificial subdivision.
+
+At runtime, `AnatomyClothing` removes external skin triangles intersecting the
+covered pelvic band and supplies closed opaque training shorts. The same clothes
+are drawn in body exploration, every layer, translucent skin guides, AR placement
+previews and lying/side-rolled casualty views. They participate in ray occlusion
+and cannot be hidden as an anatomical part. Chest, airway and limb landmarks remain
+available. This changes presentation, not the licensed source files or anatomical labels.
 External downloading and high-detail regional packs remain future work. Static
 source assets do not establish the accuracy of any illustrative runtime motion.
 Never build the distributable APK while an exporter is rewriting its assets.

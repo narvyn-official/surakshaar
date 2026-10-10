@@ -31,10 +31,11 @@ class AndroidBackAndLearningTest {
     private fun field(a:RoomMissionActivity,name:String)=RoomMissionActivity::class.java.getDeclaredField(name).apply{isAccessible=true}.get(a)
     @Test fun systemBackPopsMainHistoryAndSurvivesRecreation(){
         setup();ActivityScenario.launch(MainActivity::class.java).use{s->
-            tap("Learning library");tap(Curriculum(context).module("fire").local("title",false));tap("Course actions & practice options");tap("More practice options")
+            tap("Learn");tap("Earlier industrial courses");tap(Curriculum(context).module("fire").local("title",false));tap("Course actions & practice options");tap("More practice options")
             s.recreate();back()
             s.onActivity{assertNotNull(views(it.window.decorView).singleOrNull{v->v.tag=="main-page-module"})}
             back();s.onActivity{assertNotNull(views(it.window.decorView).singleOrNull{v->v.tag=="main-page-library"})}
+            back();s.onActivity{assertNotNull(views(it.window.decorView).singleOrNull{v->v.tag=="main-page-courses"})}
             back();s.onActivity{assertNotNull(views(it.window.decorView).singleOrNull{v->v.tag=="main-page-home"})}
             tap("Progress");s.onActivity{a->views(a.window.decorView).filterIsInstance<Button>().single{it.tag=="main-profile"}.performClick()};tap("Help & settings");back()
             s.onActivity{assertNotNull(views(it.window.decorView).singleOrNull{v->v.tag=="main-page-records"})}

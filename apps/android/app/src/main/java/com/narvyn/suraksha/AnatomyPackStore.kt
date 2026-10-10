@@ -35,6 +35,20 @@ internal class AnatomyPackStore(context: Context) {
     }.getOrDefault(false)
     fun activeDirectory(): File? = if (preferences.getBoolean("detailed", false) && installed()) destination(descriptor()) else null
     fun requestedDetailed() = preferences.getBoolean("detailed", false)
+    /** Called by the background model loader. An explicit balanced choice is never overridden. */
+    fun prepareDefaultQuality(cancelled: () -> Boolean): String? {
+        if (preferences.contains("detailed") && !requestedDetailed()) return null
+        return try {
+            if (installed()) selectDetailed(true) else install(cancelled) { _, _ -> }
+            null
+        } catch (cancelled: CancellationException) {
+            throw cancelled
+        } catch (_: Exception) {
+            // Do not loop failed preparations on every scene opening. Offline content offers retry.
+            preferences.edit().putBoolean("detailed", false).apply()
+            "Detailed models could not be prepared. Balanced models are ready; choose Detailed in Offline content to retry."
+        }
+    }
     fun invalidate() {
         preferences.edit().putBoolean("detailed",false).apply()
         runCatching { File(destination(descriptor()), ".verified").delete() }
@@ -57,7 +71,7 @@ internal class AnatomyPackStore(context: Context) {
             val d = descriptor(); val scratch = staging(d)
             check(root.exists() || root.mkdirs()) { "Content storage is unavailable." }
             check(root.usableSpace >= d.getLong("unpackedBytes") + 20_000_000) { "Free some storage before installing this pack." }
-            if (installed()) return
+            if (installed()) { selectDetailed(true); return }
             progress("Checking the included archive", 0)
             // The archive identity is pinned by the catalogue shipped with this application.
             app.assets.open(d.getString("archive")).use { input ->

@@ -1,0 +1,17 @@
+{
+  "tests": 268,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "classes": 42,
+  "lint": {
+    "Error": 0,
+    "Warning": 54,
+    "Fatal": 0
+  },
+  "apk": {
+    "name": "surakshaar-0.14.0-dev-debug.apk",
+    "bytes": 37803291,
+    "sha256": "0a2877b11d9424232d36d6733ec56b0e208808053b490185929c23b346db19c8"
+  }
+}

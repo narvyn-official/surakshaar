@@ -41,7 +41,8 @@ class MainNavigationTest {
     private fun back(){onView(tag("main-back")).perform(click())}
     private fun openModule(id:String){
         clickTag("main-nav-home")
-        onView(allOf(isAssignableFrom(Button::class.java),withText(if(Store(context).use{it.hi})"सीखने की लाइब्रेरी"else"Learning library"))).perform(reveal(),click())
+        clickTag("main-nav-courses")
+        clickTag("main-learning-library")
         val expected=Curriculum(context).modules.map{"legacy-${it.getString("id")}"}.toSet()
         onView(tag("main-page-library")).check { view,error ->
             if(error!=null)throw error
@@ -82,8 +83,8 @@ class MainNavigationTest {
                     val panel=views.filterIsInstance<PagedPanel>().single()
                     assertEquals("Home must be a single screen",1,panel.pageCount)
                     assertTrue("No swipe scrolling",views.none{it is ScrollView})
-                    val library=views.filterIsInstance<Button>().single{it.text.toString()==if(hi)"सीखने की लाइब्रेरी"else"Learning library"}
-                    val controls=listOf(library)+listOf("course-fire","course-first-aid","main-nav-home","main-nav-records","main-nav-courses")
+                    val primary=views.single{it.tag=="main-continue"||it.tag=="main-browse-courses"}
+                    val controls=listOf(primary)+listOf("main-home-progress","main-home-account","main-nav-home","main-nav-records","main-nav-courses")
                         .map{tag->views.single{it.tag==tag}}
                     for(control in controls) {
                         val visible=Rect()
@@ -105,8 +106,8 @@ class MainNavigationTest {
             ActivityScenario.launch(MainActivity::class.java).use { s ->
                 s.onActivity { a ->
                     val views=all(a.window.decorView)
-                    assertEquals("Home presents Fire and First Aid; the library retains earlier courses",setOf("course-fire","course-first-aid"),views.mapNotNull{it.tag as? String}.filter{it.startsWith("course-")}.toSet())
-                    assertNotNull(views.filterIsInstance<Button>().singleOrNull{it.text.toString()==if(hi)"सीखने की लाइब्रेरी"else"Learning library"})
+                    assertTrue("Home must not repeat the Learn catalog",views.none{(it.tag as? String)?.startsWith("course-")==true})
+                    assertNotNull(views.singleOrNull{it.tag=="main-home-progress"})
                     assertTrue("Home should not repeat equipment previews",all(a.window.decorView).none{it is SceneView})
                     assertReadableControls(a)
                 }
@@ -131,7 +132,7 @@ class MainNavigationTest {
                 s.recreate();assertPage(s,"lesson");assertLesson(1)
                 clickTag("main-lesson-previous");assertLesson(0)
                 lessons.indices.forEach { index -> assertLesson(index);clickTag("main-lesson-next") }
-                assertPage(s,"module");back();assertPage(s,"library");back();assertPage(s,"home")
+                assertPage(s,"module");back();assertPage(s,"library");back();assertPage(s,"courses");androidx.test.espresso.Espresso.pressBackUnconditionally();assertPage(s,"home")
             }
         }} finally { Store(context).use{it.hi=oldHi} }
         assertEquals("Reading must not create assessment evidence",before,Store(context).use{it.attempts().map{a->a.toString()}})
@@ -179,7 +180,7 @@ class MainNavigationTest {
                     assertEquals(id,intent.getStringExtra("moduleId"))
                     assertTrue(intent.getBooleanExtra("guided",false));assertTrue(intent.getBooleanExtra("camera",false))
                     assertFalse(intent.getBooleanExtra("recall",true))
-                    assertPage(s,"practice");back();assertPage(s,"module");back();assertPage(s,"library");back();assertPage(s,"home")
+                    assertPage(s,"practice");back();assertPage(s,"module");back();assertPage(s,"library");back();assertPage(s,"courses");androidx.test.espresso.Espresso.pressBackUnconditionally();assertPage(s,"home")
                 }
                 captured.set(null);openModule("machinery");courseAction(if(Store(context).use{it.hi})"पाठ पढ़ें या सुनें"else"Read or listen to lessons");assertPage(s,"lesson")
                 assertNull("Other modules must not enter a fire/gas room mission",captured.get())

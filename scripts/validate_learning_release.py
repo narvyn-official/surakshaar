@@ -221,7 +221,8 @@ def validate_optional_pack(content: Path, base: dict) -> dict | None:
             (destination / "anatomy" / name).write_bytes((destination / name).read_bytes())
         licences = validate_licensing(manifest, destination)
         triangles = sum(row["triangles"] for row in meshes)
-        require(triangles == catalog["triangleCount"] and triangles <= 500_000, "optional triangle budget mismatch")
+        require(triangles == catalog["triangleCount"] and triangles <= 1_000_000, "optional triangle budget mismatch")
+        require(sum(row["decodedBytes"] for row in meshes) <= 90_000_000, "optional decoded memory budget exceeded")
         require(len(manifest["parts"]) == catalog["partCount"], "optional part count mismatch")
     return {"id": catalog["id"], "version": catalog["version"], "bytes": catalog["bytes"], "sha256": catalog["sha256"],
             "manifestSha256": catalog["manifestSha256"], "parts": catalog["partCount"], "triangles": triangles,

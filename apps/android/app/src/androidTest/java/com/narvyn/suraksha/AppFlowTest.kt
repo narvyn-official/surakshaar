@@ -25,7 +25,8 @@ class AppFlowTest {
  private fun tap(s:ActivityScenario<MainActivity>,text:String){s.onActivity{a->val view=texts(a.window.decorView).firstOrNull{it.text.toString()==text}?:error("Missing control: $text");view.performClick()};InstrumentationRegistry.getInstrumentation().waitForIdleSync()}
  private fun openModule(id:String){
   val hi=Store(InstrumentationRegistry.getInstrumentation().targetContext).use{it.hi}
-  onView(allOf(isAssignableFrom(Button::class.java),withText(if(hi)"सीखने की लाइब्रेरी"else"Learning library"))).perform(revealOnPage(),click())
+  onView(allOf(isAssignableFrom(Button::class.java),withText(if(hi)"सीखें"else"Learn"))).perform(click())
+  onView(allOf(isAssignableFrom(Button::class.java),withText(if(hi)"पुराने औद्योगिक पाठ्यक्रम"else"Earlier industrial courses"))).perform(revealOnPage(),click())
   onView(withTagValue(equalTo<Any>("legacy-$id"))).perform(revealOnPage(),click())
  }
  private fun shot(name:String){val i=InstrumentationRegistry.getInstrumentation();val b=i.uiAutomation.takeScreenshot();File(i.targetContext.getExternalFilesDir(null),name).outputStream().use{b.compress(Bitmap.CompressFormat.PNG,100,it)}}
@@ -35,7 +36,7 @@ class AppFlowTest {
   ActivityScenario.launch(MainActivity::class.java).use{s->
    s.onActivity{it.setShowWhenLocked(true);it.setTurnScreenOn(true);it.window.addFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);it.getSystemService(android.app.KeyguardManager::class.java).requestDismissKeyguard(it,null)}
    InstrumentationRegistry.getInstrumentation().waitForIdleSync()
-   onView(withText("Learn by doing")).check(matches(isDisplayed()));shot("home.png")
+   onView(withText("Your learning")).check(matches(isDisplayed()));shot("home.png")
    openModule("fire");onView(withTagValue(equalTo<Any>("main-course-actions"))).perform(revealOnPage(),click());onView(withText("Take an assessment")).inRoot(isDialog()).perform(revealOnPage(),click());onView(withText("On-screen decisions")).inRoot(isDialog()).perform(revealOnPage(),click());onView(withText("I’m in a safe area")).inRoot(isDialog()).perform(revealOnPage(),click())
    val curriculum=Curriculum(context);val questions=curriculum.module("fire").getJSONArray("questions").objects()
    questions.forEachIndexed{i,q->
@@ -53,7 +54,7 @@ class AppFlowTest {
   val p=raw.removePrefix("SURAKSHA:CREDENTIAL:").split('.').toMutableList();val payload=org.json.JSONObject(String(android.util.Base64.decode(p[1],android.util.Base64.URL_SAFE)));payload.put("score",12);p[1]=android.util.Base64.encodeToString(payload.toString().toByteArray(),android.util.Base64.URL_SAFE or android.util.Base64.NO_WRAP or android.util.Base64.NO_PADDING)
   try{CredentialVerifier.verify(i.targetContext,"SURAKSHA:CREDENTIAL:"+p.joinToString("."));fail("Tampered credential accepted")}catch(expected:IllegalArgumentException){}
  }
- @Test fun hindiHomeRenders(){val c=InstrumentationRegistry.getInstrumentation().targetContext;Store(c).use{it.hi=true};ActivityScenario.launch(MainActivity::class.java).use{onView(withText("करके सीखें")).check(matches(isDisplayed()));shot("hindi-home.png")};Store(c).use{it.hi=false}}
+ @Test fun hindiHomeRenders(){val c=InstrumentationRegistry.getInstrumentation().targetContext;Store(c).use{it.hi=true};ActivityScenario.launch(MainActivity::class.java).use{onView(withText("आपकी सीख")).check(matches(isDisplayed()));shot("hindi-home.png")};Store(c).use{it.hi=false}}
 
  @Test fun machineryCriticalDecisionStopsAssessment(){
   val c=InstrumentationRegistry.getInstrumentation().targetContext;Store(c).use{it.hi=false}
@@ -70,7 +71,7 @@ class AppFlowTest {
   val c=InstrumentationRegistry.getInstrumentation().targetContext;Store(c).use{it.hi=false}
   for(module in listOf("fire","gas","machinery","ppe","emergency")){
    ActivityScenario.launch<EquipmentActivity>(android.content.Intent(c,EquipmentActivity::class.java).putExtra("moduleId",module)).use{s->
-    onView(withText("Rotate right")).perform(click());onView(withText("Change zoom")).perform(click())
+    onView(withContentDescription("Equipment view controls")).perform(click());onView(withContentDescription("Rotate right")).perform(click());onView(withContentDescription("Zoom in")).perform(click())
     val done=java.util.concurrent.CountDownLatch(1);var result=-1
     s.onActivity{a->val root=a.window.decorView;fun find(v:View):android.opengl.GLSurfaceView?{if(v is android.opengl.GLSurfaceView)return v;if(v is ViewGroup)for(i in 0 until v.childCount){find(v.getChildAt(i))?.let{return it}};return null};val surface=find(root)!!;val bitmap=Bitmap.createBitmap(surface.width,surface.height,Bitmap.Config.ARGB_8888);android.view.PixelCopy.request(surface,bitmap,{code->result=code;if(code==android.view.PixelCopy.SUCCESS){val colors=HashSet<Int>();for(x in 0 until bitmap.width step 10)for(y in 0 until bitmap.height step 10)colors.add(bitmap.getPixel(x,y));if(colors.size<8)result=-2;File(c.getExternalFilesDir(null),"model-$module.png").outputStream().use{bitmap.compress(Bitmap.CompressFormat.PNG,100,it)}};done.countDown()},android.os.Handler(android.os.Looper.getMainLooper()))}
     assertTrue(done.await(10,java.util.concurrent.TimeUnit.SECONDS));assertEquals("A non-blank 3D model must render",android.view.PixelCopy.SUCCESS,result);shot("equipment-$module.png")

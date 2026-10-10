@@ -1,6 +1,6 @@
 import { auth } from "@/lib/auth";
 export async function GET(request:Request) { return auth().handler(request); }
-import { env } from "cloudflare:workers";
+import { env } from "@/lib/runtime-env";
 import { recoveryReady } from "@/lib/recovery-mail";
 import { readJson } from "@/lib/http";
 export async function POST(request:Request) {

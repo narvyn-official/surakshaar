@@ -31,7 +31,8 @@ class EmergencyFlowTest {
     }
     private fun open(s: ActivityScenario<MainActivity>, hi: Boolean, practice: Boolean) {
         fun t(en: String, hindi: String) = if(hi)hindi else en
-        onView(allOf(isAssignableFrom(Button::class.java),withText(t("Learning library","सीखने की लाइब्रेरी")))).perform(revealOnPage(),click())
+        onView(allOf(isAssignableFrom(Button::class.java),withText(t("Learn","सीखें")))).perform(click())
+        onView(allOf(isAssignableFrom(Button::class.java),withText(t("Earlier industrial courses","पुराने औद्योगिक पाठ्यक्रम")))).perform(revealOnPage(),click())
         onView(withTagValue(equalTo<Any>("legacy-emergency"))).perform(revealOnPage(),click())
         instrumentation.waitForIdleSync()
         if(InstrumentationRegistry.getArguments().getString("emergencyDemo")=="true")Thread.sleep(700)

@@ -19,6 +19,8 @@ class AnatomyPackFlowTest {
         // This test must never replace a user's existing optional pack.
         assumeTrue(!store.installed()&&!store.paused()&&!File(context.filesDir,"content-packs/body-detail").exists())
         val prefs=context.getSharedPreferences("anatomy-quality",0);val hadChoice=prefs.contains("detailed");val oldChoice=prefs.getBoolean("detailed",false)
+        // Choose the fallback explicitly; otherwise the first-use loader prepares detailed by default.
+        store.selectDetailed(false)
         val base=AnatomyData.load(context)
         try {
             var cancelled=false

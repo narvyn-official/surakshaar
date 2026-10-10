@@ -23,7 +23,7 @@ class AdminClient(private val context:Context) {
     fun <T> forIdentity(stamp:String,work:()->T):T{val previous=expectedRequest.get();expectedRequest.set(stamp);return try{work()}finally{expectedRequest.set(previous)}}
     private val prefs=context.getSharedPreferences("admin_session",Context.MODE_PRIVATE)
     var base:String
-        get()=prefs.getString("server",null) ?: if(context.applicationInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE!=0) "http://localhost:5173" else ""
+        get()=prefs.getString("server",null) ?: DEFAULT_ORIGIN
         private set(value){prefs.edit().putString("server",value).apply()}
     private fun key():SecretKey {
         val store=KeyStore.getInstance("AndroidKeyStore").apply { load(null) }
@@ -36,7 +36,7 @@ class AdminClient(private val context:Context) {
         require(uri.host!=null && uri.userInfo==null && uri.query==null && uri.fragment==null && uri.path.orEmpty() in listOf("","/") && (uri.scheme=="https" || debug&&uri.scheme=="http"&&uri.host in listOf("localhost","127.0.0.1"))) { "Enter your training centre’s HTTPS server address." }
         val clean=uri.toString().trimEnd('/');if(clean!=base)sessionGuard.replace{clearTokens();base=clean}
     }
-    companion object { private val sessionGuard=SessionRequestGuard(); private var sessionCookies:JSONObject?=null; private var sessionOrigin:String?=null }
+    companion object { const val DEFAULT_ORIGIN="https://surakshaar.213-210-36-82.sslip.io"; private val sessionGuard=SessionRequestGuard(); private var sessionCookies:JSONObject?=null; private var sessionOrigin:String?=null }
     fun remember(value:Boolean){prefs.edit().putBoolean("remember",value).apply();if(!value)prefs.edit().remove("cookies").apply()}
     private fun cookies():JSONObject { return try {
         if(!prefs.getBoolean("remember",true))return if(sessionOrigin==base)JSONObject(sessionCookies?.toString()?:"{}")else JSONObject()
@@ -44,14 +44,15 @@ class AdminClient(private val context:Context) {
         if(saved==null)JSONObject() else {
             val parts=saved.split('.');val cipher=Cipher.getInstance("AES/GCM/NoPadding")
             cipher.init(Cipher.DECRYPT_MODE,key(),GCMParameterSpec(128,Base64.decode(parts[0],Base64.NO_WRAP)))
-            JSONObject(String(cipher.doFinal(Base64.decode(parts[1],Base64.NO_WRAP)),Charsets.UTF_8))
+            val envelope=JSONObject(String(cipher.doFinal(Base64.decode(parts[1],Base64.NO_WRAP)),Charsets.UTF_8))
+            SessionCookieEnvelope.read(envelope,base) ?: run { prefs.edit().remove("cookies").apply(); JSONObject() }
         }
     } catch(_:Exception){prefs.edit().remove("cookies").apply();JSONObject()}
     }
     private fun saveCookies(value:JSONObject) {
         if(!prefs.getBoolean("remember",true)){sessionCookies=JSONObject(value.toString());sessionOrigin=base;return}
         val cipher=Cipher.getInstance("AES/GCM/NoPadding");cipher.init(Cipher.ENCRYPT_MODE,key())
-        val encrypted=cipher.doFinal(value.toString().toByteArray(Charsets.UTF_8))
+        val encrypted=cipher.doFinal(SessionCookieEnvelope.create(base,value).toString().toByteArray(Charsets.UTF_8))
         prefs.edit().putString("cookies",Base64.encodeToString(cipher.iv,Base64.NO_WRAP)+"."+Base64.encodeToString(encrypted,Base64.NO_WRAP)).apply()
     }
     fun hasSession():Boolean { val jar=cookies();val now=System.currentTimeMillis();return jar.keys().asSequence().any{it.endsWith("session_token")&&jar.getJSONObject(it).optLong("expires",0)>now} }
@@ -89,7 +90,7 @@ class AdminClient(private val context:Context) {
                 JSONObject()
             }
             if(!sessionGuard.isCurrent(generation)||origin!=base)throw SessionChanged()
-            if(status==401){if(!sessionGuard.apply(generation){if(!SessionCookiePolicy.canClearUnauthorized(cookieValues(jar,now),cookieValues(cookies(),now)))throw SessionChanged();clear()})throw SessionChanged();if(path.startsWith("/api/auth/sign-in"))throw IllegalStateException(data.optString("message","Check your email and password."));throw SignedOut()}
+            if(status==401){if(!sessionGuard.apply(generation){if(!SessionCookiePolicy.canClearUnauthorized(cookieValues(jar,now),cookieValues(cookies(),now)))throw SessionChanged();clear()})throw SessionChanged();if(path.startsWith("/api/auth/sign-in"))throw IllegalStateException("Check your email and password, then try again.");throw SignedOut()}
             if(!sessionGuard.apply(generation){
                 // Merge only returned cookies. An unrelated response must not roll
                 // back a newer token rotation or resurrect a cleared cookie.
@@ -101,6 +102,7 @@ class AdminClient(private val context:Context) {
                 completedStamp=identityStamp()
             })throw SessionChanged()
             if(status==429)throw IllegalStateException("Too many attempts. Wait a minute before trying again.")
+            if(status==503&&path=="/api/auth/request-password-reset")throw IllegalStateException("Password recovery is unavailable. Contact your institution; your password has not changed.")
             if(status>=500)throw IllegalStateException("The account service is unavailable. Try again later or contact your training centre.")
             if(status !in 200..299)throw IllegalStateException(data.optString("message",data.optString("error","Could not complete the request ($status).")))
             return data

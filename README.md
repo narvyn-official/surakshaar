@@ -1,21 +1,23 @@
 # SurakshaAR
 
-A **v0.13.1-dev development preview** for accessible Android AR learning, focused on Fire Safety and First Aid for independent learners and institutions.
+A **v0.14.0-dev development preview** for accessible Android AR learning, focused on Fire Safety and First Aid for independent learners and institutions.
 
-**New repository:** [narvyn-official/surakshaar](https://github.com/narvyn-official/surakshaar). [Download the v0.13.1 Android APK](https://github.com/narvyn-official/surakshaar/releases/download/v0.13.1-preview/surakshaar-0.13.1-dev-debug.apk) · Android 10+, debug-signed. [Release notes and checksums](https://github.com/narvyn-official/surakshaar/releases/tag/v0.13.1-preview). Historical links below refer to the earlier Suraksha Saathi repository.
+**Repository:** [narvyn-official/surakshaar](https://github.com/narvyn-official/surakshaar). [Download the v0.14.0 Android APK](https://github.com/narvyn-official/surakshaar/releases/download/v0.14.0-preview/surakshaar-0.14.0-dev-debug.apk) · Android 10+, debug-signed. [Release notes and checksums](https://github.com/narvyn-official/surakshaar/releases/tag/v0.14.0-preview). Historical links below refer to earlier versions.
 
-**Current working source: 0.13.1-dev / code 28.** This refinement adds accessible native Fire inspection controls, separate model space and enlarged-text portrait/landscape layouts. [0.13.1 changes](docs/surakshaar-0.13.1/README.md) · [build-specific verification](docs/surakshaar-0.13.1/verification.md). The included 0.13.0 foundation adds eight adult casualty situations, lying-body and injury-cue interaction, a dressing gesture, compact view/audio controls, two deeper Fire room journeys, institution-scoped records and revocable formative-practice QR sharing. The separate decision curriculum has 20 draft scenarios and 94 stages. See [current changes and release boundaries](docs/surakshaar-0.13.0/README.md) and [verification](docs/surakshaar-0.13.0/verification.md). Qualified content/language review, production configuration and complete physical-device acceptance remain open; this is not a production release.
+**Current source: 0.14.0-dev / code 29.** Home now offers personal continuation and progress; Learn holds the course catalogue. The detailed body pack has 987,482 source-derived triangles, opaque training shorts and protected skin geometry. Fire equipment has a readable bilingual training label, finer geometry and a fixed model viewport with one-tap label/gauge inspection. Independent native accounts connect to the dedicated [public HTTPS preview service](https://surakshaar.213-210-36-82.sslip.io/login). Password recovery is disabled at the owner's request; sign-up does not grant institution or administrator access. See [0.14.0 changes](docs/surakshaar-0.14.0/README.md) and [build-specific verification](docs/surakshaar-0.14.0/verification.md).
+
+The included learning foundation contains eight adult casualty situations, lying-body and injury-cue interaction, a dressing gesture, compact view/audio controls, two Fire room journeys, institution-scoped records and revocable formative-practice QR sharing. The separate decision curriculum has 20 draft scenarios and 94 stages. See [learning scope](docs/surakshaar-0.13.0/README.md). Qualified content/language review, production distribution and final physical-device acceptance remain open; this is a development preview.
 
 The retained v0.10.0 baseline added learner enrolment, MFA, course progress, five expanded sequences, encrypted retry sync, instructor observations and independent certification corrections/review. Its historical report is [here](docs/p0-p2-local-implementation.md); it is not proof for the current APK.
 
 **Previously published download: [SurakshaAr v0.11.0 development pilot prerelease](https://github.com/narvyn-official/suraksha-saathi/releases/tag/v0.11.0-pilot)**
 
-- [Download the Android APK — SurakshaAr v0.11.0-dev](https://github.com/narvyn-official/suraksha-saathi/releases/download/v0.11.0-pilot/surakshaar-0.11.0-dev-debug.apk) · Android 10+, debug-signed pilot. Offline practice works; account-linked sync/review needs a configured server. The backend is not publicly deployed.
+- [Download the Android APK — SurakshaAr v0.11.0-dev](https://github.com/narvyn-official/suraksha-saathi/releases/download/v0.11.0-pilot/surakshaar-0.11.0-dev-debug.apk) · Android 10+, debug-signed pilot. Offline practice works; account-linked sync/review needs a configured server. That historical APK needs manual server configuration; the current preview has a public account endpoint.
 - [Watch the earlier v0.6.0 emulator walkthrough](https://github.com/narvyn-official/suraksha-saathi/releases/download/v0.6.0-pilot/suraksha-saathi-0.6.0-emulator-demo.mp4) · Screen fire/gas and explosion-evacuation practice; not physical AR evidence.
 - [Download SHA-256 checksums](https://github.com/narvyn-official/suraksha-saathi/releases/download/v0.11.0-pilot/SHA256SUMS-0.11.0-dev.txt).
 - [Previous v0.10.0 pilot release](https://github.com/narvyn-official/suraksha-saathi/releases/tag/v0.10.0-pilot).
 
-**Previously published (0.7.1):** fixed learner/admin screens with explicit page controls and focused popups, automatic English/Hindi instructions, corrected Android Back navigation, detailed fire-type/agent learning and improved AR surface placement with a 20 cm virtual-footprint gap. Samsung phone checks confirm tracking, placement and automatic Hindi speech; earlier fire-evacuation and outside-only gas branches completed on the same phone. See [0.7.1 changes and validation](docs/release-0.7.1.md). **Public account hosting remains pending; native administration requires a configured account server.**
+**Previously published (0.7.1):** fixed learner/admin screens with explicit page controls and focused popups, automatic English/Hindi instructions, corrected Android Back navigation, detailed fire-type/agent learning and improved AR surface placement with a 20 cm virtual-footprint gap. Samsung phone checks confirm tracking, placement and automatic Hindi speech; earlier fire-evacuation and outside-only gas branches completed on the same phone. See [0.7.1 changes and validation](docs/release-0.7.1.md). **The 0.14.0 preview now supplies a public account endpoint; institution authority remains separately approved.**
 
 **In the published 0.6.0 version:** 0.6.0 expands fire room practice through exit selection, evacuation, assembly and reporting, adds an explosion-risk evacuation branch and gas PPE/buddy checks, introduces paged native lessons and saved room-practice recovery, and connects separate room journals to trainer review. All four camera paths share camera configuration, pacing, thermal recovery and session-release handling. See [implementation, verification and remaining gaps](docs/release-0.6.0.md). The latest physical checks and remaining scope are in the 0.7.1 release report; this remains a pilot prerelease.
 
@@ -31,14 +33,14 @@ The [access and certification follow-up](docs/access-certification-review-2026-0
 - Offline decision recall with corrective feedback, self-explanation prompts and scheduled return visits that survive compatible curriculum updates; assessment evidence remains unchanged.
 - Staged equipment identification: examples, hidden labels, changed viewing angles, English/Hindi description alternatives and local review scheduling. Fire has optional camera-based component practice with tracking gates, preserved screen fallback and separate presentation attribution. Camera component recognition still needs its own physical validation.
 - AR decision recovery preserves saved practice explanations and assessment acknowledgements until explicit Continue; fresh camera images, tracked placement and readable native answer controls gate new answers. [Recovery details](docs/ar-assessment-recovery.md).
-- Paged equipment inspection with native rotation/tilt/zoom controls, meaningful accessibility headings and distinct review actions. Text-based component practice remains separately attributed. See [accessibility scope](docs/accessibility.md).
+- Fixed-viewport equipment inspection with native rotation/tilt/zoom controls, meaningful accessibility headings and distinct review actions. Text-based component practice remains separately attributed. See [accessibility scope](docs/accessibility.md).
 - Native centre-placement actions and a camera aiming cross for fire component practice and AR decisions, with fresh-frame/revision guards and screen alternatives. [Placement scope and limits](docs/ar-placement.md).
 - Ordered fire/gas procedure drafts with persistent action journals and visible pin, nozzle, boundary and attendant states; camera/screen/text alternatives. [Procedure scope](docs/procedure-training.md).
 - Shared-phone learner profiles with separate local progress and wallets.
 - Android credential wallet with pinned-issuer signature verification offline, explicit expiry and legacy-date handling; renewal requires a new passed assessment.
 - Role-coloured Mineral Light controls with native ripple/focus feedback and a responsive trainer dashboard.
 
-**Pilot scope:** these are simulation learning records, not statutory safety certificates, identity verification, practical competence or permission to work. Santali is visibly pending native review. Samsung results cited above belong to earlier versions. Current candidate evidence is recorded separately in the 0.13.1 verification report; historical Samsung results are not proof for the new build.
+**Pilot scope:** these are simulation learning records, not statutory safety certificates, identity verification, practical competence or permission to work. Santali is visibly pending native review. Samsung results cited above belong to earlier versions. Current candidate evidence is recorded separately in the 0.14.0 verification report; historical Samsung results are not proof for the new build.
 
 ## Build Android
 
@@ -48,7 +50,7 @@ Install Android SDK platform/build tools 36 and a compatible JDK, then:
 bash scripts/build-android.sh
 ```
 
-The debug-signed APK is copied to `artifacts/surakshaar-0.13.1/surakshaar-0.13.1-dev-debug.apk`. Android Studio can open `apps/android`. The repository includes the Gradle wrapper. For a fresh clone, generate the pilot issuer before building if you want your own independently approved pilot credentials:
+The debug-signed APK is copied to `artifacts/surakshaar-0.14.0/surakshaar-0.14.0-dev-debug.apk`. Android Studio can open `apps/android`. The repository includes the Gradle wrapper. For a fresh clone, generate the pilot issuer before building if you want your own independently approved pilot credentials:
 
 ```sh
 node scripts/create-pilot-issuer.mjs
@@ -58,7 +60,7 @@ The command creates an ignored private runtime key and matching public trust fil
 
 ## Login and administration
 
-The web dashboard now includes a sign-in screen, shared workspaces, Admin/Trainer/Viewer/Certifier roles, staff invitations, worker registration/editing, bulk training assignments, overdue tracking, CSV reports and an activity log. See [admin setup and validation](docs/admin-workspace.md). The 0.7.0 development APK adds a native training-centre workspace and independent Suraksha accounts. Public hosting remains unresolved.
+The web dashboard now includes a sign-in screen, shared workspaces, Admin/Trainer/Viewer/Certifier roles, staff invitations, worker registration/editing, bulk training assignments, overdue tracking, CSV reports and an activity log. See [admin setup and validation](docs/admin-workspace.md). The native app includes a training-centre workspace and independent Suraksha accounts. Version 0.14.0 connects to the public preview by default. Existing explicit server choices remain respected. Account email delivery and password recovery are disabled; no ChatGPT sign-in is involved.
 
 ## Run locally
 
@@ -68,7 +70,7 @@ From the repository root, after installing web dependencies:
 node scripts/local-dev.mjs
 ```
 
-The launcher preserves existing signing/account keys, applies local migrations and starts the learner portal at `http://localhost:5173/learn`, staff workspace at `http://localhost:5173`, and temporary development inbox at `http://127.0.0.1:5188`. No external email is sent. For the debug Android app over USB, use `adb reverse tcp:5173 tcp:5173`. Complete centre approval using the existing operator procedure; signup does not grant staff access.
+The launcher preserves existing signing/account keys, applies local migrations and starts the learner portal at `http://localhost:5173/learn`, staff workspace at `http://localhost:5173`, and temporary development inbox at `http://127.0.0.1:5188`. No external email is sent. For a deliberately configured local debug Android connection, select `http://localhost:5173` in Connection and use `adb reverse tcp:5173 tcp:5173`; the default APK now uses public HTTPS. Complete centre approval using the existing operator procedure; signup does not grant staff access.
 
 Register the Android learner ID in Workers, create a private invitation in **Learners & observations**, then join and sync in Android **My training centre**. Finish and sync all four course stages before requesting certification. A different certifier reviews the evidence and can request clarification, reject, or approve. Approved credentials sync into the Android wallet and have a printable learner web record.
 
@@ -85,7 +87,7 @@ Open the printed localhost address and create/sign in to an independent account.
 
 For room practice, use **My record → Export room practice journals** and the separate **Room practice** dashboard tab. These histories cannot issue certificates.
 
-See [dashboard setup](apps/admin-web/README.md) for issuer configuration, tests and deployment details. Internet hosting is not yet available: the Sites registration request failed and discovery found no created Suraksha site.
+See [dashboard setup](apps/admin-web/README.md) for issuer configuration, tests and deployment details. The current preview uses a dedicated Node/SQLite service on the authorised VPS; historical Sites deployment attempts do not describe the current service.
 
 ## Validation
 

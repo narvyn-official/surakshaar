@@ -2,7 +2,7 @@ import { twoFactor } from "better-auth/plugins/two-factor";
 import { betterAuth } from "better-auth/minimal";
 import { drizzleAdapter } from "@better-auth/drizzle-adapter";
 import { drizzle } from "drizzle-orm/d1";
-import { env } from "cloudflare:workers";
+import { env } from "@/lib/runtime-env";
 import { headers } from "next/headers";
 import * as schema from "@/db/auth-schema";
 import { sendRecovery, recoveryReady, sendAccountVerification } from "./recovery-mail";

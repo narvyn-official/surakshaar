@@ -1,4 +1,5 @@
 import vinext from "vinext";
+import {fileURLToPath} from "node:url";
 import { defineConfig } from "vite";
 import hostingConfig from "./.openai/hosting.json";
 import { sites } from "./build/sites-vite-plugin";
@@ -34,6 +35,10 @@ const localBindingConfig = {
 };
 
 export default defineConfig(async () => {
+  if(process.env.SURAKSHA_RUNTIME==="node")return {
+    plugins:[vinext()],
+    resolve:{alias:{"cloudflare:workers":fileURLToPath(new URL("./lib/runtime-node.ts",import.meta.url))}},
+  };
   // Use Miniflare's local Request.cf placeholder unless fetching is requested.
   process.env.CLOUDFLARE_CF_FETCH_ENABLED ??= "false";
   process.env.WRANGLER_SEND_METRICS ??= "false";

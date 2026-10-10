@@ -35,7 +35,7 @@ def package(base:Path,detail:Path,output:Path)->dict:
         validator.validate_mesh(part,detail.parent)
     # Decimation may shift extremal vertices slightly, never translate or re-scale a structure.
     assert max_delta<=.015,('Unexpected quality-pack alignment change in metres',max_delta)
-    assert sum(p['vertices']//3 for p in manifest['parts'])<=500_000,'Detailed mobile budget exceeded'
+    assert sum(p['vertices']//3 for p in manifest['parts'])<=1_000_000,'Detailed bounded geometry budget exceeded'
     files={'manifest.json':manifest_bytes}
     for part in manifest['parts']:
         path=Path(part['file'])
@@ -57,7 +57,7 @@ def package(base:Path,detail:Path,output:Path)->dict:
         'unpackedBytes':sum(map(len,files.values())),
         'manifestSha256':hashlib.sha256(manifest_bytes).hexdigest(),
         'title':'Detailed anatomy',
-        'description':'Install the bundled detailed model for closer exploration. Uses more storage and memory; clinical review remains pending.',
+        'description':'Full source skin with more skeletal, muscle and organ detail. Prepared offline on first use; balanced quality remains available. Clinical review remains pending.',
         'partCount':len(actual),'triangleCount':sum(p['vertices']//3 for p in manifest['parts']),
         'compatibleBaseVersion':base_manifest['version'],
         'maxPartBoundsDeltaMetres':max_delta,
