@@ -6,7 +6,9 @@ const root=resolve(import.meta.dirname,'../../..'),app=join(root,'apps/admin-web
 if(!/^[0-9][a-zA-Z0-9.-]+$/.test(version))throw Error('Invalid release version');
 const target=join(root,'artifacts','surakshaar-'+version),web=join(target,'web');
 if(!existsSync(join(app,'.next/standalone/apps/admin-web/server.js')))throw Error('Build the standalone server first');
+if(!existsSync(join(app,'dist-safety-worker/worker.mjs')))throw Error('Build the Safety Updates worker first');
 mkdirSync(target,{recursive:true});for(const generated of [web,join(target,'source')])rmSync(generated,{recursive:true,force:true});cpSync(join(app,'.next/standalone'),web,{recursive:true});
+cpSync(join(app,'dist-safety-worker'),join(web,'apps/admin-web/dist-safety-worker'),{recursive:true});
 cpSync(join(app,'.next/static'),join(web,'apps/admin-web/.next/static'),{recursive:true});
 cpSync(join(app,'public'),join(web,'apps/admin-web/public'),{recursive:true});
 cpSync(join(app,'drizzle'),join(web,'drizzle'),{recursive:true});
@@ -14,7 +16,7 @@ cpSync(join(app,'deployment'),join(web,'deployment'),{recursive:true});
 mkdirSync(join(web,'scripts'),{recursive:true});for(const name of ['migrate-node.mjs','backup-node.mjs','maintain-node.mjs'])cpSync(join(app,'scripts',name),join(web,'scripts',name));
 // Explicit allowlist prevents copying the developer database, private config, cookies or release keys.
 const source=join(target,'source/apps/admin-web');mkdirSync(source,{recursive:true});
-for(const name of ['app','components','db','drizzle','lib','public','scripts','tests','deployment','build','.openai','hooks','vendor','cloudflare-env.d.ts','drizzle.config.ts','components.json','.npmrc','package.json','package-lock.json','tsconfig.json','next.config.ts','postcss.config.mjs','eslint.config.mjs','next-env.d.ts','vite.config.ts','vite.safety-worker.config.ts'])if(existsSync(join(app,name)))cpSync(join(app,name),join(source,name),{recursive:true});
+for(const name of ['app','components','db','drizzle','lib','public','scripts','tests','deployment','docs','build','.openai','hooks','vendor','cloudflare-env.d.ts','drizzle.config.ts','components.json','.npmrc','package.json','package-lock.json','tsconfig.json','next.config.ts','postcss.config.mjs','eslint.config.mjs','next-env.d.ts','vite.config.ts','vite.safety-worker.config.ts'])if(existsSync(join(app,name)))cpSync(join(app,name),join(source,name),{recursive:true});
 cpSync(join(root,'content/learning'),join(target,'source/content/learning'),{recursive:true});
 cpSync(join(root,'content/spatial'),join(target,'source/content/spatial'),{recursive:true});
 mkdirSync(join(target,'source/content/anatomy'),{recursive:true});

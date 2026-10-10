@@ -1,6 +1,6 @@
 # Safety Updates pilot
 
-Local implementation, 10 October 2026. This feature is for **staff reference**, not curriculum publication or clinical approval. No deployment or recurring collection was enabled for this delivery. Learner, assessment, translation and certification paths are unchanged.
+Historical pilot implementation, 10 October 2026. See `safety-references-0.16.1.md` for the subsequent Search, lesson-link and deployment integration. This feature is for **staff reference**, not curriculum publication or clinical approval. No deployment or recurring collection was enabled for this delivery. Learner, assessment, translation and certification paths are unchanged.
 
 ## Staff workflow
 

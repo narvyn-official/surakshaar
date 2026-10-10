@@ -79,7 +79,7 @@ test('preflight rejects private or mixed DNS before connection, pins the selecte
  await assert.rejects(publicPreflight(url,config.hosts,{resolve:async()=>{throw Error('DNS failed')},status:async()=>200}),/source-unavailable/);
 });
 test('Fetch sends only public URLs, validates failures and never follows provider redirects',async()=>{
- const f=fixture();let calls=0;const transport:typeof fetch=async(url,init)=>{calls++;assert.equal(url,'https://api.fetch.tinyfish.ai');assert.equal(init?.redirect,'error');const body=JSON.parse(init?.body as string);assert.deepEqual(body.urls,[f.source.url]);assert.deepEqual(Object.keys(body).sort(),['exclude_selectors','format','iframe_links','image_links','links','per_url_timeout_ms','ttl','urls']);return Response.json(responseFor(f.source));};
+ const f=fixture();let calls=0;const transport:typeof fetch=async(url,init)=>{calls++;assert.equal(url,'https://api.fetch.tinyfish.ai');assert.equal(init?.redirect,'error');const body=JSON.parse(init?.body as string);assert.deepEqual(body.urls,[f.source.url]);assert.deepEqual(Object.keys(body).sort(),['format','iframe_links','image_links','links','per_url_timeout_ms','ttl','urls']);return Response.json(responseFor(f.source));};
  try{
  await assert.rejects(fetchPublicPage(f.source,{...config,key:undefined},async()=>{},transport),/missing-key/);assert.equal(calls,0);
  await assert.rejects(fetchPublicPage(f.source,config,async()=>{throw new CollectionError('unsafe-url')},transport),/unsafe-url/);assert.equal(calls,0);

@@ -8,7 +8,7 @@ export async function requestJson<T>(path: string, method = "GET", body?: unknow
   try {
     response = await fetch(path, {
       method, cache: "no-store", credentials: "same-origin", redirect: "error",
-      signal: AbortSignal.timeout(20_000),
+      signal: AbortSignal.timeout(path === "/api/safety-updates/equipment" && method === "POST" ? 50_000 : 20_000),
       headers: body === undefined ? { Accept: "application/json" } : { Accept: "application/json", "Content-Type": "application/json" },
       body: body === undefined ? undefined : JSON.stringify(body),
     });
@@ -25,7 +25,7 @@ export async function requestJson<T>(path: string, method = "GET", body?: unknow
     }
     const info = data as { error?: unknown; message?: unknown };
     const reason = info.error ?? info.message;
-    throw new RequestError(response.status === 429 ? "Too many attempts. Wait a minute before trying again." :
+    throw new RequestError(path.startsWith("/api/safety-updates") && typeof reason === "string" && reason.length <= 1000 ? reason : response.status === 429 ? "Too many attempts. Wait a minute before trying again." :
       response.status >= 500 ? "The service is temporarily unavailable. Please try again later." :
       typeof reason === "string" ? reason : "Could not complete the request. Please try again.", response.status);
   }

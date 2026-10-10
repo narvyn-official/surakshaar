@@ -31,18 +31,22 @@ export async function fetchPublicPage(source:Source,config:SafetyConfig,prefligh
  try{sourceUrl(source.url,config.hosts)}catch{throw new CollectionError('unsafe-url')}
  await preflight(source.url);
  try{
-  const response=await transport('https://api.fetch.tinyfish.ai',{method:'POST',redirect:'error',signal:AbortSignal.timeout(config.timeoutMs+5000),headers:{'Content-Type':'application/json','X-API-Key':config.key},body:JSON.stringify({urls:[source.url],format:'markdown',links:false,image_links:false,iframe_links:false,ttl:0,per_url_timeout_ms:config.timeoutMs,exclude_selectors:['nav','header','footer','script','style']})});
+  const response=await transport('https://api.fetch.tinyfish.ai',{method:'POST',redirect:'error',signal:AbortSignal.timeout(config.timeoutMs+5000),headers:{'Content-Type':'application/json','X-API-Key':config.key},body:JSON.stringify({urls:[source.url],format:'markdown',links:false,image_links:false,iframe_links:false,ttl:0,per_url_timeout_ms:config.timeoutMs})});
   if(response.status===401||response.status===403)throw new CollectionError('provider-auth');
   if(response.status===402)throw new CollectionError('provider-quota');
   if(response.status===429){const raw=response.headers.get('retry-after')??'';const wait=/^\d+$/.test(raw)?Number(raw)*1000:Date.parse(raw)-Date.now();throw new CollectionError('rate-limit',true,Math.max(5000,Math.min(86400000,Number.isFinite(wait)?wait:30000)));}
   if(response.status>=500)throw new CollectionError('provider-unavailable',true);
   if(!response.ok)throw new CollectionError('provider-unavailable');
+  return parseResult(await readProviderJson(response),source,config.hosts);
+ }catch(error){if(error instanceof CollectionError)throw error;if(error instanceof Error&&['TimeoutError','AbortError'].includes(error.name))throw new CollectionError('timeout',true);throw new CollectionError('provider-unavailable',true);}
+}
+export async function readProviderJson(response:Response):Promise<unknown> {
   if(!response.headers.get('content-type')?.includes('application/json')||Number(response.headers.get('content-length'))>1_000_000)throw new CollectionError('malformed');
   const reader=response.body?.getReader();if(!reader)throw new CollectionError('malformed');let bytes=0,text='';const decoder=new TextDecoder('utf-8',{fatal:true});
   try{for(;;){const {done,value}=await reader.read();if(done)break;bytes+=value.byteLength;if(bytes>1_000_000)throw new CollectionError('malformed');text+=decoder.decode(value,{stream:true})}text+=decoder.decode()}finally{await reader.cancel().catch(()=>{});reader.releaseLock()}
   let result:unknown;try{result=JSON.parse(text)}catch{throw new CollectionError('malformed')}
-  return parseResult(result,source,config.hosts);
- }catch(error){if(error instanceof CollectionError)throw error;if(error instanceof Error&&['TimeoutError','AbortError'].includes(error.name))throw new CollectionError('timeout',true);throw new CollectionError('provider-unavailable',true);}
+
+ return result;
 }
 export function excerpts(content:string,previous?:string){
  if(!previous)return {excerpt:content.slice(0,1400),previousExcerpt:null};

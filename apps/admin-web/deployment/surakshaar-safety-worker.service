@@ -1,0 +1,27 @@
+[Unit]
+Description=SurakshaAR public safety reference collector
+After=network-online.target surakshaar.service
+Wants=network-online.target
+[Service]
+Type=simple
+User=surakshaar
+Group=surakshaar
+WorkingDirectory=/opt/surakshaar/current
+EnvironmentFile=/etc/surakshaar/runtime.env
+Environment=REQUIRE_STAFF_MFA=true
+ExecStartPre=/usr/bin/node deployment/validate-runtime.mjs
+ExecStart=/usr/bin/node --max-old-space-size=96 apps/admin-web/dist-safety-worker/worker.mjs
+Restart=on-failure
+RestartSec=10
+TimeoutStopSec=50
+UMask=0077
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+ReadWritePaths=/var/lib/surakshaar
+MemoryHigh=112M
+MemoryMax=160M
+TasksMax=32
+[Install]
+WantedBy=multi-user.target

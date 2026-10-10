@@ -1,4 +1,4 @@
-import {getAppUser,freshUser,isOperator} from '@/lib/auth';
+import {getAppUser,freshUser,isOperator,requireStaffMfa} from '@/lib/auth';
 import {access,db,failure,json} from '@/lib/server';
 import {env} from '@/lib/runtime-env';
 import {configFrom,requireSafetyRole,requireSourceOperator,sourceCommand} from '@/lib/safety/model';
@@ -6,13 +6,13 @@ import {sourceUrl} from '@/lib/safety/url-policy';
 const headers={'Cache-Control':'no-store'};
 export async function GET(){try{
  const user=await getAppUser();if(!user)throw new Error('Sign in to continue.');const operator=isOperator(user.userId);
- if(!operator)requireSafetyRole((await access()).role,'read');
+ if(!operator)requireSafetyRole((await access()).role,'read');else await requireStaffMfa(user.userId);
  const sources=await db().prepare('SELECT * FROM safety_sources ORDER BY topic,title LIMIT 100').all();
  const audit=operator?await db().prepare('SELECT * FROM safety_source_audit ORDER BY at DESC,id DESC LIMIT 50').all():{results:[]};
  return Response.json({sources:sources.results,operator,audit:audit.results},{headers});
 }catch(e){return failure(e)}}
 export async function POST(request:Request){try{
- const user=await freshUser();requireSourceOperator(isOperator(user.userId));
+ const user=await freshUser();requireSourceOperator(isOperator(user.userId));await requireStaffMfa(user.userId);
  const parsed=sourceCommand.safeParse(await json(request,8000));if(!parsed.success)throw new Error('Invalid public source proposal or decision.');
  const c=parsed.data,now=Date.now();
  if(c.action==='propose'){
