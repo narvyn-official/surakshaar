@@ -1,0 +1,4 @@
+'use client';
+import Link from 'next/link';
+import {GovernancePanel} from '@/components/training/GovernancePanel';
+export function PlatformConsole({section}:{section:'institutes'|'plans'|'sources'}){return <main className="role-tool-page"><div className="role-page-heading"><div><p className="role-eyebrow">PLATFORM OWNER</p><h1>{section==='institutes'?'Institute access':section==='plans'?'Plans and configuration':'Safety reference governance'}</h1><p>Manage platform responsibilities from one place.</p></div></div><nav className="institution-tabs" aria-label="Platform sections">{[['institutes','Institute access'],['plans','Plans and configuration'],['sources','Safety references']].map(([id,title])=><Link key={id} aria-current={id===section?'page':undefined} href={'/platform?section='+id}>{title}</Link>)}</nav><GovernancePanel section={section} onChange={async()=>{}}/></main>}

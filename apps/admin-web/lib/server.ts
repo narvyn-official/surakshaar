@@ -1,6 +1,7 @@
+import {staffWorkspaces,selectedWorkspace,defaultStaffWorkspace} from "./workspace-store";
 import { env } from "@/lib/runtime-env";
 import { headers } from "next/headers";
-import { permitted, roles, type Role, type Permission } from "@/lib/access";
+import { permitted, type Role, type Permission } from "@/lib/access";
 import { getAppUser, requireStaffMfa } from "@/lib/auth";
 export function db() {
   if (!env.DB) throw new Error("Training storage is unavailable.");
@@ -10,18 +11,11 @@ export type Access = { owner: string; role: Role; user: NonNullable<Awaited<Retu
 export async function access(permission: Permission = "read"): Promise<Access> {
   const user = await getAppUser();
   if (!user) throw new Error("Sign in to access training records.");
-  const cookie = (await headers()).get("cookie") ?? "";
-  const value = cookie.split(";").map(v => v.trim()).find(v => v.startsWith("suraksha_workspace="))?.split("=").slice(1).join("=");
-  let who = user.userId;
-  if (value) { try { who = decodeURIComponent(value); } catch { throw new Error("Forbidden workspace."); } }
-  const centre=await db().prepare("SELECT status FROM centre_approvals WHERE owner=?").bind(who).first<{status:string}>();
-  if(centre?.status!=="approved")throw new Error("Forbidden centre: approval is required or access has been suspended.");
-  let role: Role = "admin";
-  if (who !== user.userId) {
-    const member = await db().prepare("SELECT role FROM team_members WHERE owner=? AND user_id=? AND active=1").bind(who, user.userId).first<{role: Role}>();
-    if (!member || !roles.includes(member.role)) throw new Error("Forbidden workspace. Choose an approved workspace or join a centre.");
-    role = member.role;
-  }
+  const selected=selectedWorkspace((await headers()).get("cookie")??"");
+  const choices=await staffWorkspaces(user.userId);
+  const current=selected?choices.find(w=>w.owner===selected):defaultStaffWorkspace(choices,user.userId);
+  if(!current)throw new Error("Forbidden workspace: choose an approved institute or ask your administrator to restore access.");
+  const who=current.owner,role=current.role;
   await requireStaffMfa(user.userId);
   if (!permitted(role, permission)) throw new Error("Forbidden: your role does not allow this action.");
   return {owner: who, role, user};

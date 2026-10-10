@@ -1,4 +1,5 @@
 "use client";
+import {legacyTabs} from "@/lib/role-workspace";
 import {InstructorPanel} from "./InstructorPanel";
 import {GovernancePanel} from "./GovernancePanel";
 import {CertificationQueue} from "./CertificationQueue";
@@ -99,7 +100,8 @@ export default function Home() {
   const [session, setSession] = useState<AdminSession | null>(null);
   const writable = session?.current != null && permitted(session.current.role,"write");
   const [requestedTab, setActiveTab] = useState("insights");
-  const tab=session&&!session.current?"access":(session?.current?.role!=="admin"&&["settings","team"].includes(requestedTab)||requestedTab==="safety-updates"&&session?.current!=null&&!["admin","trainer"].includes(session.current.role))?"insights":requestedTab;
+  const allowedTabs=session?.current?legacyTabs(session.current.role):[];
+  const tab=session&&!session.current?"access":allowedTabs.includes(requestedTab)?requestedTab:(allowedTabs[0]??"insights");
   const [workerView,setWorkerView]=useState("register");
   const setTab = useCallback((id:string) => {
     if (!destinations.some(d=>d.id===id)) return;

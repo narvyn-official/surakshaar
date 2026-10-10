@@ -14,6 +14,7 @@ export async function POST(request: Request) {
   try {
     const user = await getAppUser();if (!user) throw new Error("Sign in to continue.");
     const input=await json(request);
+    if(input.clear===true)return Response.json({cleared:true},{headers:{"Cache-Control":"no-store","Set-Cookie":"suraksha_workspace=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0"}});
     let selected=input.owner;
     if(typeof input.invitation==="string" && input.invitation.length<500) {
       const [who,code]=input.invitation.trim().split(".");

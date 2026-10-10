@@ -111,6 +111,7 @@ class LearnerCentreActivity:Activity(){
     }}
     private fun accountHome(){screen(t("Suraksha account","सुरक्षा खाता"));body.add(label(accountName.ifBlank{t("Signed in","प्रवेश हो गया")},20f,bold=true),bottom=4);body.add(label(accountEmail,14f,Palette.muted),bottom=12)
         body.add(label(t("This phone: ${identity.name.ifBlank{"Learner"}}. Practice stays private until you choose to upload or share it.","यह फ़ोन: ${identity.name.ifBlank{"शिक्षार्थी"}}। अपलोड या साझा करने तक अभ्यास निजी रहता है।"),14f),bottom=12)
+        body.add(action(t("My role dashboard","मेरी भूमिका का डैशबोर्ड"),false){startActivity(Intent(this,RoleDashboardActivity::class.java))},bottom=8)
         body.add(action(t("Private practice & sync","निजी अभ्यास और सिंक")){LearningPracticeSyncDialog.show(this,identity)},bottom=8)
         body.add(action(t("Institution assignments","संस्था के अभ्यास कार्य"),false){LearningCentreDialog.showLearner(this,identity)},bottom=8)
         body.add(action(t("Institution-issued records","संस्था द्वारा जारी रिकॉर्ड"),false){InstitutionRecordsDialog.show(this,identity)},bottom=8)
@@ -123,7 +124,7 @@ class LearnerCentreActivity:Activity(){
     private fun chooseCentre(){screen(t("Choose institution","संस्था चुनें"),"choose");links.forEach{link->body.add(action(link.getString("centre")){selectCentre(link)},bottom=10)};body.add(action(t("Join another institution","दूसरी संस्था से जुड़ें"),false){join()},top=8)}
     private fun login(){screen(t(if(challenge)"Confirm sign-in"else if(signup)"Create Suraksha account"else"Sign in to Suraksha",if(challenge)"प्रवेश की पुष्टि"else if(signup)"सुरक्षा खाता बनाएँ"else"सुरक्षा में साइन इन"),if(challenge)"challenge"else if(signup)"signup"else"login")
         if(challenge){val code=input(t("Authenticator or recovery code","ऑथेंटिकेटर या रिकवरी कोड"),key="code");val backup=CheckBox(this).apply{text=t("Use recovery code","रिकवरी कोड उपयोग करें")};body.add(backup)
-            val verify={if(code.text.isBlank())code.error=t("Enter your code","कोड दर्ज करें")else task({api.call("/api/auth/two-factor/"+(if(backup.isChecked)"verify-backup-code"else"verify-totp"),JSONObject().put("code",code.text.toString().trim()))},identityChange=true){challenge=false;code.text.clear();load()}}
+            val verify={if(code.text.isBlank())code.error=t("Enter your code","कोड दर्ज करें")else task({api.call("/api/auth/two-factor/"+(if(backup.isChecked)"verify-backup-code"else"verify-totp"),JSONObject().put("code",code.text.toString().trim()))},identityChange=true){challenge=false;code.text.clear();startActivity(Intent(this,RoleDashboardActivity::class.java));finish()}}
             body.add(action(t("Verify sign-in","प्रवेश सत्यापित करें")){verify()},top=12);submitOnKeyboard(code){verify()};body.add(action(t("Back to sign in","साइन इन पर वापस"),false){api.clear();challenge=false;login()},top=8);return
         }
         body.add(label(t("Save private practice and connect to your institution.","निजी अभ्यास सहेजें और अपनी संस्था से जुड़ें।"),15f,Palette.muted),bottom=6)
@@ -137,7 +138,7 @@ class LearnerCentreActivity:Activity(){
             else if(validEmail(email)&&validPassword(password,signup)){
                 if(signup&&name!!.text.toString().trim().length !in 1..100){name.error=t("Use 1–100 characters","1–100 अक्षर रखें");name.requestFocus()}
                 else{api.remember(remember.isChecked);val payload=JSONObject().put("email",email.text.toString().trim()).put("password",password.text.toString()).put("rememberMe",remember.isChecked);if(signup)payload.put("name",name!!.text.toString().trim())
-                    task({api.call("/api/auth/${if(signup)"sign-up"else"sign-in"}/email",payload)},identityChange=true){r->password.text.clear();if(r.optBoolean("twoFactorRedirect")){challenge=true;login()}else{signup=false;load()}}
+                    task({api.call("/api/auth/${if(signup)"sign-up"else"sign-in"}/email",payload)},identityChange=true){r->password.text.clear();if(r.optBoolean("twoFactorRedirect")){challenge=true;login()}else{signup=false;startActivity(Intent(this,RoleDashboardActivity::class.java));finish()}}
                 }
             }
         }

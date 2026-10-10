@@ -1,3 +1,5 @@
+import {RoleHeader} from "@/components/workspace/RoleHeader";
+import "./role-workspaces.css";
 import type { Metadata } from "next";
 import "./globals.css";
 import "./spatial-studio.css";
@@ -24,7 +26,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="antialiased spatial-light">{children}</body>
+      <body className="antialiased spatial-light"><RoleHeader/>{children}</body>
     </html>
   );
 }

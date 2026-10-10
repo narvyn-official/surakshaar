@@ -1,0 +1,7 @@
+'use client';
+import Link from 'next/link';
+import {usePathname} from 'next/navigation';
+import {useEffect,useState} from 'react';
+import {workspaceDefinitions} from '@/lib/role-workspace';
+import type {WorkspaceContext} from '@/lib/workspace-context';
+export function RoleHeader(){const path=usePathname(),[context,setContext]=useState<WorkspaceContext|null>(null);useEffect(()=>{const controller=new AbortController();void fetch('/api/dashboard?context=1',{cache:'no-store',signal:controller.signal}).then(async r=>{if(!r.ok)return null;return ((await r.json()) as {context:WorkspaceContext}).context;}).then(c=>{if(!controller.signal.aborted)setContext(c);}).catch(()=>{});return()=>controller.abort();},[path]);if(!context||path.startsWith('/dashboard')||path==='/workspace'||['/login','/forgot-password','/reset-password'].includes(path))return null;const links=workspaceDefinitions[context.role].actions;return <header className="role-global-bar"><div><Link href={context.home} className="role-global-brand">SurakshaAR <span>{context.label}</span></Link><Link href={context.home}>Your dashboard</Link><Link href="/account">Account security</Link></div><nav aria-label={context.label+' tools'}>{!context.mfaRequired&&!context.workspaceUnavailable&&links.map(a=><Link key={a.id} href={a.href} aria-current={path===a.href.split(/[?#]/)[0]?'page':undefined}>{a.title}</Link>)}</nav></header>}

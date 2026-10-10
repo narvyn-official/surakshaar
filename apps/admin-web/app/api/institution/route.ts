@@ -7,6 +7,7 @@ import {launchBudget} from '@/lib/learning-centre-store';
 const reply=(data:unknown)=>Response.json(data,{headers:{'Cache-Control':'private, no-store'}});
 export async function GET(){try{
  const a=await access('workspace'),canRead=permitted(a.role,'read'),canContent=permitted(a.role,'content');
+ if(!canRead&&!canContent)throw Error('Forbidden: your role does not allow institution records.');
  const [units,people,policy,procedures,plan]=await Promise.all([
  canRead?db().prepare('SELECT * FROM institution_units WHERE owner=? ORDER BY kind,name LIMIT 300').bind(a.owner).all():{results:[]},
  canRead?db().prepare('SELECT w.id,w.name,w.sector,p.employee_number,p.unit_id,p.archived_at,l.user_id IS NOT NULL AS linked FROM workers w LEFT JOIN institution_people p ON p.owner=w.owner AND p.worker_id=w.id LEFT JOIN learner_links l ON l.owner=w.owner AND l.worker_id=w.id WHERE w.owner=? ORDER BY w.name,w.id LIMIT 1000').bind(a.owner).all():{results:[]},
