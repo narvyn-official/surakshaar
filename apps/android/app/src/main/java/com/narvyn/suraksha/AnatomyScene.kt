@@ -74,6 +74,8 @@ internal class AnatomyScene(private val host:Activity,val data:AnatomyData,val c
     private val projection=FloatArray(16);private val view=FloatArray(16);private val vp=FloatArray(16);private val model=FloatArray(16);private val mvp=FloatArray(16);private val inverse=FloatArray(16)
     private val eye=FloatArray(3);private val inverseView=FloatArray(16)
     private var visible=emptyList<AnatomyPart>()
+    private var visibleSkinOverlay=emptyList<AnatomyPart>()
+    private var visibleClothing=emptyList<AnatomyPart>()
     private var lastControls:AnatomyControls?=null
     private var background:CameraImage?=null
     private var lastStatus=""
@@ -108,7 +110,7 @@ internal class AnatomyScene(private val host:Activity,val data:AnatomyData,val c
         surface.setOnTouchListener{_,event->touch(event)}
     }
     fun change(block:(AnatomyControls)->AnatomyControls){pendingFrame=null;val previous=controls;val next=block(previous);controls=if(camera&&placed&&!previous.edit&&!next.edit)next.copy(yaw=previous.yaw,scale=previous.scale)else next;onControls(controls);surface.requestRender()}
-    fun layer(name:String){change{it.copy(layer=name,isolated=false,hidden=emptySet(),skinOverlay=false)};if(!camera)frameBounds(layerBounds(name))}
+    fun layer(name:String){change{it.copy(layer=name,selected=null,isolated=false,hidden=emptySet(),skinOverlay=false)};if(!camera)frameBounds(layerBounds(name))}
     private fun layerBounds(name:String):FloatArray {
         val parts=data.parts.filter{it.layer==name}
         return FloatArray(6){i->if(i<3)parts.minOf{it.bounds[i]}else parts.maxOf{it.bounds[i]}}
@@ -186,8 +188,13 @@ internal class AnatomyScene(private val host:Activity,val data:AnatomyData,val c
         GLES20.glClearColor(.96f,.97f,.985f,1f);GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT or GLES20.GL_DEPTH_BUFFER_BIT)
         if(!foreground)return
         val c=controls
-        if(lastControls!=c){visible=data.parts.filter{it.id !in c.hidden && if(c.isolated)it.id==c.selected else it.layer==c.layer}+
-            (if(c.equipment)equipment else emptyList())+cueParts.filter{it.id=="cue:${c.cueRegion}"}+injuryParts.filter{it.id=="injury:${c.casualtyDetail}"};lastControls=c}
+        if(lastControls!=c){
+            visible=data.parts.filter{it.id !in c.hidden && if(c.isolated)it.id==c.selected else it.layer==c.layer}+
+                (if(c.equipment)equipment else emptyList())+cueParts.filter{it.id=="cue:${c.cueRegion}"}+injuryParts.filter{it.id=="injury:${c.casualtyDetail}"}
+            visibleSkinOverlay=if(c.skinOverlay&&c.layer!="skin"&&!c.isolated)skinParts.filter{it.id !in c.hidden}else emptyList()
+            visibleClothing=AnatomyClothing.shownWith(visible,visibleSkinOverlay)
+            lastControls=c
+        }
         Matrix.setIdentityM(model,0)
         Matrix.setIdentityM(floorModel,0)
         var preview=false
@@ -256,9 +263,10 @@ internal class AnatomyScene(private val host:Activity,val data:AnatomyData,val c
             renderer.draw(floorMvp,floorModel,matParts,null,if(camera).35f else 1f,c.skinTone,cameraPosition=eye)
         }
         renderer.draw(mvp,model,visible,if(c.equipmentPowered)FirstAidEquipment.DISPLAY else c.selected,if(preview).4f else 1f,c.skinTone,cameraPosition=eye)
-        if(c.skinOverlay&&c.layer!="skin"&&!c.isolated)renderer.draw(mvp,model,skinParts,null,.15f,c.skinTone,cameraPosition=eye)
-        // Clothing is opaque in every layer, including translucent skin / AR placement.
-        renderer.draw(mvp,model,clothingParts,null,1f,c.skinTone,cameraPosition=eye)
+        if(visibleSkinOverlay.isNotEmpty())renderer.draw(mvp,model,visibleSkinOverlay,null,.15f,c.skinTone,cameraPosition=eye)
+        // Opaque coverage follows visible skin, including a translucent skin overlay or AR preview.
+        // Internal layers without skin remain unobstructed, and picking uses this same list.
+        if(visibleClothing.isNotEmpty())renderer.draw(mvp,model,visibleClothing,null,1f,c.skinTone,cameraPosition=eye)
         }catch(error:Exception){
             resetCueDwell();validAt=0;canPlace=false
             android.util.Log.e("AnatomyAR","Model rendering interrupted",error)
@@ -290,9 +298,9 @@ internal class AnatomyScene(private val host:Activity,val data:AnatomyData,val c
             if(cue!=null&&CasualtyMarkers.hit(cue,a,d)){
                 post{if(foreground&&controls==pickedControls&&interactionReady())onCuePicked(cue,if(camera)"ar-exploration"else"3d")};return@queueEvent
             }
-            val hit=(visible.filter{it.layer!="cue-detail"}+clothingParts).mapNotNull{part->AnatomyPicking.distance(part.vertices,part.bounds,a,d)?.let{part to it}}.minByOrNull{it.second}?.first?:return@queueEvent
+            val hit=(visible.filter{it.layer!="cue-detail"}+visibleClothing).mapNotNull{part->AnatomyPicking.distance(part.vertices,part.bounds,a,d)?.let{part to it}}.minByOrNull{it.second}?.first?:return@queueEvent
             if(hit.layer=="clothing")return@queueEvent
-            post{if(foreground){
+            post{if(foreground&&controls==pickedControls&&interactionReady()){
                 val mode=if(camera)"ar-exploration" else "3d"
                 if(hit.layer=="cue")onCuePicked(hit.id.removePrefix("cue:"),mode)
                 else if(hit.layer=="equipment")onToolPicked(hit.id,mode)

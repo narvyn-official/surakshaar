@@ -142,8 +142,8 @@ class LaunchLearningFlowTest {
                 waitForRenderedModel(rendered.get())
                 tap("Parts")
                 onView(withHint("Find a structure")).perform(replaceText("FMA7485")).check(matches(withText("FMA7485"))).perform(closeSoftKeyboard())
-                tap("sternum")
-                tap("Details"); tap("Isolate this structure")
+                tap(AnatomyKnowledge.info("FMA7485")!!.title)
+                onView(withContentDescription("About selected part")).perform(click()); tap("Show alone")
                 val picked = AtomicReference<String>()
                 scenario.onActivity { activity ->
                     val scene = field(activity, "scene") as AnatomyScene
@@ -240,15 +240,16 @@ class LaunchLearningFlowTest {
         val index = attempt.index; val priorEvents = attempt.events.length()
         val part = AnatomyData.load(context).parts.single { it.id == attempt.current.getString("part") }
         ActivityScenario.launch<LearningScenarioActivity>(Intent(context, LearningScenarioActivity::class.java).putExtra("scenarioId", "adult-collapse")).use { scenario ->
-            tap("Explore and identify")
+            tap("Continue")
+            tap("Find in body")
             waitUntil("Anatomy child did not load") { ins.uiAutomation.rootInActiveWindow?.findAccessibilityNodeInfosByText("Parts")?.any { it.isVisibleToUser } == true }
             pressBack()
             scenario.onActivity { assertEquals(priorEvents, (field(it, "attempt") as LearningAttempt).events.length()) }
-            tap("Explore and identify")
+            tap("Find in body")
             waitUntil("Anatomy child did not reload") { ins.uiAutomation.rootInActiveWindow?.findAccessibilityNodeInfosByText("Parts")?.any { it.isVisibleToUser } == true }
             tap("Parts")
             onView(withHint("Find a structure")).perform(replaceText(part.id)).check(matches(withText(part.id))).perform(closeSoftKeyboard())
-            tap(part.name); tap("Use this structure")
+            tap(AnatomyKnowledge.info(part.id)!!.title); tap("Use this structure")
             scenario.onActivity {
                 val current = field(it, "attempt") as LearningAttempt
                 assertEquals(index, current.index)

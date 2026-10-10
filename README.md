@@ -1,10 +1,10 @@
 # SurakshaAR
 
-A **v0.14.0-dev development preview** for accessible Android AR learning, focused on Fire Safety and First Aid for independent learners and institutions.
+A **v0.14.1-dev development preview** for accessible Android AR learning, focused on Fire Safety and First Aid for independent learners and institutions.
 
-**Repository:** [narvyn-official/surakshaar](https://github.com/narvyn-official/surakshaar). [Download the v0.14.0 Android APK](https://github.com/narvyn-official/surakshaar/releases/download/v0.14.0-preview/surakshaar-0.14.0-dev-debug.apk) · Android 10+, debug-signed. [Release notes and checksums](https://github.com/narvyn-official/surakshaar/releases/tag/v0.14.0-preview). Historical links below refer to earlier versions.
+**Repository:** [narvyn-official/surakshaar](https://github.com/narvyn-official/surakshaar). [Download the v0.14.1 Android APK](https://github.com/narvyn-official/surakshaar/releases/download/v0.14.1-preview/surakshaar-0.14.1-dev-debug.apk) · Android 10+, debug-signed. [Release notes and checksums](https://github.com/narvyn-official/surakshaar/releases/tag/v0.14.1-preview). Historical links below refer to earlier versions.
 
-**Current source: 0.14.0-dev / code 29.** Home now offers personal continuation and progress; Learn holds the course catalogue. The detailed body pack has 987,482 source-derived triangles, opaque training shorts and protected skin geometry. Fire equipment has a readable bilingual training label, finer geometry and a fixed model viewport with one-tap label/gauge inspection. Independent native accounts connect to the dedicated [public HTTPS preview service](https://surakshaar.213-210-36-82.sslip.io/login). Password recovery is disabled at the owner's request; sign-up does not grant institution or administrator access. See [0.14.0 changes](docs/surakshaar-0.14.0/README.md) and [build-specific verification](docs/surakshaar-0.14.0/verification.md).
+**Current source: 0.14.1-dev / code 30.** Saved lessons and practical scenarios offer Continue or Start from step 1, keeping earlier attempt history. Course entry and next-lesson navigation are shorter. Body selections have matching English/Hindi descriptions for all 117 named structures/groups; training shorts appear only with skin, leaving the skeleton, muscles and organs unobstructed. Detailed-model recreation and cleanup are improved. Independent native accounts retain the dedicated [public HTTPS preview service](https://surakshaar.213-210-36-82.sslip.io/login); password recovery remains disabled. See [0.14.1 changes and verification](docs/surakshaar-0.14.1/verification.md) and [anatomy references](docs/learning-flow/anatomy-sources.md).
 
 The included learning foundation contains eight adult casualty situations, lying-body and injury-cue interaction, a dressing gesture, compact view/audio controls, two Fire room journeys, institution-scoped records and revocable formative-practice QR sharing. The separate decision curriculum has 20 draft scenarios and 94 stages. See [learning scope](docs/surakshaar-0.13.0/README.md). Qualified content/language review, production distribution and final physical-device acceptance remain open; this is a development preview.
 
@@ -40,7 +40,7 @@ The [access and certification follow-up](docs/access-certification-review-2026-0
 - Android credential wallet with pinned-issuer signature verification offline, explicit expiry and legacy-date handling; renewal requires a new passed assessment.
 - Role-coloured Mineral Light controls with native ripple/focus feedback and a responsive trainer dashboard.
 
-**Pilot scope:** these are simulation learning records, not statutory safety certificates, identity verification, practical competence or permission to work. Santali is visibly pending native review. Samsung results cited above belong to earlier versions. Current candidate evidence is recorded separately in the 0.14.0 verification report; historical Samsung results are not proof for the new build.
+**Pilot scope:** these are simulation learning records, not statutory safety certificates, identity verification, practical competence or permission to work. Santali is visibly pending native review. Samsung results cited above belong to earlier versions. Current candidate evidence is recorded separately in the 0.14.1 verification report; historical Samsung results are not proof for the new build.
 
 ## Build Android
 
@@ -50,7 +50,7 @@ Install Android SDK platform/build tools 36 and a compatible JDK, then:
 bash scripts/build-android.sh
 ```
 
-The debug-signed APK is copied to `artifacts/surakshaar-0.14.0/surakshaar-0.14.0-dev-debug.apk`. Android Studio can open `apps/android`. The repository includes the Gradle wrapper. For a fresh clone, generate the pilot issuer before building if you want your own independently approved pilot credentials:
+The debug-signed APK is copied to `artifacts/surakshaar-0.14.1/surakshaar-0.14.1-dev-debug.apk`. Android Studio can open `apps/android`. The repository includes the Gradle wrapper. For a fresh clone, generate the pilot issuer before building if you want your own independently approved pilot credentials:
 
 ```sh
 node scripts/create-pilot-issuer.mjs

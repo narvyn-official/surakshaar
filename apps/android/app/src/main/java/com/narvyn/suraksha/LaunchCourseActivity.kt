@@ -40,19 +40,37 @@ class LaunchCourseActivity : Activity() {
         render()
     }
 
+    private fun lessons(): List<JSONObject> = catalog.scenarios.filter {
+        it.getString("course") == courseId && (context() != "School" || it.getString("audience") == "awareness")
+    }.sortedBy { if (context() == "School" && it.getString("setting") == "school") 0 else 1 }
+
+    private fun validRecords(lessons: List<JSONObject>): List<JSONObject> {
+        val byId = lessons.associateBy { it.getString("id") }
+        return LearningProgress(this, store.workerId).use { it.records() }.filter { record ->
+            val lesson = byId[record.optString("scenarioId")] ?: return@filter false
+            runCatching { LearningAttempt.restore(record, lesson, catalog.version, store.workerId) }.isSuccess
+        }
+    }
+
+    private fun openLesson(lesson: JSONObject) {
+        if (!store.isCurrentProfile() || lessons().none { it.getString("id") == lesson.getString("id") }) return
+        selectedLesson = lesson.getString("id")
+        val saved = validRecords(listOf(lesson)).firstOrNull { !it.optBoolean("finished") }
+        startActivity(Intent(this, LearningScenarioActivity::class.java).putExtra("scenarioId", selectedLesson)
+            .putExtra("attemptId", saved?.optString("id")))
+    }
+
     private fun render() {
         val course = catalog.course(courseId)
         val school = context() == "School"
-        val lessons = catalog.scenarios.filter {
-            it.getString("course") == courseId && (!school || it.getString("audience") == "awareness")
-        }.sortedBy { if (school && it.getString("setting") == "school") 0 else 1 }
-        val selected = lessons.firstOrNull { it.getString("id") == selectedLesson } ?: lessons.first()
-        selectedLesson = selected.getString("id")
-        val index = lessons.indexOf(selected)
-        val records = LearningProgress(this, store.workerId).use { it.records() }
-        val latest = records.firstOrNull {
-            it.getString("scenarioId") == selectedLesson && it.getString("contentVersion") == catalog.version
-        }
+        val lessons = lessons()
+        val records = validRecords(lessons)
+        val unfinished = records.filter { !it.optBoolean("finished") }
+        val completed = records.filter { it.optBoolean("finished") }.map { it.getString("scenarioId") }.toSet()
+        val resume = unfinished.firstOrNull { it.getString("scenarioId") == selectedLesson } ?: unfinished.firstOrNull()
+        val selected = lessons.firstOrNull { it.getString("id") == resume?.optString("scenarioId") }
+            ?: lessons.firstOrNull { it.getString("id") !in completed } ?: lessons.firstOrNull()
+        selectedLesson = selected?.getString("id")
         val root = column().apply { setBackgroundColor(Palette.canvas) }
         val head = LinearLayout(this).apply { gravity = Gravity.CENTER_VERTICAL }
         head.addView(action("‹", false, ActionRole.NEUTRAL) { finish() }.apply {
@@ -60,88 +78,106 @@ class LaunchCourseActivity : Activity() {
         }, LinearLayout.LayoutParams(dp(48), dp(48)))
         head.addView(label(course.getString(if (store.hi) "titleHi" else "title"), 22f, Palette.ink, true)
             .asHeading().apply { setPadding(dp(12), 0, 0, 0) }, LinearLayout.LayoutParams(0, -2, 1f))
-        root.add(head, bottom = 14)
+        root.add(head, bottom = 10)
         val body = column()
-        body.add(label(course.getString(if (store.hi) "subtitleHi" else "subtitle"), 15f, Palette.muted), bottom = 12)
         body.add(action(contextLabel(context()) + " · " + t("Change", "बदलें"), false, ActionRole.NEUTRAL) {
             chooseContext()
-        }.apply { tag = "learning-context" }, bottom = 12)
-        if (store.hi) body.add(label(copy("pendingTranslation"), 13f, Palette.amber), bottom = 10)
-        body.add(card().apply {
-            add(label(t("Lesson ${index + 1} of ${lessons.size}", "पाठ ${index + 1} / ${lessons.size}"), 12f, Palette.blue), bottom = 8)
-            add(label(selected.getString("title"), 22f, Palette.ink, true).asHeading(), bottom = 8)
-            val state = when {
-                latest?.optBoolean("finished") == true -> t("Decision practice complete", "निर्णय अभ्यास पूरा")
-                latest != null -> t("Practice saved · ready to continue", "अभ्यास सहेजा गया · आगे बढ़ें")
-                else -> t("${selected.getJSONArray("steps").length()} stages · ${if (selected.getString("audience") == "adult") "adult scenario" else "awareness"}",
-                    "${selected.getJSONArray("steps").length()} चरण · ${if (selected.getString("audience") == "adult") "वयस्क स्थिति" else "जागरूकता"}")
-            }
-            add(label(state, 13f, Palette.muted), bottom = 12)
-            add(action(if (latest == null) copy("start") else if (latest.optBoolean("finished")) copy("again") else copy("continue")) {
-                startActivity(Intent(this@LaunchCourseActivity, LearningScenarioActivity::class.java)
-                    .putExtra("scenarioId", selected.getString("id")))
-            }.apply { tag = "launch-${selected.getString("id")}" }, bottom = 8)
-            add(action(t("What you will learn", "इस पाठ में क्या सीखेंगे"), false, ActionRole.NEUTRAL) {
-                lessonDetails(selected)
-            })
-        }, bottom = 12)
-        val chooser = LinearLayout(this).apply { gravity = Gravity.CENTER_VERTICAL }
-        chooser.addView(action("‹", false, ActionRole.NEUTRAL) {
-            selectedLesson = lessons[index - 1].getString("id"); render()
-        }.apply { isEnabled = index > 0; contentDescription = t("Previous lesson", "पिछला पाठ") }, LinearLayout.LayoutParams(dp(48), dp(48)))
-        chooser.addView(action(t("Choose lesson", "पाठ चुनें"), false, ActionRole.NEUTRAL) {
-            PageDialogBuilder(this).setTitle(t("Choose lesson", "पाठ चुनें"))
-                .setItems(lessons.map { it.getString("title") }.toTypedArray()) { _, i ->
-                    selectedLesson = lessons[i].getString("id"); render()
-                }.show()
-        }.apply { tag = "choose-lesson" }, LinearLayout.LayoutParams(0, -2, 1f).apply { setMargins(dp(8), 0, dp(8), 0) })
-        chooser.addView(action("›", false, ActionRole.NEUTRAL) {
-            selectedLesson = lessons[index + 1].getString("id"); render()
-        }.apply { isEnabled = index < lessons.lastIndex; contentDescription = t("Next lesson", "अगला पाठ") }, LinearLayout.LayoutParams(dp(48), dp(48)))
-        body.add(chooser, bottom = 12)
+        }.apply { tag = "learning-context"; textSize = 13f }, bottom = 10)
+        if (store.hi) body.add(label(t("Lessons in English · translation under review", "पाठ अंग्रेज़ी में · अनुवाद की समीक्षा जारी"), 12f, Palette.amber), bottom = 8)
+        if (selected == null) {
+            body.add(label(t("No lessons available in this learning context.", "इस संदर्भ में कोई पाठ उपलब्ध नहीं है।"), 16f), bottom = 12)
+        } else {
+            body.add(card().apply {
+                add(label(if (resume != null) t("CONTINUE LESSON", "पाठ जारी रखें") else t("NEXT LESSON", "अगला पाठ"), 12f, Palette.blue, true), bottom = 6)
+                add(label(selected.getString("title"), 20f, Palette.ink, true).asHeading(), bottom = 6)
+                val status = if (resume != null) t("Saved on this phone · step ${resume.optInt("index") + 1} of ${selected.getJSONArray("steps").length()}",
+                    "इस फ़ोन पर सहेजा · चरण ${resume.optInt("index") + 1} / ${selected.getJSONArray("steps").length()}")
+                    else t("${selected.getJSONArray("steps").length()} decisions · ${completed.size} of ${lessons.size} lessons complete",
+                        "${selected.getJSONArray("steps").length()} निर्णय · ${lessons.size} में से ${completed.size} पाठ पूरे")
+                add(label(status, 13f, Palette.muted), bottom = 12)
+                add(action(if (resume != null) copy("continue") else if (selected.getString("id") in completed) copy("again") else copy("start")) {
+                    openLesson(selected)
+                }.apply { tag = "launch-${selected.getString("id")}" })
+            }, bottom = 10)
+            body.add(action(t("All lessons (${lessons.size})", "सभी पाठ (${lessons.size})"), false, ActionRole.NEUTRAL) {
+                chooseLesson(lessons, records)
+            }.apply { tag = "choose-lesson" }, bottom = 10)
+        }
         val revisionCount = LearningProgress(this, store.workerId).use { it.weakObjectives(catalog, courseId, school).size }
         if (revisionCount > 0) body.add(action(t("Review tricky decisions ($revisionCount)", "कठिन निर्णय दोहराएँ ($revisionCount)"), false, ActionRole.REVIEW) {
             startActivity(Intent(this, LearningScenarioActivity::class.java).putExtra("revision", true).putExtra("courseId", courseId))
         }.apply { tag = "course-revision" }, bottom = 10)
         if (courseId == "first-aid") {
-            if (!school) body.add(action(t("First-aid practice bay", "प्राथमिक उपचार अभ्यास"), false, ActionRole.CAMERA) {
-                startActivity(Intent(this, FirstAidBayActivity::class.java))
-            }.apply { tag = "first-aid-bay" }, bottom = 10)
-            body.add(action(copy("body"), false, ActionRole.CAMERA) {
-                startActivity(Intent(this, AnatomyActivity::class.java))
-            }.apply { tag = "explore-body" }, bottom = 10)
+            val practice = if (school) null else action(t("Casualty practice", "घायल व्यक्ति का अभ्यास"), false, ActionRole.CAMERA) {
+                if (store.isCurrentProfile() && context() != "School") startActivity(Intent(this, FirstAidBayActivity::class.java))
+            }.apply { tag = "first-aid-bay" }
+            val anatomy = action(t("Explore body", "शरीर देखें"), false, ActionRole.CAMERA) {
+                if (store.isCurrentProfile()) startActivity(Intent(this, AnatomyActivity::class.java))
+            }.apply { tag = "explore-body" }
+            if (practice == null) body.add(anatomy, bottom = 10) else addActions(body, practice, anatomy)
         } else if (!school) {
-            body.add(action(t("Fire equipment & room AR", "अग्नि सुरक्षा उपकरण और AR"), false, ActionRole.CAMERA) {
-                firePracticeMenu()
-            }, bottom = 10)
+            addActions(body,
+                action(t("Practise in AR", "AR में अभ्यास"), false, ActionRole.CAMERA) { firePracticeMenu(true) }.apply { tag = "fire-ar-practice" },
+                action(t("Practise in 3D", "3D में अभ्यास"), false, ActionRole.CAMERA) { firePracticeMenu(false) }.apply { tag = "fire-3d-practice" })
         }
         root.addView(paged(body, store.hi), LinearLayout.LayoutParams(-1, 0, 1f))
-        root.add(action(copy("review"), false, ActionRole.NEUTRAL) {
-            notice(t("Draft learning content", "समीक्षा बाकी है"), "Version ${catalog.version}\n\n" +
-                t("Source-checked draft. Clinical, fire-instructor and translation approval are pending. These lessons do not award a certificate or establish practical skill.\n\nPlanned chapters: ",
-                    "स्रोतों से जाँचा गया प्रारूप। चिकित्सकीय, अग्नि प्रशिक्षक और अनुवाद समीक्षा बाकी है। ये पाठ प्रमाणपत्र या व्यावहारिक कौशल की पुष्टि नहीं करते।\n\nआगे जोड़े जाने वाले अध्याय: ") +
-                catalog.content.optJSONArray("plannedChapters")?.strings().orEmpty().joinToString(", "))
-        }, top = 8)
+        root.add(action(t("Course info · draft content", "पाठ की जानकारी · समीक्षा बाकी"), false, ActionRole.NEUTRAL) {
+            courseTools(selected)
+        }.apply { tag = "course-tools" }, top = 8)
         setContentView(root)
         trainingInsets(root)
     }
 
-    private fun firePracticeMenu() {
+    private fun addActions(body: LinearLayout, first: android.widget.Button, second: android.widget.Button) {
+        if (resources.configuration.fontScale >= 1.5f) {
+            body.add(first, bottom = 8); body.add(second, bottom = 10); return
+        }
+        val row = LinearLayout(this).apply { isBaselineAligned = false }
+        row.addView(first, LinearLayout.LayoutParams(0, -2, 1f).apply { marginEnd = dp(8) })
+        row.addView(second, LinearLayout.LayoutParams(0, -2, 1f))
+        body.add(row, bottom = 10)
+    }
+
+    /** Picking a lesson is the start action; a second confirmation screen adds no information. */
+    private fun chooseLesson(lessons: List<JSONObject>, records: List<JSONObject>) {
+        val choices = lessons.map { lesson ->
+            val id = lesson.getString("id")
+            val saved = records.firstOrNull { it.optString("scenarioId") == id && !it.optBoolean("finished") }
+            lesson.getString("title") + when {
+                saved != null -> t(" · resume", " · जारी रखें")
+                records.any { it.optString("scenarioId") == id && it.optBoolean("finished") } -> t(" · complete", " · पूरा")
+                else -> ""
+            }
+        }
+        PageDialogBuilder(this).setTitle(t("Choose a lesson to start", "शुरू करने के लिए पाठ चुनें"))
+            .setItems(choices.toTypedArray()) { _, index -> openLesson(lessons[index]) }
+            .setNegativeButton(t("Back", "वापस"), null).show()
+    }
+
+    private fun courseTools(selected: JSONObject?) {
+        val actions = mutableListOf<Pair<String, () -> Unit>>()
+        selected?.let { actions.add(t("Lesson overview", "पाठ की जानकारी") to { lessonDetails(it) }) }
+        if (courseId == "fire" && context() != "School") {
+            actions.add(t("Inspect equipment in 3D", "3D में उपकरण देखें") to {
+                if (store.isCurrentProfile() && context() != "School") startActivity(Intent(this, EquipmentActivity::class.java).putExtra("moduleId", "fire"))
+            })
+            actions.add(t("Saved room practice", "सहेजा गया कमरे का अभ्यास") to { roomRecords() })
+        }
+        actions.add(t("Content review status", "सामग्री की समीक्षा") to {
+            notice(t("Draft learning content", "समीक्षा बाकी है"), "Version ${catalog.version}\n\n" +
+                t("Source-checked draft. Clinical, fire-instructor and translation approval are pending. These lessons do not award a certificate or establish practical skill.",
+                    "स्रोतों से जाँचा गया प्रारूप। चिकित्सकीय, अग्नि प्रशिक्षक और अनुवाद समीक्षा बाकी है। ये पाठ प्रमाणपत्र या व्यावहारिक कौशल की पुष्टि नहीं करते।"))
+        })
+        PageDialogBuilder(this).setTitle(t("Course info & tools", "पाठ की जानकारी और साधन"))
+            .setItems(actions.map { it.first }.toTypedArray()) { _, index -> if (store.isCurrentProfile()) actions[index].second() }
+            .setNegativeButton(t("Done", "पूरा हुआ"), null).show()
+    }
+
+    private fun firePracticeMenu(camera: Boolean) {
         val choices = FireRoomScenarioCatalog.all
-        val labels = choices.map { it.title(store.hi) } + listOf(t("Inspect equipment in 3D", "3D में उपकरण देखें"), t("Saved room practice", "सहेजा गया कमरे का अभ्यास"))
-        PageDialogBuilder(this).setTitle(t("Fire practice", "अग्नि सुरक्षा अभ्यास"))
-            .setItems(labels.toTypedArray()) { _, index ->
-                if (!store.isCurrentProfile() || context() == "School") return@setItems
-                if(index == choices.size) startActivity(Intent(this, EquipmentActivity::class.java).putExtra("moduleId", "fire"))
-                else if(index == choices.size+1) roomRecords()
-                else {
-                    val lesson = choices[index]
-                    PageDialogBuilder(this).setTitle(lesson.title(store.hi)).setMessage(lesson.summary(store.hi))
-                        .setPositiveButton(t("Start AR", "AR शुरू करें")) { _, _ -> startFire(lesson.id,true) }
-                        .setNeutralButton(t("Use 3D", "3D में करें")) { _, _ -> startFire(lesson.id,false) }
-                        .setNegativeButton(t("Back", "वापस"),null).show()
-                }
-            }.show()
+        PageDialogBuilder(this).setTitle(if (camera) t("AR fire practice", "AR अग्नि अभ्यास") else t("3D fire practice", "3D अग्नि अभ्यास"))
+            .setItems(choices.map { it.title(store.hi) }.toTypedArray()) { _, index -> startFire(choices[index].id, camera) }
+            .setNegativeButton(t("Back", "वापस"), null).show()
     }
 
     private fun startFire(id:String,camera:Boolean){

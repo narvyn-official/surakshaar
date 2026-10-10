@@ -16,7 +16,9 @@ internal class AnatomyData(val manifest:JSONObject,val parts:List<AnatomyPart>) 
             val preparationFallback=store.prepareDefaultQuality { Thread.currentThread().isInterrupted }
             val requested=store.requestedDetailed()
             store.activeDirectory()?.let { directory ->
-                runCatching { return loadPack({name->PackIntegrity.safeFile(directory,name).inputStream()},"manifest.json","Detailed") }
+                try { return loadPack({name->PackIntegrity.safeFile(directory,name).inputStream()},"manifest.json","Detailed") }
+                catch(cancelled:java.util.concurrent.CancellationException){throw cancelled}
+                catch(invalid:Exception){ /* Invalid content can fall back; interruption is not corruption. */ }
                 store.invalidate()
                 return loadPack({name->context.assets.open(name)},"anatomy/manifest.json","Balanced").also { it.manifest.put("qualityFallback","The detailed pack could not be verified. Balanced models are in use; reinstall the optional pack in Offline content.") }
             }
@@ -31,6 +33,7 @@ internal class AnatomyData(val manifest:JSONObject,val parts:List<AnatomyPart>) 
             require(entries.map{it.getString("id")}.toSet().size==entries.size)
             var totalBytes=0L
             val parts=entries.map { p->
+                if(Thread.currentThread().isInterrupted)throw java.util.concurrent.CancellationException("Anatomy loading cancelled")
                 require(p.getInt("bytes") in 1..32_000_000)
                 val bytes=open(p.getString("file")).use{PackIntegrity.readBounded(it,p.getInt("bytes"))}
                 check(bytes.size==p.getInt("bytes")) {"Anatomy pack size mismatch"}

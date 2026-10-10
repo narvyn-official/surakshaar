@@ -1,6 +1,7 @@
 package com.narvyn.suraksha
 
 import android.graphics.Bitmap
+import android.graphics.Color
 import android.os.Build
 import android.view.View
 import android.view.ViewGroup
@@ -19,11 +20,24 @@ class AnatomyClothingFlowTest {
     private val ins get()=InstrumentationRegistry.getInstrumentation()
     private fun views(v:View):List<View> = listOf(v)+if(v is ViewGroup)(0 until v.childCount).flatMap{views(v.getChildAt(it))}else emptyList()
     private fun waitFor(test:()->Boolean){repeat(300){if(test())return;Thread.sleep(100)};error("Model did not finish loading")}
-    private fun capture(name:String){
+    private fun capture(name:String,body:AnatomyScene?=null):Int{
         ins.waitForIdleSync();Thread.sleep(700)
         val bitmap=ins.uiAutomation.takeScreenshot()?:error("Screenshot unavailable")
         File(ins.targetContext.getExternalFilesDir("validation"),"clothing-$name.png").outputStream().use{bitmap.compress(Bitmap.CompressFormat.PNG,100,it)}
+        // Count the garment's blue fabric only inside the GL viewport, excluding app controls.
+        // Every anatomical source layer uses warm colours, so this checks actual rendered output.
+        var fabric=0
+        if(body!=null){
+            val at=IntArray(2);var width=0;var height=0
+            ins.runOnMainSync{body.getLocationOnScreen(at);width=body.width;height=body.height}
+            for(y in maxOf(0,at[1]) until minOf(bitmap.height,at[1]+height) step 2)
+                for(x in maxOf(0,at[0]) until minOf(bitmap.width,at[0]+width) step 2){
+                    val pixel=bitmap.getPixel(x,y);val r=Color.red(pixel);val g=Color.green(pixel);val b=Color.blue(pixel)
+                    if(r<g*.78f&&g<b*.9f&&g-r>8&&b-g>6)fabric++
+                }
+        }
         bitmap.recycle()
+        return fabric
     }
     @Test fun detailedBodyIsCoveredFromEveryInspectionAngleAndRetainsUsefulLayers(){
         assumeTrue(Build.HARDWARE in listOf("ranchu","goldfish")||Build.MODEL.contains("sdk_gphone"))
@@ -44,16 +58,24 @@ class AnatomyClothingFlowTest {
                     "low" to (0f to -65f),"high" to (180f to 65f))
                 for((name,angle)in angles){
                     activity.onActivity{body.layer("skin");body.change{it.copy(yaw=angle.first,pitch=angle.second)}}
-                    capture(name)
+                    assertTrue("Skin loses visible shorts at $name",capture(name,body)>25)
                 }
                 for(layer in listOf("skeleton","muscles","organs")){
-                    activity.onActivity{body.layer(layer);body.change{it.copy(yaw=25f,pitch=0f,skinOverlay=true)}}
-                    capture(layer)
+                    activity.onActivity{body.layer(layer);body.change{it.copy(yaw=25f,pitch=0f,skinOverlay=false)}}
+                    val bare=capture("$layer-bare",body)
+                    assertTrue("Shorts remain visible on $layer without skin: $bare pixels",bare<8)
+                    activity.onActivity{body.change{it.copy(skinOverlay=true)}}
+                    assertTrue("Skin overlay loses its opaque coverage on $layer",capture("$layer-skin-overlay",body)>bare+25)
+                    activity.onActivity{body.change{it.copy(hidden=body.data.parts.filter{p->p.layer=="skin"}.map{p->p.id}.toSet())}}
+                    assertTrue("Hidden skin leaves floating shorts on $layer",capture("$layer-hidden-skin",body)<8)
+                    val selected=body.data.parts.first{it.layer==layer}.id
+                    activity.onActivity{body.change{it.copy(hidden=emptySet(),selected=selected,isolated=true,skinOverlay=true)}}
+                    assertTrue("Isolated $layer leaves floating shorts",capture("$layer-isolated",body)<8)
                 }
                 // The same scene owner and source transform draw the lying and side-rolled casualty.
                 for(roll in listOf(0f,90f)){
-                    activity.onActivity{body.change{it.copy(layer="skin",supine=true,bodyRoll=roll,skinOverlay=false,yaw=25f,pitch=0f)};body.reset()}
-                    capture("lying-${roll.toInt()}")
+                    activity.onActivity{body.change{it.copy(layer="skin",selected=null,isolated=false,hidden=emptySet(),supine=true,bodyRoll=roll,skinOverlay=false,yaw=25f,pitch=0f)};body.reset()}
+                    assertTrue("Lying skin loses its garment at roll $roll",capture("lying-${roll.toInt()}",body)>25)
                 }
                 activity.onActivity{it.finish()}
             }

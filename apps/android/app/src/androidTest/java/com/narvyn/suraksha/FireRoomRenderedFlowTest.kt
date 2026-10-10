@@ -162,7 +162,7 @@ class FireRoomRenderedFlowTest {
                         waitUntil("Landscape configuration did not settle"){var ready=false;s.onActivity{ready=it.resources.configuration.orientation==Configuration.ORIENTATION_LANDSCAPE};ready}
                     }
                     waitUntil("Saved practice briefing must be acknowledged"){
-                        val node=ins.uiAutomation.rootInActiveWindow?.findAccessibilityNodeInfosByText("Start in a clear area")?.firstOrNull{it.isVisibleToUser}
+                        val node=ins.uiAutomation.rootInActiveWindow?.findAccessibilityNodeInfosByText("Continue")?.firstOrNull{it.isVisibleToUser&&it.isClickable&&it.text?.toString().equals("Continue",true)}
                         node?.performAction(AccessibilityNodeInfo.ACTION_CLICK)==true
                     }
                     lateinit var scene:RoomMissionView

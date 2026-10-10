@@ -7,6 +7,33 @@ import kotlin.math.*
 class AnatomyClothingTest {
     private fun triangle(y:Float,x:Float=0f)=floatArrayOf(x-.01f,y-.01f,.10f,0f,0f,1f,
         x+.01f,y-.01f,.10f,0f,0f,1f,x,y+.01f,.10f,0f,0f,1f)
+    private fun part(layer:String,id:String=layer,vertices:FloatArray=triangle(.88f))=
+        AnatomyPart(id,id,layer,"",floatArrayOf(-.01f,.87f,.10f,.01f,.89f,.10f),floatArrayOf(.5f,.3f,.2f),vertices)
+
+    @Test fun clothesAppearOnlyWhenTheVisibleMeshOrExplicitOverlayContainsSkin(){
+        val skin=part("skin")
+        assertEquals(AnatomyClothing.parts,AnatomyClothing.shownWith(listOf(skin)))
+        for(layer in listOf("skeleton","muscles","organs","equipment","cue")){
+            val internal=part(layer)
+            assertTrue("Floating clothes on $layer",AnatomyClothing.shownWith(listOf(internal)).isEmpty())
+            assertEquals("Explicit skin overlay must stay covered",AnatomyClothing.parts,
+                AnatomyClothing.shownWith(listOf(internal),listOf(skin)))
+        }
+    }
+    @Test fun hiddenEmptyOrIsolatedNonSkinSelectionsDoNotRetainAClothingBlocker(){
+        // The scene passes the actual filtered render lists, so hiding skin or isolating an organ
+        // cannot retain opaque clothes from a preceding skin-layer frame.
+        val skin=part("skin");val heart=part("organs","heart")
+        assertFalse(AnatomyClothing.shownWith(listOf(skin,heart)).isEmpty())
+        assertTrue(AnatomyClothing.shownWith(listOf(heart)).isEmpty())
+        assertTrue(AnatomyClothing.shownWith(emptyList()).isEmpty())
+        assertTrue(AnatomyClothing.shownWith(listOf(skin.copy(vertices=FloatArray(0)))).isEmpty())
+        assertTrue(AnatomyClothing.shownWith(listOf(heart),emptyList()).isEmpty())
+        val origin=floatArrayOf(0f,.88f,1f);val direction=floatArrayOf(0f,0f,-1f)
+        val shown=listOf(heart)+AnatomyClothing.shownWith(listOf(heart))
+        val hit=shown.mapNotNull{p->AnatomyPicking.distance(p.vertices,p.bounds,origin,direction)?.let{p.id to it}}.minByOrNull{it.second}
+        assertEquals("An internal structure beneath the garment region remains pickable", "heart",hit?.first)
+    }
     @Test fun coveredExternalSkinIsRemovedButAirwayChestLimbsAndHandsRemain(){
         val skin=AnatomyPart("skin","Skin","skin","",floatArrayOf(-.3f,0f,-.15f,.3f,1.72f,.15f),floatArrayOf(.5f,.3f,.2f),
             triangle(.85f)+triangle(1.30f)+triangle(1.64f)+triangle(.35f)+triangle(.85f,.28f)+triangle(1.025f,.20f)+triangle(1.07f,.18f))
@@ -36,6 +63,23 @@ class AnatomyClothingTest {
         for(region in listOf("HEAD","CHEST","RIGHT_FOREARM","LEFT_FOREARM","RIGHT_LOWER_LEG")){
             val c=CasualtyMarkers.centres.getValue(region);val origin=floatArrayOf(c[0],c[1],1f)
             assertFalse("Clothing hides $region",parts.any{AnatomyPicking.distance(it.vertices,it.bounds,origin,floatArrayOf(0f,0f,-1f))!=null})
+        }
+    }
+    @Test fun garmentStaysLocalToTheWaistAndUpperThighs(){
+        val parts=AnatomyClothing.parts
+        assertTrue("Hem must not extend toward the knee",parts.minOf{it.bounds[1]}>=.619f)
+        assertTrue("Waist must not extend over the abdomen",parts.maxOf{it.bounds[4]}<=1.042f)
+        for(y in listOf(.60f,1.06f)){
+            val origin=floatArrayOf(.08f,y,1f)
+            assertFalse("Garment unnecessarily covers y=$y",parts.any{
+                AnatomyPicking.distance(it.vertices,it.bounds,origin,floatArrayOf(0f,0f,-1f))!=null
+            })
+        }
+        for(y in listOf(.66f,.88f,1.005f)){
+            val origin=floatArrayOf(.08f,y,1f)
+            assertTrue("Protected skin region loses coverage at y=$y",parts.any{
+                AnatomyPicking.distance(it.vertices,it.bounds,origin,floatArrayOf(0f,0f,-1f))!=null
+            })
         }
     }
     @Test fun posedShortsAndSkinUseTheSameSourceCoordinates(){

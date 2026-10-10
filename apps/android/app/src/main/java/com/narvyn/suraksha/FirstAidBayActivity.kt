@@ -23,6 +23,7 @@ class FirstAidBayActivity : Activity() {
     private var feedback: FirstAidBay.Feedback? = null
     private var selectedScenario=FirstAidScenarioCatalog.DEFAULT_ID
     private var practising=false
+    private var resumeChoicePending=false
     private var dock:AnatomyViewDock?=null
     private lateinit var dockHost:LinearLayout
     private lateinit var sceneRow:LinearLayout
@@ -85,6 +86,9 @@ class FirstAidBayActivity : Activity() {
             root.add(label("This saved attempt could not be verified for the current learner. Its original data has not been changed.", 16f), bottom = 16)
             root.add(action("Back to progress") { finish() }); setContentView(root); trainingInsets(root); return
         }
+        attempt?.definition?.id?.let { selectedScenario = it }
+        camera = state?.getBoolean("camera") ?: (attempt?.events?.objects()?.lastOrNull { it.optString("kind") == "action" }?.optString("mode") == "ar")
+        resumeChoicePending = state?.getBoolean("resumeChoicePending") ?: hasSavedDecisions()
         if (attempt?.finished == true || attempt?.stopped == true) summary() else introduction()
         loader.execute {
             runCatching { AnatomyData.load(this) }.fold({ loaded -> runOnUiThread {
@@ -95,8 +99,50 @@ class FirstAidBayActivity : Activity() {
         }
     }
 
+    private fun hasSavedDecisions() = attempt?.let { bay ->
+        !bay.finished && !bay.stopped && (bay.index > 0 || bay.events.objects().any { it.optString("kind") == "action" })
+    } == true
+
+    private fun newAttempt(): FirstAidBay {
+        val legacy = attempt?.scenarioId == FirstAidBay.SCENARIO_ID || (attempt == null && intent.getBooleanExtra("legacyBay", false))
+        return if (legacy) FirstAidBay.create(store.workerId, catalog.version)
+            else FirstAidBay.createScenario(store.workerId, catalog.version, selectedScenario)
+    }
+
+    private fun resumeChoice() {
+        val bay = attempt ?: return
+        val root = column(20).apply { setBackgroundColor(Palette.canvas) }
+        root.add(label(bay.title(store.hi), 22f, Palette.ink, true).asHeading(), bottom = 12)
+        val body = column()
+        body.add(label(t("Saved at step ${bay.index + 1} of ${bay.steps.size}", "चरण ${bay.index + 1} / ${bay.steps.size} पर सहेजा गया"), 18f, Palette.ink, true), bottom = 8)
+        body.add(label(bay.current.title(store.hi), 16f, Palette.muted), bottom = 12)
+        body.add(label(t("Earlier attempt stays saved.", "पिछला अभ्यास सहेजा रहेगा।"), 14f, Palette.muted), bottom = 16)
+        body.add(label(t("Practice mode", "अभ्यास का तरीका"), 13f, Palette.muted), bottom = 6)
+        val modes = LinearLayout(this).apply { isBaselineAligned = false }
+        modes.addView(action(t("AR camera", "AR कैमरा"), camera) { camera = true; resumeChoice() }.apply {
+            tag = "bay-resume-mode-ar"; isSelected = camera
+        }, LinearLayout.LayoutParams(0, -2, 1f).apply { marginEnd = dp(8) })
+        modes.addView(action(t("3D screen", "3D स्क्रीन"), !camera) { camera = false; resumeChoice() }.apply {
+            tag = "bay-resume-mode-3d"; isSelected = !camera
+        }, LinearLayout.LayoutParams(0, -2, 1f))
+        body.add(modes)
+        root.addView(paged(body, store.hi), LinearLayout.LayoutParams(-1, 0, 1f))
+        root.add(action(t("Continue", "जारी रखें")) {
+            if (!allowed()) { finish(); return@action }
+            resumeChoicePending = false; introduction(); enter(camera)
+        }.apply { tag = "bay-resume-continue" }, top = 12)
+        root.add(action(t("Start from step 1", "चरण 1 से शुरू करें"), false) {
+            if (!allowed()) { finish(); return@action }
+            attempt = newAttempt(); save(); feedback = null
+            resumeChoicePending = false; introduction(); enter(camera)
+        }.apply { tag = "bay-resume-restart" }, top = 8)
+        root.add(action(t("Back", "वापस"), false, ActionRole.NEUTRAL) { finish() }, top = 8)
+        setContentView(root); trainingInsets(root)
+    }
+
     private fun introduction() {
         practising=false;dock=null;scene?.close();scene=null;narrator.clear()
+        if (resumeChoicePending && hasSavedDecisions()) { resumeChoice(); return }
         val root = column(20).apply { setBackgroundColor(Palette.canvas) }
         root.add(label(t("First-aid practice bay","प्राथमिक उपचार अभ्यास"), 22f, Palette.ink, true).asHeading(), bottom = 12)
         val body = column()
@@ -116,7 +162,13 @@ class FirstAidBayActivity : Activity() {
     private fun chooseSituation(){
         val list=FirstAidScenarioCatalog.all
         PageDialogBuilder(this).setTitle(t("Choose a situation","स्थिति चुनें")).setItems(list.map{it.title(store.hi)}.toTypedArray()){_,i->
-            attempt?.pause();save();attempt=null;selectedScenario=list[i].id;introduction()
+            if (practising) { attempt?.pause(); save() }
+            selectedScenario = list[i].id
+            attempt = records.records().firstOrNull { it.optString("scenarioId") == selectedScenario &&
+                it.optString("contentVersion") == catalog.version && !it.optBoolean("finished") && !it.optBoolean("stopped") && currentDefinition(it)
+            }?.let { runCatching { FirstAidBay.restore(it, store.workerId, catalog.version) }.getOrNull() }
+            camera = attempt?.events?.objects()?.lastOrNull { it.optString("kind") == "action" }?.optString("mode") == "ar"
+            resumeChoicePending = hasSavedDecisions(); introduction()
         }.show()
     }
 
@@ -125,8 +177,7 @@ class FirstAidBayActivity : Activity() {
         if (ar && checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(arrayOf(Manifest.permission.CAMERA), 703); return
         }
-        if (attempt == null) attempt = if(intent.getBooleanExtra("legacyBay",false)) FirstAidBay.create(store.workerId,catalog.version)
-            else FirstAidBay.createScenario(store.workerId, catalog.version, selectedScenario)
+        if (attempt == null) attempt = newAttempt()
         if (attempt!!.paused) attempt!!.resume()
         save(); camera = ar; feedback = null; build()
     }
@@ -348,17 +399,18 @@ class FirstAidBayActivity : Activity() {
     private fun rescan(){closeView();scene?.pause();scene?.resume();renderStage()}
     private fun goBack(){
         if(dock!=null){closeView();return}
-        if(practising){attempt?.pause();save();introduction()}else finish()
+        if(practising){attempt?.pause();save();resumeChoicePending=hasSavedDecisions();introduction()}else finish()
     }
     @android.annotation.SuppressLint("GestureBackNavigation")
     @Deprecated("Android 10–12 back compatibility") override fun onBackPressed(){goBack()}
 
     private fun options() {
-        PageDialogBuilder(this).setTitle("Practice options").setItems(arrayOf("Retry camera / rescan", if (camera) "Switch to 3D practice" else "Switch to AR practice", "Source & current cue", "Stop this practice")) { _, i -> when (i) {
+        PageDialogBuilder(this).setTitle("Practice options").setItems(arrayOf("Retry camera / rescan", if (camera) "Switch to 3D practice" else "Switch to AR practice", "Source & current cue", "Stop this practice", t("Start from step 1", "चरण 1 से शुरू करें"))) { _, i -> when (i) {
             0 -> { if (attempt?.paused == true) attempt?.resume(); save(); rescan() }
             1 -> enter(!camera)
             2 -> cueDetails()
             3 -> { attempt?.stop(); save(); summary() }
+            4 -> if (allowed()) { attempt = newAttempt(); save(); feedback = null; resumeChoicePending = false; build() }
         } }.show()
     }
 
@@ -383,7 +435,7 @@ class FirstAidBayActivity : Activity() {
             PageDialogBuilder(this).setTitle("Original decision record").setView(paged(log, store.hi)).setNegativeButton("Close", null).show()
         }, bottom = 10)
         root.addView(paged(body, store.hi), LinearLayout.LayoutParams(-1, 0, 1f))
-        root.add(action("Practise again") { attempt = null; introduction() }, top = 10)
+        root.add(action("Practise again") { attempt = null; resumeChoicePending = false; introduction() }, top = 10)
         root.add(action("Back to course", false) { finish() }, top = 8)
         setContentView(root); trainingInsets(root)
     }
@@ -392,10 +444,10 @@ class FirstAidBayActivity : Activity() {
     override fun onResume() { super.onResume(); resumed = true; if (!allowed()) { finish(); return }; attachScene(); if (attempt?.paused == false) scene?.resume() }
     override fun onPause() {
         resumed = false; scene?.pause(); narrator.pause()
-        attempt?.pause(); save(); if (practising && ::actions.isInitialized && attempt?.finished == false) renderStage()
+        if (practising) { attempt?.pause(); save(); if (::actions.isInitialized && attempt?.finished == false) renderStage() }
         super.onPause()
     }
     override fun onWindowFocusChanged(hasFocus: Boolean) { super.onWindowFocusChanged(hasFocus); if (::narrator.isInitialized) { if (hasFocus) narrator.automatic() else narrator.pause() } }
-    override fun onSaveInstanceState(out: Bundle) { out.putString("scenario",selectedScenario);attempt?.let { out.putString("attempt", it.data.getString("id")) }; super.onSaveInstanceState(out) }
+    override fun onSaveInstanceState(out: Bundle) { out.putBoolean("camera",camera); out.putBoolean("resumeChoicePending",resumeChoicePending); out.putString("scenario",selectedScenario);attempt?.let { out.putString("attempt", it.data.getString("id")) }; super.onSaveInstanceState(out) }
     override fun onDestroy() { scene?.close(); narrator.close(); records.close(); store.close(); loader.shutdownNow(); back.close(); super.onDestroy() }
 }

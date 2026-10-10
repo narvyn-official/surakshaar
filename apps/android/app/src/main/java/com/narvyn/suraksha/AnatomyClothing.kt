@@ -8,6 +8,10 @@ internal object AnatomyClothing {
     private const val HIGH = 1.01f
     private const val HALF_WIDTH = .178f
 
+    /** Clothes belong to visible external skin, never to an isolated internal structure. */
+    fun shownWith(visibleParts:List<AnatomyPart>,skinOverlayParts:List<AnatomyPart> = emptyList()):List<AnatomyPart> =
+        if((visibleParts.asSequence()+skinOverlayParts.asSequence()).any{it.layer=="skin"&&it.vertices.isNotEmpty()})parts else emptyList()
+
     /** Remove the covered external skin itself: coverage must survive close-up / inside-mesh views. */
     fun coveredTriangle(v:FloatArray, offset:Int):Boolean {
         val lowY=minOf(v[offset+1],v[offset+7],v[offset+13])
@@ -71,16 +75,18 @@ internal object AnatomyClothing {
 
     val parts:List<AnatomyPart> by lazy {
         val navy=floatArrayOf(.12f,.23f,.32f);val trim=floatArrayOf(.19f,.34f,.44f)
+        // A local waist/upper-thigh garment: keep clearance around the protected skin region
+        // (0.65–1.01 m) without the previous high waistband or knee-length leg sections.
         val result=mutableListOf(shell("shorts:hips",listOf(
-            Ring(1.078f,.177f,.139f),Ring(1.04f,.182f,.144f),Ring(.96f,.190f,.165f),
+            Ring(1.038f,.177f,.139f),Ring(1.01f,.182f,.144f),Ring(.96f,.190f,.165f),
             Ring(.87f,.192f,.165f),Ring(.78f,.185f,.147f),Ring(.735f,.182f,.140f)),navy))
         for(side in listOf(-1,1)){
             result+=shell("shorts:leg:$side",listOf(Ring(.835f,.102f,.151f,side*.088f),
-                Ring(.72f,.102f,.135f,side*.088f),Ring(.63f,.098f,.122f,side*.088f),
-                Ring(.57f,.094f,.112f,side*.088f)),navy)
-            result+=shell("shorts:hem:$side",listOf(Ring(.590f,.096f,.115f,side*.088f),Ring(.568f,.096f,.115f,side*.088f)),trim,false)
+                Ring(.75f,.102f,.135f,side*.088f),Ring(.68f,.098f,.122f,side*.088f),
+                Ring(.622f,.094f,.112f,side*.088f)),navy)
+            result+=shell("shorts:hem:$side",listOf(Ring(.644f,.096f,.115f,side*.088f),Ring(.620f,.096f,.115f,side*.088f)),trim,false)
         }
-        result+=shell("shorts:waist",listOf(Ring(1.081f,.179f,.141f),Ring(1.052f,.184f,.146f)),trim,false)
+        result+=shell("shorts:waist",listOf(Ring(1.041f,.179f,.141f),Ring(1.012f,.184f,.146f)),trim,false)
         result
     }
 }

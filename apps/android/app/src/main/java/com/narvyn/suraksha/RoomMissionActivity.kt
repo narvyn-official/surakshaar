@@ -14,7 +14,7 @@ import java.util.UUID
 
 /** Action-led missions have a distinct local journal and never award an assessment certificate. */
 class RoomMissionActivity:Activity() {
-    private data class Retained(val worker:String,val id:String,val module:String,val camera:Boolean,val mission:RoomMission,val safe:Boolean,val coaching:RoomCoaching,val clockOffset:Long)
+    private data class Retained(val worker:String,val id:String,val module:String,val camera:Boolean,val mission:RoomMission,val safe:Boolean,val coaching:RoomCoaching,val clockOffset:Long,val resumeChoice:Boolean)
     private lateinit var identity:Store
     private lateinit var store:RoomMissionStore
     private lateinit var mission:RoomMission
@@ -27,6 +27,7 @@ class RoomMissionActivity:Activity() {
     private var id=UUID.randomUUID().toString()
     private var clockOffset=0L
     private var resumeNotice:String?=null
+    private var resumeChoice=false
     private fun missionClock(raw:Long=SystemClock.elapsedRealtime())=Math.addExact(raw,clockOffset)
     private var module="fire";private var camera=true;private var explosionRisk=false;private var safe=false;private var active=false
     private var held=false;private var heldAt=0L;private var saveFailed=false
@@ -48,7 +49,7 @@ class RoomMissionActivity:Activity() {
         module=intent.getStringExtra("moduleId")?.takeIf{it in listOf("fire","gas")}?:"fire";camera=intent.getBooleanExtra("camera",true);explosionRisk=module=="fire"&&intent.getBooleanExtra("explosionRisk",false)
         coaching=RoomCoaching(module,intent.getBooleanExtra("recall",false))
         val kept=lastNonConfigurationInstance as? Retained
-        if(kept?.worker==identity.workerId && kept.module==module && kept.camera==camera && kept.coaching.recall==coaching.recall && kept.mission.explosionRisk==explosionRisk){mission=kept.mission.apply{resetIncomplete()};id=kept.id;safe=kept.safe;coaching=kept.coaching.apply{hideCue()};clockOffset=kept.clockOffset}else {
+        if(kept?.worker==identity.workerId && kept.module==module && kept.camera==camera && kept.coaching.recall==coaching.recall && kept.mission.explosionRisk==explosionRisk){mission=kept.mission.apply{resetIncomplete()};id=kept.id;safe=kept.safe;coaching=kept.coaching.apply{hideCue()};clockOffset=kept.clockOffset;resumeChoice=kept.resumeChoice}else {
             mission=RoomMission(module,explosionRisk,intent.getStringExtra("fireScenarioId").takeIf{module=="fire"})
             val restoreId=state?.getString("roomAttemptId")?:intent.getStringExtra("resumeId")
             if(restoreId!=null)try{
@@ -61,7 +62,8 @@ class RoomMissionActivity:Activity() {
                 val elapsed=SystemClock.elapsedRealtime();val floor=maxOf(elapsed,restored.nextElapsedTime,restoredCoaching.nextElapsedTime)
                 check(floor<Long.MAX_VALUE-86_400_000L)
                 clockOffset=floor-elapsed;mission=restored;coaching=restoredCoaching;id=restoreId
-                resumeNotice=t("Saved actions restored. Confirm your training area and place the camera stations again. Incomplete gestures restart.","सहेजी क्रियाएँ वापस मिलीं। क्षेत्र की पुष्टि करके कैमरा स्थल फिर रखें। अधूरी क्रियाएँ फिर शुरू होंगी।")
+                resumeChoice=state?.getBoolean("roomResumeChoice")?:(!mission.completed&&mission.events.isNotEmpty())
+                resumeNotice=if(camera)t("Saved actions restored. Confirm your training area and place the camera stations again. Incomplete gestures restart.","सहेजी क्रियाएँ वापस मिलीं। क्षेत्र की पुष्टि करके कैमरा स्थल फिर रखें। अधूरी क्रियाएँ फिर शुरू होंगी।")else t("Saved actions restored. Incomplete gestures restart.","सहेजी क्रियाएँ वापस मिलीं। अधूरी क्रियाएँ फिर शुरू होंगी।")
             }catch(_:Exception){resumeNotice=t("This saved practice cannot be resumed. A separate new attempt will start; the earlier record is retained.","यह सहेजा अभ्यास जारी नहीं हो सकता। अलग नया प्रयास शुरू होगा; पुराना रिकॉर्ड रहेगा।")}
         }
         val root=column().apply{setBackgroundColor(Palette.canvas)}
@@ -133,13 +135,47 @@ class RoomMissionActivity:Activity() {
         override fun onMeasure(w:Int,h:Int){super.onMeasure(w,MeasureSpec.makeMeasureSpec(minOf(dp(maxDp),(MeasureSpec.getSize(h)*fraction).toInt()),if(fixed)MeasureSpec.EXACTLY else MeasureSpec.AT_MOST))}
     }
     private fun briefing(){
+        if(resumeChoice){resumeDialog();return}
         val mode=if(coaching.recall)t("Recall practice: try the actions from memory. Requested hints are recorded.","याद करके अभ्यास करें। माँगे गए संकेत दर्ज होंगे।")else t("Guided practice: do each action in the scene. Coach explains the reason.","निर्देशित अभ्यास: दृश्य में क्रिया करें। मार्गदर्शन उसका कारण समझाता है।")
         val scenario=mission.selectedScenario?.summary(identity.hi)?:if(module=="fire")t("Virtual fire response: alarm, clear exit, an approved response, then assembly and reporting. Extinguisher use assumes a trained, authorised role.","काल्पनिक आग: अलार्म, खुला निकास, स्वीकृत प्रतिक्रिया, फिर एकत्र स्थल और सूचना। उपकरण उपयोग में प्रशिक्षित, अधिकृत भूमिका मानी गई है।")else t("Outside-only confined-space practice. The SIM meter cannot measure gas. Entry stays closed; rescue readiness is unconfirmed.","बाहर रहकर बंद स्थान का अभ्यास। SIM मीटर गैस नहीं माप सकता। प्रवेश बंद है; बचाव तैयारी अपुष्ट है।")
-        PageDialogBuilder(this).setTitle(t("Ready for your practice?","अभ्यास के लिए तैयार?"))
-            .setMessage((resumeNotice?.plus("\n\n")?:"")+t("Use a clear, well-lit area away from live machinery. Stay in one safe position; no walking toward hazards.\n\n","चालू मशीनों से दूर खाली, उजले क्षेत्र में रहें। सुरक्षित जगह पर रहकर अभ्यास करें; खतरे की ओर न चलें।\n\n")+mode+"\n\n"+scenario+"\n\n"+t("Virtual actions only. Markers are not real exits or safety distances; this practice does not issue a certificate.","केवल काल्पनिक क्रियाएँ। चिह्न वास्तविक निकास या सुरक्षा दूरी नहीं हैं; यह अभ्यास प्रमाणपत्र नहीं देता।"))
-            .setPositiveButton(t("Start in a clear area","खाली क्षेत्र में शुरू करें")){_,_->safe=true;persist(mission);if(active)startScene();render()}
-            .setNeutralButton(t("Setup guide","तैयारी सीखें")){_,_->setupGuide()}
+        val message=if(resumeChoice)t("Continue your saved steps or start a separate attempt. Earlier practice stays saved.","सहेजे चरण जारी रखें या अलग प्रयास शुरू करें। पिछला अभ्यास सहेजा रहेगा।")+if(camera)t(" Camera stations must be placed again."," कैमरा स्थल फिर रखने होंगे।")else "" else resumeNotice.orEmpty()
+        PageDialogBuilder(this).setTitle(if(resumeChoice)t("Continue or restart?","जारी रखें या फिर शुरू करें?")else t("Ready for your practice?","अभ्यास के लिए तैयार?"))
+            .setMessage(message.takeIf{it.isNotBlank()}?.plus("\n\n").orEmpty()+t("Use a clear, well-lit area away from live machinery. Stay in one safe position; no walking toward hazards.\n\n","चालू मशीनों से दूर खाली, उजले क्षेत्र में रहें। सुरक्षित जगह पर रहकर अभ्यास करें; खतरे की ओर न चलें।\n\n")+mode+"\n\n"+scenario+"\n\n"+t("Virtual actions only. Markers are not real exits or safety distances; this practice does not issue a certificate.","केवल काल्पनिक क्रियाएँ। चिह्न वास्तविक निकास या सुरक्षा दूरी नहीं हैं; यह अभ्यास प्रमाणपत्र नहीं देता।"))
+            .setPositiveButton(if(resumeChoice)t("Continue","जारी रखें")else t("Start in a clear area","खाली क्षेत्र में शुरू करें")){_,_->beginPractice(false)}
+            .setNeutralButton(if(resumeChoice)t("Start from step 1","चरण 1 से शुरू करें")else t("Setup guide","तैयारी सीखें")){_,_->if(resumeChoice)beginPractice(true)else setupGuide()}
             .setNegativeButton(t("Back","वापस")){_,_->finish()}.setCancelable(false).show()
+    }
+    private fun resumeDialog(){
+        lateinit var dialog:AlertDialog
+        val root=column(16)
+        val header=LinearLayout(this).apply{gravity=Gravity.CENTER_VERTICAL}
+        header.addView(action(t("Back","वापस"),false,ActionRole.NEUTRAL){dialog.dismiss();finish()})
+        header.addView(label(t("Continue or restart?","जारी रखें या फिर शुरू करें?"),20f,Palette.ink,true).asHeading().apply{setPadding(dp(10),0,0,0)},LinearLayout.LayoutParams(0,-2,1f))
+        root.add(header,bottom=12)
+        val details=column()
+        details.add(label(RoomLearning.forPhase(mission.phase,explosionRisk).title.local(identity.hi),18f,Palette.ink,true),bottom=10)
+        details.add(label(t("Earlier attempt stays saved.","पिछला अभ्यास सहेजा रहेगा।"),15f,Palette.muted),bottom=12)
+        details.add(label(t("Use a clear, well-lit area away from live machinery. Stay in one safe position; do not walk toward hazards.","चालू मशीनों से दूर खाली, उजले क्षेत्र में रहें। सुरक्षित जगह पर रहकर अभ्यास करें; खतरे की ओर न चलें।"),15f),bottom=10)
+        if(camera)details.add(label(t("Place virtual stations again. They are not real exits or safety distances.","काल्पनिक स्थल फिर रखें। वे वास्तविक निकास या सुरक्षा दूरी नहीं हैं।"),14f,Palette.muted),bottom=10)
+        details.add(label(t("Virtual practice only · no certificate","केवल काल्पनिक अभ्यास · प्रमाणपत्र नहीं"),13f,Palette.muted))
+        root.addView(paged(details,identity.hi),LinearLayout.LayoutParams(-1,0,1f))
+        root.add(action(t("Continue","जारी रखें")){dialog.dismiss();beginPractice(false)}.apply{tag="room-resume-continue"},top=12)
+        root.add(action(t("Start from step 1","चरण 1 से शुरू करें"),false){dialog.dismiss();beginPractice(true)}.apply{tag="room-resume-restart"},top=8)
+        dialog=AlertDialog.Builder(this).setView(root).setCancelable(true).setOnCancelListener{finish()}.create()
+        dialog.setCanceledOnTouchOutside(false)
+        dialog.show()
+        dialog.window?.setLayout((resources.displayMetrics.widthPixels*.94f).toInt(),(resources.displayMetrics.heightPixels*.88f).toInt())
+    }
+    private fun beginPractice(restart:Boolean){
+        if(!identity.isCurrentProfile()){finish();return}
+        if(restart){
+            mission=RoomMission(module,explosionRisk,mission.fireScenarioId)
+            coaching=RoomCoaching(module,coaching.recall)
+            id=UUID.randomUUID().toString();clockOffset=0L;resumeNotice=null
+        }
+        resumeChoice=false;safe=true
+        if(persist(mission)&&active)startScene()
+        render()
     }
     private fun speakLearning(text:String):String? {
         if(!active||!identity.isCurrentProfile())return t("Return to this practice to listen.","सुनने के लिए इस अभ्यास पर लौटें।")
@@ -229,8 +265,8 @@ class RoomMissionActivity:Activity() {
     override fun onWindowFocusChanged(focused:Boolean){super.onWindowFocusChanged(focused);if(!::scene.isInitialized)return;if(!focused){narrator.pause();hideCoaching();cancelGesture();scene.pause()}else if(active&&safe&&modalCount==0){scene.resume();render()}}
     override fun onPause(){active=false;speakButton.removeCallbacks(autoVoiceNext);held=false;narrator.pause();hideCoaching();mission.resetIncomplete();scene.pause();super.onPause()}
     override fun onDestroy(){backNavigation.close();narrator.close();scene.close();store.close();identity.close();super.onDestroy()}
-    override fun onSaveInstanceState(out:Bundle){out.putString("roomAttemptId",id);out.putString("roomWorker",identity.workerId);super.onSaveInstanceState(out)}
-    override fun onRetainNonConfigurationInstance():Any=Retained(identity.workerId,id,module,camera,mission.fork(),safe,coaching.fork(),clockOffset)
+    override fun onSaveInstanceState(out:Bundle){out.putString("roomAttemptId",id);out.putString("roomWorker",identity.workerId);out.putBoolean("roomResumeChoice",resumeChoice);super.onSaveInstanceState(out)}
+    override fun onRetainNonConfigurationInstance():Any=Retained(identity.workerId,id,module,camera,mission.fork(),safe,coaching.fork(),clockOffset,resumeChoice)
     private fun eligible():Boolean {
         if(!active || !safe || modalCount>0 || saveFailed || !identity.isCurrentProfile())return false
         return scene.ready
@@ -406,12 +442,12 @@ class RoomMissionActivity:Activity() {
     }
     private fun options(){
         narrator.pause();speakButton.removeCallbacks(autoVoiceNext);hideCoaching()
-        val items=arrayOf(t("Resume mission","मिशन जारी रखें"),t("Restart camera mission","कैमरा मिशन फिर शुरू करें"),t("Start separate screen mission","अलग स्क्रीन मिशन शुरू करें"),t("Text procedure alternative","लिखित प्रक्रिया विकल्प"),t("Saved mission records","सहेजे मिशन रिकॉर्ड"),t("Save & leave","सहेजें और लौटें"),t("Start recall challenge","याद करके अभ्यास शुरू करें"),t("Camera diagnostics","कैमरा स्थिति")) + if(module=="fire"&&!coaching.recall)arrayOf(t("Fire type & agent guide","आग का प्रकार और माध्यम"))else emptyArray()
+        val items=arrayOf(t("Resume mission","मिशन जारी रखें"),t("Start from step 1","चरण 1 से शुरू करें"),if(camera)t("Start separate screen mission","अलग स्क्रीन मिशन शुरू करें")else t("Start separate camera mission","अलग कैमरा मिशन शुरू करें"),t("Text procedure alternative","लिखित प्रक्रिया विकल्प"),t("Saved mission records","सहेजे मिशन रिकॉर्ड"),t("Save & leave","सहेजें और लौटें"),t("Start recall challenge","याद करके अभ्यास शुरू करें"),t("Camera diagnostics","कैमरा स्थिति")) + if(module=="fire"&&!coaching.recall)arrayOf(t("Fire type & agent guide","आग का प्रकार और माध्यम"))else emptyArray()
         val choices=items+if(autoVoice)t("Mute automatic instructions","अपने आप निर्देश बोलना बंद करें")else t("Enable automatic instructions","अपने आप निर्देश बोलना चालू करें")
         // A modal must not accumulate aim or discharge progress behind it.
         modalCount++;held=false;mission.resetIncomplete();scene.pause()
         PageDialogBuilder(this).setTitle(t("Mission options","मिशन विकल्प")).setItems(choices){_,index->if(index==items.size)toggleAutomaticVoice()else when(index){
-            1,2->{if(persist(mission)){startActivity(Intent(this,RoomMissionActivity::class.java).putExtra("moduleId",module).putExtra("camera",index==1).putExtra("recall",coaching.recall).putExtra("explosionRisk",explosionRisk).putExtra("fireScenarioId",mission.fireScenarioId));finish()}}
+            1,2->{if(persist(mission)){startActivity(Intent(this,RoomMissionActivity::class.java).putExtra("moduleId",module).putExtra("camera",if(index==1)camera else !camera).putExtra("recall",coaching.recall).putExtra("explosionRisk",explosionRisk).putExtra("fireScenarioId",mission.fireScenarioId));finish()}}
             3->{if(persist(mission)){startActivity(Intent(this,ProcedureActivity::class.java).putExtra("moduleId",module));finish()}}
             4->saved()
             5->{if(persist(mission))finish()}

@@ -17,12 +17,28 @@ import androidx.test.platform.app.InstrumentationRegistry
 import org.junit.Assert.*
 import org.junit.Assume.assumeTrue
 import org.junit.Test
+import org.junit.Before
+import org.junit.After
 import org.junit.runner.RunWith
 import java.io.File
 
 /** Tests the actual compact dock and scene together, without changing any learner records. */
 @RunWith(AndroidJUnit4::class)
 class AnatomyViewControlsTest {
+    private var oldDetailed:Boolean?=null
+    private var qualitySet=false
+    @Before fun useDetailedGeometry(){
+        assumeTrue(Build.HARDWARE in listOf("ranchu","goldfish")||Build.MODEL.contains("sdk_gphone"))
+        val prefs=InstrumentationRegistry.getInstrumentation().targetContext.getSharedPreferences("anatomy-quality",0)
+        oldDetailed=if(prefs.contains("detailed"))prefs.getBoolean("detailed",false)else null
+        qualitySet=true;prefs.edit().remove("detailed").commit()
+    }
+    @After fun restoreGeometryPreference(){
+        if(!qualitySet)return
+        val prefs=InstrumentationRegistry.getInstrumentation().targetContext.getSharedPreferences("anatomy-quality",0)
+        prefs.edit().apply{oldDetailed?.let{putBoolean("detailed",it)}?:remove("detailed")}.commit()
+    }
+
     private fun all(v: View): List<View> = listOf(v) + if (v is ViewGroup) (0 until v.childCount).flatMap { all(v.getChildAt(it)) } else emptyList()
     private fun tap(name: String) = onView(withContentDescription(name)).perform(click())
     private fun capture(name: String) {
@@ -70,6 +86,7 @@ class AnatomyViewControlsTest {
             }
             assertNotNull("Anatomy must load before controls can open", scene)
             val original = scene!!
+            assertEquals("Detailed",original.data.manifest.getString("loadedQuality"))
             onView(withText("View")).perform(click())
             activity.onActivity { host ->
                 val dock = all(host.window.decorView).filterIsInstance<AnatomyViewDock>().single()

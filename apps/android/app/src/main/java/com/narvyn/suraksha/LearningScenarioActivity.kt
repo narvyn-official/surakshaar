@@ -21,6 +21,7 @@ class LearningScenarioActivity : Activity() {
     private var revision: LearningRevision? = null
     private var revisionCourse: String? = null
     private var blocked = false
+    private var resumeChoicePending = false
     private var pendingStep: String? = null
     private var pendingPart: String? = null
     private var guidanceDialog: AlertDialog? = null
@@ -62,15 +63,21 @@ class LearningScenarioActivity : Activity() {
             val scenario = catalog.scenarios.firstOrNull { it.getString("id") == id } ?: run { finish(); return }
             blocked = !allowed(scenario)
             if (!blocked) {
+                val savedId = state?.getString("attemptId") ?: intent.getStringExtra("attemptId")
                 val saved = if (intent.getBooleanExtra("newPractice", false) && state == null) null else progress.records().firstOrNull {
-                    it.getString("scenarioId") == id && !it.optBoolean("finished") && it.getString("contentVersion") == catalog.version
+                    it.getString("scenarioId") == id && it.getString("contentVersion") == catalog.version &&
+                        if (savedId != null) it.optString("id") == savedId else !it.optBoolean("finished")
                 }
                 attempt = if (saved != null) runCatching { LearningAttempt.restore(saved, scenario, catalog.version, store.workerId) }.getOrNull() else null
-                if (saved != null && attempt == null) {
+                if ((saved != null || savedId != null) && attempt == null) {
                     notice(t("Saved record needs review", "सहेजे गए रिकॉर्ड की समीक्षा चाहिए"),
                         t("The previous record cannot be safely resumed. It is retained unchanged; a new practice will start.", "पिछला अभ्यास सुरक्षित रूप से जारी नहीं हो सकता। उसका रिकॉर्ड रखा गया है; नया अभ्यास शुरू होगा।"))
                 }
+                resumeChoicePending = state?.getBoolean("resumeChoicePending") ?: (attempt?.let {
+                    !it.finished && (it.index > 0 || it.events.objects().any { event -> event.optString("kind") in setOf("decision", "observation", "hint") })
+                } == true)
                 if (attempt == null) attempt = LearningAttempt.create(scenario, catalog.version, store.workerId, intent.getBooleanExtra("guided", true)).also { progress.save(it) }
+
             }
         }
         render()
@@ -98,15 +105,16 @@ class LearningScenarioActivity : Activity() {
     private fun render() {
         if (revisionMode) { renderRevision(); return }
         val a = attempt
+        if (resumeChoicePending && !recordsMode && !blocked && a != null && !a.finished) { resumeChoice(a); return }
         if (recordsMode || blocked || a?.finished == true) narrator.clear()
         val root = column().apply { setBackgroundColor(Palette.canvas) }
         val header = LinearLayout(this).apply { gravity = Gravity.CENTER_VERTICAL }
         header.addView(action("‹", false, ActionRole.NEUTRAL) { finish() }.apply {
-            contentDescription = t("Back to course", "पाठ्यक्रम पर वापस जाएँ")
+            contentDescription = t("Back", "वापस")
         }, LinearLayout.LayoutParams(dp(48), dp(48)))
         header.addView(label(if (recordsMode) t("Practice records", "अभ्यास रिकॉर्ड") else if (blocked) t("Awareness learning", "जागरूकता पाठ") else a!!.scenario.getString("title"),
             18f, Palette.ink, true).asHeading().apply { setPadding(dp(10), 0, dp(6), 0) }, LinearLayout.LayoutParams(0, -2, 1f))
-        if (!recordsMode && !blocked) header.addView(action(t("Audio", "आवाज़"), false, ActionRole.NEUTRAL) { audio() })
+        if (!recordsMode && !blocked) header.addView(action(t("More", "और"), false, ActionRole.NEUTRAL) { lessonTools() }.apply { tag = "learning-tools" })
         root.add(header, bottom = 12)
         val body = column()
         when {
@@ -135,11 +143,9 @@ class LearningScenarioActivity : Activity() {
                         body.add(label(step.getString("cue"), 16f), bottom = 14)
                         body.add(card().apply {
                             add(label(t("Find ${partNames[part] ?: "the structure"}", "शरीर में संरचना पहचानें"), 18f, Palette.ink, true), bottom = 8)
-                            add(label(t("Select it in the body viewer, then return to make your decision. Touch or the accessible Parts list can be used.",
-                                "शरीर के मॉडल में इसे चुनें, फिर अपना निर्णय दें। मॉडल पर छूकर या संरचना सूची से चुन सकते हैं।"), 15f), bottom = 12)
-                            add(action(t("Explore and identify", "देखें और पहचानें"), role = ActionRole.CAMERA) { openAnatomy(a) }.apply { tag = "required-anatomy-observation" })
+                            add(action(t("Find in body", "शरीर में पहचानें"), role = ActionRole.CAMERA) { openAnatomy(a) }.apply { tag = "required-anatomy-observation" })
                         }, bottom = 12)
-                        body.add(label(t("Records anatomical exploration only. It does not measure a physical skill.", "यह केवल संरचना की पहचान का रिकॉर्ड है, व्यावहारिक कौशल का माप नहीं।"), 13f, Palette.muted))
+                        body.add(label(t("Body exploration only · not a physical skills test", "शरीर की पहचान का अभ्यास · व्यावहारिक कौशल की जाँच नहीं"), 13f, Palette.muted))
                     }
                     a.awaitingContinue -> {
                         body.add(label(t("Decision saved", "निर्णय सहेजा गया"), 14f, Palette.success, true), bottom = 10)
@@ -161,7 +167,7 @@ class LearningScenarioActivity : Activity() {
                                 if (!store.isCurrentProfile() || !allowed(a.scenario)) { blocked = true; narrator.pause(); render(); return@action }
                                 val correct = a.answer(choice.getString("id")); progress.save(a); render()
                                 if (!correct) narrator.show(if (guided) "Review the cue. " + step.getString("explanation") else "Try again. Guidance is available if you need it.")
-                            }.apply { textSize = 15f; gravity = Gravity.START or Gravity.CENTER_VERTICAL }, bottom = 8)
+                            }.apply { tag = "learning-choice-${choice.getString("id")}"; textSize = 15f; gravity = Gravity.START or Gravity.CENTER_VERTICAL }, bottom = 8)
                         }
                     }
                 }
@@ -180,11 +186,48 @@ class LearningScenarioActivity : Activity() {
                 if (!store.isCurrentProfile() || !allowed(a.scenario)) { blocked = true; narrator.pause(); render(); return@action }
                 if (needsObservation(a)) { openAnatomy(a); return@action }
                 a.advance(); a.data.remove("lastCorrect"); progress.save(a); render()
-            }.apply { isEnabled = !needsObservation(a) }, LinearLayout.LayoutParams(0, -2, 1f).apply { leftMargin = dp(8) })
+            }.apply { tag = "learning-next"; isEnabled = !needsObservation(a) }, LinearLayout.LayoutParams(0, -2, 1f).apply { leftMargin = dp(8) })
             root.add(footer, top = 8)
         }
         setContentView(root)
         trainingInsets(root)
+    }
+
+    private fun resumeChoice(a: LearningAttempt) {
+        narrator.clear()
+        val root = column().apply { setBackgroundColor(Palette.canvas) }
+        root.add(label(a.scenario.getString("title"), 22f, Palette.ink, true).asHeading(), bottom = 12)
+        val body = column()
+        body.add(label(t("Saved at step ${a.index + 1} of ${a.steps.size}", "चरण ${a.index + 1} / ${a.steps.size} पर सहेजा गया"), 18f, Palette.ink, true), bottom = 8)
+        body.add(label(a.current.getString("title"), 16f, Palette.muted), bottom = 12)
+        body.add(label(t("Earlier attempt stays saved.", "पिछला अभ्यास सहेजा रहेगा।"), 14f, Palette.muted))
+        root.addView(paged(body, store.hi), LinearLayout.LayoutParams(-1, 0, 1f))
+        root.add(action(t("Continue", "जारी रखें")) {
+            if (!store.isCurrentProfile() || !allowed(a.scenario)) { finish(); return@action }
+            resumeChoicePending = false; render()
+        }.apply { tag = "learning-resume-continue" }, top = 12)
+        root.add(action(t("Start from step 1", "चरण 1 से शुरू करें"), false) {
+            if (!store.isCurrentProfile() || !allowed(a.scenario)) { finish(); return@action }
+            restartLesson(a)
+        }.apply { tag = "learning-resume-restart" }, top = 8)
+        root.add(action(t("Back", "वापस"), false, ActionRole.NEUTRAL) { finish() }, top = 8)
+        setContentView(root); trainingInsets(root)
+    }
+
+    private fun restartLesson(a: LearningAttempt) {
+        if (!store.isCurrentProfile() || !allowed(a.scenario)) { finish(); return }
+        narrator.clear()
+        attempt = LearningAttempt.create(a.scenario, catalog.version, store.workerId, a.data.optBoolean("guided", true)).also { progress.save(it) }
+        resumeChoicePending = false; pendingStep = null; pendingPart = null; render()
+    }
+
+    private fun lessonTools() {
+        val a = attempt ?: return
+        val choices = mutableListOf(t("Audio", "आवाज़"))
+        if (a.index > 0 || a.events.length() > 0) choices.add(t("Start from step 1", "चरण 1 से शुरू करें"))
+        PageDialogBuilder(this).setTitle(t("Lesson options", "पाठ के विकल्प"))
+            .setItems(choices.toTypedArray()) { _, index -> if (index == 0) audio() else restartLesson(a) }
+            .setNegativeButton(t("Back", "वापस"), null).show()
     }
 
     @Suppress("DEPRECATION")
@@ -243,38 +286,76 @@ class LearningScenarioActivity : Activity() {
         val hints = a.events.objects().count { it.optString("kind") == "hint" }
         val observations = a.events.objects().filter { it.optString("kind") == "observation" }.map { it.optString("stepId") }.distinct().size
         body.add(label(t("Practice complete", "अभ्यास पूरा"), 24f, Palette.ink, true).asHeading(), bottom = 10)
-        body.add(label(t("${a.steps.size} decisions · $misses retries · $hints hints", "${a.steps.size} निर्णय · $misses दोबारा प्रयास · $hints संकेत"), 14f, Palette.muted), bottom = 12)
-        if (observations > 0) body.add(label(t("$observations anatomy stages explored", "$observations चरणों में संरचना देखी गई"), 14f, Palette.blue), bottom = 12)
-        body.add(label(t("Your practice is saved. Physical skills need separate instructor observation.", "अभ्यास सहेजा गया। व्यावहारिक कौशल की जाँच प्रशिक्षक अलग से करेंगे।"), 16f), bottom = 16)
-        body.add(action(t("Explain a decision", "अपना निर्णय समझाएँ"), false) {
-            val text = EditText(this).apply {
-                hint = a.scenario.optString("teachBack", "Which cue mattered, and why?")
-                minLines = 3; maxLines = 6; setPadding(dp(16), dp(12), dp(16), dp(12))
-            }
-            PageDialogBuilder(this).setTitle(t("Teach it back", "अपने शब्दों में बताएँ"))
-                .setMessage(t("Optional reflection, kept on this phone. Avoid personal health details. AI does not grade it.", "वैकल्पिक उत्तर, इसी फ़ोन पर सहेजा जाएगा। निजी स्वास्थ्य जानकारी न लिखें। AI इसका मूल्यांकन नहीं करता।"))
-                .setView(text).setPositiveButton(t("Save", "सहेजें")) { _, _ ->
-                    if (text.text.isNotBlank() && store.isCurrentProfile() && allowed(a.scenario)) {
-                        a.explain(text.text.toString()); progress.save(a)
-                        notice(t("Reflection saved", "उत्तर सहेजा गया"), t("Read it in this attempt’s replay.", "इसे अभ्यास की समीक्षा में देख सकते हैं।"))
-                    }
-                }.setNegativeButton(t("Cancel", "रद्द करें"), null).show()
-        }, bottom = 8)
-        body.add(action(t("Review my decisions", "मेरे निर्णय देखें"), false) { replay(a.data) }, bottom = 8)
+        body.add(label(t("${a.steps.size} decisions · $misses retries · $hints hints", "${a.steps.size} निर्णय · $misses दोबारा प्रयास · $hints संकेत"), 14f, Palette.muted), bottom = 8)
+        if (observations > 0) body.add(label(t("$observations anatomy stages explored", "$observations चरणों में संरचना देखी गई"), 14f, Palette.blue), bottom = 8)
+        body.add(label(t("Saved on this phone. Physical skills need instructor observation.", "इस फ़ोन पर सहेजा गया। व्यावहारिक कौशल की जाँच प्रशिक्षक करेंगे।"), 14f, Palette.muted), bottom = 16)
         val weak = progress.weakObjectives(catalog, a.scenario.getString("course"), school())
-        if (weak.isNotEmpty()) body.add(action(t("Review tricky decisions (${weak.size})", "कठिन निर्णय दोहराएँ (${weak.size})"), false) {
-            startActivity(Intent(this, LearningScenarioActivity::class.java).putExtra("revision", true).putExtra("courseId", a.scenario.getString("course")))
-        }.apply { tag = "start-targeted-revision" }, bottom = 8)
-        addTransferAction(body, a.scenario)
-        if (a.scenario.getString("course") == "fire" && !school()) body.add(action(t("Practise equipment in a room", "कमरे में उपकरण अभ्यास"), false, ActionRole.CAMERA) {
-            if (store.isCurrentProfile() && allowed(a.scenario)) startActivity(Intent(this, RoomMissionActivity::class.java).putExtra("moduleId", "fire").putExtra("camera", true))
-        }.apply { tag = "fire-room-practice" }, bottom = 8)
-        body.add(action(t("Try without guidance", "बिना मार्गदर्शन अभ्यास करें")) {
+        val next = nextLesson(a)
+        if (weak.isNotEmpty()) body.add(action(t("Review tricky decisions (${weak.size})", "कठिन निर्णय दोहराएँ (${weak.size})")) {
             if (store.isCurrentProfile() && allowed(a.scenario)) {
-                attempt = LearningAttempt.create(a.scenario, catalog.version, store.workerId, false).also { progress.save(it) }; render()
+                startActivity(Intent(this, LearningScenarioActivity::class.java).putExtra("revision", true).putExtra("courseId", a.scenario.getString("course")))
+                finish()
             }
-        }, bottom = 8)
-        body.add(action(t("Back to course", "पाठ्यक्रम पर वापस"), false, ActionRole.NEUTRAL) { finish() })
+        }.apply { tag = "start-targeted-revision" }, bottom = 8)
+        if (next != null) body.add(action(t("Next lesson", "अगला पाठ"), primary = weak.isEmpty()) {
+            if (store.isCurrentProfile() && allowed(next)) {
+                startActivity(Intent(this, LearningScenarioActivity::class.java).putExtra("scenarioId", next.getString("id")))
+                finish()
+            }
+        }.apply { tag = "learning-next-lesson"; contentDescription = t("Next lesson: ", "अगला पाठ: ") + next.getString("title") }, bottom = 8)
+        body.add(action(t("Review my decisions", "मेरे निर्णय देखें"), false, ActionRole.NEUTRAL) { replay(a.data) }.apply { tag = "learning-replay" }, bottom = 8)
+        body.add(action(t("More practice", "और अभ्यास"), false, ActionRole.NEUTRAL) { completionTools(a) }.apply { tag = "learning-completion-tools" }, bottom = 8)
+        body.add(action(t("Back to course", "पाठ्यक्रम पर वापस"), primary = next == null && weak.isEmpty(), role = if (next == null && weak.isEmpty()) ActionRole.PRIMARY else ActionRole.NEUTRAL) { finish() })
+    }
+
+    private fun nextLesson(a: LearningAttempt): JSONObject? {
+        val lessons = catalog.scenarios.filter { it.getString("course") == a.scenario.getString("course") && allowed(it) }
+        val byId = lessons.associateBy { it.getString("id") }
+        val completed = progress.records().mapNotNull { record ->
+            val lesson = byId[record.optString("scenarioId")] ?: return@mapNotNull null
+            runCatching { LearningAttempt.restore(record, lesson, catalog.version, store.workerId) }
+                .getOrNull()?.takeIf { it.finished }?.scenario?.getString("id")
+        }.toSet()
+        return lessons.firstOrNull { it.getString("id") !in completed }
+    }
+
+    private fun completionTools(a: LearningAttempt) {
+        val actions = mutableListOf<Pair<String, () -> Unit>>()
+        actions.add(t("Try without guidance", "बिना मार्गदर्शन अभ्यास करें") to {
+            attempt = LearningAttempt.create(a.scenario, catalog.version, store.workerId, false).also { progress.save(it) }; render()
+        })
+        actions.add(t("Explain a decision", "अपना निर्णय समझाएँ") to { reflect(a) })
+        transferTargets(a.scenario).forEach { target ->
+            actions.add(t("Try: ", "अभ्यास: ") + target.getString("title") to {
+                if (allowed(target)) {
+                    startActivity(Intent(this, LearningScenarioActivity::class.java)
+                        .putExtra("scenarioId", target.getString("id")).putExtra("guided", false).putExtra("newPractice", true))
+                    finish()
+                }
+            })
+        }
+        if (a.scenario.getString("course") == "fire" && !school()) actions.add(t("Practise in AR", "AR में अभ्यास") to {
+            if (!school()) startActivity(Intent(this, RoomMissionActivity::class.java).putExtra("moduleId", "fire").putExtra("camera", true))
+        })
+        PageDialogBuilder(this).setTitle(t("More practice", "और अभ्यास"))
+            .setItems(actions.map { it.first }.toTypedArray()) { _, index ->
+                if (store.isCurrentProfile() && allowed(a.scenario)) actions[index].second()
+            }.setNegativeButton(t("Back", "वापस"), null).show()
+    }
+
+    private fun reflect(a: LearningAttempt) {
+        val text = EditText(this).apply {
+            hint = a.scenario.optString("teachBack", "Which cue mattered, and why?")
+            minLines = 3; maxLines = 6; setPadding(dp(16), dp(12), dp(16), dp(12))
+        }
+        PageDialogBuilder(this).setTitle(t("Explain your decision", "अपना निर्णय समझाएँ"))
+            .setMessage(t("Optional reflection, kept on this phone. Avoid personal health details. AI does not grade it.", "वैकल्पिक उत्तर, इसी फ़ोन पर सहेजा जाएगा। निजी स्वास्थ्य जानकारी न लिखें। AI इसका मूल्यांकन नहीं करता।"))
+            .setView(text).setPositiveButton(t("Save", "सहेजें")) { _, _ ->
+                if (text.text.isNotBlank() && store.isCurrentProfile() && allowed(a.scenario)) {
+                    a.explain(text.text.toString()); progress.save(a)
+                    notice(t("Reflection saved", "उत्तर सहेजा गया"), t("Read it in this attempt’s replay.", "इसे अभ्यास की समीक्षा में देख सकते हैं।"))
+                }
+            }.setNegativeButton(t("Cancel", "रद्द करें"), null).show()
     }
 
     private fun records(body: LinearLayout) {
@@ -412,10 +493,12 @@ class LearningScenarioActivity : Activity() {
             }.setNegativeButton(t("Done", "पूरा हुआ"), null).show()
     }
 
+    private fun transferTargets(scenario: JSONObject) = scenario.optJSONArray("transferScenarioIds")?.strings().orEmpty().mapNotNull { id ->
+        catalog.scenarios.firstOrNull { it.getString("id") == id && allowed(it) }
+    }
+
     private fun addTransferAction(body:LinearLayout, scenario:JSONObject) {
-        val targets = scenario.optJSONArray("transferScenarioIds")?.strings().orEmpty().mapNotNull { id ->
-            catalog.scenarios.firstOrNull { it.getString("id") == id && allowed(it) }
-        }
+        val targets = transferTargets(scenario)
         if (targets.isEmpty()) return
         body.add(action(t("Apply it in another situation", "दूसरी स्थिति में लागू करें"), false, ActionRole.REVIEW) {
             PageDialogBuilder(this).setTitle(t("Transfer challenge", "नई स्थिति में अभ्यास"))
@@ -428,7 +511,7 @@ class LearningScenarioActivity : Activity() {
     }
 
     private fun audio() { narrator.showControls() }
-    override fun onSaveInstanceState(out: Bundle) { out.putString("revisionId", revision?.data?.optString("id")); out.putString("pendingStep", pendingStep); out.putString("pendingPart", pendingPart); super.onSaveInstanceState(out) }
+    override fun onSaveInstanceState(out: Bundle) { out.putString("attemptId", attempt?.data?.optString("id")); out.putBoolean("resumeChoicePending", resumeChoicePending); out.putString("revisionId", revision?.data?.optString("id")); out.putString("pendingStep", pendingStep); out.putString("pendingPart", pendingPart); super.onSaveInstanceState(out) }
     override fun onWindowFocusChanged(hasFocus: Boolean) { super.onWindowFocusChanged(hasFocus); if (::narrator.isInitialized) { if (hasFocus) narrator.automatic() else narrator.pause() } }
     override fun onPause() { guidanceDialog?.dismiss(); guidanceDialog = null; if (::narrator.isInitialized) narrator.pause(); super.onPause() }
     override fun onDestroy() {

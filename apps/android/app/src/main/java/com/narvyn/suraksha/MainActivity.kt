@@ -204,7 +204,7 @@ class MainActivity: Activity() {
             val a=LearningAttempt.restore(r,scenario,launch.version,store.workerId)
             HomePractice(learningText(scenario,"title"),r.getString("courseId"),r.getLong("updatedAt"),a.finished,!a.finished&&r.getString("id") in resumable,
                 t("${a.index} of ${a.steps.size} steps complete","${a.steps.size} में से ${a.index} चरण पूरे"),
-                Intent(this,LearningScenarioActivity::class.java).putExtra("scenarioId",r.getString("scenarioId")))
+                Intent(this,LearningScenarioActivity::class.java).putExtra("scenarioId",r.getString("scenarioId")).putExtra("attemptId",r.getString("id")))
         }.getOrNull()}
         val bays=if(school)emptyList()else SkillPracticeStore(this,store.workerId,"first-aid-bay.db").use{it.records()}.mapNotNull{r->runCatching{
             val a=FirstAidBay.restore(r,store.workerId,launch.version)

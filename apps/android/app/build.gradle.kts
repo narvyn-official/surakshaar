@@ -7,8 +7,8 @@ android {
         applicationId = "com.narvyn.suraksha"
         minSdk = 29
         targetSdk = 36
-        versionCode = 29
-        versionName = "0.14.0-dev"
+        versionCode = 30
+        versionName = "0.14.1-dev"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
