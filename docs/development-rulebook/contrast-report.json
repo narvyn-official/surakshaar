@@ -1,0 +1,312 @@
+{
+  "scope": "Opaque sRGB starter palette pairs only; not a full interface accessibility audit.",
+  "formula": "WCAG relative luminance; full precision used before comparison",
+  "pairs": [
+    {
+      "theme": "light",
+      "purpose": "text",
+      "foreground": "#0F172A",
+      "background": "#FFFFFF",
+      "ratio": 17.8525,
+      "required": 4.5,
+      "pass": true
+    },
+    {
+      "theme": "light",
+      "purpose": "text",
+      "foreground": "#0F172A",
+      "background": "#F8FAFC",
+      "ratio": 17.0629,
+      "required": 4.5,
+      "pass": true
+    },
+    {
+      "theme": "light",
+      "purpose": "text",
+      "foreground": "#475569",
+      "background": "#FFFFFF",
+      "ratio": 7.5777,
+      "required": 4.5,
+      "pass": true
+    },
+    {
+      "theme": "light",
+      "purpose": "text",
+      "foreground": "#475569",
+      "background": "#F8FAFC",
+      "ratio": 7.2425,
+      "required": 4.5,
+      "pass": true
+    },
+    {
+      "theme": "light",
+      "purpose": "text",
+      "foreground": "#1D4ED8",
+      "background": "#FFFFFF",
+      "ratio": 6.7016,
+      "required": 4.5,
+      "pass": true
+    },
+    {
+      "theme": "light",
+      "purpose": "text",
+      "foreground": "#1D4ED8",
+      "background": "#F8FAFC",
+      "ratio": 6.4052,
+      "required": 4.5,
+      "pass": true
+    },
+    {
+      "theme": "light",
+      "purpose": "text",
+      "foreground": "#B91C1C",
+      "background": "#FFFFFF",
+      "ratio": 6.47,
+      "required": 4.5,
+      "pass": true
+    },
+    {
+      "theme": "light",
+      "purpose": "text",
+      "foreground": "#B91C1C",
+      "background": "#F8FAFC",
+      "ratio": 6.1839,
+      "required": 4.5,
+      "pass": true
+    },
+    {
+      "theme": "light",
+      "purpose": "text",
+      "foreground": "#166534",
+      "background": "#FFFFFF",
+      "ratio": 7.1303,
+      "required": 4.5,
+      "pass": true
+    },
+    {
+      "theme": "light",
+      "purpose": "text",
+      "foreground": "#166534",
+      "background": "#F8FAFC",
+      "ratio": 6.8149,
+      "required": 4.5,
+      "pass": true
+    },
+    {
+      "theme": "light",
+      "purpose": "text",
+      "foreground": "#92400E",
+      "background": "#FFFFFF",
+      "ratio": 7.09,
+      "required": 4.5,
+      "pass": true
+    },
+    {
+      "theme": "light",
+      "purpose": "text",
+      "foreground": "#92400E",
+      "background": "#F8FAFC",
+      "ratio": 6.7765,
+      "required": 4.5,
+      "pass": true
+    },
+    {
+      "theme": "light",
+      "purpose": "essential boundary or focus against neutral",
+      "foreground": "#64748B",
+      "background": "#FFFFFF",
+      "ratio": 4.7588,
+      "required": 3,
+      "pass": true
+    },
+    {
+      "theme": "light",
+      "purpose": "essential boundary or focus against neutral",
+      "foreground": "#64748B",
+      "background": "#F8FAFC",
+      "ratio": 4.5484,
+      "required": 3,
+      "pass": true
+    },
+    {
+      "theme": "light",
+      "purpose": "essential boundary or focus against neutral",
+      "foreground": "#1D4ED8",
+      "background": "#FFFFFF",
+      "ratio": 6.7016,
+      "required": 3,
+      "pass": true
+    },
+    {
+      "theme": "light",
+      "purpose": "essential boundary or focus against neutral",
+      "foreground": "#1D4ED8",
+      "background": "#F8FAFC",
+      "ratio": 6.4052,
+      "required": 3,
+      "pass": true
+    },
+    {
+      "theme": "light",
+      "purpose": "button label",
+      "foreground": "#FFFFFF",
+      "background": "#1D4ED8",
+      "ratio": 6.7016,
+      "required": 4.5,
+      "pass": true
+    },
+    {
+      "theme": "dark",
+      "purpose": "text",
+      "foreground": "#F8FAFC",
+      "background": "#0F172A",
+      "ratio": 17.0629,
+      "required": 4.5,
+      "pass": true
+    },
+    {
+      "theme": "dark",
+      "purpose": "text",
+      "foreground": "#F8FAFC",
+      "background": "#1E293B",
+      "ratio": 13.9817,
+      "required": 4.5,
+      "pass": true
+    },
+    {
+      "theme": "dark",
+      "purpose": "text",
+      "foreground": "#CBD5E1",
+      "background": "#0F172A",
+      "ratio": 12.0243,
+      "required": 4.5,
+      "pass": true
+    },
+    {
+      "theme": "dark",
+      "purpose": "text",
+      "foreground": "#CBD5E1",
+      "background": "#1E293B",
+      "ratio": 9.853,
+      "required": 4.5,
+      "pass": true
+    },
+    {
+      "theme": "dark",
+      "purpose": "text",
+      "foreground": "#93C5FD",
+      "background": "#0F172A",
+      "ratio": 9.9001,
+      "required": 4.5,
+      "pass": true
+    },
+    {
+      "theme": "dark",
+      "purpose": "text",
+      "foreground": "#93C5FD",
+      "background": "#1E293B",
+      "ratio": 8.1123,
+      "required": 4.5,
+      "pass": true
+    },
+    {
+      "theme": "dark",
+      "purpose": "text",
+      "foreground": "#FCA5A5",
+      "background": "#0F172A",
+      "ratio": 9.4061,
+      "required": 4.5,
+      "pass": true
+    },
+    {
+      "theme": "dark",
+      "purpose": "text",
+      "foreground": "#FCA5A5",
+      "background": "#1E293B",
+      "ratio": 7.7076,
+      "required": 4.5,
+      "pass": true
+    },
+    {
+      "theme": "dark",
+      "purpose": "text",
+      "foreground": "#86EFAC",
+      "background": "#0F172A",
+      "ratio": 12.7144,
+      "required": 4.5,
+      "pass": true
+    },
+    {
+      "theme": "dark",
+      "purpose": "text",
+      "foreground": "#86EFAC",
+      "background": "#1E293B",
+      "ratio": 10.4184,
+      "required": 4.5,
+      "pass": true
+    },
+    {
+      "theme": "dark",
+      "purpose": "text",
+      "foreground": "#FDE68A",
+      "background": "#0F172A",
+      "ratio": 14.3349,
+      "required": 4.5,
+      "pass": true
+    },
+    {
+      "theme": "dark",
+      "purpose": "text",
+      "foreground": "#FDE68A",
+      "background": "#1E293B",
+      "ratio": 11.7463,
+      "required": 4.5,
+      "pass": true
+    },
+    {
+      "theme": "dark",
+      "purpose": "essential boundary or focus against neutral",
+      "foreground": "#94A3B8",
+      "background": "#0F172A",
+      "ratio": 6.9627,
+      "required": 3,
+      "pass": true
+    },
+    {
+      "theme": "dark",
+      "purpose": "essential boundary or focus against neutral",
+      "foreground": "#94A3B8",
+      "background": "#1E293B",
+      "ratio": 5.7053,
+      "required": 3,
+      "pass": true
+    },
+    {
+      "theme": "dark",
+      "purpose": "essential boundary or focus against neutral",
+      "foreground": "#93C5FD",
+      "background": "#0F172A",
+      "ratio": 9.9001,
+      "required": 3,
+      "pass": true
+    },
+    {
+      "theme": "dark",
+      "purpose": "essential boundary or focus against neutral",
+      "foreground": "#93C5FD",
+      "background": "#1E293B",
+      "ratio": 8.1123,
+      "required": 3,
+      "pass": true
+    },
+    {
+      "theme": "dark",
+      "purpose": "button label",
+      "foreground": "#0F172A",
+      "background": "#93C5FD",
+      "ratio": 9.9001,
+      "required": 4.5,
+      "pass": true
+    }
+  ]
+}

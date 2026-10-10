@@ -1,4 +1,4 @@
-import {getAppUser,freshUser,isOperator} from '@/lib/auth';
+import {getAppUser,freshUser,isOperator,requireStaffMfa} from '@/lib/auth';
 import {db,json,failure,audit} from '@/lib/server';
 import {z} from 'zod';
 const command=z.discriminatedUnion('action',[
@@ -7,7 +7,7 @@ const command=z.discriminatedUnion('action',[
 ]);
 export async function GET(){try{
  const user=await getAppUser();if(!user)throw new Error('Sign in to continue.');
- const operator=isOperator(user.userId);
+ const operator=isOperator(user.userId);if(operator)await requireStaffMfa(user.userId);
  const rows=await db().prepare(`SELECT c.owner,c.name,c.site,a.status,a.requested_at,a.reviewed_at,a.reason FROM centre_approvals a JOIN training_centres c ON c.owner=a.owner ${operator?'':'WHERE c.owner=?'} ORDER BY a.requested_at DESC LIMIT 200`).bind(...(operator?[]:[user.userId])).all();
  return Response.json({operator,centres:rows.results},{headers:{'Cache-Control':'no-store'}});
 }catch(e){return failure(e)}}
@@ -23,7 +23,7 @@ export async function POST(request:Request){try{
    audit({owner:user.userId,user,role:'admin'},'centre.request',user.userId,{name:c.name,site:c.site},true)]);
   if(!submitted[0].meta.changes)throw new Error('Already submitted: refresh the application status.');
  }else{
-  if(!isOperator(user.userId))throw new Error('Forbidden: only configured platform operators can review centres.');
+  if(!isOperator(user.userId))throw new Error('Forbidden: only configured platform operators can review centres.');await requireStaffMfa(user.userId);
   if(c.owner===user.userId)throw new Error('Forbidden: you cannot approve or review your own centre.');
   const state=c.action==='approve'?'approved':c.action==='reject'?'rejected':'suspended';
   const result=await db().batch([db().prepare(`UPDATE centre_approvals SET status=?,reviewed_at=?,reviewed_by=?,reason=? WHERE owner=? AND ${c.action==='suspend'?"status='approved'":c.action==='reject'?"status='pending'":"status IN ('pending','suspended')"}`).bind(state,now,user.userId,c.reason,c.owner),audit({owner:c.owner,user,role:'admin'},'centre.'+c.action,c.owner,{reason:c.reason},true)]);

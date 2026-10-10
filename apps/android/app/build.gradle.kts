@@ -3,16 +3,37 @@ plugins { id("com.android.application") }
 android {
     namespace = "com.narvyn.suraksha"
     compileSdk = 36
+    buildFeatures { buildConfig = true }
     defaultConfig {
         applicationId = "com.narvyn.suraksha"
         minSdk = 29
         targetSdk = 36
-        versionCode = 30
-        versionName = "0.14.1-dev"
+        versionCode = 33
+        versionName = "0.16.0-rc.1"
+        val apiOrigin = System.getenv("SURAKSHA_API_ORIGIN") ?: ""
+        require(apiOrigin.isEmpty() || (apiOrigin.startsWith("https://") && apiOrigin.matches(Regex("https://[A-Za-z0-9.-]+(:[0-9]+)?")))) { "SURAKSHA_API_ORIGIN must be an HTTPS origin" }
+        buildConfigField("String", "API_ORIGIN", "\"$apiOrigin\"")
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
+    signingConfigs {
+        create("distribution") {
+            val keyPath = System.getenv("SURAKSHA_ANDROID_KEYSTORE")
+            if (keyPath != null) {
+                storeFile = file(keyPath)
+                storePassword = System.getenv("SURAKSHA_ANDROID_STORE_PASSWORD")
+                keyAlias = System.getenv("SURAKSHA_ANDROID_KEY_ALIAS") ?: "surakshaar-release"
+                keyPassword = System.getenv("SURAKSHA_ANDROID_KEY_PASSWORD")
+            }
+        }
+    }
     buildTypes {
-        release { isMinifyEnabled = false }
+        debug {
+            if (System.getenv("SURAKSHA_ANDROID_SIGN_DEBUG") == "true" && System.getenv("SURAKSHA_ANDROID_KEYSTORE") != null) signingConfig = signingConfigs.getByName("distribution")
+        }
+        release {
+            isMinifyEnabled = false
+            if (System.getenv("SURAKSHA_ANDROID_KEYSTORE") != null) signingConfig = signingConfigs.getByName("distribution")
+        }
     }
     compileOptions { sourceCompatibility = JavaVersion.VERSION_17; targetCompatibility = JavaVersion.VERSION_17 }
     // Keep emulator window transitions from obscuring injected UI test touches.

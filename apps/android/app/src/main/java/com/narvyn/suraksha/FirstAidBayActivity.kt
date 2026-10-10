@@ -40,6 +40,11 @@ class FirstAidBayActivity : Activity() {
     private lateinit var viewport: FrameLayout
     private var currentLayer: String? = null
     private var lastVisualKey=""
+    private var feedbackStep:FirstAidBay.Step?=null
+    private var demoControls:LinearLayout?=null
+    private var demoPlay:Button?=null
+    private var demoReplay:Button?=null
+    private var demoDetail:Button?=null
     private fun t(en:String,hi:String)=if(store.hi)hi else en
 
     private fun allowed() = store.isCurrentProfile() && getSharedPreferences("learning-profile", MODE_PRIVATE)
@@ -151,7 +156,7 @@ class FirstAidBayActivity : Activity() {
         body.add(label(if(attempt!=null)t("Saved at step ${attempt!!.index+1}. Continue without losing earlier decisions.","चरण ${attempt!!.index+1} पर सहेजा गया। पिछले निर्णयों के साथ जारी रखें।")else scenario.summary(store.hi),16f),bottom=16)
         body.add(practiceTool(t("Choose situation","स्थिति चुनें"),PracticeIcon.TARGET){chooseSituation()},bottom=14)
         body.add(label(t("Inspect the virtual casualty, choose an action and learn from the result.","आभासी घायल व्यक्ति को देखें, निर्णय लें और परिणाम से सीखें।"),15f,Palette.muted),bottom=14)
-        body.add(practiceTool(t("About this practice","अभ्यास के बारे में"),PracticeIcon.INFO){notice(t("Practice, not treatment","सीखने का अभ्यास"),t("Adult simulation. No real calls or physical treatment. Content and Hindi translation are source-checked drafts awaiting qualified review. Side-lying views are illustrative, not a recovery-position demonstration.","वयस्क का आभासी अभ्यास। कोई असली कॉल या उपचार नहीं। सामग्री और हिंदी अनुवाद के विशेषज्ञ अनुमोदन बाकी हैं। करवट का दृश्य केवल संकेत है, रिकवरी पोज़िशन का प्रदर्शन नहीं।"))})
+        body.add(practiceTool(t("About this practice","अभ्यास के बारे में"),PracticeIcon.INFO){notice(t("Practice, not treatment","सीखने का अभ्यास"),t("Adult simulation. No real calls or physical treatment. Content and Hindi translation are source-checked drafts awaiting qualified review. The small pose guides are schematic. Practise physical techniques with a qualified instructor.","वयस्क का आभासी अभ्यास। कोई असली कॉल या उपचार नहीं। सामग्री और हिंदी अनुवाद के विशेषज्ञ अनुमोदन बाकी हैं। छोटी मुद्रा आकृतियाँ केवल चित्रण हैं। वास्तविक तकनीक योग्य प्रशिक्षक के साथ सीखें।"))})
         root.addView(paged(body, store.hi), LinearLayout.LayoutParams(-1, 0, 1f))
         root.add(action(if (attempt == null) t("Start in AR","AR में शुरू करें") else t("Continue in AR","AR में जारी रखें")) { enter(true) }, top = 12)
         root.add(action(t("Use 3D practice","3D अभ्यास करें"), false) { enter(false) }, top = 8)
@@ -179,7 +184,7 @@ class FirstAidBayActivity : Activity() {
         }
         if (attempt == null) attempt = newAttempt()
         if (attempt!!.paused) attempt!!.resume()
-        save(); camera = ar; feedback = null; build()
+        save(); camera = ar; feedback = null; feedbackStep=null; build()
     }
 
     override fun onRequestPermissionsResult(code: Int, permissions: Array<out String>, results: IntArray) {
@@ -264,25 +269,63 @@ class FirstAidBayActivity : Activity() {
                 bay.current.actions.firstOrNull{it.spatial&&(it.id.startsWith("inspect:")||it.id=="apply-pressure")}?.let{act(it.id,if(mode=="ar-exploration")"ar"else"3d")}
             }
         }
+        next.onTeachingPicked={partId,mode->
+            val bay=attempt
+            if(bay!=null&&feedback==null&&!bay.finished&&!bay.paused){
+                val guide=FirstAidSceneGuide.forStep(bay.scenarioId,bay.current.id)
+                val action=guide?.let{FirstAidSceneGuide.actionForPart(it,partId)}
+                if(action!=null&&bay.current.actions.any{it.id==action})act(action,if(mode=="ar-exploration")"ar"else"3d")
+            }
+        }
         scene = next; viewport.removeAllViews(); viewport.addView(next, FrameLayout.LayoutParams(-1, -1))
+        val demoBar=LinearLayout(this).apply{gravity=Gravity.CENTER_VERTICAL;setPadding(dp(4),dp(4),dp(4),dp(4));background=shape(Palette.surface,12,Palette.line)}
+        demoPlay=practiceTool("",PracticeIcon.PAUSE,t("Pause visual demonstration","दृश्य प्रदर्शन रोकें")){
+            next.change{it.copy(teachingPaused=!it.teachingPaused)};syncDemoControls()
+        }.apply{tag="bay-demo-toggle"}
+        demoBar.addView(demoPlay,LinearLayout.LayoutParams(dp(48),dp(48)))
+        demoReplay=practiceTool("",PracticeIcon.RESET,t("Replay visual demonstration","दृश्य प्रदर्शन फिर देखें")){
+            next.change{it.copy(teachingPaused=false,teachingReplay=it.teachingReplay+1)};syncDemoControls()
+        }.apply{tag="bay-demo-replay"}
+        demoBar.addView(demoReplay,LinearLayout.LayoutParams(dp(48),dp(48)))
+        demoDetail=practiceTool("",PracticeIcon.TARGET,t("Inspect this step in detail","इस चरण को पास से देखें")){next.focusTeachingStep()}.apply{tag="bay-demo-detail"}
+        demoBar.addView(demoDetail,LinearLayout.LayoutParams(dp(48),dp(48)))
+        demoControls=demoBar
+        viewport.addView(demoBar,FrameLayout.LayoutParams(-2,-2,Gravity.TOP or Gravity.END).apply{setMargins(dp(6),dp(6),dp(6),dp(6))})
         if (resumed && attempt?.paused == false) next.resume()
         showLayer()
     }
 
     private fun showLayer() {
-        val bay = attempt ?: return; val data = model ?: return; if (bay.finished) return
-        val layer = data.parts.firstOrNull { it.id == bay.current.partId }?.layer ?: "skin"
+        val bay = attempt ?: return; val data = model ?: return
+        val shownStep=feedbackStep.takeIf{feedback!=null}?:bay.current
+        val layer = data.parts.firstOrNull { it.id == shownStep.partId }?.layer ?: "skin"
         if (layer != currentLayer) { scene?.layer(layer); scene?.change { it.copy(skinOverlay = layer!="skin") }; currentLayer = layer }
-        val visual=bay.currentVisual
+        val visual=shownStep.visual?:bay.currentVisual
         val powerIndex=bay.steps.indexOfFirst{it.id=="aed_power"}
-        val cueRegion=visual.bodyRegion.name.takeIf{it!="NONE"&&bay.current.actions.any{a->a.spatial&&(a.id.startsWith("inspect:")||a.id=="apply-pressure")}}
+        val cueRegion=visual.bodyRegion.name.takeIf{feedback==null&&it!="NONE"&&shownStep.actions.any{a->a.spatial&&(a.id.startsWith("inspect:")||a.id=="apply-pressure")}}
         scene?.change { it.copy(equipment = powerIndex>=0&&bay.index>=powerIndex, equipmentPowered = powerIndex>=0&&bay.index>powerIndex,
             casualtyDetail=when(bay.scenarioId){"bleeding-injury"->"bleeding";"thermal-burn-response"->"scald";"suspected-limb-injury"->"limb";else->null},
-            bodyRoll=if(visual.pose==FirstAidScenarioCatalog.Pose.RECOVERY_SIDE)90f else 0f,cueRegion=cueRegion,cueHold=bay.current.actions.any{a->a.id=="apply-pressure"}) }
-        val visualKey="${bay.current.id}:$layer:${visual.pose}"
+            bodyRoll=if(visual.pose==FirstAidScenarioCatalog.Pose.RECOVERY_SIDE)90f else 0f,cueRegion=cueRegion,cueHold=feedback==null&&shownStep.actions.any{a->a.id=="apply-pressure"},
+            teachingKey=FirstAidSceneGuide.forStep(bay.scenarioId,shownStep.id)?.key) }
+        syncDemoControls()
+        val visualKey="${shownStep.id}:$layer:${visual.pose}"
         if(!camera&&lastVisualKey!=visualKey){scene?.reset();lastVisualKey=visualKey}
         // Keep the whole body visible in AR. The ordinary 3D view can frame a small landmark.
-        if (!camera) bay.current.partId?.let { id -> data.parts.firstOrNull { it.id == id }?.let { scene?.focus(it) } }
+        if (!camera) shownStep.partId?.let { id -> data.parts.firstOrNull { it.id == id }?.let { scene?.focus(it) } }
+    }
+
+    private fun syncDemoControls(){
+        val controls=scene?.controls?:return
+        val animated=FirstAidSceneGuide.byKey(controls.teachingKey)?.animated==true
+        demoControls?.visibility=if((animated||!camera)&&attempt?.paused!=true&&dock==null&&(!camera||scene?.placed==true))View.VISIBLE else View.GONE
+        demoPlay?.visibility=if(animated)View.VISIBLE else View.GONE
+        demoReplay?.visibility=if(animated)View.VISIBLE else View.GONE
+        demoDetail?.visibility=if(camera)View.GONE else View.VISIBLE
+        demoPlay?.apply{
+            text=""
+            contentDescription=if(controls.teachingPaused)t("Play visual demonstration","दृश्य प्रदर्शन चलाएँ")else t("Pause visual demonstration","दृश्य प्रदर्शन रोकें")
+            setPracticeIcon(this,if(controls.teachingPaused)PracticeIcon.PLAY else PracticeIcon.PAUSE,true)
+        }
     }
 
     private fun renderStage() {
@@ -294,7 +337,7 @@ class FirstAidBayActivity : Activity() {
         setPracticeIcon(pause,if(bay.paused)PracticeIcon.PLAY else PracticeIcon.PAUSE)
         if (bay.paused) {
             stage.text = t("Practice paused","अभ्यास रुका है"); cue.text = t("Your progress is saved. Resume when your practice area is ready.","प्रगति सहेजी गई है। जगह तैयार होने पर जारी रखें।")
-            place.visibility = View.GONE; status.text = t("View paused","दृश्य रुका है")
+            place.visibility = View.GONE; syncDemoControls(); status.text = t("View paused","दृश्य रुका है")
             return
         }
         val result = feedback
@@ -302,13 +345,13 @@ class FirstAidBayActivity : Activity() {
             stage.text = if (result.advanced) t("Step recorded","चरण सहेजा गया") else t("Try that step again","यह चरण फिर करें")
             cue.text = result.message(store.hi)
             actions.add(action(if (bay.finished) t("Review practice","अभ्यास देखें") else if (result.advanced) t("Next step","अगला चरण") else t("Try again","फिर करें")) {
-                feedback = null; renderStage()
+                feedback = null; feedbackStep=null; renderStage()
             })
-            narrator.showLocalized(result.message,result.messageHi); return
+            showLayer();syncDemoControls();narrator.showLocalized(result.message,result.messageHi); return
         }
         val step = bay.current
         stage.text = "${bay.index + 1} / ${bay.steps.size} · ${step.title(store.hi)}"
-        cue.text = if(step.id=="pressure")t("Hold the wound marker until the ring fills. This gesture does not set a treatment duration or measure pressure.","घेरा भरने तक घाव के संकेत को दबाए रखें। इससे उपचार की अवधि तय नहीं होती और वास्तविक दबाव नहीं मापा जाता।")else if(bay.definition!=null)bay.currentVisual.label(store.hi) else if (step.instructionalPause) "Learning pause · select the ${model?.parts?.firstOrNull { it.id == step.partId }?.name ?: "named structure"}. Use Cue to inspect the authored condition." else when (step.id) {
+        cue.text = FirstAidSceneGuide.forStep(bay.scenarioId,step.id)?.caption(store.hi) ?: if(step.id=="pressure")t("Hold the wound marker until the ring fills. This gesture does not set a treatment duration or measure pressure.","घेरा भरने तक घाव के संकेत को दबाए रखें। इससे उपचार की अवधि तय नहीं होती और वास्तविक दबाव नहीं मापा जाता।")else if(bay.definition!=null)bay.currentVisual.label(store.hi) else if (step.instructionalPause) "Learning pause · select the ${model?.parts?.firstOrNull { it.id == step.partId }?.name ?: "named structure"}. Use Cue to inspect the authored condition." else when (step.id) {
             "safe_space" -> "Check your real practice area before continuing."
             "buddy" -> "The adult is unresponsive and only gasping. Give the virtual bystander a clear task."
             "begin_cpr" -> "Help is being obtained. Choose the next action in this simulation."
@@ -339,12 +382,12 @@ class FirstAidBayActivity : Activity() {
             }
         }
         showLayer(); updateAvailability()
-        val gestureEn=if(step.id=="pressure")" Hold the wound marker until the ring fills. This screen gesture does not set a treatment duration or measure pressure."else ""
-        val gestureHi=if(step.id=="pressure")" घेरा भरने तक घाव का संकेत दबाए रखें। यह स्क्रीन की क्रिया है; इससे उपचार की अवधि तय नहीं होती और वास्तविक दबाव नहीं मापा जाता।"else ""
-        narrator.showLocalized(step.title+". "+step.cue+gestureEn,if(bay.definition!=null)step.titleHi+"। "+step.cueHi+gestureHi else null)
+        val guide=FirstAidSceneGuide.forStep(bay.scenarioId,step.id)
+        narrator.showLocalized(step.title+". "+(guide?.caption?:step.cue),if(bay.definition!=null)step.titleHi+"। "+(guide?.captionHi?:step.cueHi) else null)
     }
 
     private fun updateAvailability() {
+        syncDemoControls()
         if (!::actions.isInitialized || feedback != null) return
         actions.visibility=if(dock!=null||camera&&scene?.placed!=true)View.GONE else View.VISIBLE
         for (i in 0 until actions.childCount) {
@@ -357,6 +400,7 @@ class FirstAidBayActivity : Activity() {
         if (!allowed()) { finish(); return }
         val bay = attempt ?: return
         if (feedback != null || bay.paused) return
+        feedbackStep=bay.current
         feedback = bay.act(id, mode, scene?.interactionReady() == true)
         save(); renderStage()
     }
@@ -393,7 +437,7 @@ class FirstAidBayActivity : Activity() {
         if(attempt?.paused==true)return
         actions.visibility=View.GONE;cue.visibility=View.GONE;if(shortScreen)lessonPanel.visibility=View.GONE
         dock=AnatomyViewDock(this,current,{closeView()},{rescan()},allowPlacementEdits=!camera)
-        dockHost.removeAllViews();dockHost.addView(dock);dockHost.visibility=View.VISIBLE
+        dockHost.removeAllViews();dockHost.addView(dock);dockHost.visibility=View.VISIBLE;syncDemoControls()
         current.onControls={dock?.sync()}
     }
     private fun rescan(){closeView();scene?.pause();scene?.resume();renderStage()}
@@ -449,5 +493,5 @@ class FirstAidBayActivity : Activity() {
     }
     override fun onWindowFocusChanged(hasFocus: Boolean) { super.onWindowFocusChanged(hasFocus); if (::narrator.isInitialized) { if (hasFocus) narrator.automatic() else narrator.pause() } }
     override fun onSaveInstanceState(out: Bundle) { out.putBoolean("camera",camera); out.putBoolean("resumeChoicePending",resumeChoicePending); out.putString("scenario",selectedScenario);attempt?.let { out.putString("attempt", it.data.getString("id")) }; super.onSaveInstanceState(out) }
-    override fun onDestroy() { scene?.close(); narrator.close(); records.close(); store.close(); loader.shutdownNow(); back.close(); super.onDestroy() }
+    override fun onDestroy() { scene?.close(); scene=null; model=null; if(::viewport.isInitialized)viewport.removeAllViews(); narrator.close(); records.close(); store.close(); loader.shutdownNow(); back.close(); super.onDestroy() }
 }

@@ -1,0 +1,21 @@
+[Unit]
+Description=SurakshaAR web and API
+After=network.target
+[Service]
+Type=simple
+User=surakshaar
+Group=surakshaar
+WorkingDirectory=/opt/surakshaar/web
+EnvironmentFile=/etc/surakshaar/production.env
+ExecStartPre=/usr/bin/node deployment/validate-runtime.mjs
+ExecStart=/usr/bin/node apps/admin-web/server.js
+Restart=on-failure
+RestartSec=5
+UMask=0077
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+ReadWritePaths=/var/lib/surakshaar
+[Install]
+WantedBy=multi-user.target

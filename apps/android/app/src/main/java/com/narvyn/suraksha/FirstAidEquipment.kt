@@ -16,10 +16,21 @@ internal object FirstAidEquipment {
             box("trainer-aed-handle-left", "Virtual AED handle", .52f, 1.27f, -.05f, .024f, .07f, .04f, floatArrayOf(.20f, .28f, .36f)),
             box("trainer-aed-handle-right", "Virtual AED handle", .66f, 1.27f, -.05f, .024f, .07f, .04f, floatArrayOf(.20f, .28f, .36f)),
             box("trainer-aed-handle-top", "Virtual AED handle", .59f, 1.30f, -.05f, .16f, .024f, .04f, floatArrayOf(.20f, .28f, .36f))
-        )
+        ) + buildList {
+            val seam=floatArrayOf(.35f,.43f,.47f);val foil=floatArrayOf(.86f,.89f,.88f)
+            // Packet heat-seal ridges and peel tab; no manufacturer pad-placement diagram.
+            for(i in 0..12)add(box("trainer-aed-packet-seal-$i","Pad packet sealed edge",.585f+i*.012f,.878f,-.012f,.004f,.008f,.003f,seam))
+            add(box("trainer-aed-peel-tab","Pad packet peel tab",.735f,.862f,-.010f,.024f,.026f,.004f,foil))
+            for(i in 0..3)add(box("trainer-aed-slip-line-$i","Instruction slip",.66f,.85f-i*.016f,-.013f,.105f,.002f,.002f,seam))
+            for(x in listOf(.48f,.70f))for(y in listOf(.92f,1.20f))add(disk("trainer-aed-screw-$x-$y","Casing fastener",x,y,.015f,.005f,seam))
+            for(i in 0..6)add(box("trainer-aed-speaker-$i","Speaker grille",.65f,.99f+i*.008f,.018f,.064f,.002f,.002f,seam))
+            add(box("trainer-aed-connector","Trainer connector",.69f,1.245f,-.008f,.035f,.020f,.024f,seam))
+        }
     }
     private fun part(id: String, name: String, colour: FloatArray, vertices: List<Float>): AnatomyPart {
         val data = vertices.toFloatArray()
+        // Rest the trainer case on the same source-floor plane as the supine body.
+        for(i in data.indices step 6)data[i+2]-=.035f
         val bounds = FloatArray(6)
         for (axis in 0..2) {
             bounds[axis] = (data.indices step 6).minOf { data[it + axis] }

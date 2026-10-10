@@ -21,9 +21,9 @@ internal object CasualtyGeometry {
 
 /** Non-graphic, labelled cue markers. Their colour does not diagnose a real injury. */
 internal object CasualtyMarkers {
-    val centres=mapOf("CHEST" to floatArrayOf(0f,1.30f,.17f),"HEAD" to floatArrayOf(0f,1.64f,.14f),
-        "RIGHT_FOREARM" to floatArrayOf(-.265f,1.00f,.09f),"LEFT_FOREARM" to floatArrayOf(.265f,1.00f,.09f),
-        "RIGHT_LOWER_LEG" to floatArrayOf(-.09f,.35f,.11f),"WHOLE_BODY" to floatArrayOf(0f,1.10f,.21f))
+    val centres=mapOf("CHEST" to floatArrayOf(0f,1.30f,.13f),"HEAD" to floatArrayOf(0f,1.64f,.095f),
+        "RIGHT_FOREARM" to floatArrayOf(-.265f,1.00f,.038f),"LEFT_FOREARM" to floatArrayOf(.265f,1.00f,.038f),
+        "RIGHT_LOWER_LEG" to floatArrayOf(-.09f,.35f,.038f),"WHOLE_BODY" to floatArrayOf(0f,1.10f,.21f))
     fun hit(region:String,origin:FloatArray,direction:FloatArray):Boolean {
         val centre=centres[region]?:return false
         if(abs(direction[2])<1e-6f)return false

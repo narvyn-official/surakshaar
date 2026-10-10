@@ -1,0 +1,2369 @@
+{
+  "version": "2.0",
+  "research_date": "2026-09-18",
+  "scope": "Curated public-source research; complete observed 21st directory category coverage, not exhaustive demo verification or an internet archive.",
+  "patterns": [
+    {
+      "id": "P001",
+      "category": "Announcements",
+      "group": "Marketing blocks",
+      "name": "Quiet release strip",
+      "variants": "Dismissible update; maintenance notice; inline launch badge",
+      "use": "An update affects the current audience or task.",
+      "guard": "Date the message; persist sensible dismissal; avoid blocking essential controls.",
+      "fallback": "Inline text notice with a detail link.",
+      "sources": [
+        "D12"
+      ],
+      "cost": "Low",
+      "maturity": "Original recipe; integration not tested"
+    },
+    {
+      "id": "P002",
+      "category": "ASCII Art",
+      "group": "Marketing blocks",
+      "name": "Textured technical illustration",
+      "variants": "Monospace silhouette; dithered product; terminal backdrop",
+      "use": "Developer/editorial identity benefits from a distinctive illustration.",
+      "guard": "Keep real headings in HTML; decorative glyphs must not flood screen readers.",
+      "fallback": "Static image with appropriate alternative text.",
+      "sources": [
+        "D04"
+      ],
+      "cost": "Medium",
+      "maturity": "Original recipe; integration not tested"
+    },
+    {
+      "id": "P003",
+      "category": "Backgrounds",
+      "group": "Marketing blocks",
+      "name": "Layered atmosphere",
+      "variants": "Grid; grain; contour; aurora; silhouette",
+      "use": "A public page needs depth without competing with content.",
+      "guard": "Keep text over a stable surface; bound rendering and contrast.",
+      "fallback": "Solid tone or compressed static asset.",
+      "sources": [
+        "D02"
+      ],
+      "cost": "Medium",
+      "maturity": "Original recipe; integration not tested"
+    },
+    {
+      "id": "P004",
+      "category": "Borders",
+      "group": "Marketing blocks",
+      "name": "Purposeful edge treatment",
+      "variants": "Hairline; inset frame; corner marks; tracing accent",
+      "use": "Separate related regions or emphasize one object.",
+      "guard": "Do not confuse decoration with focus or selection; keep hit areas intact.",
+      "fallback": "Stable outline with explicit state label.",
+      "sources": [
+        "D13"
+      ],
+      "cost": "Low",
+      "maturity": "Original recipe; integration not tested"
+    },
+    {
+      "id": "P005",
+      "category": "Calls to Action",
+      "group": "Marketing blocks",
+      "name": "Decision-focused action panel",
+      "variants": "Inline action; closing band; contextual next step",
+      "use": "The visitor has enough information to choose.",
+      "guard": "State consequence and commitment; avoid repetitive competing primary actions.",
+      "fallback": "Plain action link or button near explanation.",
+      "sources": [
+        "D11"
+      ],
+      "cost": "Low",
+      "maturity": "Original recipe; integration not tested"
+    },
+    {
+      "id": "P006",
+      "category": "Clients",
+      "group": "Marketing blocks",
+      "name": "Credible customer evidence",
+      "variants": "Logo row; sector groups; linked case studies",
+      "use": "Relevant real customers establish context.",
+      "guard": "Use permissioned logos and accurate relationship descriptions.",
+      "fallback": "Named text list with case-study links.",
+      "sources": [
+        "D11"
+      ],
+      "cost": "Low",
+      "maturity": "Original recipe; integration not tested"
+    },
+    {
+      "id": "P007",
+      "category": "Comparisons",
+      "group": "Marketing blocks",
+      "name": "Decision matrix",
+      "variants": "Feature table; before/after; side-by-side variants",
+      "use": "Users must understand meaningful differences.",
+      "guard": "Use comparable units and dates; avoid hiding unfavorable facts.",
+      "fallback": "Stacked labeled comparisons.",
+      "sources": [
+        "D12"
+      ],
+      "cost": "Medium",
+      "maturity": "Original recipe; integration not tested"
+    },
+    {
+      "id": "P008",
+      "category": "Docks",
+      "group": "Marketing blocks",
+      "name": "Compact tool launcher",
+      "variants": "Floating app dock; contextual action shelf",
+      "use": "A small familiar toolset needs frequent access.",
+      "guard": "Labels on keyboard/touch; no magnification required to hit targets.",
+      "fallback": "Stable toolbar or labeled navigation.",
+      "sources": [
+        "D02"
+      ],
+      "cost": "Medium",
+      "maturity": "Original recipe; integration not tested"
+    },
+    {
+      "id": "P009",
+      "category": "FAQs",
+      "group": "Marketing blocks",
+      "name": "Objection-oriented answers",
+      "variants": "Grouped questions; search; linked answer sections",
+      "use": "Common questions need concise discoverable explanations.",
+      "guard": "Keep essential commitments outside collapsed content.",
+      "fallback": "Expanded headings and answers.",
+      "sources": [
+        "D11"
+      ],
+      "cost": "Low",
+      "maturity": "Original recipe; integration not tested"
+    },
+    {
+      "id": "P010",
+      "category": "Features",
+      "group": "Marketing blocks",
+      "name": "Capability storytelling",
+      "variants": "Alternating media/text; modular proof; interactive demo",
+      "use": "Explain how a capability changes a real workflow.",
+      "guard": "Pair claims with truthful examples; do not depend on hover-only content.",
+      "fallback": "Sequential text and screenshot blocks.",
+      "sources": [
+        "D12"
+      ],
+      "cost": "Low",
+      "maturity": "Original recipe; integration not tested"
+    },
+    {
+      "id": "P011",
+      "category": "Footers",
+      "group": "Marketing blocks",
+      "name": "Useful destination index",
+      "variants": "Grouped sitemap; support; compact utility bar",
+      "use": "Users seek contact, policies, secondary routes, or reassurance.",
+      "guard": "Keep labels meaningful and current; avoid a link graveyard.",
+      "fallback": "Simple grouped link lists.",
+      "sources": [
+        "D11"
+      ],
+      "cost": "Low",
+      "maturity": "Original recipe; integration not tested"
+    },
+    {
+      "id": "P012",
+      "category": "Galleries",
+      "group": "Marketing blocks",
+      "name": "Contextual work explorer",
+      "variants": "Editorial grid; filmstrip; masonry; lightbox",
+      "use": "Visual work benefits from browsing and closer inspection.",
+      "guard": "Preserve reading order, captions, keyboard navigation, and return position.",
+      "fallback": "Regular image list with detail links.",
+      "sources": [
+        "D14"
+      ],
+      "cost": "Medium",
+      "maturity": "Original recipe; integration not tested"
+    },
+    {
+      "id": "P013",
+      "category": "Gradients",
+      "group": "Marketing blocks",
+      "name": "Controlled color field",
+      "variants": "Radial spotlight; mesh; duotone; edge glow",
+      "use": "Brand atmosphere or a subtle hierarchy cue is useful.",
+      "guard": "Test worst-case contrast; don't encode meaning only in a gradient.",
+      "fallback": "Flat semantic surface.",
+      "sources": [
+        "D05"
+      ],
+      "cost": "Medium",
+      "maturity": "Original recipe; integration not tested"
+    },
+    {
+      "id": "P014",
+      "category": "Heroes",
+      "group": "Marketing blocks",
+      "name": "Specific opening statement",
+      "variants": "Editorial type; split product; evidence-first; guided demo",
+      "use": "The first screen must establish value and next action.",
+      "guard": "Keep explanation and action available before optional effects load.",
+      "fallback": "Text plus optimized product image.",
+      "sources": [
+        "D11"
+      ],
+      "cost": "Medium",
+      "maturity": "Original recipe; integration not tested"
+    },
+    {
+      "id": "P015",
+      "category": "Hooks",
+      "group": "Marketing blocks",
+      "name": "Reusable interaction behavior",
+      "variants": "Outside-click; resize; reduced-motion; visibility helper",
+      "use": "Several components share real behavior.",
+      "guard": "Audit cleanup, stale closures, SSR assumptions, and event subscriptions.",
+      "fallback": "Native event behavior with minimal script.",
+      "sources": [
+        "D06"
+      ],
+      "cost": "Medium",
+      "maturity": "Original recipe; integration not tested"
+    },
+    {
+      "id": "P016",
+      "category": "Images",
+      "group": "Marketing blocks",
+      "name": "Art-directed media",
+      "variants": "Context crop; framed screenshot; annotated image; zoom",
+      "use": "An image explains content or reinforces identity.",
+      "guard": "Provide useful alt text when informative; reserve dimensions; honor rights.",
+      "fallback": "Responsive static image with caption.",
+      "sources": [
+        "D14"
+      ],
+      "cost": "Low",
+      "maturity": "Original recipe; integration not tested"
+    },
+    {
+      "id": "P017",
+      "category": "Maps",
+      "group": "Marketing blocks",
+      "name": "Location-aware explorer",
+      "variants": "Result pins; selected route; region summary",
+      "use": "Geography changes a user's decision.",
+      "guard": "Provide a synchronized list, address search, clear precision, and permission boundaries.",
+      "fallback": "Address/result list with links.",
+      "sources": [
+        "D12"
+      ],
+      "cost": "High",
+      "maturity": "Original recipe; integration not tested"
+    },
+    {
+      "id": "P018",
+      "category": "Marquees",
+      "group": "Marketing blocks",
+      "name": "Optional moving texture",
+      "variants": "Logo ribbon; phrase band; image rail",
+      "use": "Nonessential repetition supports a brand moment.",
+      "guard": "Don't hide unique information in motion; offer pause when applicable.",
+      "fallback": "Static wrapped list.",
+      "sources": [
+        "D03"
+      ],
+      "cost": "Medium",
+      "maturity": "Original recipe; integration not tested"
+    },
+    {
+      "id": "P019",
+      "category": "Navigation Menus",
+      "group": "Marketing blocks",
+      "name": "Predictable destination system",
+      "variants": "Simple header; grouped mega-menu; mobile drawer",
+      "use": "Visitors need to understand where they can go.",
+      "guard": "Keep destination links as links; distinguish disclosure controls; preserve keyboard paths.",
+      "fallback": "Visible grouped navigation list.",
+      "sources": [
+        "D06"
+      ],
+      "cost": "Medium",
+      "maturity": "Original recipe; integration not tested"
+    },
+    {
+      "id": "P020",
+      "category": "Pricing Sections",
+      "group": "Marketing blocks",
+      "name": "Honest plan chooser",
+      "variants": "Tier cards; usage estimate; comparison; billing selector",
+      "use": "Users compare entitlement and total commitment.",
+      "guard": "Show currency, period, taxes/fees as applicable, limits, and renewal behavior.",
+      "fallback": "Readable plan list and comparison table.",
+      "sources": [
+        "D12"
+      ],
+      "cost": "Medium",
+      "maturity": "Original recipe; integration not tested"
+    },
+    {
+      "id": "P021",
+      "category": "Scroll Areas",
+      "group": "Marketing blocks",
+      "name": "Local overflow with orientation",
+      "variants": "Code viewport; activity log; bounded list",
+      "use": "A bounded region genuinely improves context.",
+      "guard": "Avoid nested-scroll traps; show affordance and permit keyboard scrolling.",
+      "fallback": "Natural document flow.",
+      "sources": [
+        "D06"
+      ],
+      "cost": "Medium",
+      "maturity": "Original recipe; integration not tested"
+    },
+    {
+      "id": "P022",
+      "category": "Shaders",
+      "group": "Marketing blocks",
+      "name": "Bounded procedural art",
+      "variants": "Fluid color; halftone; reflective material; light field",
+      "use": "An optional visual moment warrants rendering cost.",
+      "guard": "Measure GPU use; handle context loss; keep content in DOM.",
+      "fallback": "Poster image or CSS approximation.",
+      "sources": [
+        "D05"
+      ],
+      "cost": "High",
+      "maturity": "Original recipe; integration not tested"
+    },
+    {
+      "id": "P023",
+      "category": "Stats & KPIs",
+      "group": "Marketing blocks",
+      "name": "Contextual outcome metrics",
+      "variants": "Metric strip; trend card; target comparison",
+      "use": "A number can inform a decision with context.",
+      "guard": "Supply denominator, period, source, and meaning; label demo data.",
+      "fallback": "Static values with explanation.",
+      "sources": [
+        "D12"
+      ],
+      "cost": "Low",
+      "maturity": "Original recipe; integration not tested"
+    },
+    {
+      "id": "P024",
+      "category": "Steppers",
+      "group": "Marketing blocks",
+      "name": "Resumable task progression",
+      "variants": "Labeled stages; check answers; edit previous step",
+      "use": "A lengthy task has meaningful stages.",
+      "guard": "Preserve drafts and errors; distinguish current, complete, and skipped.",
+      "fallback": "Numbered sections and Back/Continue buttons.",
+      "sources": [
+        "D06"
+      ],
+      "cost": "Medium",
+      "maturity": "Original recipe; integration not tested"
+    },
+    {
+      "id": "P025",
+      "category": "Team Sections",
+      "group": "Marketing blocks",
+      "name": "Real people and roles",
+      "variants": "Portrait grid; expertise list; story cards",
+      "use": "People's qualifications or responsibilities matter.",
+      "guard": "Use truthful names, roles, and permissioned images.",
+      "fallback": "Text biographies and contact paths.",
+      "sources": [
+        "D11"
+      ],
+      "cost": "Low",
+      "maturity": "Original recipe; integration not tested"
+    },
+    {
+      "id": "P026",
+      "category": "Testimonials",
+      "group": "Marketing blocks",
+      "name": "Verifiable customer story",
+      "variants": "Quote with context; case-study card; video evidence",
+      "use": "A relevant experience supports an honest claim.",
+      "guard": "Get permission; state attribution; no fabricated reviews or misleading selection.",
+      "fallback": "Static quote with source/context.",
+      "sources": [
+        "D11"
+      ],
+      "cost": "Low",
+      "maturity": "Original recipe; integration not tested"
+    },
+    {
+      "id": "P027",
+      "category": "Texts",
+      "group": "Marketing blocks",
+      "name": "Expressive type treatment",
+      "variants": "Editorial scale; highlight; reveal; typographic interlude",
+      "use": "A brief headline or brand moment benefits.",
+      "guard": "Render complete accessible text; avoid delaying comprehension or duplicating spoken text.",
+      "fallback": "Plain visible text.",
+      "sources": [
+        "D04"
+      ],
+      "cost": "Medium",
+      "maturity": "Original recipe; integration not tested"
+    },
+    {
+      "id": "P028",
+      "category": "Timelines",
+      "group": "Marketing blocks",
+      "name": "Meaningful sequence",
+      "variants": "Audit history; project phases; story milestones",
+      "use": "Order and change over time explain the subject.",
+      "guard": "Label dates/time zones and pending states; avoid implying false causality.",
+      "fallback": "Chronological list.",
+      "sources": [
+        "D12"
+      ],
+      "cost": "Medium",
+      "maturity": "Original recipe; integration not tested"
+    },
+    {
+      "id": "P029",
+      "category": "Videos",
+      "group": "Marketing blocks",
+      "name": "User-controlled demonstration",
+      "variants": "Product walkthrough; case study; ambient clip",
+      "use": "Motion explains something a still cannot.",
+      "guard": "Captions/transcript when needed; controls; poster; no unexpected sound.",
+      "fallback": "Poster plus text explanation.",
+      "sources": [
+        "D14"
+      ],
+      "cost": "High",
+      "maturity": "Original recipe; integration not tested"
+    },
+    {
+      "id": "P030",
+      "category": "Accordions",
+      "group": "UI components",
+      "name": "Progressive detail",
+      "variants": "Single section; independent sections; grouped detail",
+      "use": "Users need optional detail without losing overview.",
+      "guard": "Give headings and controls clear names; don't conceal required decisions.",
+      "fallback": "Expanded sections.",
+      "sources": [
+        "D22"
+      ],
+      "cost": "Low",
+      "maturity": "Original recipe; integration not tested"
+    },
+    {
+      "id": "P031",
+      "category": "AI Chats",
+      "group": "UI components",
+      "name": "Controllable assistant workspace",
+      "variants": "Streaming response; sources; attachment tray; approval card",
+      "use": "A conversation is useful for the actual task.",
+      "guard": "Show stop/retry/error, distinguish drafts from actions, and enforce backend permissions.",
+      "fallback": "Form-based task submission and durable result.",
+      "sources": [
+        "D06"
+      ],
+      "cost": "High",
+      "maturity": "Original recipe; integration not tested"
+    },
+    {
+      "id": "P032",
+      "category": "Alerts",
+      "group": "UI components",
+      "name": "Scoped important feedback",
+      "variants": "Inline error; page status; consequence warning",
+      "use": "A relevant condition needs attention.",
+      "guard": "Match urgency to severity; offer resolution without repeated interruption.",
+      "fallback": "Persistent text near the affected task.",
+      "sources": [
+        "D06"
+      ],
+      "cost": "Low",
+      "maturity": "Original recipe; integration not tested"
+    },
+    {
+      "id": "P033",
+      "category": "Avatars",
+      "group": "UI components",
+      "name": "Recognizable identity",
+      "variants": "Initials; portrait; small group; presence marker",
+      "use": "Identity matters to collaboration or ownership.",
+      "guard": "Handle missing images and identical initials; label presence explicitly.",
+      "fallback": "Name and role text.",
+      "sources": [
+        "D06"
+      ],
+      "cost": "Low",
+      "maturity": "Original recipe; integration not tested"
+    },
+    {
+      "id": "P034",
+      "category": "Badges",
+      "group": "UI components",
+      "name": "Concise state label",
+      "variants": "Status pill; count; qualification",
+      "use": "A short label adds scannable context.",
+      "guard": "Don't rely on color; define ambiguous counts and states.",
+      "fallback": "Plain text label.",
+      "sources": [
+        "D06"
+      ],
+      "cost": "Low",
+      "maturity": "Original recipe; integration not tested"
+    },
+    {
+      "id": "P035",
+      "category": "Buttons",
+      "group": "UI components",
+      "name": "Clear action with feedback",
+      "variants": "Solid primary; quiet secondary; icon+label; stateful",
+      "use": "An operation changes something.",
+      "guard": "Keep labels and target stable; support pending/error; avoid nested interactive elements.",
+      "fallback": "Native button with visible state.",
+      "sources": [
+        "D13"
+      ],
+      "cost": "Low",
+      "maturity": "Original recipe; integration not tested"
+    },
+    {
+      "id": "P036",
+      "category": "Calendars",
+      "group": "UI components",
+      "name": "Temporal overview",
+      "variants": "Month grid; agenda; resource schedule",
+      "use": "Users compare events or availability in time.",
+      "guard": "Account for locale/time zone, keyboard operation, dense days, and conflicts.",
+      "fallback": "Agenda list.",
+      "sources": [
+        "D08"
+      ],
+      "cost": "High",
+      "maturity": "Original recipe; integration not tested"
+    },
+    {
+      "id": "P037",
+      "category": "Cards",
+      "group": "UI components",
+      "name": "Object summary with hierarchy",
+      "variants": "Editorial card; actionable record; media tile; expandable summary",
+      "use": "An object merits a short preview before detail.",
+      "guard": "Make primary destination clear; preserve semantics for nested actions.",
+      "fallback": "Heading, summary, and explicit link.",
+      "sources": [
+        "D06"
+      ],
+      "cost": "Low",
+      "maturity": "Original recipe; integration not tested"
+    },
+    {
+      "id": "P038",
+      "category": "Carousels",
+      "group": "UI components",
+      "name": "Optional sequential browsing",
+      "variants": "Manual slides; filmstrip; snap rail",
+      "use": "Space is limited and users benefit from sequence.",
+      "guard": "Expose controls and position; avoid trapping focus or auto-rotating essential content.",
+      "fallback": "Static list/grid.",
+      "sources": [
+        "D22"
+      ],
+      "cost": "Medium",
+      "maturity": "Original recipe; integration not tested"
+    },
+    {
+      "id": "P039",
+      "category": "Charts & Data Viz",
+      "group": "UI components",
+      "name": "Decision-oriented visualization",
+      "variants": "Trend; distribution; comparison; small multiples",
+      "use": "A relationship is easier to see graphically.",
+      "guard": "Label units, uncertainty, missingness, source and range; supply accessible data.",
+      "fallback": "Summary and data table.",
+      "sources": [
+        "D08"
+      ],
+      "cost": "High",
+      "maturity": "Original recipe; integration not tested"
+    },
+    {
+      "id": "P040",
+      "category": "Checkboxes",
+      "group": "UI components",
+      "name": "Independent selection",
+      "variants": "Single consent; multi-select; indeterminate parent",
+      "use": "Zero or more independent choices apply.",
+      "guard": "Separate required consent from optional; handle mixed selection accurately.",
+      "fallback": "Labeled native checkbox.",
+      "sources": [
+        "D08"
+      ],
+      "cost": "Low",
+      "maturity": "Original recipe; integration not tested"
+    },
+    {
+      "id": "P041",
+      "category": "Cursors",
+      "group": "UI components",
+      "name": "Optional pointer ornament",
+      "variants": "Soft follower; contextual label; image preview",
+      "use": "An expressive desktop scene gains context.",
+      "guard": "Keep system cursor and stable targets; no essential information follows pointer alone.",
+      "fallback": "Normal pointer and visible labels.",
+      "sources": [
+        "D04"
+      ],
+      "cost": "High",
+      "maturity": "Original recipe; integration not tested"
+    },
+    {
+      "id": "P042",
+      "category": "Dashboards",
+      "group": "UI components",
+      "name": "Prioritized work overview",
+      "variants": "Exception queue; trends; role home; drill-down",
+      "use": "Users need an overview to decide their next task.",
+      "guard": "Prioritize action over ornamental metrics; include freshness and scope.",
+      "fallback": "Ordered work list and concise summaries.",
+      "sources": [
+        "D12"
+      ],
+      "cost": "High",
+      "maturity": "Original recipe; integration not tested"
+    },
+    {
+      "id": "P043",
+      "category": "Date Pickers",
+      "group": "UI components",
+      "name": "Flexible date entry",
+      "variants": "Typed date; calendar popover; range; presets",
+      "use": "People need to choose dates confidently.",
+      "guard": "Accept keyboard entry; specify locale and time zone; explain disabled dates.",
+      "fallback": "Validated text fields with format help.",
+      "sources": [
+        "D08"
+      ],
+      "cost": "High",
+      "maturity": "Original recipe; integration not tested"
+    },
+    {
+      "id": "P044",
+      "category": "Dialogs / Modals",
+      "group": "UI components",
+      "name": "Focused bounded decision",
+      "variants": "Confirmation; small editor; critical acknowledgement",
+      "use": "A short task requires blocking the background.",
+      "guard": "Define focus, dismissal, dirty state, and return target; avoid nested modals.",
+      "fallback": "Dedicated page or inline section.",
+      "sources": [
+        "D22"
+      ],
+      "cost": "Medium",
+      "maturity": "Original recipe; integration not tested"
+    },
+    {
+      "id": "P045",
+      "category": "Dropdowns",
+      "group": "UI components",
+      "name": "Compact disclosure",
+      "variants": "Action menu; navigation disclosure; choice list",
+      "use": "Hidden options are secondary and discoverable.",
+      "guard": "Choose correct semantics: actions, destinations, and value selection differ.",
+      "fallback": "Visible choices or native select.",
+      "sources": [
+        "D07"
+      ],
+      "cost": "Medium",
+      "maturity": "Original recipe; integration not tested"
+    },
+    {
+      "id": "P046",
+      "category": "Empty States",
+      "group": "UI components",
+      "name": "Useful next step",
+      "variants": "First use; no matches; cleared queue; permission denial",
+      "use": "The absence of content has a clear cause.",
+      "guard": "Explain the specific cause and offer relevant action; do not call an error empty.",
+      "fallback": "Concise message and action.",
+      "sources": [
+        "D10"
+      ],
+      "cost": "Low",
+      "maturity": "Original recipe; integration not tested"
+    },
+    {
+      "id": "P047",
+      "category": "File Trees",
+      "group": "UI components",
+      "name": "Hierarchical resource explorer",
+      "variants": "Nested folders; lazy branches; path breadcrumbs",
+      "use": "Real hierarchy is useful for navigation.",
+      "guard": "Keep keyboard and selection behavior consistent; handle deep paths.",
+      "fallback": "Searchable flat list with path.",
+      "sources": [
+        "D08"
+      ],
+      "cost": "High",
+      "maturity": "Original recipe; integration not tested"
+    },
+    {
+      "id": "P048",
+      "category": "File Uploads",
+      "group": "UI components",
+      "name": "Recoverable transfer",
+      "variants": "Drop zone; browse; queue; preview; resume",
+      "use": "Users provide files or media.",
+      "guard": "Always include file picker; validate on server; show individual failure and cancellation.",
+      "fallback": "Native file input with status list.",
+      "sources": [
+        "D10"
+      ],
+      "cost": "High",
+      "maturity": "Original recipe; integration not tested"
+    },
+    {
+      "id": "P049",
+      "category": "Forms",
+      "group": "UI components",
+      "name": "Task-shaped data collection",
+      "variants": "Single column; grouped fields; staged flow",
+      "use": "Collect only the data needed for the outcome.",
+      "guard": "Persistent labels, useful errors, preserved values, and review for consequences.",
+      "fallback": "Semantic native form.",
+      "sources": [
+        "D08"
+      ],
+      "cost": "Medium",
+      "maturity": "Original recipe; integration not tested"
+    },
+    {
+      "id": "P050",
+      "category": "Globes",
+      "group": "UI components",
+      "name": "Optional global story",
+      "variants": "Coverage globe; connected regions; orbital markers",
+      "use": "A global narrative benefits from spatial context.",
+      "guard": "Don't use a decorative globe as sole evidence of coverage; provide region list.",
+      "fallback": "Map/image plus text regions.",
+      "sources": [
+        "D03"
+      ],
+      "cost": "High",
+      "maturity": "Original recipe; integration not tested"
+    },
+    {
+      "id": "P051",
+      "category": "Grids & Bento",
+      "group": "UI components",
+      "name": "Hierarchical content modules",
+      "variants": "Asymmetric feature tiles; summary grid; editorial mosaic",
+      "use": "Related content differs in importance and shape.",
+      "guard": "DOM order must match meaning; don't squeeze long content to preserve a shape.",
+      "fallback": "Single-column semantic sections.",
+      "sources": [
+        "D12"
+      ],
+      "cost": "Medium",
+      "maturity": "Original recipe; integration not tested"
+    },
+    {
+      "id": "P052",
+      "category": "Icons",
+      "group": "UI components",
+      "name": "Consistent visual shorthand",
+      "variants": "Outline; filled; duotone; state pair",
+      "use": "A familiar symbol improves scanning.",
+      "guard": "Label ambiguous/interactive icons; normalize stroke and optical size; preserve rights.",
+      "fallback": "Text labels.",
+      "sources": [
+        "D18"
+      ],
+      "cost": "Low",
+      "maturity": "Original recipe; integration not tested"
+    },
+    {
+      "id": "P053",
+      "category": "Inputs",
+      "group": "UI components",
+      "name": "Clear editable values",
+      "variants": "Text; search; number; segmented verification",
+      "use": "Users must enter and correct data.",
+      "guard": "Choose appropriate input type and autocomplete; allow paste; don't mask unexpectedly.",
+      "fallback": "Labeled native input.",
+      "sources": [
+        "D10"
+      ],
+      "cost": "Low",
+      "maturity": "Original recipe; integration not tested"
+    },
+    {
+      "id": "P054",
+      "category": "Links",
+      "group": "UI components",
+      "name": "Predictable destinations",
+      "variants": "Inline; card destination; external resource",
+      "use": "An action navigates to another resource.",
+      "guard": "Use meaningful text and valid URLs; distinguish downloads and consequential destinations.",
+      "fallback": "Underlined text link.",
+      "sources": [
+        "D06"
+      ],
+      "cost": "Low",
+      "maturity": "Original recipe; integration not tested"
+    },
+    {
+      "id": "P055",
+      "category": "Lists",
+      "group": "UI components",
+      "name": "Scannable collections",
+      "variants": "Dense rows; media list; grouped activity",
+      "use": "People compare or scan repeated objects.",
+      "guard": "Stable identity, clear sorting, useful truncation, and scoped item actions.",
+      "fallback": "Semantic list with detail links.",
+      "sources": [
+        "D10"
+      ],
+      "cost": "Low",
+      "maturity": "Original recipe; integration not tested"
+    },
+    {
+      "id": "P056",
+      "category": "Menus",
+      "group": "UI components",
+      "name": "Discoverable commands",
+      "variants": "Menu button; context menu; overflow actions",
+      "use": "Secondary commands should remain reachable.",
+      "guard": "Context menu cannot be the only route; avoid hiding frequent tasks.",
+      "fallback": "Labeled toolbar/actions.",
+      "sources": [
+        "D22"
+      ],
+      "cost": "Medium",
+      "maturity": "Original recipe; integration not tested"
+    },
+    {
+      "id": "P057",
+      "category": "Notifications",
+      "group": "UI components",
+      "name": "Durable event inbox",
+      "variants": "Grouped feed; unread filter; channel preferences",
+      "use": "Events matter after a transient message disappears.",
+      "guard": "Deduplicate, deep-link to authorized context, and distinguish unread from unresolved.",
+      "fallback": "Activity list with timestamps.",
+      "sources": [
+        "D12"
+      ],
+      "cost": "High",
+      "maturity": "Original recipe; integration not tested"
+    },
+    {
+      "id": "P058",
+      "category": "Numbers",
+      "group": "UI components",
+      "name": "Legible changing values",
+      "variants": "Tabular values; gentle transition; unit suffix",
+      "use": "Metrics update and comparison matters.",
+      "guard": "Render real final value immediately for assistive tech; don't animate critical balances misleadingly.",
+      "fallback": "Static number and timestamp.",
+      "sources": [
+        "D03"
+      ],
+      "cost": "Medium",
+      "maturity": "Original recipe; integration not tested"
+    },
+    {
+      "id": "P059",
+      "category": "Onboarding",
+      "group": "UI components",
+      "name": "First useful outcome",
+      "variants": "Checklist; contextual hint; sample workspace",
+      "use": "New users need help reaching value.",
+      "guard": "Skip optional steps; return later; avoid compulsory tours and fake completion.",
+      "fallback": "Clear first-task instructions.",
+      "sources": [
+        "D15"
+      ],
+      "cost": "Medium",
+      "maturity": "Original recipe; integration not tested"
+    },
+    {
+      "id": "P060",
+      "category": "Paginations",
+      "group": "UI components",
+      "name": "Navigable result sets",
+      "variants": "Page links; load more; cursor navigation",
+      "use": "Result size exceeds a useful view.",
+      "guard": "Preserve filter/history state; show position and handle removed records.",
+      "fallback": "Next/previous links with context.",
+      "sources": [
+        "D06"
+      ],
+      "cost": "Medium",
+      "maturity": "Original recipe; integration not tested"
+    },
+    {
+      "id": "P061",
+      "category": "Popovers",
+      "group": "UI components",
+      "name": "Anchored supplemental work",
+      "variants": "Filter editor; small help panel; quick preview",
+      "use": "A bounded task benefits from staying beside its origin.",
+      "guard": "Handle collision, focus, outside click, and keyboard; use dialog semantics if modal.",
+      "fallback": "Inline panel.",
+      "sources": [
+        "D09"
+      ],
+      "cost": "Medium",
+      "maturity": "Original recipe; integration not tested"
+    },
+    {
+      "id": "P062",
+      "category": "Profiles",
+      "group": "UI components",
+      "name": "Identity and account context",
+      "variants": "Public bio; workspace role; editable account",
+      "use": "Identity or preferences affect the task.",
+      "guard": "Separate public/private information; clearly scope account versus workspace edits.",
+      "fallback": "Labeled account page.",
+      "sources": [
+        "D12"
+      ],
+      "cost": "Medium",
+      "maturity": "Original recipe; integration not tested"
+    },
+    {
+      "id": "P063",
+      "category": "Progress",
+      "group": "UI components",
+      "name": "Truthful task status",
+      "variants": "Measured bar; stage list; background-job tracker",
+      "use": "Work takes long enough to need status.",
+      "guard": "Distinguish measured and indeterminate progress; expose failure and cancellation.",
+      "fallback": "Text stage and durable job link.",
+      "sources": [
+        "D06"
+      ],
+      "cost": "Medium",
+      "maturity": "Original recipe; integration not tested"
+    },
+    {
+      "id": "P064",
+      "category": "Radio Groups",
+      "group": "UI components",
+      "name": "Mutually exclusive choice",
+      "variants": "Inline options; choice cards; segmented choice",
+      "use": "Exactly one option in a known set applies.",
+      "guard": "Use real selection semantics and labels; no hidden preselected paid commitments.",
+      "fallback": "Native radio group.",
+      "sources": [
+        "D08"
+      ],
+      "cost": "Low",
+      "maturity": "Original recipe; integration not tested"
+    },
+    {
+      "id": "P065",
+      "category": "Search Bars",
+      "group": "UI components",
+      "name": "Find with context",
+      "variants": "Suggestions; scoped search; recent queries; command entry",
+      "use": "Users know something about the destination.",
+      "guard": "Label scope; support empty/no-result/error states; don't leak recent sensitive queries.",
+      "fallback": "Submit-based search form.",
+      "sources": [
+        "D08"
+      ],
+      "cost": "High",
+      "maturity": "Original recipe; integration not tested"
+    },
+    {
+      "id": "P066",
+      "category": "Selects",
+      "group": "UI components",
+      "name": "Compact value choice",
+      "variants": "Native select; searchable combobox; grouped options",
+      "use": "A known set supplies a value.",
+      "guard": "Prefer simpler control when adequate; test long options, typing, and mobile.",
+      "fallback": "Native select or radio group.",
+      "sources": [
+        "D09"
+      ],
+      "cost": "Medium",
+      "maturity": "Original recipe; integration not tested"
+    },
+    {
+      "id": "P067",
+      "category": "Sidebars",
+      "group": "UI components",
+      "name": "Stable workspace orientation",
+      "variants": "Expanded navigation; compact rail; contextual inspector",
+      "use": "Repeated work benefits from consistent context.",
+      "guard": "Current route and collapse state stay clear; small screens need reachable alternatives.",
+      "fallback": "Labeled mobile navigation/drawer.",
+      "sources": [
+        "D10"
+      ],
+      "cost": "Medium",
+      "maturity": "Original recipe; integration not tested"
+    },
+    {
+      "id": "P068",
+      "category": "Sign Ins",
+      "group": "UI components",
+      "name": "Trustworthy account entry",
+      "variants": "Password/passkey; SSO; account chooser",
+      "use": "Returning users need access with recovery.",
+      "guard": "Reveal/hide, autofill/paste, recovery, useful safe errors; avoid decorative friction.",
+      "fallback": "Straightforward labeled login form.",
+      "sources": [
+        "D12"
+      ],
+      "cost": "High",
+      "maturity": "Original recipe; integration not tested"
+    },
+    {
+      "id": "P069",
+      "category": "Sign ups",
+      "group": "UI components",
+      "name": "Minimal account creation",
+      "variants": "Invitation; progressive profile; SSO",
+      "use": "An account is justified by the next task.",
+      "guard": "Explain benefits and required data; verify identity appropriately; preserve progress.",
+      "fallback": "Short form with explicit terms and next step.",
+      "sources": [
+        "D12"
+      ],
+      "cost": "High",
+      "maturity": "Original recipe; integration not tested"
+    },
+    {
+      "id": "P070",
+      "category": "Sliders",
+      "group": "UI components",
+      "name": "Approximate range adjustment",
+      "variants": "Single value; range; comparison scrubber",
+      "use": "Continuous or approximate selection is natural.",
+      "guard": "Provide keyboard and precise numeric alternative where precision matters.",
+      "fallback": "Number input or presets.",
+      "sources": [
+        "D08"
+      ],
+      "cost": "Medium",
+      "maturity": "Original recipe; integration not tested"
+    },
+    {
+      "id": "P071",
+      "category": "Spinner Loaders",
+      "group": "UI components",
+      "name": "Bounded waiting cue",
+      "variants": "Inline spinner; skeleton; stage status",
+      "use": "A short unknown duration needs feedback.",
+      "guard": "Don't imply determinate progress; expose slow/failure state rather than spinning forever.",
+      "fallback": "Text status with retry when available.",
+      "sources": [
+        "D06"
+      ],
+      "cost": "Low",
+      "maturity": "Original recipe; integration not tested"
+    },
+    {
+      "id": "P072",
+      "category": "Tables",
+      "group": "UI components",
+      "name": "Reliable structured comparison",
+      "variants": "Sortable table; sticky key column; selectable rows",
+      "use": "Rows share attributes users compare.",
+      "guard": "Keep headers and meaning; selection/bulk actions respect permissions; scope sticky overflow.",
+      "fallback": "Accessible table or labeled record list.",
+      "sources": [
+        "D12"
+      ],
+      "cost": "High",
+      "maturity": "Original recipe; integration not tested"
+    },
+    {
+      "id": "P073",
+      "category": "Tabs",
+      "group": "UI components",
+      "name": "Related views in one context",
+      "variants": "Content panels; view switcher; vertical categories",
+      "use": "Users switch between peer content panels.",
+      "guard": "Distinguish route links from tabs; implement keyboard state; preserve meaningful selection.",
+      "fallback": "Headed sections or ordinary navigation.",
+      "sources": [
+        "D22"
+      ],
+      "cost": "Medium",
+      "maturity": "Original recipe; integration not tested"
+    },
+    {
+      "id": "P074",
+      "category": "Tags",
+      "group": "UI components",
+      "name": "Manageable descriptors",
+      "variants": "Filter chips; removable labels; taxonomy",
+      "use": "Descriptors help organize or narrow content.",
+      "guard": "Name remove actions; retain visible active-filter context and reset.",
+      "fallback": "Text labels with separate controls.",
+      "sources": [
+        "D10"
+      ],
+      "cost": "Low",
+      "maturity": "Original recipe; integration not tested"
+    },
+    {
+      "id": "P075",
+      "category": "Text Areas",
+      "group": "UI components",
+      "name": "Comfortable longer entry",
+      "variants": "Auto-grow; preview; counter; draft",
+      "use": "People compose meaningful text.",
+      "guard": "Don't resize disruptively; preserve drafts and errors; explain limits before loss.",
+      "fallback": "Labeled native textarea.",
+      "sources": [
+        "D10"
+      ],
+      "cost": "Low",
+      "maturity": "Original recipe; integration not tested"
+    },
+    {
+      "id": "P076",
+      "category": "Toasts",
+      "group": "UI components",
+      "name": "Brief acknowledgement",
+      "variants": "Saved; copied; reversible dismissal",
+      "use": "Noncritical feedback can be transient.",
+      "guard": "Never sole record of critical failure; don't steal focus; give undo enough time or durable access.",
+      "fallback": "Inline status beside the action.",
+      "sources": [
+        "D06"
+      ],
+      "cost": "Medium",
+      "maturity": "Original recipe; integration not tested"
+    },
+    {
+      "id": "P077",
+      "category": "Toggles",
+      "group": "UI components",
+      "name": "Immediate binary setting",
+      "variants": "Switch; pressed tool; visibility choice",
+      "use": "The user changes a clear two-state setting.",
+      "guard": "Label state and save failure; distinguish toggle buttons from switches and submit-based choices.",
+      "fallback": "Labeled checkbox with clear persistence.",
+      "sources": [
+        "D09"
+      ],
+      "cost": "Low",
+      "maturity": "Original recipe; integration not tested"
+    },
+    {
+      "id": "P078",
+      "category": "Tooltips",
+      "group": "UI components",
+      "name": "Supplementary explanation",
+      "variants": "Icon label; concise clarification; shortcut hint",
+      "use": "Nonessential extra explanation aids discovery.",
+      "guard": "No interactive controls or indispensable instructions; support focus and dismissal.",
+      "fallback": "Visible help text.",
+      "sources": [
+        "D22"
+      ],
+      "cost": "Low",
+      "maturity": "Original recipe; integration not tested"
+    },
+    {
+      "id": "P079",
+      "category": null,
+      "group": "Art & surfaces",
+      "name": "Paper grain editorial",
+      "variants": "Warm paper; restrained grain; ink frame",
+      "use": "Human, crafted brands and long-form stories.",
+      "guard": "Keep texture subtle and away from fine text; avoid large raster downloads.",
+      "fallback": "Flat warm neutral.",
+      "sources": [
+        "D16"
+      ],
+      "cost": "Low",
+      "maturity": "Original recipe; integration not tested"
+    },
+    {
+      "id": "P080",
+      "category": null,
+      "group": "Art & surfaces",
+      "name": "Topographic storytelling",
+      "variants": "Contour fields; elevation bands; route motif",
+      "use": "Place, systems, or provenance is part of the story.",
+      "guard": "Don't present invented contours as actual measured geography.",
+      "fallback": "Static line illustration.",
+      "sources": [
+        "D16"
+      ],
+      "cost": "Medium",
+      "maturity": "Original recipe; integration not tested"
+    },
+    {
+      "id": "P081",
+      "category": null,
+      "group": "Art & surfaces",
+      "name": "Isometric system cutaway",
+      "variants": "Layered system; room cutaway; process stack",
+      "use": "Explain relationships that photography cannot show.",
+      "guard": "Add a labeled diagram/list; don't make reading depend on rotation.",
+      "fallback": "Flat annotated diagram.",
+      "sources": [
+        "D28"
+      ],
+      "cost": "High",
+      "maturity": "Original recipe; integration not tested"
+    },
+    {
+      "id": "P082",
+      "category": null,
+      "group": "Art & surfaces",
+      "name": "Collage with discipline",
+      "variants": "Cutout subjects; paper layers; editorial captions",
+      "use": "A creative brand has a strong image collection.",
+      "guard": "Unify crop, lighting, and edge treatment; manage image rights.",
+      "fallback": "Single strong image and caption.",
+      "sources": [
+        "D14"
+      ],
+      "cost": "Medium",
+      "maturity": "Original recipe; integration not tested"
+    },
+    {
+      "id": "P083",
+      "category": null,
+      "group": "Art & surfaces",
+      "name": "Technical schematic art",
+      "variants": "Exploded diagram; node map; circuit field",
+      "use": "A technical product needs an explanatory visual identity.",
+      "guard": "Separate real architecture from conceptual illustration; label abstraction.",
+      "fallback": "Static SVG plus prose.",
+      "sources": [
+        "D14"
+      ],
+      "cost": "Medium",
+      "maturity": "Original recipe; integration not tested"
+    },
+    {
+      "id": "P084",
+      "category": null,
+      "group": "Art & surfaces",
+      "name": "Glass over a controlled surface",
+      "variants": "Frosted toolbar; translucent preview; acrylic panel",
+      "use": "Layer relationships need subtle depth.",
+      "guard": "Test all allowed backgrounds; border/focus remain visible without blur.",
+      "fallback": "Opaque elevated surface.",
+      "sources": [
+        "D05"
+      ],
+      "cost": "High",
+      "maturity": "Original recipe; integration not tested"
+    },
+    {
+      "id": "P085",
+      "category": null,
+      "group": "Art & surfaces",
+      "name": "Clay and tactile objects",
+      "variants": "Soft volume; embossed illustration; material chips",
+      "use": "Friendly creative/learning products benefit from tactile art.",
+      "guard": "Keep controls recognizable and contrasted; don't use shadow alone as a boundary.",
+      "fallback": "Flat illustration and explicit borders.",
+      "sources": [
+        "D14"
+      ],
+      "cost": "Medium",
+      "maturity": "Original recipe; integration not tested"
+    },
+    {
+      "id": "P086",
+      "category": null,
+      "group": "Art & surfaces",
+      "name": "Monochrome with semantic accent",
+      "variants": "Grayscale structure; single brand accent; status palette",
+      "use": "Dense products need quiet hierarchy.",
+      "guard": "Keep error/warning/success distinct from branding and understandable without color.",
+      "fallback": "Neutral UI with labeled states.",
+      "sources": [
+        "D32"
+      ],
+      "cost": "Low",
+      "maturity": "Original recipe; integration not tested"
+    },
+    {
+      "id": "P087",
+      "category": null,
+      "group": "Separators",
+      "name": "Whitespace and rule",
+      "variants": "Open gap; hairline; section number",
+      "use": "Content needs breathing room and a clear break.",
+      "guard": "Spacing must represent grouping consistently, including on mobile.",
+      "fallback": "Simple heading and margin.",
+      "sources": [
+        "D34"
+      ],
+      "cost": "Low",
+      "maturity": "Original recipe; integration not tested"
+    },
+    {
+      "id": "P088",
+      "category": null,
+      "group": "Separators",
+      "name": "Wave or contour bridge",
+      "variants": "Wave; layered curve; topographic transition",
+      "use": "Related story sections need a thematic boundary.",
+      "guard": "Keep decorative geometry out of text; bound height at narrow widths.",
+      "fallback": "Flat color-zone boundary.",
+      "sources": [
+        "D16"
+      ],
+      "cost": "Low",
+      "maturity": "Original recipe; integration not tested"
+    },
+    {
+      "id": "P089",
+      "category": null,
+      "group": "Separators",
+      "name": "Architectural edge",
+      "variants": "Diagonal cut; step; notch; corner reveal",
+      "use": "A precise or industrial art direction needs rhythm.",
+      "guard": "No clipped copy or interactive areas; maintain real document order.",
+      "fallback": "Rectangular section.",
+      "sources": [
+        "D16"
+      ],
+      "cost": "Low",
+      "maturity": "Original recipe; integration not tested"
+    },
+    {
+      "id": "P090",
+      "category": null,
+      "group": "Separators",
+      "name": "Editorial interlude",
+      "variants": "Large numeral; short quote; chapter label",
+      "use": "A long narrative benefits from a meaningful pause.",
+      "guard": "Use actual heading hierarchy; avoid an empty full-screen obstruction.",
+      "fallback": "Normal subheading.",
+      "sources": [
+        "D14"
+      ],
+      "cost": "Low",
+      "maturity": "Original recipe; integration not tested"
+    },
+    {
+      "id": "P091",
+      "category": null,
+      "group": "Micro interactions",
+      "name": "Press and release feedback",
+      "variants": "Small scale; surface change; icon response",
+      "use": "Confirm that an input was received.",
+      "guard": "Keep target stable and action immediate; preserve keyboard focus.",
+      "fallback": "Instant state change.",
+      "sources": [
+        "D24"
+      ],
+      "cost": "Low",
+      "maturity": "Original recipe; integration not tested"
+    },
+    {
+      "id": "P092",
+      "category": null,
+      "group": "Micro interactions",
+      "name": "Save with honest recovery",
+      "variants": "Pending label; saved timestamp; retry",
+      "use": "People edit data that can fail to persist.",
+      "guard": "Distinguish local draft and server save; avoid fake success animation.",
+      "fallback": "Visible save status and retry.",
+      "sources": [
+        "D25"
+      ],
+      "cost": "Medium",
+      "maturity": "Original recipe; integration not tested"
+    },
+    {
+      "id": "P093",
+      "category": null,
+      "group": "Micro interactions",
+      "name": "Reversible optimistic action",
+      "variants": "Favorite; archive; local reorder",
+      "use": "Low-risk frequent changes benefit from immediacy.",
+      "guard": "Track rollback and concurrent changes; never fake confirmed payment or permission change.",
+      "fallback": "Wait for confirmation and retain retry.",
+      "sources": [
+        "D06"
+      ],
+      "cost": "High",
+      "maturity": "Original recipe; integration not tested"
+    },
+    {
+      "id": "P094",
+      "category": null,
+      "group": "Micro interactions",
+      "name": "Copy with confirmation",
+      "variants": "Copy reference; code; share link",
+      "use": "Users transfer content to another tool.",
+      "guard": "Handle clipboard failure; confirm exact copied value type without exposing secrets.",
+      "fallback": "Selectable text and manual copy.",
+      "sources": [
+        "D10"
+      ],
+      "cost": "Low",
+      "maturity": "Original recipe; integration not tested"
+    },
+    {
+      "id": "P095",
+      "category": null,
+      "group": "Micro interactions",
+      "name": "Inline editable record",
+      "variants": "Edit in place; confirm/cancel; draft indicator",
+      "use": "Small repeated edits benefit from preserved context.",
+      "guard": "Define Enter/Escape, validation, dirty state, and stale-value conflicts.",
+      "fallback": "Dedicated edit form.",
+      "sources": [
+        "D10"
+      ],
+      "cost": "Medium",
+      "maturity": "Original recipe; integration not tested"
+    },
+    {
+      "id": "P096",
+      "category": null,
+      "group": "Micro interactions",
+      "name": "Pointer light as ornament",
+      "variants": "Soft spotlight; edge reflection; gentle tilt",
+      "use": "A limited product/portfolio card invites exploration.",
+      "guard": "Never move the actual hit target; disable for coarse pointer and reduced motion.",
+      "fallback": "Static highlight.",
+      "sources": [
+        "D02"
+      ],
+      "cost": "Medium",
+      "maturity": "Original recipe; integration not tested"
+    },
+    {
+      "id": "P097",
+      "category": null,
+      "group": "Micro interactions",
+      "name": "Icon continuity",
+      "variants": "Play/pause morph; expand/collapse; save check",
+      "use": "An icon transition reinforces actual state.",
+      "guard": "Keep label/state accessible; don't delay command execution.",
+      "fallback": "Instant icon and label change.",
+      "sources": [
+        "D19"
+      ],
+      "cost": "Low",
+      "maturity": "Original recipe; integration not tested"
+    },
+    {
+      "id": "P098",
+      "category": null,
+      "group": "Micro interactions",
+      "name": "Purposeful completion moment",
+      "variants": "Brief check; subtle burst; next-action reveal",
+      "use": "A real meaningful milestone deserves acknowledgement.",
+      "guard": "Don't celebrate routine clicks or sensitive failures; no repeated blocking spectacle.",
+      "fallback": "Success text and next action.",
+      "sources": [
+        "D24"
+      ],
+      "cost": "Medium",
+      "maturity": "Original recipe; integration not tested"
+    },
+    {
+      "id": "P099",
+      "category": null,
+      "group": "Micro interactions",
+      "name": "Drag with explicit alternatives",
+      "variants": "Reorder list; kanban move; upload pickup",
+      "use": "Spatial movement improves a real workflow.",
+      "guard": "Provide move buttons/menu and announce outcome; handle cancellation and permissions.",
+      "fallback": "Move-to action and list order controls.",
+      "sources": [
+        "D08"
+      ],
+      "cost": "High",
+      "maturity": "Original recipe; integration not tested"
+    },
+    {
+      "id": "P100",
+      "category": null,
+      "group": "Micro interactions",
+      "name": "Density without losing meaning",
+      "variants": "Compact/comfy rows; detail toggle",
+      "use": "Experts need more information while others need space.",
+      "guard": "Keep target requirements and text readability; persist user choice appropriately.",
+      "fallback": "One readable density.",
+      "sources": [
+        "D31"
+      ],
+      "cost": "Medium",
+      "maturity": "Original recipe; integration not tested"
+    },
+    {
+      "id": "P101",
+      "category": null,
+      "group": "Macro interactions",
+      "name": "List-to-detail continuity",
+      "variants": "Shared image; expanding summary; routed detail",
+      "use": "Users benefit from seeing where an item went.",
+      "guard": "Deep links, back/scroll, focus, and rapid navigation must work without animation.",
+      "fallback": "Immediate routed detail.",
+      "sources": [
+        "D21"
+      ],
+      "cost": "High",
+      "maturity": "Original recipe; integration not tested"
+    },
+    {
+      "id": "P102",
+      "category": null,
+      "group": "Macro interactions",
+      "name": "Master/detail workspace",
+      "variants": "List beside detail; responsive inspector",
+      "use": "Frequent scanning and inspection should preserve context.",
+      "guard": "Keep selected item and unsaved edits safe; avoid tiny panes.",
+      "fallback": "Separate list and detail routes.",
+      "sources": [
+        "D15"
+      ],
+      "cost": "High",
+      "maturity": "Original recipe; integration not tested"
+    },
+    {
+      "id": "P103",
+      "category": null,
+      "group": "Macro interactions",
+      "name": "Adaptive sheet to full page",
+      "variants": "Compact quick action; tall sheet; mobile editor",
+      "use": "The same task must suit different viewport heights.",
+      "guard": "No fixed half-screen assumption; handle keyboard, zoom, dismissal, draft.",
+      "fallback": "Dedicated full page.",
+      "sources": [
+        "D09"
+      ],
+      "cost": "High",
+      "maturity": "Original recipe; integration not tested"
+    },
+    {
+      "id": "P104",
+      "category": null,
+      "group": "Macro interactions",
+      "name": "Command palette with discovery",
+      "variants": "Global search; recent objects; scoped commands",
+      "use": "Experienced users benefit from fast task access.",
+      "guard": "Keep ordinary navigation; label scope and consequences; enforce permissions.",
+      "fallback": "Search page and visible menus.",
+      "sources": [
+        "D06"
+      ],
+      "cost": "High",
+      "maturity": "Original recipe; integration not tested"
+    },
+    {
+      "id": "P105",
+      "category": null,
+      "group": "Macro interactions",
+      "name": "Filter-to-result continuity",
+      "variants": "Applied chips; result count; URL state",
+      "use": "Exploration should preserve context and shareability.",
+      "guard": "Cancel stale requests; keep focus stable; explain zero results.",
+      "fallback": "Submit filters with a result heading.",
+      "sources": [
+        "D08"
+      ],
+      "cost": "Medium",
+      "maturity": "Original recipe; integration not tested"
+    },
+    {
+      "id": "P106",
+      "category": null,
+      "group": "Macro interactions",
+      "name": "Background job journey",
+      "variants": "Queue; progress; notify; durable result",
+      "use": "Long work should not block other tasks.",
+      "guard": "Expose cancellation limits, partial failure, retries, and notification preferences.",
+      "fallback": "Jobs page with status polling/manual refresh.",
+      "sources": [
+        "D12"
+      ],
+      "cost": "High",
+      "maturity": "Original recipe; integration not tested"
+    },
+    {
+      "id": "P107",
+      "category": null,
+      "group": "Macro interactions",
+      "name": "Draft-to-review-to-receipt",
+      "variants": "Autosave; check answers; submit; confirmation",
+      "use": "Consequential tasks need correction and proof.",
+      "guard": "Clarify committed versus draft data; deduplicate submission; recover session expiry.",
+      "fallback": "Explicit staged forms with save and receipt.",
+      "sources": [
+        "D15"
+      ],
+      "cost": "High",
+      "maturity": "Original recipe; integration not tested"
+    },
+    {
+      "id": "P108",
+      "category": null,
+      "group": "Macro interactions",
+      "name": "Progressive permission request",
+      "variants": "Explain value; request at use; denied path",
+      "use": "A permission is needed for a user-chosen feature.",
+      "guard": "Never gate unrelated features or repeatedly nag after denial.",
+      "fallback": "Manual entry or file picker where viable.",
+      "sources": [
+        "D15"
+      ],
+      "cost": "Medium",
+      "maturity": "Original recipe; integration not tested"
+    },
+    {
+      "id": "P109",
+      "category": null,
+      "group": "Macro interactions",
+      "name": "Comparison workspace",
+      "variants": "Pin candidates; remove; aligned attributes",
+      "use": "Users compare multiple options over time.",
+      "guard": "Preserve selection across exploration; cap complexity; label differences fairly.",
+      "fallback": "Side-by-side table or stacked summaries.",
+      "sources": [
+        "D12"
+      ],
+      "cost": "High",
+      "maturity": "Original recipe; integration not tested"
+    },
+    {
+      "id": "P110",
+      "category": null,
+      "group": "Macro interactions",
+      "name": "Coordinated map and list",
+      "variants": "Select result; highlight pin; preserve viewport",
+      "use": "Geographic search needs accessible task parity.",
+      "guard": "Avoid unexpected zoom/scroll on every hover; clarify location precision.",
+      "fallback": "Full-featured list.",
+      "sources": [
+        "D15"
+      ],
+      "cost": "High",
+      "maturity": "Original recipe; integration not tested"
+    },
+    {
+      "id": "P111",
+      "category": null,
+      "group": "Macro interactions",
+      "name": "Scroll narrative with escape",
+      "variants": "Chapter progress; bounded sticky visual; reveal",
+      "use": "A public explanation benefits from a sequence.",
+      "guard": "Keep native scroll, reading order, keyboard access, and a skip route.",
+      "fallback": "Fully visible linear story.",
+      "sources": [
+        "D20"
+      ],
+      "cost": "High",
+      "maturity": "Original recipe; integration not tested"
+    },
+    {
+      "id": "P112",
+      "category": null,
+      "group": "Macro interactions",
+      "name": "Context-preserving view switch",
+      "variants": "Grid/list; calendar/agenda; board/table",
+      "use": "Different views answer different questions about the same data.",
+      "guard": "Retain filters, selection, sorting where meaningful; explain losses.",
+      "fallback": "Single reliable view.",
+      "sources": [
+        "D21"
+      ],
+      "cost": "Medium",
+      "maturity": "Original recipe; integration not tested"
+    },
+    {
+      "id": "P113",
+      "category": null,
+      "group": "Macro interactions",
+      "name": "Collaborative presence and conflict",
+      "variants": "Presence chips; edit locks; merge prompt",
+      "use": "Concurrent work creates real coordination needs.",
+      "guard": "Presence isn't authorization; protect identity, handle disconnect, and expose conflict.",
+      "fallback": "Version check and explicit conflict resolution.",
+      "sources": [
+        "D12"
+      ],
+      "cost": "High",
+      "maturity": "Original recipe; integration not tested"
+    },
+    {
+      "id": "P114",
+      "category": null,
+      "group": "Macro interactions",
+      "name": "Undo history and recovery",
+      "variants": "Recent changes; restore snapshot; reversible batch",
+      "use": "Users make many edits or consequential mistakes.",
+      "guard": "State undo scope/time and nonreversible actions; check current permission on restore.",
+      "fallback": "Confirmation and recoverable version history.",
+      "sources": [
+        "D15"
+      ],
+      "cost": "High",
+      "maturity": "Original recipe; integration not tested"
+    },
+    {
+      "id": "P115",
+      "category": null,
+      "group": "Advanced art",
+      "name": "User-controlled 3D object",
+      "variants": "Rotate product; exploded view; material preview",
+      "use": "Spatial inspection materially aids understanding.",
+      "guard": "Provide keyboard controls, reset, poster, real dimensions, and bounded rendering.",
+      "fallback": "Multi-angle images and specification table.",
+      "sources": [
+        "D28"
+      ],
+      "cost": "High",
+      "maturity": "Original recipe; integration not tested"
+    },
+    {
+      "id": "P116",
+      "category": null,
+      "group": "Advanced art",
+      "name": "Generative identity system",
+      "variants": "Seeded motifs; data-shaped covers; constrained variation",
+      "use": "A brand needs many related original visuals.",
+      "guard": "Keep seeds stable; don't encode sensitive data; ensure consistent crop/contrast.",
+      "fallback": "Pre-generated approved assets.",
+      "sources": [
+        "D16"
+      ],
+      "cost": "High",
+      "maturity": "Original recipe; integration not tested"
+    },
+    {
+      "id": "P117",
+      "category": null,
+      "group": "Advanced art",
+      "name": "Image comparison reveal",
+      "variants": "Before/after slider; split image; toggle",
+      "use": "Differences between two genuine states matter.",
+      "guard": "Label each state and date; include keyboard slider and side-by-side alternative.",
+      "fallback": "Two captioned images.",
+      "sources": [
+        "D02"
+      ],
+      "cost": "Medium",
+      "maturity": "Original recipe; integration not tested"
+    },
+    {
+      "id": "P118",
+      "category": null,
+      "group": "Advanced art",
+      "name": "Kinetic headline with restraint",
+      "variants": "Word reveal; short scramble; underline draw",
+      "use": "A short noncritical headline benefits from one entrance.",
+      "guard": "Full text available immediately; no repeated scramble, flashing, or layout jump.",
+      "fallback": "Static heading.",
+      "sources": [
+        "D04"
+      ],
+      "cost": "Medium",
+      "maturity": "Original recipe; integration not tested"
+    },
+    {
+      "id": "P119",
+      "category": null,
+      "group": "Advanced art",
+      "name": "Ambient shader vignette",
+      "variants": "Dithered glow; water-like field; material study",
+      "use": "An optional brand scene is worth its resource cost.",
+      "guard": "No motion behind important reading; stop offscreen and on preference change.",
+      "fallback": "Static poster with same composition.",
+      "sources": [
+        "D05"
+      ],
+      "cost": "High",
+      "maturity": "Original recipe; integration not tested"
+    },
+    {
+      "id": "P120",
+      "category": null,
+      "group": "Advanced art",
+      "name": "Diagram that explains itself",
+      "variants": "Step-highlighted nodes; selectable layers; playback",
+      "use": "A process is clearer when readers choose a step.",
+      "guard": "Expose every step in text; pause/reset; no knowledge hidden in animation.",
+      "fallback": "Labeled static diagram and ordered explanation.",
+      "sources": [
+        "D14"
+      ],
+      "cost": "High",
+      "maturity": "Original recipe; integration not tested"
+    }
+  ],
+  "themes": [
+    {
+      "id": "T01",
+      "name": "Editorial precision",
+      "use": "Publishing, professional service, case studies",
+      "composition": "Strong type scale, deliberate asymmetry, captions, thin rules",
+      "palette": "Ink, ivory, one decisive accent",
+      "type_motion": "Serif display plus neutral sans; short fades",
+      "guard": "Avoid tiny captions and forced full-screen headlines.",
+      "swatches": [
+        "#F6F2E9",
+        "#20241F",
+        "#A3432F"
+      ]
+    },
+    {
+      "id": "T02",
+      "name": "Calm workspace",
+      "use": "Operational apps, admin, management",
+      "composition": "Stable shell, restrained cards, strong table hierarchy",
+      "palette": "Cool neutral surfaces and semantic state colors",
+      "type_motion": "Readable sans, tabular numerals; immediate feedback",
+      "guard": "Avoid excessive panels and accent competition.",
+      "swatches": [
+        "#F3F5F7",
+        "#172334",
+        "#275DA8"
+      ]
+    },
+    {
+      "id": "T03",
+      "name": "Technical blueprint",
+      "use": "Developer, infrastructure, systems",
+      "composition": "Grids, annotations, diagrammatic illustrations",
+      "palette": "Deep ink, cool paper, electric accent",
+      "type_motion": "Sans body with limited mono; line/step reveals",
+      "guard": "Decorative schematics must not masquerade as actual architecture.",
+      "swatches": [
+        "#EEF4FA",
+        "#152D43",
+        "#17616A"
+      ]
+    },
+    {
+      "id": "T04",
+      "name": "Warm humanist",
+      "use": "Education, hospitality, community",
+      "composition": "Generous rhythm, rounded but clear controls, real people",
+      "palette": "Cream, earthy accent, calm neutrals",
+      "type_motion": "Humanist sans; gentle short movement",
+      "guard": "Do not use warmth as an excuse for weak text contrast.",
+      "swatches": [
+        "#FAF3E8",
+        "#322A23",
+        "#8D4D2C"
+      ]
+    },
+    {
+      "id": "T05",
+      "name": "Monochrome luxury",
+      "use": "Premium products, architecture, portfolio",
+      "composition": "Large photography, quiet framing, disciplined whitespace",
+      "palette": "Black/white plus a restrained material color",
+      "type_motion": "Elegant display face with robust body; sparse transitions",
+      "guard": "Keep prices, labels, and navigation fully legible.",
+      "swatches": [
+        "#F7F7F2",
+        "#181818",
+        "#856340"
+      ]
+    },
+    {
+      "id": "T06",
+      "name": "Bold typographic",
+      "use": "Events, creative studios, campaigns",
+      "composition": "Oversized type, sharp contrast, clear blocks",
+      "palette": "One saturated field and controlled neutral",
+      "type_motion": "Heavy display; restrained entry motion",
+      "guard": "Avoid all-caps paragraphs and clipped translated text.",
+      "swatches": [
+        "#F5F021",
+        "#181A1B",
+        "#E9E7E0"
+      ]
+    },
+    {
+      "id": "T07",
+      "name": "Structured brutalist",
+      "use": "Culture, independent products, experimental brand",
+      "composition": "Visible rules, hard edges, explicit controls",
+      "palette": "Paper, ink, loud accent",
+      "type_motion": "Plain strong type; direct state changes",
+      "guard": "Preserve familiar control behavior and calm reading areas.",
+      "swatches": [
+        "#F3EDE1",
+        "#1E211D",
+        "#B63827"
+      ]
+    },
+    {
+      "id": "T08",
+      "name": "Soft tactile",
+      "use": "Learning, creative tools, friendly onboarding",
+      "composition": "Soft illustration, material hints, clear surface boundaries",
+      "palette": "Pastels used as surfaces, deep readable text",
+      "type_motion": "Rounded accents; restrained springs",
+      "guard": "Neumorphic low-contrast controls are not an acceptable default.",
+      "swatches": [
+        "#F0E7F6",
+        "#35263F",
+        "#765082"
+      ]
+    },
+    {
+      "id": "T09",
+      "name": "Controlled glass",
+      "use": "Media tools, spatial interfaces, polished overlays",
+      "composition": "Translucent chrome above controlled imagery",
+      "palette": "Neutral glass plus solid semantic layers",
+      "type_motion": "System-like sans; subtle elevation",
+      "guard": "Needs opaque fallback and tested contrast over every backdrop.",
+      "swatches": [
+        "#E6F0F4",
+        "#152F3B",
+        "#27748B"
+      ]
+    },
+    {
+      "id": "T10",
+      "name": "Organic landscape",
+      "use": "Sustainability, travel, place-led stories",
+      "composition": "Contours, natural textures, image-led sections",
+      "palette": "Stone, forest, restrained clay",
+      "type_motion": "Readable serif/sans pairing; minimal parallax",
+      "guard": "Do not imply environmental evidence through green styling alone.",
+      "swatches": [
+        "#F1EFE4",
+        "#25382A",
+        "#8B482B"
+      ]
+    },
+    {
+      "id": "T11",
+      "name": "Retro digital",
+      "use": "Games, creative developer brands",
+      "composition": "Pixel accents, dither, terminal motifs",
+      "palette": "Dark ink and limited bright accents",
+      "type_motion": "Mono headlines only; optional short reveals",
+      "guard": "Avoid CRT flicker, illegible pixel body type, and fake console behavior.",
+      "swatches": [
+        "#151E20",
+        "#E4F0D0",
+        "#94BF3F"
+      ]
+    },
+    {
+      "id": "T12",
+      "name": "Scientific clarity",
+      "use": "Research, data tools, evidence products",
+      "composition": "Annotations, confidence bands, compact comparisons",
+      "palette": "Neutral ground, deliberate categorical scales",
+      "type_motion": "Clear sans and tabular data; calm updates",
+      "guard": "Show uncertainty and provenance, not just visual precision.",
+      "swatches": [
+        "#F1F5F7",
+        "#1D2D37",
+        "#326C87"
+      ]
+    },
+    {
+      "id": "T13",
+      "name": "Cinematic product",
+      "use": "Visual products, launch pages",
+      "composition": "Large controlled media, sparse supporting copy",
+      "palette": "Dark stage, bright subject, limited accent",
+      "type_motion": "Strong display; user-controlled media",
+      "guard": "Maintain lightweight first paint and meaningful posters.",
+      "swatches": [
+        "#10141C",
+        "#EDEEF1",
+        "#BC6C36"
+      ]
+    },
+    {
+      "id": "T14",
+      "name": "Playful modular",
+      "use": "Learning, consumer discovery, creative teams",
+      "composition": "Color-coded modules, simple shapes, expressive illustration",
+      "palette": "Several controlled surface hues with dark text",
+      "type_motion": "Friendly sans; occasional meaningful celebration",
+      "guard": "Do not turn every task into a game or every tile into a button.",
+      "swatches": [
+        "#FFF1CF",
+        "#2A2940",
+        "#6A4997"
+      ]
+    },
+    {
+      "id": "T15",
+      "name": "Architectural minimal",
+      "use": "Real estate, built environment, professional portfolios",
+      "composition": "Precise grid, generous image ratios, measured rhythm",
+      "palette": "Limestone, graphite, restrained green",
+      "type_motion": "Editorial headings; short geometry transitions",
+      "guard": "Keep essential metadata beside images and visible on mobile.",
+      "swatches": [
+        "#EDEBE3",
+        "#2F3331",
+        "#496054"
+      ]
+    },
+    {
+      "id": "T16",
+      "name": "Craft collage",
+      "use": "Arts, community, independent brands",
+      "composition": "Cutouts, paper edges, annotated layers",
+      "palette": "Warm paper and a narrow ink palette",
+      "type_motion": "Expressive headings, simple body; limited layered reveals",
+      "guard": "Control visual noise and asset provenance.",
+      "swatches": [
+        "#F4E4C8",
+        "#332C30",
+        "#9F3D37"
+      ]
+    },
+    {
+      "id": "T17",
+      "name": "Chromatic atmosphere",
+      "use": "Creative technology, select marketing moments",
+      "composition": "Mesh fields, soft glow, stable foreground panels",
+      "palette": "Two or three adjacent hues with neutral text surfaces",
+      "type_motion": "Clean type; static or slow optional atmosphere",
+      "guard": "Avoid glowing financial/admin forms and uncontrolled contrast.",
+      "swatches": [
+        "#1B2140",
+        "#DBE8F5",
+        "#8173D9"
+      ]
+    },
+    {
+      "id": "T18",
+      "name": "Accessible civic",
+      "use": "Public services, high-stakes forms",
+      "composition": "Clear headings, explicit actions, predictable pages",
+      "palette": "High-contrast semantic roles, understated brand",
+      "type_motion": "Plain readable type; mostly instant state changes",
+      "guard": "Novelty must not raise the learning cost of essential tasks.",
+      "swatches": [
+        "#F5F7FA",
+        "#16283D",
+        "#185594"
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "D01",
+      "name": "21st.dev",
+      "group": "Discovery",
+      "url": "https://21st.dev/community/components",
+      "note": "All 78 directory category labels inventoried; individual demos not comprehensively audited.",
+      "checked": "2026-09-18",
+      "status": "directory or documentation inspected"
+    },
+    {
+      "id": "D02",
+      "name": "Aceternity UI",
+      "group": "Expressive components",
+      "url": "https://ui.aceternity.com/components",
+      "note": "Catalogue of effects and blocks inspected; check the selected item and tier before adoption.",
+      "checked": "2026-09-18",
+      "status": "directory or documentation inspected"
+    },
+    {
+      "id": "D03",
+      "name": "Magic UI",
+      "group": "Expressive components",
+      "url": "https://magicui.design/docs/components",
+      "note": "Component index inspected; useful for selective marketing accents, not a usability guarantee.",
+      "checked": "2026-09-18",
+      "status": "directory or documentation inspected"
+    },
+    {
+      "id": "D04",
+      "name": "React Bits",
+      "group": "Expressive components",
+      "url": "https://github.com/DavidHDev/react-bits",
+      "note": "Official repository read because the site was not text-readable; animated UI and background families.",
+      "checked": "2026-09-18",
+      "status": "directory or documentation inspected"
+    },
+    {
+      "id": "D05",
+      "name": "Paper Shaders",
+      "group": "Rendering",
+      "url": "https://shaders.paper.design/",
+      "note": "Shader/filter directory inspected; measure the selected effect on real target devices.",
+      "checked": "2026-09-18",
+      "status": "directory or documentation inspected"
+    },
+    {
+      "id": "D06",
+      "name": "shadcn/ui",
+      "group": "Foundations",
+      "url": "https://ui.shadcn.com/docs/components",
+      "note": "Component directory inspected; adapt owned code and track updates.",
+      "checked": "2026-09-18",
+      "status": "directory or documentation inspected"
+    },
+    {
+      "id": "D07",
+      "name": "Radix Primitives",
+      "group": "Foundations",
+      "url": "https://www.radix-ui.com/primitives/docs/overview/introduction",
+      "note": "Behavior primitives; styling and integration still require verification.",
+      "checked": "2026-09-18",
+      "status": "directory or documentation inspected"
+    },
+    {
+      "id": "D08",
+      "name": "React Aria",
+      "group": "Foundations",
+      "url": "https://react-aria.adobe.com/",
+      "note": "Official component overview read; accessibility and internationalization foundations.",
+      "checked": "2026-09-18",
+      "status": "directory or documentation inspected"
+    },
+    {
+      "id": "D09",
+      "name": "Base UI",
+      "group": "Foundations",
+      "url": "https://base-ui.com/react/overview/quick-start",
+      "note": "Official quick-start inspected; select only if it fits the existing stack.",
+      "checked": "2026-09-18",
+      "status": "directory or documentation inspected"
+    },
+    {
+      "id": "D10",
+      "name": "coss ui",
+      "group": "Foundations",
+      "url": "https://coss.com/ui",
+      "note": "Origin UI now redirects here; current Base UI-based component catalogue inspected.",
+      "checked": "2026-09-18",
+      "status": "directory or documentation inspected"
+    },
+    {
+      "id": "D11",
+      "name": "Tailark",
+      "group": "Page sections",
+      "url": "https://tailark.com/",
+      "note": "Marketing block catalogue inspected; normalize tokens before mixing blocks.",
+      "checked": "2026-09-18",
+      "status": "directory or documentation inspected"
+    },
+    {
+      "id": "D12",
+      "name": "Shadcnblocks",
+      "group": "Page sections",
+      "url": "https://www.shadcnblocks.com/",
+      "note": "Blocks and product page families inspected; catalogue includes paid offerings.",
+      "checked": "2026-09-18",
+      "status": "directory or documentation inspected"
+    },
+    {
+      "id": "D13",
+      "name": "Uiverse",
+      "group": "Expressive components",
+      "url": "https://uiverse.io/",
+      "note": "Community element directory inspected; audit exact component and provenance.",
+      "checked": "2026-09-18",
+      "status": "directory or documentation inspected"
+    },
+    {
+      "id": "D14",
+      "name": "Codrops",
+      "group": "Inspiration",
+      "url": "https://tympanus.net/codrops/",
+      "note": "Creative case studies and tutorials directory read; experimental examples need product adaptation.",
+      "checked": "2026-09-18",
+      "status": "directory or documentation inspected"
+    },
+    {
+      "id": "D15",
+      "name": "Mobbin",
+      "group": "Inspiration",
+      "url": "https://mobbin.com/",
+      "note": "Public overview of screens and journeys inspected; paid individual flows not reviewed.",
+      "checked": "2026-09-18",
+      "status": "directory or documentation inspected"
+    },
+    {
+      "id": "D16",
+      "name": "Haikei",
+      "group": "Assets",
+      "url": "https://haikei.app/",
+      "note": "SVG shape/background generator overview inspected; check export terms for selected use.",
+      "checked": "2026-09-18",
+      "status": "directory or documentation inspected"
+    },
+    {
+      "id": "D17",
+      "name": "unDraw license",
+      "group": "Rights",
+      "url": "https://undraw.co/license",
+      "note": "Project use and restrictions inspected; do not treat as permission to build an asset dataset or competing library.",
+      "checked": "2026-09-18",
+      "status": "directory or documentation inspected"
+    },
+    {
+      "id": "D18",
+      "name": "Lucide license",
+      "group": "Rights",
+      "url": "https://lucide.dev/license",
+      "note": "ISC and inherited Feather MIT notices inspected; preserve applicable notices.",
+      "checked": "2026-09-18",
+      "status": "directory or documentation inspected"
+    },
+    {
+      "id": "D19",
+      "name": "Motion accessibility",
+      "group": "Motion guidance",
+      "url": "https://motion.dev/docs/react-accessibility",
+      "note": "Preference-aware animation guidance read; configure behavior explicitly.",
+      "checked": "2026-09-18",
+      "status": "directory or documentation inspected"
+    },
+    {
+      "id": "D20",
+      "name": "GSAP matchMedia",
+      "group": "Motion guidance",
+      "url": "https://gsap.com/docs/v3/GSAP/gsap.matchMedia()/",
+      "note": "Official media-query and cleanup API guidance inspected; verify installed version.",
+      "checked": "2026-09-18",
+      "status": "directory or documentation inspected"
+    },
+    {
+      "id": "D21",
+      "name": "MDN View Transition API",
+      "group": "Platform guidance",
+      "url": "https://developer.mozilla.org/en-US/docs/Web/API/View_Transition_API",
+      "note": "View changes within/across documents; browser support must be checked for chosen features.",
+      "checked": "2026-09-18",
+      "status": "directory or documentation inspected"
+    },
+    {
+      "id": "D22",
+      "name": "WAI ARIA patterns",
+      "group": "Accessibility",
+      "url": "https://www.w3.org/WAI/ARIA/apg/patterns/",
+      "note": "Interaction-pattern index inspected; examples are guidance, not certification.",
+      "checked": "2026-09-18",
+      "status": "directory or documentation inspected"
+    },
+    {
+      "id": "D23",
+      "name": "web.dev animation guide",
+      "group": "Performance",
+      "url": "https://web.dev/articles/animations-guide",
+      "note": "Rendering-cost guidance inspected; prefer measurable minimal effects.",
+      "checked": "2026-09-18",
+      "status": "directory or documentation inspected"
+    },
+    {
+      "id": "D24",
+      "name": "Fluent 2 motion",
+      "group": "Design systems",
+      "url": "https://fluent2.microsoft.design/motion",
+      "note": "Purpose, consistency, and transition guidance inspected; adapt platform conventions.",
+      "checked": "2026-09-18",
+      "status": "directory or documentation inspected"
+    },
+    {
+      "id": "D25",
+      "name": "Carbon motion",
+      "group": "Design systems",
+      "url": "https://carbondesignsystem.com/elements/motion/overview/",
+      "note": "Productive/expressive distinction inspected; source tokens are system-specific.",
+      "checked": "2026-09-18",
+      "status": "directory or documentation inspected"
+    },
+    {
+      "id": "D26",
+      "name": "WCAG Pause Stop Hide",
+      "group": "Accessibility",
+      "url": "https://www.w3.org/WAI/WCAG22/Understanding/pause-stop-hide.html",
+      "note": "Level A criterion with specific automatic movement/update conditions and exceptions.",
+      "checked": "2026-09-18",
+      "status": "directory or documentation inspected"
+    },
+    {
+      "id": "D27",
+      "name": "WCAG Animation from Interactions",
+      "group": "Accessibility",
+      "url": "https://www.w3.org/WAI/WCAG22/Understanding/animation-from-interactions.html",
+      "note": "Level AAA criterion; distinguish from our broader house reduced-motion requirement.",
+      "checked": "2026-09-18",
+      "status": "directory or documentation inspected"
+    },
+    {
+      "id": "D28",
+      "name": "Spline documentation",
+      "group": "Rendering",
+      "url": "https://docs.spline.design/",
+      "note": "3D authoring documentation entrypoint inspected; no individual embedded scene verified.",
+      "checked": "2026-09-18",
+      "status": "directory or documentation inspected"
+    },
+    {
+      "id": "D29",
+      "name": "React Bits license",
+      "group": "Rights",
+      "url": "https://github.com/DavidHDev/react-bits/blob/main/LICENSE.md",
+      "note": "MIT plus Commons Clause text inspected; component redistribution restrictions differ from plain MIT.",
+      "checked": "2026-09-18",
+      "status": "directory or documentation inspected"
+    },
+    {
+      "id": "D30",
+      "name": "Utopia",
+      "group": "Typography",
+      "url": "https://utopia.fyi/",
+      "note": "Fluid type/spacing approach inspected; generated values still need zoom and content testing.",
+      "checked": "2026-09-18",
+      "status": "directory or documentation inspected"
+    },
+    {
+      "id": "D31",
+      "name": "Open Props",
+      "group": "Tokens",
+      "url": "https://open-props.style/",
+      "note": "CSS custom-property library inspected; optional source of consistent scales.",
+      "checked": "2026-09-18",
+      "status": "directory or documentation inspected"
+    },
+    {
+      "id": "D32",
+      "name": "Radix Colors",
+      "group": "Tokens",
+      "url": "https://www.radix-ui.com/colors/docs/palette-composition/understanding-the-scale",
+      "note": "Role-oriented scale guidance inspected; test real text/background pairings.",
+      "checked": "2026-09-18",
+      "status": "directory or documentation inspected"
+    },
+    {
+      "id": "D33",
+      "name": "Design Tokens Format 2025.10",
+      "group": "Tokens",
+      "url": "https://www.designtokens.org/tr/2025.10/format/",
+      "note": "Community Group format specification inspected; not a W3C Recommendation.",
+      "checked": "2026-09-18",
+      "status": "directory or documentation inspected"
+    },
+    {
+      "id": "D34",
+      "name": "21st separator example",
+      "group": "Discovery",
+      "url": "https://21st.dev/community/components/base-ui/separator-1",
+      "note": "Search result located; individual demo not tested. Separators added beyond the directory's top-level taxonomy.",
+      "checked": "2026-09-18",
+      "status": "search result only"
+    }
+  ]
+}

@@ -13,8 +13,8 @@ class NarrationPlaybackTest {
         assertFalse(state.complete(old.id)); assertTrue(state.owns(next.id)); assertEquals(0, state.index)
         assertTrue(state.complete(next.id)); assertTrue(state.finished); assertFalse(state.playing)
     }
-    @Test fun pauseResumeRepeatsOnlyTheInterruptedSentence() {
-        val state = NarrationPlayback(); state.set("First sentence. Second sentence. Third sentence.", "en")
+    @Test fun pauseResumeRepeatsOnlyTheInterruptedPhrase() {
+        val state = NarrationPlayback(); state.set("First sentence.\n\nSecond sentence.\n\nThird sentence.", "en")
         assertTrue(state.complete(state.begin()!!.id))
         val interrupted = state.begin()!!; assertEquals("Second sentence.", interrupted.text)
         state.pause(); assertTrue(state.paused); assertFalse(state.complete(interrupted.id))
@@ -40,6 +40,23 @@ class NarrationPlaybackTest {
         assertEquals("First.", chunks[0]); assertEquals("दूसरा वाक्य।", chunks[1])
         assertTrue(chunks.all { it.length <= 420 && !Character.isHighSurrogate(it.last()) && !Character.isLowSurrogate(it.first()) })
     }
+    @Test fun relatedSentencesShareProsodyButParagraphsRemainSeparate() {
+        assertEquals(listOf("Check the scene. Ask for help.", "Take your time. Pause when needed."),
+            NarrationPlayback.phrases("Check the scene. Ask for help.\n\nTake your time. Pause when needed."))
+    }
+    @Test fun speechFormattingKeepsNumbersWarningsAndAuthoredMeaning() {
+        val source = "CPR · Adult. .\nUse 5.5 cm as the example. Never practise compressions on a healthy person."
+        val phrases = NarrationPlayback.phrases(source)
+        assertEquals("CPR. Adult. Use 5.5 cm as the example. Never practise compressions on a healthy person.", phrases.joinToString(" "))
+        assertEquals(listOf("धीरे बोलें। फिर सुनें।"), NarrationPlayback.phrases("धीरे बोलें।. फिर सुनें।"))
+    }
+    @Test fun boundedPhrasesKeepAllTextAndUnicodeIntact() {
+        val source = "Check the scene. " + "word ".repeat(170) + "😀".repeat(160)
+        val phrases = NarrationPlayback.phrases(source, 120)
+        assertTrue(phrases.size > 2)
+        assertTrue(phrases.all { it.length <= 120 && !Character.isHighSurrogate(it.last()) && !Character.isLowSurrogate(it.first()) })
+        assertEquals(source.filterNot { it.isWhitespace() }, phrases.joinToString("").filterNot { it.isWhitespace() })
+    }
     @Test fun matchingInstalledOfflineVoiceWinsAndRegionThenQualityAreDeterministic() {
         val voices = listOf(
             NarrationVoicePolicy.Candidate("cloud", "hi-IN", false, true, 500),
@@ -49,5 +66,24 @@ class NarrationPlaybackTest {
             NarrationVoicePolicy.Candidate("other-region", "hi", true, true, 400))
         assertEquals("regional", NarrationVoicePolicy.select("hi-IN", voices))
         assertNull(NarrationVoicePolicy.select("sat-IN", voices))
+    }
+    @Test fun explicitPreferenceNeverEnablesCloudMissingOrWrongLanguageVoice() {
+        val voices = listOf(
+            NarrationVoicePolicy.Candidate("default", "en-IN", true, true, 400),
+            NarrationVoicePolicy.Candidate("preferred", "en-IN", true, true, 200),
+            NarrationVoicePolicy.Candidate("cloud", "en-IN", false, true, 500),
+            NarrationVoicePolicy.Candidate("missing", "en-IN", true, false, 500),
+            NarrationVoicePolicy.Candidate("hindi", "hi-IN", true, true, 500))
+        assertEquals("preferred", NarrationVoicePolicy.select("en-IN", voices, "preferred"))
+        for (unavailable in listOf("cloud", "missing", "hindi", "removed"))
+            assertEquals("default", NarrationVoicePolicy.select("en-IN", voices, unavailable))
+    }
+    @Test fun voiceQualityThenLatencyDetermineAutomaticChoiceWithinTheLocale() {
+        val voices = listOf(
+            NarrationVoicePolicy.Candidate("slow", "en-IN", true, true, 400, 500),
+            NarrationVoicePolicy.Candidate("quick", "en-IN", true, true, 400, 100),
+            NarrationVoicePolicy.Candidate("basic", "en-IN", true, true, 200, 50))
+        assertEquals("quick", NarrationVoicePolicy.select("en-IN", voices))
+        assertEquals(listOf("quick", "slow", "basic"), NarrationVoicePolicy.ranked("en-IN", voices).map { it.name })
     }
 }

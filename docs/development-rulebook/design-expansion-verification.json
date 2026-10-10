@@ -1,0 +1,47 @@
+{
+  "date": "2026-09-18",
+  "scope": "Local documentation and atlas; no application implementation or audit",
+  "html_sha256": {
+    "checklist.html": "52c5b583128a801f4818ab045bd41cf172ea3bfcf17aab55457ddf4a365621cc",
+    "index.html": "20846897cf692ddd434fae0b55571df36e0b7214d23083079ef47fc50a4bfe97",
+    "design-atlas.html": "cfdaf540b9ab6320b0a86e1ab0834c2fa305c1aaf6b821ead3d984336fbd473b",
+    "design-guide.html": "daa395c947935eb6889376443cda78290cdf25adc200af92b8502e7bcb4cf7b2"
+  },
+  "checks": {
+    "rules": 308,
+    "chapters": 40,
+    "release_checks": 61,
+    "old_rule_ids_preserved": 276,
+    "atlas_patterns": 120,
+    "mapped_categories": 78,
+    "themes": 18,
+    "source_records": 34,
+    "opaque_atlas_contrast_pairs_passed": 36,
+    "local_html_links_resolve": true,
+    "skill_reference_links_resolve": true,
+    "installed_main_and_design_references_synced": true,
+    "skill_validator": "passed"
+  },
+  "browser_observations": [
+    "Desktop system/dark atlas and design guide rendered and visually inspected.",
+    "Light mobile catalogue and bottom-positioned dialog visually inspected at 390 x 844.",
+    "Document width equals viewport at 390 and 320 CSS px.",
+    "Search shader returns 4 patterns; separator family returns 4; incompatible filter returns 0; reset restores catalogue.",
+    "Appearance switch and persistence on reload observed.",
+    "Reduce control reports 0s CSS transition for accent study.",
+    "Simulated save reaches explicit demo completion; list/density toggles change pressed state.",
+    "Native disclosure expands; keyboard comparison increases from 50 to 51.",
+    "Dialog autofocus on close button; Escape closes and returns focus to opener.",
+    "Progress reaches completion and reset; accent link navigates to pattern section.",
+    "New MOT-03 lookup returns one matching rule in rebuilt main handbook.",
+    "No browser console errors returned during final inspection."
+  ],
+  "not_tested": [
+    "Full WCAG conformance and screen-reader journeys.",
+    "OS-level reduced-motion switching, forced colors, 200% text zoom, and print output.",
+    "Cross-browser/device matrix, GPU performance, and field metrics.",
+    "Third-party individual component implementations, paid content, and project integrations.",
+    "A fresh independent Codex task selecting the updated skill."
+  ],
+  "installation": "Personal skill and global instructions updated on this Mac; no cloud/other-machine installation implied."
+}

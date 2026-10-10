@@ -22,3 +22,9 @@ test("bounds UTF-8 bytes and cancels a streamed oversized request", async () => 
   await assert.rejects(readJson(request, 16), /too large/); assert.equal(cancelled,true);
   await assert.rejects(readJson(make('{}',{'Content-Length':'1000001'})), /too large/);
 });
+test('self-hosted proxy requests use configured origin without trusting arbitrary headers',async()=>{
+ const make=(origin:string)=>new Request('http://localhost:5173/api/test',{method:'POST',headers:{Origin:origin,'Content-Type':'application/json'},body:JSON.stringify({safe:true})});
+ assert.deepEqual(await readJson(make('https://learning.example'),1000,'https://learning.example'),{safe:true});
+ await assert.rejects(readJson(make('https://attacker.example'),1000,'https://learning.example'),/origin/);
+ await assert.rejects(readJson(make('https://learning.example'),1000),/origin/);
+});

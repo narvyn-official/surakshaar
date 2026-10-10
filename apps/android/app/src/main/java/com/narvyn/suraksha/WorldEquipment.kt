@@ -10,7 +10,7 @@ import kotlin.math.*
 
 /** Original procedural training illustrations, in metres. No operational readings or manufacturer claims. */
 class WorldEquipment {
- private data class Material(val color:FloatArray,val roughness:Float=.5f,val metal:Float=0f,val emission:Float=0f)
+ internal data class Material(val color:FloatArray,val roughness:Float=.5f,val metal:Float=0f,val emission:Float=0f)
  private val red=Material(floatArrayOf(.72f,.025f,.045f),.36f)
  private val blue=Material(floatArrayOf(.075f,.22f,.52f),.34f)
  private val yellow=Material(floatArrayOf(.98f,.63f,.035f),.31f)
@@ -23,9 +23,21 @@ class WorldEquipment {
  private val screen=Material(floatArrayOf(.43f,.75f,.57f),.28f,0f,.23f)
  private val scenes=mutableMapOf<String,FloatBuffer>()
  private fun mesh(module:String):FloatBuffer? = scenes[module] ?: when(module){
-  "fire"->fire();"gas"->gas();"machinery"->machinery();"ppe"->ppe();"emergency"->emergency();else->null
+  "fire"->fire();"gas"->gas();"machinery"->machinery();"ppe"->ppe();"emergency"->emergency();
+  in FireScenePlan.propKinds->fireSceneProp(module);else->null
  }?.also{scenes[module]=it}
+ internal fun exportMesh(id:String):FloatBuffer?=when(id){
+  "fire-pin-removed"->procedureFire.getValue(1)
+  "fire-aimed"->procedureFire.getValue(4)
+  "fire-discharging"->procedureFire.getValue(5)
+  "fire-damaged"->damagedFire
+  "machinery-unlocked"->procedureMachinery.getValue(0)
+  "machinery-guard-missing"->procedureMachinery.getValue(3)
+  "ppe-damaged"->procedurePpe.getValue(0)
+  else->mesh(id)
+ }
  private val label=EquipmentLabel()
+ private val inspectionTag=EquipmentLabel(tag=true)
  // Only the procedure view requests these meshes. Existing viewers keep their original buffers.
  private val procedureFire by lazy {
   buildMap<Int,FloatBuffer>{
@@ -60,7 +72,7 @@ class WorldEquipment {
  fun create(){
   // Called once per new EGL context. Old names belong to the destroyed context, not this one.
   vertexBuffers.clear()
-  label.contextCreated()
+  label.contextCreated();inspectionTag.contextCreated()
   GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER,0)
   fun compile(type:Int,source:String):Int{val s=GLES20.glCreateShader(type);GLES20.glShaderSource(s,source);GLES20.glCompileShader(s);val ok=IntArray(1);GLES20.glGetShaderiv(s,GLES20.GL_COMPILE_STATUS,ok,0);check(ok[0]!=0){GLES20.glGetShaderInfoLog(s)};return s}
   val vertex=compile(GLES20.GL_VERTEX_SHADER,"""
@@ -99,10 +111,12 @@ class WorldEquipment {
  }
  /** Prepare bounded variants before starting a procedure renderer; no mesh construction is needed per frame. */
  fun prepareProcedure(module:String){when(module){"fire"->{procedureFire;fireProcedureProps;damagedFire};"gas"->{procedureGas;gasProcedureProps};"machinery"->{procedureMachinery};"ppe"->{procedurePpe};"emergency"->{emergencyScenario}}}
+ /** Bound room-only props are cached once; the component viewer does not allocate them. */
+ fun prepareFireRoom(){prepareProcedure("fire");FireScenePlan.propKinds.forEach{mesh(it)}}
  /** Anchor is rigid. Default calls retain one original mesh; procedures add a separate pre-baked scene mesh. */
  fun draw(vp:FloatArray,anchor:FloatArray,module:String,cameraPosition:FloatArray=defaultEye,lightCorrection:FloatArray=defaultLighting,completedActions:Set<String> = emptySet(),procedureMode:Boolean=false,clearDepth:Boolean=true){
   if(program==0)return
-  val original=mesh(module)?:return
+  val original=exportMesh(module)?:return
   val meshes=if(module=="fire" && "fire-damaged" in completedActions)listOf(damagedFire) else if(module=="fire" && (procedureMode || completedActions.isNotEmpty())){
    val pin="fire-pin" in completedActions;val aimed=pin && "fire-aim" in completedActions
    val pressed=aimed && "fire-squeeze" in completedActions && "fire-withdraw" !in completedActions
@@ -126,7 +140,7 @@ class WorldEquipment {
     for((location,offset) in listOf(position to 0,normal to 3,color to 6,surface to 9)){GLES20.glVertexAttribPointer(location,3,GLES20.GL_FLOAT,false,48,offset*4);GLES20.glEnableVertexAttribArray(location)}
     GLES20.glDrawArrays(GLES20.GL_TRIANGLES,0,mesh.capacity()/12)
    }
-   if(module=="fire")label.draw(mvp,lightCorrection)
+   if(module in setOf("fire","fire-damaged","fire-pin-removed","fire-aimed","fire-discharging")){label.draw(mvp,lightCorrection);inspectionTag.draw(mvp,lightCorrection)}
   } finally {
    for(location in intArrayOf(position,normal,color,surface))GLES20.glDisableVertexAttribArray(location)
    // Camera renderers use client FloatBuffers, which require no array buffer to be bound.
@@ -149,6 +163,155 @@ class WorldEquipment {
   b.box(0f,.035f,0f,.72f,.008f,.44f,.003f,Material(floatArrayOf(.89f,.92f,.94f),.8f))
   for(x in listOf(-.32f,.32f))for(z in listOf(-.17f,.17f))b.sphere(x,.008f,z,.038f,.012f,.038f,rubber)
  }
+ /** Original compact authored props, in the same metre frame as the anchored station.
+  * Smoke is a symbolic mesh, never camera smoke recognition or a physical simulation. */
+ private fun fireSceneProp(kind:String):FloatBuffer=Builder().apply{
+  when(kind){
+   "fire-exit","fire-blocked-exit"->{
+    for(x in listOf(-.20f,.20f))box(x,.32f,0f,.025f,.64f,.04f,.003f,metal)
+    box(0f,.64f,0f,.42f,.027f,.04f,.003f,metal)
+    box(0f,.035f,0f,.42f,.015f,.24f,.002f,dark)
+    box(0f,.58f,.025f,.18f,.062f,.005f,.002f,screen)
+    // Horizontal route chevron; never a real-site directional instruction.
+    rod(floatArrayOf(-.055f,.58f,.032f),floatArrayOf(.055f,.58f,.032f),.004f,white)
+    rod(floatArrayOf(.055f,.58f,.032f),floatArrayOf(.029f,.60f,.032f),.004f,white)
+    rod(floatArrayOf(.055f,.58f,.032f),floatArrayOf(.029f,.56f,.032f),.004f,white)
+    if(kind=="fire-blocked-exit")for(i in 0..2)box(-.06f+i*.06f,.10f+i*.075f,.035f,.22f,.15f,.19f,.005f,yellow)
+   }
+   "fire-electrical"->{
+    box(0f,.25f,0f,.38f,.46f,.16f,.012f,metal)
+    box(0f,.25f,.087f,.344f,.424f,.018f,.006f,dark)
+    for(x in listOf(-.12f,0f,.12f)){
+     box(x,.29f,.103f,.068f,.15f,.035f,.004f,white)
+     box(x,.302f,.129f,.035f,.039f,.018f,.002f,rubber)
+     for(i in 0..2)box(x,.24f+i*.014f,.123f,.040f,.004f,.004f,0f,dark)
+    }
+    box(0f,.117f,.101f,.115f,.047f,.007f,.002f,yellow)
+    for(i in 0..4)box(-.13f+i*.065f,.435f,.097f,.035f,.003f,.005f,0f,rubber)
+    for(x in listOf(-.15f,.15f))rod(floatArrayOf(x,.02f,0f),floatArrayOf(x,0f,.09f),.009f,rubber)
+   }
+   "fire-fryer"->{
+    box(0f,.15f,0f,.40f,.23f,.32f,.012f,metal)
+    box(0f,.271f,0f,.35f,.014f,.27f,.006f,dark)
+    box(0f,.281f,0f,.31f,.008f,.23f,.005f,Material(floatArrayOf(.51f,.25f,.035f),.22f))
+    // Basket frame, mesh and insulated handle; the vessel remains stationary.
+    for(x in listOf(-.125f,.125f))box(x,.31f,0f,.012f,.055f,.20f,.002f,metal)
+    for(z in listOf(-.10f,.10f))box(0f,.31f,z,.25f,.055f,.008f,.002f,metal)
+    for(i in 0..6)rod(floatArrayOf(-.12f+i*.04f,.292f,-.09f),floatArrayOf(-.12f+i*.04f,.292f,.09f),.002f,metal)
+    rod(floatArrayOf(0f,.336f,.10f),floatArrayOf(0f,.37f,.22f),.006f,metal)
+    box(0f,.375f,.25f,.039f,.03f,.105f,.008f,rubber)
+    for(x in listOf(-.12f,.12f))cylinder(x,.15f,.169f,.036f,.016f,dark,rx=90f)
+    for(x in listOf(-.15f,.15f))for(z in listOf(-.10f,.10f))box(x,.028f,z,.035f,.045f,.035f,.003f,rubber)
+   }
+   "fire-gas-cylinder"->{
+    lathe(0f,0f,0f,listOf(.025f to .105f,.05f to .125f,.35f to .125f,.39f to .11f,.43f to .06f,.44f to .035f),red,steps=48)
+    cylinder(0f,.462f,0f,.026f,.045f,brass)
+    box(0f,.481f,0f,.076f,.012f,.022f,.004f,brass)
+    for(x in listOf(-.06f,.06f))rod(floatArrayOf(x,.414f,0f),floatArrayOf(x,.508f,0f),.007f,metal)
+    rod(floatArrayOf(-.06f,.508f,0f),floatArrayOf(.06f,.508f,0f),.007f,metal)
+    box(0f,.27f,.124f,.075f,.10f,.004f,.003f,white)
+    // No animated valve opening or gas jet: the current worker case requires withdrawal.
+   }
+   "fire-diesel"->{
+    box(-.11f,.23f,-.02f,.21f,.36f,.16f,.015f,Material(floatArrayOf(.27f,.32f,.22f),.66f))
+    box(-.11f,.424f,-.02f,.10f,.037f,.032f,.006f,dark)
+    cylinder(-.05f,.415f,.024f,.04f,.019f,rubber)
+    box(-.11f,.24f,.066f,.13f,.006f,.003f,0f,dark,rz=48f)
+    box(-.11f,.24f,.067f,.13f,.006f,.003f,0f,dark,rz=-48f)
+    sphere(.10f,.008f,.11f,.44f,.011f,.33f,Material(floatArrayOf(.19f,.14f,.065f),.24f))
+   }
+   "fire-metal-swarf"->{
+    box(0f,.035f,0f,.42f,.055f,.32f,.006f,dark)
+    for(i in 0..9){val x=-.16f+(i%5)*.08f;val z=-.07f+(i/5)*.13f
+     hose(listOf(floatArrayOf(x-.025f,.08f,z),floatArrayOf(x,.115f,z+.025f),floatArrayOf(x+.022f,.09f,z+.04f)),.004f,metal)
+    }
+   }
+   "fire-sand-bucket"->{
+    lathe(0f,0f,0f,listOf(.02f to .09f,.23f to .135f,.245f to .137f),red,steps=40)
+    cylinder(0f,.248f,0f,.248f,.008f,Material(floatArrayOf(.70f,.54f,.30f),1f))
+    hose(listOf(floatArrayOf(-.132f,.23f,0f),floatArrayOf(-.10f,.37f,0f),floatArrayOf(0f,.40f,0f),floatArrayOf(.10f,.37f,0f),floatArrayOf(.132f,.23f,0f)),.006f,metal)
+    for(i in 0..14){val angle=i*2*PI/15
+     sphere(cos(angle).toFloat()*.086f,.255f,sin(angle).toFloat()*.086f,.008f,.004f,.006f,white)}
+   }
+   "fire-alarm-stand"->{
+    box(.26f,.015f,-.035f,.16f,.03f,.15f,.006f,dark)
+    box(.26f,.20f,-.035f,.025f,.38f,.025f,.003f,metal)
+    box(.26f,.40f,-.030f,.19f,.21f,.040f,.010f,dark)
+    box(.26f,.40f,-.003f,.18f,.20f,.027f,.008f,red)
+    box(.26f,.40f,.014f,.137f,.118f,.009f,.004f,white)
+    box(.26f,.40f,.021f,.100f,.078f,.008f,.003f,red)
+    box(.26f,.474f,.014f,.095f,.014f,.008f,.002f,white)
+    dome(.26f,.407f,.030f,.035f,.039f,.014f,white)
+    box(.26f,.393f,.031f,.046f,.006f,.012f,.001f,white)
+    sphere(.26f,.383f,.032f,.009f,.009f,.005f,white)
+    for(x in listOf(.186f,.334f))for(y in listOf(.319f,.481f)){
+     sphere(x,y,.015f,.009f,.009f,.004f,metal);box(x,y,.018f,.006f,.0015f,.002f,0f,dark)
+    }
+   }
+   "fire-paper-fuel"->{
+    val wood=Material(floatArrayOf(.37f,.22f,.11f),.94f)
+    val paper=Material(floatArrayOf(.72f,.67f,.52f),.96f)
+    // Charred timber and folded paper make the already-authored fuel cue visible.
+    for(i in 0..2){
+     box(-.26f+i*.24f,.055f,.14f,.22f,.055f,.13f,.006f,wood,rz=if(i==1)8f else -5f)
+     for(j in 0..2)box(-.26f+i*.24f,.084f,.098f+j*.028f,.17f,.0015f,.002f,0f,dark)
+    }
+    for(i in 0..3){
+     box(-.18f+i*.12f,.092f+i*.012f,.19f,.105f,.004f,.12f,.001f,paper,rx=if(i%2==0)12f else -15f,rz=i*7f)
+     box(-.18f+i*.12f,.104f+i*.012f,.205f,.025f,.003f,.075f,.001f,dark,rz=i*7f)
+    }
+   }
+   "fire-obstruction"->{
+    val board=Material(floatArrayOf(.41f,.29f,.19f),.9f)
+    // Physical obstruction at an already-authored blocked doorway; no route detection.
+    for(i in 0..1){
+     val x=-.14f+i*.24f;val y=.14f+i*.06f
+     box(x,y,.015f,.25f,.27f,.23f,.006f,board)
+     for(j in 0..3)box(x,y-.10f+j*.067f,.135f,.245f,.008f,.008f,.001f,dark)
+     for(dx in listOf(-.094f,.094f))box(x+dx,y,.143f,.027f,.265f,.010f,.001f,metal)
+     rod(floatArrayOf(x-.105f,y-.105f,.154f),floatArrayOf(x+.105f,y+.105f,.154f),.012f,yellow)
+    }
+   }
+   "fire-smoke-cue"->{
+    val smoke=Material(floatArrayOf(.27f,.30f,.32f),1f)
+    val ash=Material(floatArrayOf(.38f,.40f,.41f),1f)
+    // Deliberately bounded and static: shows worsening, not airflow or visibility distance.
+    for(i in 0..5){val x=if(i%2==0)-.11f else .11f
+     sphere(x,.43f+i*.085f,-.08f,.24f+i*.028f,.18f,.21f,if(i%2==0)smoke else ash)}
+   }
+   "fire-handover"->{
+    box(.17f,.018f,.16f,.34f,.036f,.24f,.008f,dark)
+    // Generic reporting radio, separate from the extinguisher or fire station.
+    box(.12f,.13f,.15f,.087f,.21f,.062f,.010f,rubber)
+    box(.12f,.164f,.186f,.053f,.036f,.005f,.003f,screen)
+    for(i in 0..4)box(.12f,.083f+i*.010f,.185f,.050f,.0025f,.003f,0f,metal)
+    rod(floatArrayOf(.146f,.23f,.151f),floatArrayOf(.151f,.34f,.151f),.004f,rubber)
+    for(x in listOf(.091f,.148f))cylinder(x,.239f,.151f,.012f,.022f,dark)
+    for(i in 0..2)box(.11f+i*.012f,.132f,.187f,.007f,.009f,.002f,0f,white)
+   }
+   "fire-rollcall"->{
+    // Clip, paper and blank rows: never fabricated worker names or a completion badge.
+    box(-.17f,.20f,.14f,.22f,.32f,.025f,.008f,dark,rx=-12f)
+    box(-.17f,.20f,.160f,.196f,.277f,.003f,.002f,white,rx=-12f)
+    box(-.17f,.347f,.181f,.073f,.023f,.012f,.003f,metal)
+    for(i in 0..4){
+     box(-.227f,.12f+i*.039f,.182f-i*.008f,.013f,.013f,.002f,.001f,blue,rx=-12f)
+     box(-.148f,.12f+i*.039f,.182f-i*.008f,.095f,.004f,.002f,0f,dark,rx=-12f)
+    }
+   }
+   "fire-unconfirmed"->{
+    // Covered label, closed valve and no pressure reading: suitability remains unknown.
+    cylinder(0f,.20f,0f,.145f,.34f,red)
+    dome(0f,.372f,0f,.144f,.080f,.144f,red)
+    cylinder(0f,.411f,0f,.035f,.045f,brass)
+    box(0f,.443f,0f,.112f,.014f,.026f,.004f,dark)
+    box(0f,.225f,.073f,.105f,.15f,.012f,.005f,dark)
+    // The tag is crossed as unreadable/unknown, not a certification or fire-class symbol.
+    for(sign in listOf(-1f,1f))rod(floatArrayOf(-.025f,.195f,.083f),floatArrayOf(.025f,.195f+sign*.055f,.083f),.004f,white)
+    hose(listOf(floatArrayOf(.022f,.416f,0f),floatArrayOf(.086f,.388f,0f),floatArrayOf(.10f,.21f,0f)),.007f,rubber)
+   }
+  }
+ }.finish()
  private fun fire(pinRemoved:Boolean=false,aimX:Float?=null,pressed:Boolean=false,damaged:Boolean=false):FloatBuffer=Builder().apply{
   base(this)
   // Turned vessel: rounded foot, cylindrical wall, shoulder and neck, not stacked flat cylinders.
@@ -172,8 +335,6 @@ class WorldEquipment {
     // Separate open ends make the authored split visible from either side of the cylinder.
     tube(listOf(floatArrayOf(.03f,.458f,-.006f),floatArrayOf(.092f,.466f,-.006f),floatArrayOf(.133f,.430f,-.006f),floatArrayOf(.16f,.35f,.015f)),.008f,rubber)
     tube(listOf(floatArrayOf(.19f,.30f,.035f),floatArrayOf(.138f,.240f,-.006f),floatArrayOf(.12f,.157f,-.006f)),.008f,rubber)
-    rod(floatArrayOf(.16f,.35f,.015f),floatArrayOf(.17f,.343f,.025f),.002f,white)
-    rod(floatArrayOf(.19f,.30f,.035f),floatArrayOf(.196f,.312f,.037f),.002f,white)
    }else hose(listOf(floatArrayOf(.03f,.458f,-.006f),floatArrayOf(.092f,.466f,-.006f),floatArrayOf(.133f,.430f,-.006f),floatArrayOf(.142f,.346f,-.006f),floatArrayOf(.138f,.240f,-.006f),floatArrayOf(.12f,.157f,-.006f)),.008f,rubber)
    rod(floatArrayOf(.12f,.17f,-.006f),floatArrayOf(.12f,.115f,-.006f),.014f,dark)
    for(i in 0..6)cylinder(.12f,.119f+i*.006f,-.006f,.029f,.0015f,rubber)
@@ -200,6 +361,7 @@ class WorldEquipment {
   for(i in 0..12){val a=(i*5+60)*PI/180;val x=cos(a).toFloat()*.013f;val y=sin(a).toFloat()*.013f;box(x,.455f+y,.0585f,.003f,.005f,.001f,0f,screen,rz=(i*5-30).toFloat())}
   for(i in 0..8){val a=(i*25+(-10))*PI/180;val x=cos(a).toFloat()*.013f;val y=sin(a).toFloat()*.013f;box(x,.455f+y,.058f,.0017f,.004f,.001f,0f,dark,rz=(i*25-100).toFloat())}
   rod(floatArrayOf(0f,.455f,.059f),if(damaged)floatArrayOf(-.013f,.450f,.059f)else floatArrayOf(0f,.468f,.059f),.0012f,red)
+  EquipmentDetailGeometry.fire(this,pinRemoved,damaged,aimX!=null)
   // The curved, readable bilingual decal is drawn by EquipmentLabel at the same transform.
  }.finish()
  private fun gas(includeBarrier:Boolean=true):FloatBuffer=Builder().apply{
@@ -218,6 +380,7 @@ class WorldEquipment {
   box(0f,.251f,-.073f,.095f,.239f,.021f,.008f,metal)
   box(0f,.349f,-.082f,.118f,.039f,.012f,.005f,rubber)
   cylinder(-.055f,.455f,0f,.026f,.038f,metal);cylinder(-.055f,.474f,0f,.038f,.009f,rubber)
+  EquipmentDetailGeometry.gas(this)
   if(includeBarrier){
    for(x in listOf(-.295f,.295f)){cylinder(x,.058f,-.04f,.105f,.027f,rubber);cylinder(x,.239f,-.04f,.022f,.345f,yellow);cylinder(x,.406f,-.04f,.029f,.021f,dark)}
    box(0f,.386f,-.064f,.61f,.021f,.012f,.004f,yellow)
@@ -303,6 +466,7 @@ class WorldEquipment {
   box(.287f,.237f,.123f,.046f,.058f,.028f,.005f,blue)
   tube(listOf(floatArrayOf(.273f,.267f,.124f),floatArrayOf(.273f,.286f,.124f),floatArrayOf(.287f,.296f,.124f),floatArrayOf(.301f,.286f,.124f),floatArrayOf(.301f,.267f,.124f)),.003f,metal)
   }
+  EquipmentDetailGeometry.machinery(this,locked)
   for(i in 0..7)box(-.284f,.21f+i*.018f,-.027f,.004f,.006f,.14f,.002f,rubber)
   box(-.018f,.409f,.035f,.21f,.003f,.033f,.002f,yellow)
  }.finish()
@@ -318,6 +482,7 @@ class WorldEquipment {
   box(0f,.341f,-.162f,.096f,.041f,.025f,.009f,rubber)
   cylinder(0f,.34f,-.18f,.032f,.016f,blue,rx=90f)
   if(cracked)tube(listOf(floatArrayOf(.08f,.48f,.08f),floatArrayOf(.04f,.46f,.14f),floatArrayOf(.065f,.43f,.165f),floatArrayOf(.035f,.39f,.178f)),.004f,dark)
+  EquipmentDetailGeometry.ppe(this)
   // Separate framed lenses, nose bridge, hinges and side arms.
   if(damagedLens)rod(floatArrayOf(-.13f,.24f,.204f),floatArrayOf(-.045f,.29f,.204f),.004f,white)
   for(x in listOf(-.08f,.08f)){box(x,.263f,.163f,.155f,.094f,.034f,.018f,rubber);box(x,.263f,.184f,.131f,.070f,.015f,.015f,glass);box(x-.025f,.279f,.193f,.047f,.006f,.002f,.002f,white,rz=12f)}
@@ -327,6 +492,7 @@ class WorldEquipment {
   tube(listOf(floatArrayOf(-.23f,.395f,-.015f),floatArrayOf(-.18f,.468f,-.015f),floatArrayOf(-.09f,.51f,-.015f),floatArrayOf(.09f,.51f,-.015f),floatArrayOf(.18f,.468f,-.015f),floatArrayOf(.23f,.395f,-.015f)),.011f,rubber)
  }.finish()
  private fun emergency():FloatBuffer=Builder().apply{
+  EquipmentDetailGeometry.emergency(this)
   base(this)
   // Generic reporting radio: no transmitted signal or operational display.
   box(-.255f,.178f,.045f,.135f,.257f,.084f,.019f,rubber)
@@ -365,9 +531,9 @@ class WorldEquipment {
   line(0f,1f,1f,1f);line(0f,1f,0f,.5f);line(0f,.5f,1f,.5f);line(1f,.5f,1f,0f);line(1f,0f,0f,0f)
   line(1.6f,0f,1.6f,1f);line(2.3f,0f,2.3f,1f);line(2.3f,1f,2.9f,.4f);line(2.9f,.4f,3.5f,1f);line(3.5f,1f,3.5f,0f)
  }
- private class Builder{
-  private val vertices=ArrayList<Float>()
-  private fun emit(p:FloatArray,n:FloatArray,m:Material){vertices.addAll(p.toList());vertices.addAll(n.toList());vertices.addAll(m.color.toList());vertices.add(m.roughness);vertices.add(m.metal);vertices.add(m.emission)}
+ internal class Builder{
+  private val vertices=GeometryFloats()
+  private fun emit(p:FloatArray,n:FloatArray,m:Material){vertices.addAll(p);vertices.addAll(n);vertices.addAll(m.color);vertices.add(m.roughness);vertices.add(m.metal);vertices.add(m.emission)}
   private fun norm(a:FloatArray):FloatArray{val l=sqrt(a.sumOf{(it*it).toDouble()}).toFloat().coerceAtLeast(.000001f);return FloatArray(3){a[it]/l}}
   private fun transformed(p:FloatArray,n:FloatArray,x:Float,y:Float,z:Float,rx:Float,rz:Float,m:Material){
    fun rotate(a:FloatArray):FloatArray{val ax=rx*PI/180;val az=rz*PI/180;val py=(a[1]*cos(ax)-a[2]*sin(ax)).toFloat();val pz=(a[1]*sin(ax)+a[2]*cos(ax)).toFloat();return floatArrayOf((a[0]*cos(az)-py*sin(az)).toFloat(),(a[0]*sin(az)+py*cos(az)).toFloat(),pz)}
@@ -412,6 +578,6 @@ class WorldEquipment {
    for(i in 0 until path.lastIndex)for(s in 0 until n){vertex(i,s);vertex(i,s+1);vertex(i+1,s+1);vertex(i,s);vertex(i+1,s+1);vertex(i+1,s)}
   }
   fun torus(x:Float,y:Float,z:Float,r:Float,t:Float,m:Material){tube((0..40).map{val a=it*2*PI/40;floatArrayOf(x+cos(a).toFloat()*r,y+sin(a).toFloat()*r,z)},t,m)}
-  fun finish():FloatBuffer=ByteBuffer.allocateDirect(vertices.size*4).order(ByteOrder.nativeOrder()).asFloatBuffer().apply{put(vertices.toFloatArray());position(0)}
+  fun finish():FloatBuffer=vertices.toBuffer()
  }
 }

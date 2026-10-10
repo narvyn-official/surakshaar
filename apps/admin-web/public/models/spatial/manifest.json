@@ -1,0 +1,176 @@
+[
+  {
+    "id": "fire",
+    "bytes": 711236,
+    "triangles": 24664,
+    "sha256": "bbc85a658b3e864a46afaccbb20e1b779f33d005b327eac9b495708f33b89417"
+  },
+  {
+    "id": "gas",
+    "bytes": 850548,
+    "triangles": 30952,
+    "sha256": "91c5ac82da8d84bdc92a777b546ffb03917b54703fbe6a776b76b4b701f75ffe"
+  },
+  {
+    "id": "machinery",
+    "bytes": 616796,
+    "triangles": 21808,
+    "sha256": "08fa99ca0f119eba9ed2bdfb9195ed90f681871e28afd5339182e2c07166f246"
+  },
+  {
+    "id": "ppe",
+    "bytes": 381272,
+    "triangles": 13388,
+    "sha256": "4c036de83376f13391ef602f53f7912953ca47fc3913f977995401c3e7cda88d"
+  },
+  {
+    "id": "emergency",
+    "bytes": 437176,
+    "triangles": 16000,
+    "sha256": "5a836c1d35d447b47a01ba632c0286b2c7d0f01e15b4240105e365218763b80d"
+  },
+  {
+    "id": "fire-pin-removed",
+    "bytes": 686456,
+    "triangles": 23860,
+    "sha256": "4cce5da962d6981fbf4eb240c3633f83f88cf774065680d288cedd026f3f5fd6"
+  },
+  {
+    "id": "fire-aimed",
+    "bytes": 497704,
+    "triangles": 17636,
+    "sha256": "24fb959ece54e6fa16af11bd039d68981164832b2e08fc42fb745b125d6ea741"
+  },
+  {
+    "id": "fire-discharging",
+    "bytes": 504036,
+    "triangles": 17780,
+    "sha256": "bb022f7866f4b4b8b38c42c4068b62ed25de978facb0f8d183b2fd2e248bba25"
+  },
+  {
+    "id": "fire-damaged",
+    "bytes": 705684,
+    "triangles": 24304,
+    "sha256": "c0662b1c5234f1a40d8b15ff978c8f1f432aa281b7f86a6174371f7d0b240e66"
+  },
+  {
+    "id": "machinery-unlocked",
+    "bytes": 554724,
+    "triangles": 19628,
+    "sha256": "a0149716b7da54d042d97b91e24d5d2cb97d8903d194727c77196a0305242fe5"
+  },
+  {
+    "id": "machinery-guard-missing",
+    "bytes": 530464,
+    "triangles": 18872,
+    "sha256": "4e96072ca7dfdee14a688331b5e2456a085f7b492095f977fba04494a1ed3364"
+  },
+  {
+    "id": "ppe-damaged",
+    "bytes": 384316,
+    "triangles": 13484,
+    "sha256": "45e5d250694d77a785a96c4563ba470481537e46616cc4b7b437422d88ae4adf"
+  },
+  {
+    "id": "fire-exit",
+    "bytes": 42480,
+    "triangles": 1572,
+    "sha256": "df2085125db4f250cc15932ebf3260faf39c01c155897e11ea6b807c9c5e5902"
+  },
+  {
+    "id": "fire-blocked-exit",
+    "bytes": 65036,
+    "triangles": 2472,
+    "sha256": "0e6996178e070accaba995db175af004ef4cc50a9d49aadfc5e292ea41f04126"
+  },
+  {
+    "id": "fire-alarm-stand",
+    "bytes": 181432,
+    "triangles": 7056,
+    "sha256": "aef5fc87cddef936a8b5ed01822593ae56cbb4722d40055e210344f4200ba226"
+  },
+  {
+    "id": "fire-paper-fuel",
+    "bytes": 88916,
+    "triangles": 3408,
+    "sha256": "605b9b4978b61de6a141406b337472e5a83c268f82f178b892b6dfeb3ddad157"
+  },
+  {
+    "id": "fire-obstruction",
+    "bytes": 106800,
+    "triangles": 4248,
+    "sha256": "dc54c1b2da8254308395f6a0549dfa34bc520e2c3391e5e85814b7cc8ca2f3b3"
+  },
+  {
+    "id": "fire-smoke-cue",
+    "bytes": 118960,
+    "triangles": 4608,
+    "sha256": "016bdfd79895c536bdb18d5a90e13255ec1c9c89324700544b76c602ab973f90"
+  },
+  {
+    "id": "fire-handover",
+    "bytes": 52164,
+    "triangles": 1660,
+    "sha256": "e2fe08b0290872d657fae767a193451599f587aec60d0cfb495ddff0c94a9ba4"
+  },
+  {
+    "id": "fire-rollcall",
+    "bytes": 65076,
+    "triangles": 2460,
+    "sha256": "3f542dfc0e5b32b3e4612a5352ef9cc8a4bfaf4312c4aae968b2af72cfb68b8a"
+  },
+  {
+    "id": "fire-unconfirmed",
+    "bytes": 67248,
+    "triangles": 2344,
+    "sha256": "b54b8ba7475e5dd96d7406356a5ca1f9fd9f4d16d90b71570357dddbe72507bf"
+  },
+  {
+    "id": "fire-diesel",
+    "bytes": 48692,
+    "triangles": 1712,
+    "sha256": "8e6bc5821f7407c086cb6b33f51ea4338c349d4d96d025496854dff36f3b14e2"
+  },
+  {
+    "id": "fire-electrical",
+    "bytes": 81420,
+    "triangles": 2916,
+    "sha256": "25dedbcb0fb842a50990c98f253025c07063a9ade9f258368aec2e895bf9bfd0"
+  },
+  {
+    "id": "fire-gas-cylinder",
+    "bytes": 46848,
+    "triangles": 1568,
+    "sha256": "107a807a5a6371c4cc47ca4c935f789429ef07a775b709030ffc3246aae00671"
+  },
+  {
+    "id": "fire-metal-swarf",
+    "bytes": 84276,
+    "triangles": 3180,
+    "sha256": "5daa2184c994d44a7bbe2b18e9b78a45e7da5f7f7a3747c113946abed28c4380"
+  },
+  {
+    "id": "fire-fryer",
+    "bytes": 117244,
+    "triangles": 4432,
+    "sha256": "00559166a6c42e518f73606382a81a5439bd79803967c1820bf78d8aa858567c"
+  },
+  {
+    "id": "fire-sand-bucket",
+    "bytes": 328524,
+    "triangles": 12656,
+    "sha256": "ba63f6101ae58cb972893953d3fcf95928f1e3c7c4681a5edb886a12f8dacf50"
+  },
+  {
+    "id": "teaching-props",
+    "bytes": 1197892,
+    "triangles": 30188,
+    "sha256": "59a5b0328e4a03a21157b10b9259112cc463116b3be13fc6bef5042805a17e96"
+  },
+  {
+    "id": "body-surface",
+    "bytes": 970672,
+    "triangles": 39200,
+    "sha256": "d4da27b6ed1527bde812bcdfb8f15f793b08b277935b789e3bb18a22e8c562a8"
+  }
+]

@@ -1,22 +1,28 @@
 {
   "name": "surakshaar-admin",
-  "version": "0.11.0-dev",
+  "version": "0.16.0-rc.1",
   "private": true,
   "engines": {
-    "node": ">=24.13.1"
+    "node": ">=24.13.1 <27"
   },
   "scripts": {
     "install:ci": "node scripts/install-ci.mjs",
-    "dev": "vinext dev --port 5173",
-    "build": "vinext build",
-    "start": "node scripts/start-local.mjs",
+    "dev": "next dev --port 5173",
+    "build": "next build --webpack",
+    "start": "next start --port 5173",
     "lint": "eslint . --ignore-pattern dist --ignore-pattern .next",
     "db:generate": "drizzle-kit generate",
     "test": "tsx --test tests/*.test.ts",
     "check": "npm test && tsc --noEmit && npm run lint && npm run build",
-    "build:node": "SURAKSHA_RUNTIME=node vinext build",
-    "start:node": "node dist/standalone/server.js",
-    "db:migrate:node": "node scripts/migrate-node.mjs"
+    "build:node": "next build --webpack",
+    "start:node": "node .next/standalone/apps/admin-web/server.js",
+    "db:migrate:node": "node scripts/migrate-node.mjs",
+    "build:safety-worker": "vite build --config vite.safety-worker.config.ts",
+    "safety:worker": "node dist-safety-worker/worker.mjs",
+    "dev:cloudflare": "vinext dev --port 5173",
+    "build:cloudflare": "vinext build",
+    "release:check": "tsx scripts/check-release-config.ts",
+    "release:package": "node scripts/package-release.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.7.0",
@@ -44,6 +50,7 @@
     "recharts": "^3.8.0",
     "sonner": "^2.0.8",
     "tailwind-merge": "3.6.0",
+    "three": "0.186.1",
     "vaul": "^1.1.2",
     "zod": "4.6.5"
   },
@@ -55,6 +62,7 @@
     "@types/qrcode": "^1.5.6",
     "@types/react": "19.2.14",
     "@types/react-dom": "19.2.3",
+    "@types/three": "0.186.0",
     "@vitejs/plugin-react": "6.0.2",
     "@vitejs/plugin-rsc": "0.5.34",
     "drizzle-kit": "0.31.10",

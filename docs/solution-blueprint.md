@@ -10,7 +10,7 @@ The central product loop is:
 
 AR is useful because it makes spatial relationships and action sequences tangible: choosing between exits, keeping clear of a simulated hazard, locating safety equipment, and recognising when entry must be refused. The lasting value is evidence of understanding that works with shared phones and poor connectivity.
 
-Suggested name: **Suraksha Saathi / सुरक्षा साथी**. This is a working name; trademark and domain availability have not been checked. Use a Santali name only after community review.
+Suggested name: **Suraksha Saathi / सुरक्षा साथी**. This is a working name; trademark and doI’ll check the connection, install the latest candidate without clearing your data, and open the AR mission for a real-camera check.main availability have not been checked. Use a Santali name only after community review.
 
 Suggested pitch: **“A pocket safety training centre that lets workers practise dangerous decisions safely, in their own language, and gives employers verifiable evidence of what they understood.”**
 

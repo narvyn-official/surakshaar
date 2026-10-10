@@ -1,5 +1,33 @@
 @import "tailwindcss";
 @import "tw-animate-css";
+/* Staff reference pilot: reuse the workspace's light, teal and slate tokens. */
+.safety-panel{display:grid;gap:18px;min-width:0}
+.safety-hero,.safety-row,.safety-toolbar{display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap}
+.safety-hero{padding:24px;border:1px solid var(--border);border-radius:16px;background:var(--card)}
+.safety-intro{display:flex;align-items:center;gap:14px;max-width:650px}
+.safety-emblem{display:grid;place-items:center;flex-shrink:0;width:44px;height:44px;background:#e3f3ef;color:#086457;border-radius:12px}
+.safety-hero h2,.safety-source h3,.safety-update h3{margin:0;font-size:1.12rem;line-height:1.45}
+.safety-hero p,.safety-context p{margin:5px 0 0;color:var(--muted-foreground)}
+.safety-boundary{display:flex;align-items:flex-start;gap:9px;font-size:.875rem;color:var(--muted-foreground);margin:0}.safety-boundary svg{flex-shrink:0;margin-top:4px}
+.safety-tabs,.safety-chips,.safety-pagination{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.safety-tabs button{min-height:44px;white-space:normal;min-width:0}.safety-panel>*{min-width:0}.safety-toolbar label,.safety-form label{display:grid;gap:6px;font-size:.875rem;font-weight:600}
+.safety-panel select,.safety-form select,.safety-form textarea,.safety-form input{width:100%;min-height:44px;padding:10px 12px;background:var(--card);color:var(--foreground);border:1px solid var(--input);border-radius:8px;font:inherit}
+.safety-panel select:focus-visible,.safety-form :is(select,textarea,input):focus-visible,.safety-panel summary:focus-visible,.safety-sources summary:focus-visible,.safety-source-link:focus-visible{outline:3px solid var(--ring);outline-offset:3px}
+.safety-update-list{display:grid;gap:14px}.safety-update,.safety-source{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;min-width:0}.safety-source+.safety-source{margin-top:14px}
+.safety-update h3{margin-top:12px}.safety-update .muted,.safety-source .muted{margin:4px 0;font-size:.875rem}
+.safety-status{font-size:.75rem;font-weight:700;padding:4px 10px;border-radius:6px;display:inline-block;text-transform:capitalize;background:#eaf0f8;color:#304663}
+.safety-status-approved{background:#e1f3eb;color:#165a42}.safety-status-needs-review,.safety-status-proposed{background:#fff1d6;color:#765013}.safety-status-rejected,.safety-status-disabled{background:#fce9ec;color:#952632}
+.safety-fixture{display:inline-block;background:#fff1d6;color:#694411;padding:5px 9px;border:1px solid #ddc080;border-radius:6px;font-size:.8rem;font-weight:700}
+.safety-excerpt-preview{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;overflow-wrap:anywhere;font-size:.9375rem;margin:14px 0;color:var(--muted-foreground)}
+.safety-source-link{color:#08675f;text-decoration:underline;text-underline-offset:3px;min-height:44px;display:inline-flex;align-items:center;font-weight:600;font-size:.875rem}
+.safety-empty{text-align:center;padding:42px 24px;background:var(--card);border:1px dashed var(--input);border-radius:12px}.safety-empty svg{margin:0 auto 14px;color:var(--primary)}.safety-empty p{max-width:570px;margin:10px auto 22px;color:var(--muted-foreground)}
+.safety-job{display:flex;gap:12px;padding:18px;background:#eaf0f8;border-radius:12px}.safety-job svg{flex-shrink:0;margin-top:4px}
+.safety-form{display:grid;gap:16px;margin:18px 0;max-width:640px}.safety-form textarea{min-height:110px;resize:vertical}.safety-form button{justify-self:start}
+.safety-audit{padding:16px 0;border-bottom:1px solid var(--border);overflow-wrap:anywhere}.safety-audit p{margin:6px 0}.safety-audit-detail{font-size:.875rem;white-space:pre-wrap;overflow-wrap:anywhere}.safety-context{margin-bottom:16px}
+.safety-review-dialog{width:min(760px,calc(100vw - 32px));max-width:760px!important;max-height:calc(100dvh - 32px);overflow:auto;overscroll-behavior:contain}.safety-review{min-width:0}.safety-review blockquote{margin:12px 0;padding:16px;background:var(--muted);border-left:3px solid var(--primary);border-radius:4px;white-space:pre-wrap;overflow-wrap:anywhere;font-size:.9rem}
+.safety-metadata{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:18px 0}.safety-metadata dt{font-size:.75rem;color:var(--muted-foreground)}.safety-metadata dd{margin:0;font-size:.875rem;overflow-wrap:anywhere}.safety-hash{overflow-wrap:anywhere}
+.safety-panel summary,.safety-sources summary{padding:10px 0;min-height:44px;cursor:pointer;font-weight:600}.safety-pagination{justify-content:center;padding:8px}
+@media(max-width:640px){.safety-hero,.safety-source,.safety-update{padding:16px}.safety-hero>button{width:100%}.safety-emblem{display:none}.safety-toolbar{align-items:stretch}.safety-toolbar label{width:100%}.safety-tabs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.safety-metadata{grid-template-columns:1fr}.safety-update .safety-row:last-child{align-items:stretch;flex-direction:column}.safety-update .safety-row:last-child>button{align-self:flex-start}}
 :root {
   color-scheme: light;
   --background: #f5f7fb;
@@ -680,3 +708,9 @@ select,input[type="datetime-local"] {min-height:44px;max-width:100%;border:1px s
 
 /* Certificate remains readable on phones and compact on a printed A4 page. */
 .certificate dl{display:grid;grid-template-columns:160px minmax(0,1fr);gap:12px 20px;margin:26px 0}.certificate dd{margin:0}.certificate h1{margin:10px 0 16px}.certificate h2{margin-bottom:18px}.certificate p{margin:12px 0}.local-qr{max-width:100%;height:auto;background:white;border-radius:8px;margin:12px 0}@media(max-width:480px){.certificate{padding:20px;margin:16px}.certificate dl{grid-template-columns:1fr;gap:4px}.certificate dd{margin-bottom:12px}}@media print{@page{size:A4;margin:14mm}.certificate{padding:0;font-size:11pt;break-inside:avoid}.certificate dl{grid-template-columns:145px 1fr}.certificate img{width:140px;height:140px}.certificate h1{font-size:24pt}}
+
+/* Safety collection provenance: live evidence stays distinct from demo records. */
+.safety-collection-summary { display: flex; flex-wrap: wrap; gap: 1rem 2rem; padding: 1rem; margin: 1rem 0; background: #f1f5f9; border: 1px solid #dbe4ee; border-radius: 14px; }
+.safety-collection-summary > div { display: grid; gap: .25rem; min-width: 0; }
+.safety-collection-summary strong { color: #24364b; font-size: .9rem; }
+.safety-collection-summary span { color: #526176; font-size: .85rem; overflow-wrap: anywhere; }

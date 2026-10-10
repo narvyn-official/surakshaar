@@ -18,9 +18,9 @@ import android.view.View
 import android.widget.*
 
 object Palette {
-    val canvas=Color.rgb(245,247,251); val surface=Color.WHITE; val ink=Color.rgb(32,44,64)
-    val muted=Color.rgb(89,102,123); val blue=Color.rgb(49,91,226); val soft=Color.rgb(237,241,251)
-    val line=Color.rgb(224,229,238); val success=Color.rgb(19,102,77); val successBg=Color.rgb(230,244,238)
+    val canvas=Color.rgb(234,240,244); val surface=Color.rgb(249,252,255); val ink=Color.rgb(24,52,76)
+    val muted=Color.rgb(75,102,123); val blue=Color.rgb(7,92,154); val soft=Color.rgb(210,233,245)
+    val line=Color.rgb(188,208,223); val success=Color.rgb(19,102,77); val successBg=Color.rgb(230,244,238)
     val danger=Color.rgb(172,52,59); val dangerBg=Color.rgb(253,236,238); val amber=Color.rgb(128,82,11); val amberBg=Color.rgb(255,243,220)
     val teal=Color.rgb(15,118,110); val tealBg=Color.rgb(228,244,239)
     val fire=Color.rgb(198,91,34)
@@ -36,14 +36,14 @@ fun Context.label(value: String,size: Float=16f,colour: Int=Palette.ink,bold: Bo
 }
 fun Context.column(padding: Int=0)=LinearLayout(this).apply { orientation=LinearLayout.VERTICAL;setPadding(dp(padding),dp(padding),dp(padding),dp(padding)) }
 fun LinearLayout.add(view: View,top: Int=0,bottom: Int=0) { addView(view,LinearLayout.LayoutParams(-1,-2).apply { topMargin=context.dp(top);bottomMargin=context.dp(bottom) }) }
-fun Context.card(colour: Int=Palette.surface)=column(18).apply {background=shape(colour,18,if(colour==Palette.surface) Palette.line else null)}
+fun Context.card(colour: Int=Palette.surface)=column(18).apply {background=shape(colour,12,if(colour==Palette.surface) Palette.line else null)}
 fun Button.actionRole(role: ActionRole)=apply {
     val (fill,ink)=when(role) {
         ActionRole.PRIMARY -> Palette.blue to Color.WHITE
         ActionRole.LEARN -> Palette.soft to Palette.blue
         ActionRole.CAMERA -> Palette.soft to Palette.blue
         ActionRole.REVIEW -> Palette.amberBg to Palette.amber
-        ActionRole.NEUTRAL -> 0xffedf0f6.toInt() to Palette.ink
+        ActionRole.NEUTRAL -> Palette.soft to Palette.ink
         ActionRole.DANGER -> Palette.dangerBg to Palette.danger
     }
     setTextColor(ColorStateList(arrayOf(intArrayOf(-android.R.attr.state_enabled),intArrayOf()),intArrayOf(Palette.muted,ink)))

@@ -1,0 +1,2 @@
+import type {MetadataRoute} from 'next';
+export default function manifest():MetadataRoute.Manifest{return {name:'SurakshaAR Spatial Studio',short_name:'SurakshaAR',description:'Safety learning, spatial exploration and practical preparedness.',start_url:'/studio',display:'standalone',background_color:'#eaf0f4',theme_color:'#075c9a',icons:[{src:'/icon.svg',sizes:'any',type:'image/svg+xml',purpose:'any'}]};}

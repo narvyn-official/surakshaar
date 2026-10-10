@@ -1,0 +1,293 @@
+{
+  "scope": "Selected opaque atlas text, control boundary, focus and decorative gradient endpoint pairs. Mood swatches excluded. Not a full accessibility audit.",
+  "pairs": [
+    {
+      "theme": "light",
+      "foreground": "#202b2b",
+      "background": "#f5f4ef",
+      "ratio": 13.225,
+      "minimum": 4.5,
+      "pass_": true
+    },
+    {
+      "theme": "light",
+      "foreground": "#202b2b",
+      "background": "#fffefa",
+      "ratio": 14.432,
+      "minimum": 4.5,
+      "pass_": true
+    },
+    {
+      "theme": "light",
+      "foreground": "#202b2b",
+      "background": "#e7eee8",
+      "ratio": 12.34,
+      "minimum": 4.5,
+      "pass_": true
+    },
+    {
+      "theme": "light",
+      "foreground": "#546060",
+      "background": "#f5f4ef",
+      "ratio": 5.924,
+      "minimum": 4.5,
+      "pass_": true
+    },
+    {
+      "theme": "light",
+      "foreground": "#546060",
+      "background": "#fffefa",
+      "ratio": 6.464,
+      "minimum": 4.5,
+      "pass_": true
+    },
+    {
+      "theme": "light",
+      "foreground": "#546060",
+      "background": "#e7eee8",
+      "ratio": 5.527,
+      "minimum": 4.5,
+      "pass_": true
+    },
+    {
+      "theme": "light",
+      "foreground": "#17685b",
+      "background": "#f5f4ef",
+      "ratio": 6.02,
+      "minimum": 4.5,
+      "pass_": true
+    },
+    {
+      "theme": "light",
+      "foreground": "#17685b",
+      "background": "#fffefa",
+      "ratio": 6.569,
+      "minimum": 4.5,
+      "pass_": true
+    },
+    {
+      "theme": "light",
+      "foreground": "#17685b",
+      "background": "#e7eee8",
+      "ratio": 5.617,
+      "minimum": 4.5,
+      "pass_": true
+    },
+    {
+      "theme": "light",
+      "foreground": "#728079",
+      "background": "#f5f4ef",
+      "ratio": 3.754,
+      "minimum": 3,
+      "pass_": true
+    },
+    {
+      "theme": "light",
+      "foreground": "#728079",
+      "background": "#fffefa",
+      "ratio": 4.097,
+      "minimum": 3,
+      "pass_": true
+    },
+    {
+      "theme": "light",
+      "foreground": "#728079",
+      "background": "#e7eee8",
+      "ratio": 3.503,
+      "minimum": 3,
+      "pass_": true
+    },
+    {
+      "theme": "light",
+      "foreground": "#145fcc",
+      "background": "#f5f4ef",
+      "ratio": 5.389,
+      "minimum": 3,
+      "pass_": true
+    },
+    {
+      "theme": "light",
+      "foreground": "#145fcc",
+      "background": "#fffefa",
+      "ratio": 5.881,
+      "minimum": 3,
+      "pass_": true
+    },
+    {
+      "theme": "light",
+      "foreground": "#145fcc",
+      "background": "#e7eee8",
+      "ratio": 5.028,
+      "minimum": 3,
+      "pass_": true
+    },
+    {
+      "theme": "dark",
+      "foreground": "#eef4e9",
+      "background": "#111b19",
+      "ratio": 15.697,
+      "minimum": 4.5,
+      "pass_": true
+    },
+    {
+      "theme": "dark",
+      "foreground": "#eef4e9",
+      "background": "#1a2824",
+      "ratio": 13.659,
+      "minimum": 4.5,
+      "pass_": true
+    },
+    {
+      "theme": "dark",
+      "foreground": "#eef4e9",
+      "background": "#243b32",
+      "ratio": 10.736,
+      "minimum": 4.5,
+      "pass_": true
+    },
+    {
+      "theme": "dark",
+      "foreground": "#b8c8c0",
+      "background": "#111b19",
+      "ratio": 10.096,
+      "minimum": 4.5,
+      "pass_": true
+    },
+    {
+      "theme": "dark",
+      "foreground": "#b8c8c0",
+      "background": "#1a2824",
+      "ratio": 8.785,
+      "minimum": 4.5,
+      "pass_": true
+    },
+    {
+      "theme": "dark",
+      "foreground": "#b8c8c0",
+      "background": "#243b32",
+      "ratio": 6.905,
+      "minimum": 4.5,
+      "pass_": true
+    },
+    {
+      "theme": "dark",
+      "foreground": "#9bdbc3",
+      "background": "#111b19",
+      "ratio": 11.145,
+      "minimum": 4.5,
+      "pass_": true
+    },
+    {
+      "theme": "dark",
+      "foreground": "#9bdbc3",
+      "background": "#1a2824",
+      "ratio": 9.698,
+      "minimum": 4.5,
+      "pass_": true
+    },
+    {
+      "theme": "dark",
+      "foreground": "#9bdbc3",
+      "background": "#243b32",
+      "ratio": 7.623,
+      "minimum": 4.5,
+      "pass_": true
+    },
+    {
+      "theme": "dark",
+      "foreground": "#81998d",
+      "background": "#111b19",
+      "ratio": 5.754,
+      "minimum": 3,
+      "pass_": true
+    },
+    {
+      "theme": "dark",
+      "foreground": "#81998d",
+      "background": "#1a2824",
+      "ratio": 5.007,
+      "minimum": 3,
+      "pass_": true
+    },
+    {
+      "theme": "dark",
+      "foreground": "#81998d",
+      "background": "#243b32",
+      "ratio": 3.936,
+      "minimum": 3,
+      "pass_": true
+    },
+    {
+      "theme": "dark",
+      "foreground": "#a8cbff",
+      "background": "#111b19",
+      "ratio": 10.59,
+      "minimum": 3,
+      "pass_": true
+    },
+    {
+      "theme": "dark",
+      "foreground": "#a8cbff",
+      "background": "#1a2824",
+      "ratio": 9.215,
+      "minimum": 3,
+      "pass_": true
+    },
+    {
+      "theme": "dark",
+      "foreground": "#a8cbff",
+      "background": "#243b32",
+      "ratio": 7.243,
+      "minimum": 3,
+      "pass_": true
+    },
+    {
+      "theme": "hero",
+      "foreground": "#f0f5dd",
+      "background": "#183c34",
+      "ratio": 10.843,
+      "minimum": 4.5,
+      "pass_": true
+    },
+    {
+      "theme": "hero",
+      "foreground": "#f0f5dd",
+      "background": "#213d33",
+      "ratio": 10.568,
+      "minimum": 4.5,
+      "pass_": true
+    },
+    {
+      "theme": "hero",
+      "foreground": "#d0e2d5",
+      "background": "#183c34",
+      "ratio": 8.947,
+      "minimum": 4.5,
+      "pass_": true
+    },
+    {
+      "theme": "hero",
+      "foreground": "#d0e2d5",
+      "background": "#213d33",
+      "ratio": 8.72,
+      "minimum": 4.5,
+      "pass_": true
+    },
+    {
+      "theme": "accent-study",
+      "foreground": "#f2f7eb",
+      "background": "#43654a",
+      "ratio": 6.027,
+      "minimum": 4.5,
+      "pass_": true
+    },
+    {
+      "theme": "accent-study",
+      "foreground": "#f2f7eb",
+      "background": "#173e34",
+      "ratio": 10.861,
+      "minimum": 4.5,
+      "pass_": true
+    }
+  ]
+}

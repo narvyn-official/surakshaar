@@ -9,7 +9,7 @@ export class SqliteD1 {
   readonly sqlite:DatabaseSync;
   constructor(path:string){
     this.sqlite=new DatabaseSync(path);
-    this.sqlite.exec('PRAGMA foreign_keys=ON; PRAGMA busy_timeout=5000; PRAGMA journal_mode=WAL; PRAGMA synchronous=FULL;');
+    this.sqlite.exec('PRAGMA foreign_keys=ON; PRAGMA busy_timeout=5000; PRAGMA journal_mode=WAL; PRAGMA synchronous=FULL; PRAGMA secure_delete=ON;');
   }
   prepare(sql:string){return new SqliteStatement(this,sql,[])}
   async batch(statements:SqliteStatement[]){

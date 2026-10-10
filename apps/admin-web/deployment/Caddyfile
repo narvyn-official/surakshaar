@@ -1,0 +1,9 @@
+learning.your-domain.example {
+    encode zstd gzip
+    header Strict-Transport-Security "max-age=31536000"
+    request_body { max_size 2MB }
+    reverse_proxy 127.0.0.1:5173 {
+        header_up -CF-Connecting-IP
+        header_up X-Real-IP {remote_host}
+    }
+}

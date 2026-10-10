@@ -1,0 +1,28 @@
+import {cpSync,existsSync,mkdirSync,readFileSync,writeFileSync,readdirSync,lstatSync,statSync,rmSync} from 'node:fs';
+import {resolve,join,relative} from 'node:path';
+import {createHash} from 'node:crypto';
+import {execFileSync} from 'node:child_process';
+const root=resolve(import.meta.dirname,'../../..'),app=join(root,'apps/admin-web'),version=JSON.parse(readFileSync(join(app,'package.json'),'utf8')).version;
+if(!/^[0-9][a-zA-Z0-9.-]+$/.test(version))throw Error('Invalid release version');
+const target=join(root,'artifacts','surakshaar-'+version),web=join(target,'web');
+if(!existsSync(join(app,'.next/standalone/apps/admin-web/server.js')))throw Error('Build the standalone server first');
+mkdirSync(target,{recursive:true});for(const generated of [web,join(target,'source')])rmSync(generated,{recursive:true,force:true});cpSync(join(app,'.next/standalone'),web,{recursive:true});
+cpSync(join(app,'.next/static'),join(web,'apps/admin-web/.next/static'),{recursive:true});
+cpSync(join(app,'public'),join(web,'apps/admin-web/public'),{recursive:true});
+cpSync(join(app,'drizzle'),join(web,'drizzle'),{recursive:true});
+cpSync(join(app,'deployment'),join(web,'deployment'),{recursive:true});
+mkdirSync(join(web,'scripts'),{recursive:true});for(const name of ['migrate-node.mjs','backup-node.mjs','maintain-node.mjs'])cpSync(join(app,'scripts',name),join(web,'scripts',name));
+// Explicit allowlist prevents copying the developer database, private config, cookies or release keys.
+const source=join(target,'source/apps/admin-web');mkdirSync(source,{recursive:true});
+for(const name of ['app','components','db','drizzle','lib','public','scripts','tests','deployment','build','.openai','hooks','vendor','cloudflare-env.d.ts','drizzle.config.ts','components.json','.npmrc','package.json','package-lock.json','tsconfig.json','next.config.ts','postcss.config.mjs','eslint.config.mjs','next-env.d.ts','vite.config.ts','vite.safety-worker.config.ts'])if(existsSync(join(app,name)))cpSync(join(app,name),join(source,name),{recursive:true});
+cpSync(join(root,'content/learning'),join(target,'source/content/learning'),{recursive:true});
+cpSync(join(root,'content/spatial'),join(target,'source/content/spatial'),{recursive:true});
+mkdirSync(join(target,'source/content/anatomy'),{recursive:true});
+cpSync(join(root,'content/anatomy/manifest.json'),join(target,'source/content/anatomy/manifest.json'));
+// Record generated anatomy licences and bundled dependency notices separately.
+const notices=[];function walk(dir){for(const name of readdirSync(dir)){const path=join(dir,name);if(lstatSync(path).isSymbolicLink())continue;if(statSync(path).isDirectory())walk(path);else if(/^(licen[cs]e|notice|copying)(\.|$)/i.test(name))notices.push(relative(web,path));}}walk(web);
+writeFileSync(join(target,'THIRD-PARTY-NOTICES.txt'),'Dependency and asset licence files retained inside web/:\n'+notices.join('\n')+'\n');
+writeFileSync(join(target,'BUILD.json'),JSON.stringify({version,builtAt:new Date().toISOString(),runtime:process.version,platform:process.platform,architecture:process.arch,hosted:false,contentReview:'pending',webRuntime:'Next.js standalone / SQLite single instance'},null,2));
+cpSync(join(root,'docs/surakshaar-0.16.0'),join(target,'docs'),{recursive:true});
+execFileSync('tar',['-czf',join(target,`surakshaar-${version}-web.tar.gz`),'-C',target,'web','source','THIRD-PARTY-NOTICES.txt','BUILD.json','docs']);
+const archive=join(target,`surakshaar-${version}-web.tar.gz`);console.log(JSON.stringify({archive,sha256:createHash('sha256').update(readFileSync(archive)).digest('hex'),bytes:statSync(archive).size},null,2));

@@ -29,7 +29,7 @@ import javax.microedition.khronos.opengles.GL10
 /** Local simulated procedure scene. Projected callouts are not mesh manipulation or equipment detection. */
 class ProcedureSceneView(private val activity: Activity) : FrameLayout(activity), GLSurfaceView.Renderer {
     data class Target(val id: String, val label: String, val point: FloatArray)
-    data class Scene(val module: String, val stepId: String, val targets: List<Target>, val completedActions: Set<String>, val enabled: Boolean = true, val spatial: Boolean = false)
+    data class Scene(val module: String, val stepId: String, val targets: List<Target>, val completedActions: Set<String>, val enabled: Boolean = true, val spatial: Boolean = false, val illustrationOnly:Boolean=false)
     private data class Snapshot(val revision: Int, val scene: Scene, val camera: Boolean,
                                 val heights: List<Float>, val columns: Int, val width: Int, val height: Int)
     private data class Action(val revision: Int, val stepId: String, val id: String, val camera: Boolean, val proof: ProcedureSpatial.Proof? = null, val gesture: Long = -1)
@@ -134,7 +134,7 @@ class ProcedureSceneView(private val activity: Activity) : FrameLayout(activity)
     fun configure(scene: Scene, hi: Boolean, onAction: (String, String, org.json.JSONObject?) -> Unit) {
         this.hi = hi
         this.onAction = onAction
-        equipment.prepareProcedure(scene.module)
+        if(!scene.illustrationOnly)equipment.prepareProcedure(scene.module)
         val copied = scene.copy(targets = scene.targets.map { it.copy(point = it.point.copyOf()) }, completedActions = scene.completedActions.toSet())
         snapshot = snapshot.copy(scene = copied)
         lastMessage = ""
@@ -424,7 +424,7 @@ class ProcedureSceneView(private val activity: Activity) : FrameLayout(activity)
                 Matrix.setIdentityM(model, 0)
             }
             Matrix.multiplyMM(vp, 0, projection, 0, view, 0)
-            equipment.draw(vp, model, current.scene.module, eye, if (current.camera) light else floatArrayOf(1f, 1f, 1f, 1f), completedActions = current.scene.completedActions, procedureMode = true)
+            equipment.draw(vp, model, current.scene.module, eye, if (current.camera) light else floatArrayOf(1f, 1f, 1f, 1f), completedActions = current.scene.completedActions, procedureMode = !current.scene.illustrationOnly)
             Matrix.multiplyMM(mvp, 0, vp, 0, model, 0)
             if(current.scene.spatial) {
                 drawSpatial(current,observedAt)

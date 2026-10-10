@@ -2,7 +2,7 @@ package com.narvyn.suraksha
 
 import java.util.Locale
 
-/** Main-thread speech queue. A paused utterance resumes at its sentence boundary. */
+/** Main-thread speech queue. A paused utterance resumes at its short phrase boundary. */
 internal class NarrationPlayback {
     data class Ticket(val id: String, val text: String)
     var text = ""; private set
@@ -20,7 +20,7 @@ internal class NarrationPlayback {
         val lang = language(languageTag)
         if (clean == text && lang == language) return false
         cancel()
-        text = clean; language = lang; sentences = split(clean); index = 0
+        text = clean; language = lang; sentences = phrases(clean); index = 0
         attempted = false; paused = false; finished = false
         return true
     }
@@ -42,13 +42,39 @@ internal class NarrationPlayback {
     fun retryAutomatic() { attempted = false }
     companion object {
         fun language(tag: String) = Locale.forLanguageTag(tag).language.lowercase(Locale.ROOT)
+        /** Let the engine voice connected sentences together instead of resetting after each label.
+         * Paragraphs still form pauses. Only display punctuation is cleaned; facts and safety text
+         * are never removed or rewritten by the speech layer.
+         */
+        fun phrases(value: String, maximum: Int = 280): List<String> {
+            require(maximum >= 16)
+            return value.trim().split(Regex("\\n\\s*\\n")).flatMap { paragraph ->
+                val clean = paragraph
+                    .replace(Regex("(?m)^\\s*[•●]\\s*"), "")
+                    .replace(Regex("\\s+[·|]\\s+"), ". ")
+                    .replace(Regex("([.!?।])\\s*[.।]+(?=\\s|$)"), "$1")
+                val result = mutableListOf<String>()
+                var phrase = ""
+                for (sentence in split(clean, maximum)) {
+                    if (phrase.isNotEmpty() && phrase.length + sentence.length + 1 > maximum) {
+                        result += phrase; phrase = ""
+                    }
+                    phrase += (if (phrase.isEmpty()) "" else " ") + sentence
+                }
+                if (phrase.isNotEmpty()) result += phrase
+                result
+            }
+        }
         fun split(value: String, maximum: Int = 420): List<String> {
             require(maximum >= 16)
             val result = mutableListOf<String>()
             for (sentence in value.trim().split(Regex("(?<=[.!?।])\\s+|\\n+"))) {
                 var remaining = sentence.trim()
                 while (remaining.length > maximum) {
-                    var boundary = remaining.lastIndexOf(' ', maximum).takeIf { it >= maximum / 2 } ?: maximum
+                    // Prefer a clause boundary for long sentences, then a word boundary.
+                    var boundary = remaining.take(maximum).indexOfLast { it in ",;:।" }
+                        .takeIf { it >= maximum / 2 }?.plus(1)
+                        ?: remaining.lastIndexOf(' ', maximum).takeIf { it >= maximum / 2 } ?: maximum
                     if (boundary > 0 && Character.isHighSurrogate(remaining[boundary - 1])) boundary--
                     result += remaining.substring(0, boundary).trim()
                     remaining = remaining.substring(boundary).trim()
@@ -62,9 +88,14 @@ internal class NarrationPlayback {
 
 /** Voice selection is intentionally strict: no network voice or silent language substitution. */
 internal object NarrationVoicePolicy {
-    data class Candidate(val name: String, val languageTag: String, val offline: Boolean, val installed: Boolean, val quality: Int = 0)
-    fun select(languageTag: String, candidates: List<Candidate>): String? = candidates
+    data class Candidate(val name: String, val languageTag: String, val offline: Boolean, val installed: Boolean,
+        val quality: Int = 0, val latency: Int = 0)
+    fun ranked(languageTag: String, candidates: List<Candidate>): List<Candidate> = candidates
         .filter { it.offline && it.installed && NarrationPlayback.language(it.languageTag) == NarrationPlayback.language(languageTag) }
-        .sortedWith(compareByDescending<Candidate> { it.languageTag.equals(languageTag, true) }.thenByDescending { it.quality }.thenBy { it.name })
-        .firstOrNull()?.name
+        .sortedWith(compareByDescending<Candidate> { it.languageTag.equals(languageTag, true) }
+            .thenByDescending { it.quality }.thenBy { it.latency }.thenBy { it.name })
+    fun select(languageTag: String, candidates: List<Candidate>, preferredName: String? = null): String? {
+        val available = ranked(languageTag, candidates)
+        return available.firstOrNull { it.name == preferredName }?.name ?: available.firstOrNull()?.name
+    }
 }

@@ -1,0 +1,34 @@
+{
+  "markdown_sha256": "f1fb9d23b0e54bc0a51d6e262083c99746208ea295af58442df951a15338aac9",
+  "unique_rule_ids": 308,
+  "sources": 84,
+  "contrast_pairs_passed": 34,
+  "html": [
+    {
+      "file": "index.html",
+      "rules": 308,
+      "chapters": 41,
+      "internal_links_valid": true,
+      "source_references_resolved": true
+    },
+    {
+      "file": "checklist.html",
+      "rules": 0,
+      "chapters": 12,
+      "internal_links_valid": true,
+      "source_references_resolved": true
+    },
+    {
+      "file": "design-guide.html",
+      "rules": 0,
+      "chapters": 8,
+      "internal_links_valid": true,
+      "source_references_resolved": true
+    }
+  ],
+  "limitations": [
+    "Computed palette checks are not a full accessibility audit.",
+    "Source references are resolved locally; this does not guarantee future URL availability.",
+    "No existing application has been audited by creating this handbook."
+  ]
+}

@@ -8,8 +8,12 @@ import android.widget.*
 /** One topic at a time. A single fixed footer advances content parts and then the next topic. */
 internal object RoomLearningDialog {
     data class Choice(val label:String,val feedback:String,val suitable:Boolean)
-    data class Page(val title:String,val body:String,val question:String="",val tint:Int=Palette.tealBg,val choices:List<Choice> = emptyList())
+    data class Page(val title:String,val body:String,val question:String="",val tint:Int=Palette.tealBg,val choices:List<Choice> = emptyList(),val speakTitle:Boolean=true)
     data class Next(val label:String,val run:()->Unit)
+    // Unsafe choices may be visible for reflection, but must never sound like spoken directions.
+    fun narration(page:Page,hi:Boolean)=listOf(if(page.speakTitle)page.title else "",page.body,page.question,
+        if(page.choices.isNotEmpty())if(hi)"स्क्रीन पर एक विकल्प चुनें।"else"Choose an option on screen."else "")
+        .filter{it.isNotBlank()}.joinToString("\n\n")
     fun show(host:Activity,title:String,pages:List<Page>,hi:Boolean,onDismiss:()->Unit,
              listen:((String)->String?)?=null,next:List<Next> = emptyList(),stopVoice:()->Unit={},autoSpeak:Boolean=false,narrator:TrainingNarrator?=null):Dialog {
         require(pages.isNotEmpty())
@@ -29,7 +33,7 @@ internal object RoomLearningDialog {
         root.addView(panel,LinearLayout.LayoutParams(-1,0,1f))
         var index=0;var speaking=false;var pendingRead:String?=null
         val answers=mutableMapOf<Int,Int>()
-        fun narration(p:Page)=p.title+". "+p.body+". "+p.question+". "+p.choices.joinToString(". "){it.label}
+        fun narration(p:Page)=narration(p,hi)
         fun read(text:String){if(listen==null)return;val error=listen(text);speaking=error==null;voiceStatus.text=error?:t("Narration requested. Listen / stop pauses speech.","आवाज़ का अनुरोध भेजा। सुनें / रोकें से आवाज़ रोकें।");voiceStatus.visibility=if(narrator==null)View.VISIBLE else View.GONE}
         if(narrator!=null)content.add(narrator.compactControls(),top=8)
         else if(listen!=null)content.add(host.action(t("Listen / stop","सुनें / रोकें"),false,ActionRole.REVIEW){
@@ -57,11 +61,11 @@ internal object RoomLearningDialog {
             page.choices.forEachIndexed{answer,choice->choices.add(host.action(choice.label,false,ActionRole.LEARN){
                 stopVoice();speaking=false;answers[index]=answer
                 show(host,t(if(choice.suitable)"Suitable principle"else"Reconsider",if(choice.suitable)"उपयुक्त सिद्धांत"else"फिर सोचें"),
-                    listOf(Page(choice.label,choice.feedback,t("Close to return to the example.","उदाहरण पर लौटने के लिए बंद करें।"),if(choice.suitable)Palette.tealBg else Palette.amberBg)),hi,{},listen,stopVoice=stopVoice,autoSpeak=autoSpeak,narrator=narrator)
+                    listOf(Page(choice.label,choice.feedback,t("Close to return to the example.","उदाहरण पर लौटने के लिए बंद करें।"),if(choice.suitable)Palette.tealBg else Palette.amberBg,speakTitle=false)),hi,{},listen,stopVoice=stopVoice,autoSpeak=autoSpeak,narrator=narrator)
             }.apply{isSelected=answers[index]==answer},top=6)}
             if(index==pages.lastIndex)next.forEach{choice->nextBox.add(host.action(choice.label,false,ActionRole.REVIEW){choice.run();dialog.dismiss()},top=6)}
             panel.firstPage();content.requestLayout();chrome()
-            narrator?.show(narration(page),if(hi)"hi-IN"else"en-IN")
+            narrator?.prepare(narration(page),if(hi)"hi-IN"else"en-IN")
             pendingRead=if(autoSpeak)narration(page)else null
             if(dialog.window?.decorView?.hasWindowFocus()==true){pendingRead?.let(::read);pendingRead=null}
         }

@@ -27,7 +27,8 @@ class RoomMissionView(private val host:Activity, val module:String, val camera:B
                      val targets:Map<String,ComponentProjection.Point> = emptyMap(),val inverse:FloatArray?=null,val frameWidth:Int=0,val frameHeight:Int=0,val phase:String="",val canPlace:Boolean=false,val retry:Boolean=false,
                      val footprint:List<ComponentProjection.Point> = emptyList(),
                      val surfaceBoundary:List<ComponentProjection.Point> = emptyList(),val scanProgress:Float=0f,val preview:Boolean=false,
-                     val placementAim:ComponentProjection.Point?=null,val aimSerial:Long=0,val fullFootprintMapped:Boolean=true)
+                     val placementAim:ComponentProjection.Point?=null,val aimSerial:Long=0,val fullFootprintMapped:Boolean=true,
+                     val viewSerial:Long=0,val magnification:Float=1f)
     private data class Visual(val phase:String="ALARM",val progress:Float=0f,val held:Boolean=false,val showCues:Boolean=true,val explosionRisk:Boolean=false,val equipmentCondition:String="good",val routeChanged:Boolean=false)
     private val surface=GLSurfaceView(host)
     private val overlay=Overlay()
@@ -35,6 +36,20 @@ class RoomMissionView(private val host:Activity, val module:String, val camera:B
     private val inspectionButtons=mutableMapOf<String,Button>()
     private var inspectionPhase=""
     @Volatile private var inspectionModelArea=Pair(1,1)
+    @Volatile private var magnification=InspectionMagnification.Snapshot()
+    private var multiPointer=false
+    private val zoomBar=LinearLayout(host).apply{gravity=Gravity.CENTER_VERTICAL;background=host.shape(Palette.surface,12,Palette.line);tag="room-view-controls";visibility=GONE}
+    private val zoomOut=host.action("−",false,ActionRole.NEUTRAL){changeMagnification(magnification.factor/InspectionMagnification.STEP)}.apply{contentDescription=t("Zoom out","ज़ूम घटाएँ");tag="room-zoom-out"}
+    private val zoomReset=host.action("1×",false,ActionRole.NEUTRAL){changeMagnification(1f)}.apply{tag="room-zoom-reset"}
+    private var zoomResetIcon=false
+    private val zoomIn=host.action("+",false,ActionRole.NEUTRAL){changeMagnification(magnification.factor*InspectionMagnification.STEP)}.apply{contentDescription=t("Zoom in","ज़ूम बढ़ाएँ");tag="room-zoom-in"}
+    private val scaleDetector=ScaleGestureDetector(host,object:ScaleGestureDetector.SimpleOnScaleGestureListener(){
+        override fun onScaleBegin(detector:ScaleGestureDetector):Boolean=zoomAvailable
+        override fun onScale(detector:ScaleGestureDetector):Boolean {
+            if(zoomAvailable)changeMagnification(magnification.factor*detector.scaleFactor)
+            return true
+        }
+    }).apply{isQuickScaleEnabled=false;isStylusScaleEnabled=false}
     private val equipment=WorldEquipment()
     private val geometry=RoomMissionGeometry()
     private val gate=ComponentCameraGate()
@@ -71,7 +86,7 @@ class RoomMissionView(private val host:Activity, val module:String, val camera:B
         if(camera && image?.tracked==true && session?.snapshot(now)?.ready!=true) {
             placement.set(false);down=null;gestureTarget=null;screenCursor=null;onCancel()
             val lost=image!!.copy(tracked=false,canPlace=false,message=t("Tracking interrupted. Hold the scene in view to recover.","ट्रैकिंग बाधित है। दृश्य सामने रखकर फिर खोजें।"))
-            image=lost;onImage(lost);overlay.invalidate()
+            image=lost;syncZoomControls();onImage(lost);overlay.invalidate()
         }
         surface.requestRender();postDelayed(this,if(camera&&thermalStatus>=PowerManager.THERMAL_STATUS_SEVERE)50 else 33)
     }}}
@@ -118,7 +133,7 @@ class RoomMissionView(private val host:Activity, val module:String, val camera:B
     }
     private var installRequested=false
     private var texture=0;private var program=0;private var w=1;private var h=1
-    private val vertices=floats(floatArrayOf(-1f,-1f,1f,-1f,-1f,1f,1f,1f));private val uv=floats(FloatArray(8))
+    private val vertices=floats(floatArrayOf(-1f,-1f,1f,-1f,-1f,1f,1f,1f));private val uv=floats(FloatArray(8));private val croppedVertices=floats(FloatArray(8))
     private val projection=FloatArray(16);private val view=FloatArray(16);private val vp=FloatArray(16)
     private var image:Image?=null // UI owner
     private var down:Pair<Float,Float>?=null
@@ -134,8 +149,34 @@ class RoomMissionView(private val host:Activity, val module:String, val camera:B
     private val inspectionLayoutReady get()=inspectionPanel.visibility!=VISIBLE||
         (!inspectionPanel.isLayoutRequested&&inspectionPanel.content?.isLayoutRequested!=true&&
             inspectionPanel.width==inspectionPanel.layoutParams.width&&inspectionPanel.height==inspectionPanel.layoutParams.height)
-    val ready get()=foreground && inspectionLayoutReady && image?.let { it.revision==revision && it.frameWidth==width && it.frameHeight==height && it.phase==visual.phase && it.placement==3 && it.tracked && (!camera || SystemClock.elapsedRealtime()-it.at in 0..150) }==true
+    val ready get()=foreground && inspectionLayoutReady && image?.let { it.revision==revision && it.frameWidth==width && it.frameHeight==height && it.phase==visual.phase && it.viewSerial==magnification.serial && it.placement==3 && it.tracked && (!camera || SystemClock.elapsedRealtime()-it.at in 0..150) }==true
     private fun t(en:String,hi:String)=if(hindi)hi else en
+    private val zoomAvailable get()=module=="fire"&&foreground&&image?.let{it.tracked&&it.placement==3&&(!camera||SystemClock.elapsedRealtime()-it.at in 0..150)}==true
+    private fun cancelSceneGesture(){down=null;screenCursor=null;gestureTarget=null;gestureSerial++;onCancel()}
+    private fun changeMagnification(value:Float){
+        if(module!="fire" || (value!=1f&&!zoomAvailable))return
+        val next=magnification.withFactor(value)
+        if(next==magnification)return
+        cancelSceneGesture();magnification=next;syncZoomControls();enableInspectionChoices();surface.requestRender();overlay.invalidate()
+    }
+    private fun syncZoomControls(){
+        zoomBar.visibility=if(module=="fire"&&(!camera||image?.placement==3))VISIBLE else GONE
+        val factor=magnification.factor
+        val text=if(factor==1f)"1×"else String.format(java.util.Locale.ROOT,"%.1f×",factor)
+        zoomReset.contentDescription=t("Reset view magnification. Current $text. Anchors and distances are unchanged.","दृश्य ज़ूम रीसेट करें। अभी $text। जुड़े स्थल और दूरियाँ नहीं बदलतीं।")
+        val iconOnly=resources.configuration.fontScale>=1.6f
+        if(iconOnly){
+            if(!zoomResetIcon)host.setPracticeIcon(zoomReset,PracticeIcon.RESET,iconOnly=true)
+            zoomReset.tooltipText=zoomReset.contentDescription
+        }else{
+            if(zoomResetIcon){zoomReset.foreground=null;zoomReset.setCompoundDrawablesRelative(null,null,null,null);zoomReset.tooltipText=null}
+            if(zoomReset.text.toString()!=text)zoomReset.text=text
+        }
+        zoomResetIcon=iconOnly
+        zoomOut.isEnabled=zoomAvailable&&factor>InspectionMagnification.MIN
+        zoomIn.isEnabled=zoomAvailable&&factor<InspectionMagnification.MAX
+        zoomReset.isEnabled=factor!=1f
+    }
     private fun syncInspectionDock(){
         val phase=visual.phase
         val enabled=module=="fire"&&RoomMissionChoices.isEquipmentInspection(phase)
@@ -187,10 +228,17 @@ class RoomMissionView(private val host:Activity, val module:String, val camera:B
         surface.preserveEGLContextOnPause=true;surface.tag="room-mission-surface"
         surface.importantForAccessibility=IMPORTANT_FOR_ACCESSIBILITY_NO
         addView(surface,LayoutParams(-1,-1));addView(overlay,LayoutParams(-1,-1));addView(inspectionPanel,LayoutParams(-1,host.dp(180),Gravity.BOTTOM));overlay.setBackgroundColor(Palette.canvas)
+        if(module=="fire"){
+            listOf(zoomOut,zoomReset,zoomIn).forEach{button->
+                button.textSize=14f;button.minHeight=host.dp(48);button.minimumHeight=host.dp(48);button.setPadding(0,0,0,0)
+                zoomBar.addView(button,LinearLayout.LayoutParams(host.dp(48),host.dp(48)))
+            }
+            addView(zoomBar,LayoutParams(-2,host.dp(48),Gravity.TOP or Gravity.START).apply{leftMargin=host.dp(6);topMargin=host.dp(6)})
+        }
         surface.setRenderer(this);surface.renderMode=GLSurfaceView.RENDERMODE_WHEN_DIRTY;surface.onPause()
         overlay.contentDescription=t("Interactive mission scene. Use screen procedure for text controls.","इंटरैक्टिव मिशन दृश्य। लिखित नियंत्रणों के लिए स्क्रीन प्रक्रिया उपयोग करें।")
     }
-    fun update(phase:String,progress:Float,held:Boolean,showCues:Boolean=true,explosionRisk:Boolean=false,equipmentCondition:String="good",routeChanged:Boolean=false) { visual=Visual(phase,progress,held,showCues,explosionRisk,equipmentCondition,routeChanged);syncInspectionDock();overlay.invalidate() }
+    fun update(phase:String,progress:Float,held:Boolean,showCues:Boolean=true,explosionRisk:Boolean=false,equipmentCondition:String="good",routeChanged:Boolean=false) { visual=Visual(phase,progress,held,showCues,explosionRisk,equipmentCondition,routeChanged);syncInspectionDock();syncZoomControls();overlay.invalidate() }
     fun place() { if(camera && canPlace)placement.set(true) }
     fun resume() {
         if(running || closed)return
@@ -234,10 +282,10 @@ class RoomMissionView(private val host:Activity, val module:String, val camera:B
         return true
     }
     fun close(){pause();closed=true;retireSession()}
-    private fun unavailable(message:String,retry:Boolean=false) { if(retry)stoppedReason=message;val state=Image(revision,SystemClock.elapsedRealtime(),if(camera)anchors.size else 3,false,message,retry=retry);image=state;overlay.setBackgroundColor(Palette.canvas);onImage(state);overlay.invalidate() }
+    private fun unavailable(message:String,retry:Boolean=false) { if(retry)stoppedReason=message;val state=Image(revision,SystemClock.elapsedRealtime(),if(camera)anchors.size else 3,false,message,retry=retry);image=state;syncZoomControls();overlay.setBackgroundColor(Palette.canvas);onImage(state);overlay.invalidate() }
     override fun onSurfaceCreated(gl:GL10?,config:EGLConfig?) {
         session?.invalidateTexture()
-        cameraTextureRegistered=false;equipment.prepareProcedure(module);equipment.create();geometry.create()
+        cameraTextureRegistered=false;if(module=="fire")equipment.prepareFireRoom()else equipment.prepareProcedure(module);equipment.create();geometry.create()
         val textures=IntArray(1);GLES20.glGenTextures(1,textures,0);texture=textures[0];GLES20.glBindTexture(GLES11Ext.GL_TEXTURE_EXTERNAL_OES,texture)
         for(p in listOf(GLES20.GL_TEXTURE_MIN_FILTER,GLES20.GL_TEXTURE_MAG_FILTER))GLES20.glTexParameteri(GLES11Ext.GL_TEXTURE_EXTERNAL_OES,p,GLES20.GL_LINEAR)
         for(p in listOf(GLES20.GL_TEXTURE_WRAP_S,GLES20.GL_TEXTURE_WRAP_T))GLES20.glTexParameteri(GLES11Ext.GL_TEXTURE_EXTERNAL_OES,p,GLES20.GL_CLAMP_TO_EDGE)
@@ -249,7 +297,7 @@ class RoomMissionView(private val host:Activity, val module:String, val camera:B
     override fun onDrawFrame(gl:GL10?) {
         GLES20.glClearColor(.94f,.97f,.98f,1f);GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT or GLES20.GL_DEPTH_BUFFER_BIT)
         if(!foreground)return
-        val rev=revision;val state=visual;val models=mutableListOf<FloatArray>();var at=SystemClock.elapsedRealtime();val eye:FloatArray
+        val rev=revision;val state=visual;val zoom=magnification;val frameZoom=if(camera&&anchors.size<3)1f else zoom.factor;val firePlan=FireScenePlan.forPhase(state.phase,state.equipmentCondition,state.routeChanged,state.explosionRisk,state.held);val models=mutableListOf<FloatArray>();var at=SystemClock.elapsedRealtime();val eye:FloatArray
         val placementAim=scanCursor.snapshot(w,h)
         if(lastAimSerial!=placementAim.serial){surfaceReadiness.reset();lastAimSerial=placementAim.serial}
         val light=floatArrayOf(1f,1f,1f,1f)
@@ -268,7 +316,7 @@ class RoomMissionView(private val host:Activity, val module:String, val camera:B
                 if(metricsAt==0L)metricsAt=at
                 if(at-metricsAt>=5000){Log.i("RoomAR","frames=$metricFrames trackedFrames=$metricTracked intervalMs=${at-metricsAt} maxUpdateMs=$maxUpdateMs");metricsAt=at;metricFrames=0;metricTracked=0;maxUpdateMs=0}
                 val receipt=freshness.observedAt(frame.timestamp,at)
-                if(frame.timestamp>0 && receipt!=null)drawCamera(frame)
+                if(frame.timestamp>0 && receipt!=null)drawCamera(frame,frameZoom)
                 val tracking=frame.camera.trackingState;val reason=frame.camera.trackingFailureReason
                 diagnostic("tracking=$tracking reason=$reason fresh=${receipt!=null} anchors=${anchors.size} thermal=$thermalStatus phase=${state.phase}")
                 if(receipt==null || !ar.snapshot().ready) {
@@ -346,7 +394,7 @@ class RoomMissionView(private val host:Activity, val module:String, val camera:B
                     if(anchors.any{it.trackingState==TrackingState.STOPPED} || SystemClock.elapsedRealtime()-healthyAt>=45000)requestStop(rev,t("Placed stations could not be recovered. Tap Retry camera and place the stations again.","रखे स्थल वापस नहीं मिले। कैमरा फिर चलाकर स्थल फिर रखें।"))
                     publish(Image(rev,at,anchors.size,false,t("Recovering placed stations. Keep the floor in view; restart from Options if tracking does not return.","रखे स्थल फिर खोज रहे हैं। फ़र्श दृश्य में रखें; ट्रैकिंग न लौटे तो विकल्प से फिर शुरू करें।")));return}
                 healthyAt=SystemClock.elapsedRealtime()
-                frame.camera.getProjectionMatrix(projection,0,.05f,30f);frame.camera.getViewMatrix(view,0);eye=frame.camera.pose.translation
+                frame.camera.getProjectionMatrix(projection,0,.05f,30f);InspectionMagnification.project(projection,frameZoom);frame.camera.getViewMatrix(view,0);eye=frame.camera.pose.translation
                 anchors.forEachIndexed{i,a->models.add(FloatArray(16).apply{RoomAnchorPose.model(a.pose,facing[i]).toMatrix(this,0)})}
                 if(frame.lightEstimate.state==LightEstimate.State.VALID){frame.lightEstimate.getColorCorrection(light,0);for(i in light.indices)light[i]=if(light[i].isFinite())light[i].coerceIn(.6f,1.4f)else 1f}
             }else {
@@ -356,17 +404,17 @@ class RoomMissionView(private val host:Activity, val module:String, val camera:B
                     val modelHeight=area.second.coerceAtMost(h).coerceAtLeast(1)
                     val aspect=modelWidth.toFloat()/modelHeight
                     val distance=maxOf(.82f,.42f/aspect)
-                    eye=floatArrayOf(-.6f,.32f,distance)
-                    Matrix.perspectiveM(projection,0,38f,aspect,.05f,30f)
+                    eye=floatArrayOf(-.6f,firePlan.focusY+.07f,distance)
+                    Matrix.perspectiveM(projection,0,38f,aspect,.05f,30f);InspectionMagnification.project(projection,frameZoom)
                     // Fit the remaining scene rectangle without changing model dimensions.
                     val horizontal=modelWidth.toFloat()/w;val vertical=modelHeight.toFloat()/h
                     for(i in 0..3){
                         projection[i*4]=projection[i*4]*horizontal+projection[i*4+3]*(horizontal-1f)
                         projection[i*4+1]=projection[i*4+1]*vertical+projection[i*4+3]*(1f-vertical)
                     }
-                    Matrix.setLookAtM(view,0,eye[0],eye[1],eye[2],-.6f,.26f,0f,0f,1f,0f)
+                    Matrix.setLookAtM(view,0,eye[0],eye[1],eye[2],-.6f,firePlan.focusY,0f,0f,1f,0f)
                 }else{
-                    eye=floatArrayOf(0f,1.5f,3.7f);Matrix.perspectiveM(projection,0,if(w>h*1.4f)if(module=="fire")22f else 32f else 55f,w.toFloat()/h.coerceAtLeast(1),.05f,30f);Matrix.setLookAtM(view,0,eye[0],eye[1],eye[2],0f,.3f,-.5f,0f,1f,0f)
+                    eye=floatArrayOf(0f,1.5f,3.7f);Matrix.perspectiveM(projection,0,if(w>h*1.4f)if(module=="fire")22f else 32f else 55f,w.toFloat()/h.coerceAtLeast(1),.05f,30f);if(module=="fire")InspectionMagnification.project(projection,frameZoom);Matrix.setLookAtM(view,0,eye[0],eye[1],eye[2],0f,.3f,-.5f,0f,1f,0f)
                 }
                 for(p in listOf(floatArrayOf(-.6f,0f,0f),floatArrayOf(.1f,0f,-1f),floatArrayOf(.85f,0f,.3f)))models.add(FloatArray(16).apply{Matrix.setIdentityM(this,0);Matrix.translateM(this,0,p[0],p[1],p[2])})
             }
@@ -376,29 +424,47 @@ class RoomMissionView(private val host:Activity, val module:String, val camera:B
             val targets=mutableMapOf<String,ComponentProjection.Point>();var inverse:FloatArray?=null
             fun target(id:String,index:Int,p:FloatArray){if(index>=models.size)return;val mvp=FloatArray(16);Matrix.multiplyMM(mvp,0,vp,0,models[index],0);ComponentProjection.project(p,mvp,w,h)?.let{targets[id]=it}}
             models.getOrNull(0)?.let { m ->
-                val flags=buildSet<String>{
-                    if(module=="gas")add("room-mission")
-                    if(module=="fire"&&state.equipmentCondition=="damaged")add("fire-damaged")
-                    if(module=="fire"&&state.phase in listOf("AIM","SWEEP","WITHDRAW","EVACUATE","ASSEMBLY","REPORT","COMPLETE"))add("fire-pin")
-                    if(module=="fire"&&state.phase in listOf("SWEEP","WITHDRAW","EVACUATE","ASSEMBLY","REPORT","COMPLETE"))add("fire-aim")
-                    if(module=="fire"&&state.held&&state.phase=="SWEEP")add("fire-squeeze")
+                val flags=if(module=="fire")firePlan.equipmentFlags else if(module=="gas")setOf("room-mission")else emptySet()
+                if(state.phase=="PPE")geometry.draw(vp,m,"ppe-kit",at/1000f)
+                else if(module!="fire"||firePlan.showEquipment)equipment.draw(vp,m,module,eye,light,flags,false,clearDepth=false)
+                if(module=="fire"){
+                    if(state.routeChanged)geometry.draw(vp,m,"exit",at/1000f)
+                    if(firePlan.showAlarm)equipment.draw(vp,m,"fire-alarm-stand",eye,light,clearDepth=false)
+                    if(firePlan.showUnconfirmedUnit){val candidate=m.copyOf();Matrix.translateM(candidate,0,.28f,.04f,.10f);equipment.draw(vp,candidate,"fire-unconfirmed",eye,light,clearDepth=false)}
+                }else{
+                    val alarm=m.copyOf();Matrix.translateM(alarm,0,.26f,.32f,0f);geometry.draw(vp,alarm,"alarm",at/1000f)
                 }
-                if(state.phase=="PPE")geometry.draw(vp,m,"ppe-kit",at/1000f)else equipment.draw(vp,m,module,eye,light,flags,false,clearDepth=false)
-                if(module=="fire"&&state.routeChanged)geometry.draw(vp,m,"exit",at/1000f)
-                val alarm=m.copyOf();Matrix.translateM(alarm,0,.26f,.32f,0f);geometry.draw(vp,alarm,"alarm",at/1000f)
                 target("alarm",0,floatArrayOf(.26f,.40f,0f));target("pin",0,floatArrayOf(-.055f,.478f,.015f));target("pin-out",0,floatArrayOf(-.20f,.478f,.015f));target("meter",0,floatArrayOf(0f,.30f,.085f))
             }
             models.getOrNull(1)?.let {m ->
                 if(module=="gas")geometry.draw(vp,m,"confined-zone",at/1000f)
-                geometry.draw(vp,m,if(module=="fire")"fire" else "barrier",at/1000f,if(state.phase=="SWEEP")state.progress*.5f else 0f,if(module=="fire")state.explosionRisk || state.phase in listOf("WITHDRAW","EVACUATE","ASSEMBLY","REPORT","COMPLETE") else state.phase in listOf("ATTENDANT","COMMUNICATE","ACKNOWLEDGE","REFUSE","COMPLETE"))
+                geometry.draw(vp,m,if(module=="fire")"fire" else "barrier",at/1000f,if(state.phase=="SWEEP")state.progress*.5f else 0f,if(module=="fire")firePlan.smoke else state.phase in listOf("ATTENDANT","COMMUNICATE","ACKNOWLEDGE","REFUSE","COMPLETE"))
+                if(module=="fire"){
+                    equipment.draw(vp,m,"fire-paper-fuel",eye,light,clearDepth=false)
+                    if(firePlan.smoke)equipment.draw(vp,m,"fire-smoke-cue",eye,light,clearDepth=false)
+                }
                 target("base",1,floatArrayOf(0f,.08f,0f));target("left",1,floatArrayOf(-.45f,.08f,0f));target("right",1,floatArrayOf(.45f,.08f,0f))
                 target("barrier-left",1,floatArrayOf(-.36f,.73f,0f));target("barrier-right",1,floatArrayOf(.36f,.73f,0f))
                 val mvp=FloatArray(16);Matrix.multiplyMM(mvp,0,vp,0,m,0);val inv=FloatArray(16);if(Matrix.invertM(inv,0,mvp,0))inverse=inv
             }
-            models.getOrNull(2)?.let{m->geometry.draw(vp,m,if(module=="fire" && state.phase in listOf("ASSEMBLY","REPORT","FIRE_HANDOVER","COMPLETE"))"assembly"else if(module=="fire"&&state.routeChanged)"blocked-exit"else if(module=="fire"&&state.phase in listOf("EXIT","EQUIPMENT","LABEL_CHECK","CONDITION_CHECK","HOSE_CHECK","DAMAGED_UNIT","EVACUATE"))"exit"else"safe-point",at/1000f);if(module=="gas"&&state.phase in listOf("COMMUNICATE","ACKNOWLEDGE","REFUSE","COMPLETE"))geometry.draw(vp,m,"attendant",at/1000f);target("safe",2,floatArrayOf(0f,.15f,0f))}
-            if(module=="fire"&&state.phase in listOf("EXIT","EQUIPMENT","EVACUATE"))models.getOrNull(1)?.let{geometry.draw(vp,it,"blocked-exit",at/1000f)}
+            models.getOrNull(2)?.let{m->
+                geometry.draw(vp,m,if(module=="fire")firePlan.exitKind else "safe-point",at/1000f)
+                if(module=="fire"){
+                    if(firePlan.exitKind=="blocked-exit")equipment.draw(vp,m,"fire-obstruction",eye,light,clearDepth=false)
+                    if(firePlan.showRollCall)equipment.draw(vp,m,"fire-rollcall",eye,light,clearDepth=false)
+                    if(firePlan.showHandover)equipment.draw(vp,m,"fire-handover",eye,light,clearDepth=false)
+                }
+                if(module=="gas"&&state.phase in listOf("COMMUNICATE","ACKNOWLEDGE","REFUSE","COMPLETE"))geometry.draw(vp,m,"attendant",at/1000f)
+                target("safe",2,floatArrayOf(0f,.15f,0f))
+            }
+            if(module=="fire"&&firePlan.blockedHazardRoute)models.getOrNull(1)?.let{
+                geometry.draw(vp,it,"blocked-exit",at/1000f);equipment.draw(vp,it,"fire-obstruction",eye,light,clearDepth=false)
+            }
             if(state.phase=="PPE")models.getOrNull(1)?.let{geometry.draw(vp,it,"dust-mask",at/1000f)}
-            RoomMissionChoices.forPhase(state.phase).forEach{target(it.action,it.station,floatArrayOf(it.x,it.y,it.z))}
+            RoomMissionChoices.forPhase(state.phase).forEach{
+                if(module=="fire"&&it.action=="select-unsuitable-extinguisher")target(it.action,0,floatArrayOf(.28f,.50f,.10f))
+                else target(it.action,it.station,floatArrayOf(it.x,it.y,it.z))
+            }
             if(camera && showPreview && previewPose!=null){
                 val model=FloatArray(16);previewPose!!.toMatrix(model,0)
                 when(anchors.size){
@@ -410,12 +476,17 @@ class RoomMissionView(private val host:Activity, val module:String, val camera:B
             }
             val needed=RoomMissionChoices.forPhase(state.phase).firstOrNull()?.action?:when(state.phase){"ALARM"->"alarm";"PIN"->"pin";"GAS_CHECK"->"meter";"ATTENDANT"->if(gestureTarget=="meter")"safe" else "meter";"BARRIER"->"barrier-left";"WITHDRAW","REFUSE"->"safe";else->"base"}
             val neededStation=RoomMissionChoices.forPhase(state.phase).firstOrNull{it.action==needed}?.station?:if(needed=="safe")2 else if(needed in listOf("alarm","pin","meter"))0 else 1
-            val orientationHint=if(camera&&state.phase!="COMPLETE"&&state.showCues&&models.size==3&&needed !in targets)t("Turn the phone slowly towards "+(if(neededStation==2)"the exit / outside station." else if(neededStation==0)"the equipment station." else "the virtual hazard."),"फ़ोन धीरे घुमाकर "+(if(neededStation==2)"निकास / बाहरी स्थल खोजें।" else if(neededStation==0)"उपकरण स्थल खोजें।" else "काल्पनिक खतरा खोजें।"))else null
-            publish(Image(rev,at,models.size,true,orientationHint?:if(models.size<3)(placementMessage?:t("Aim at the next clear point.","अगले खाली बिंदु पर निशाना रखें।"))else if(camera)t("Stations anchored · stay in your clear practice area", "स्थल जुड़े हैं · अपने खाली अभ्यास क्षेत्र में रहें")else t("Screen simulation · virtual actions only","स्क्रीन सिमुलेशन · केवल काल्पनिक क्रियाएँ"),targets,inverse,w,h,state.phase,canPlace=placementReady,footprint=footprint,surfaceBoundary=surfaceBoundary,scanProgress=scanProgress,preview=showPreview,placementAim=ComponentProjection.Point(placementAim.x,placementAim.y),aimSerial=placementAim.serial,fullFootprintMapped=fullFootprintMapped))
+            val orientationHint=if(camera&&state.phase!="COMPLETE"&&state.showCues&&models.size==3&&needed !in targets)
+                (if(frameZoom>1f)t("Zoom out, or ","ज़ूम घटाएँ या ")else "")+t("turn the phone slowly towards "+(if(neededStation==2)"the exit / outside station." else if(neededStation==0)"the equipment station." else "the virtual hazard."),"फ़ोन धीरे घुमाकर "+(if(neededStation==2)"निकास / बाहरी स्थल खोजें।" else if(neededStation==0)"उपकरण स्थल खोजें।" else "काल्पनिक खतरा खोजें।"))else null
+            val viewMessage=if(frameZoom>1f)t("Magnified view · distances unchanged", "बड़ा दृश्य · दूरियाँ नहीं बदलीं")else if(camera)t("Stations anchored · stay in your clear practice area", "स्थल जुड़े हैं · अपने खाली अभ्यास क्षेत्र में रहें")else t("Screen simulation · virtual actions only","स्क्रीन सिमुलेशन · केवल काल्पनिक क्रियाएँ")
+            publish(Image(rev,at,models.size,true,orientationHint?:if(models.size<3)(placementMessage?:t("Aim at the next clear point.","अगले खाली बिंदु पर निशाना रखें।"))else viewMessage,targets,inverse,w,h,state.phase,canPlace=placementReady,footprint=footprint,surfaceBoundary=surfaceBoundary,scanProgress=scanProgress,preview=showPreview,placementAim=ComponentProjection.Point(placementAim.x,placementAim.y),aimSerial=placementAim.serial,fullFootprintMapped=fullFootprintMapped,viewSerial=zoom.serial,magnification=frameZoom))
         }catch(e:Exception){placement.set(false);Log.e("RoomAR","Frame failed: ${e.javaClass.simpleName}");requestStop(rev,t("AR session interrupted. Tap Retry camera to recover.","AR सत्र बाधित हुआ। कैमरा फिर चलाएँ।"))}
     }
     private fun publish(value:Image){mailbox.set(value);if(posted.compareAndSet(false,true))post{posted.set(false);val next=mailbox.getAndSet(null)?:return@post;if(!foreground||next.revision!=revision)return@post
+        if(next.tracked&&next.viewSerial!=magnification.serial)return@post
         val previous=image;image=next;overlay.background=null
+        if(next.placement<3&&magnification.factor!=1f)changeMagnification(1f)
+        syncZoomControls()
         if(!next.tracked || (camera&&SystemClock.elapsedRealtime()-next.at>150)){down=null;gestureTarget=null;screenCursor=null}
         onImage(next);enableInspectionChoices();overlay.invalidate()
         if(camera && next.tracked && next.placement==3 && next.at!=previous?.at && SystemClock.elapsedRealtime()-next.at in 0..150) {
@@ -439,8 +510,11 @@ class RoomMissionView(private val host:Activity, val module:String, val camera:B
         val fraction=-a[2]/dz;if(fraction !in 0f..1f)return null
         return (a[0]+(b[0]-a[0])*fraction)/.45f to (a[1]+(b[1]-a[1])*fraction-.08f)/.4f
     }
-    private fun drawCamera(frame:Frame){
-        GLES20.glDisable(GLES20.GL_DEPTH_TEST);vertices.position(0);uv.position(0);frame.transformCoordinates2d(Coordinates2d.OPENGL_NORMALIZED_DEVICE_COORDINATES,vertices,Coordinates2d.TEXTURE_NORMALIZED,uv)
+    private fun drawCamera(frame:Frame,zoom:Float){
+        GLES20.glDisable(GLES20.GL_DEPTH_TEST);vertices.position(0);uv.position(0)
+        croppedVertices.clear();croppedVertices.put(InspectionMagnification.cameraCorners(zoom));croppedVertices.position(0)
+        frame.transformCoordinates2d(Coordinates2d.OPENGL_NORMALIZED_DEVICE_COORDINATES,croppedVertices,Coordinates2d.TEXTURE_NORMALIZED,uv)
+        uv.position(0)
         GLES20.glUseProgram(program);val p=GLES20.glGetAttribLocation(program,"p");val u=GLES20.glGetAttribLocation(program,"uv")
         GLES20.glActiveTexture(GLES20.GL_TEXTURE0);GLES20.glBindTexture(GLES11Ext.GL_TEXTURE_EXTERNAL_OES,texture);GLES20.glUniform1i(GLES20.glGetUniformLocation(program,"camera"),0)
         GLES20.glVertexAttribPointer(p,2,GLES20.GL_FLOAT,false,0,vertices);GLES20.glVertexAttribPointer(u,2,GLES20.GL_FLOAT,false,0,uv);GLES20.glEnableVertexAttribArray(p);GLES20.glEnableVertexAttribArray(u);GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP,0,4);GLES20.glDisableVertexAttribArray(p);GLES20.glDisableVertexAttribArray(u)
@@ -509,7 +583,9 @@ class RoomMissionView(private val host:Activity, val module:String, val camera:B
                         candidates.add(RectF(left,old.bottom+gap,left+boxW,old.bottom+gap+boxH))
                         candidates.add(RectF(left,old.top-gap-boxH,left+boxW,old.top-gap))
                     }
-                    val bounds=candidates.firstOrNull{r->r.top>=0f&&r.bottom<=height&&choiceBounds.values.none{RectF.intersects(r,it)}}?:candidates.first()
+                    val zoomBounds=if(zoomBar.visibility==VISIBLE)RectF(zoomBar.left.toFloat(),zoomBar.top.toFloat(),zoomBar.right.toFloat(),zoomBar.bottom.toFloat())else null
+                    if(zoomBounds!=null)candidates.add(RectF(left,zoomBounds.bottom+gap,left+boxW,zoomBounds.bottom+gap+boxH))
+                    val bounds=candidates.firstOrNull{r->r.top>=0f&&r.bottom<=height&&choiceBounds.values.none{RectF.intersects(r,it)}&&(zoomBounds==null||!RectF.intersects(r,zoomBounds))}?:candidates.last()
                     choiceBounds[choice.action]=bounds
                     paint.style=Paint.Style.STROKE;paint.color=Palette.blue;paint.strokeWidth=host.dp(1).toFloat()
                     c.drawLine(point.x,point.y,bounds.centerX(),bounds.bottom,paint)
@@ -532,6 +608,15 @@ class RoomMissionView(private val host:Activity, val module:String, val camera:B
             val length=kotlin.math.hypot(b.x-a.x,b.y-a.y);return length>1f && (dx*(b.x-a.x)+dy*(b.y-a.y))/length>=host.dp(56)
         }
         override fun onTouchEvent(e:MotionEvent):Boolean {
+            if(module=="fire"){
+                if(e.actionMasked==MotionEvent.ACTION_DOWN)multiPointer=false
+                if(e.actionMasked==MotionEvent.ACTION_POINTER_DOWN){multiPointer=true;cancelSceneGesture()}
+                scaleDetector.onTouchEvent(e)
+                if(multiPointer){
+                    if(e.actionMasked==MotionEvent.ACTION_UP||e.actionMasked==MotionEvent.ACTION_CANCEL){multiPointer=false;parent.requestDisallowInterceptTouchEvent(false)}
+                    invalidate();return true
+                }
+            }
             val img=image
             if(camera&&this@RoomMissionView.foreground&&img!=null&&img.placement<3&&img.tracked&&img.revision==revision&&
                 img.frameWidth==width&&img.frameHeight==height&&SystemClock.elapsedRealtime()-img.at in 0..150){

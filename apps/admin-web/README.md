@@ -1,3 +1,11 @@
+# Spatial Studio web release · 0.16.0-rc.1
+
+The selected light design includes public learning, a dedicated spatial scene for every current lesson step, detailed equipment/anatomy inspection, 55-step procedure rehearsal and optional compatible-browser WebXR placement. The release target is standard Next.js standalone with private SQLite storage, single instance, behind HTTPS. Read [the deployment guide](../../docs/surakshaar-0.16.0/DEPLOYMENT.md) and [verification](../../docs/surakshaar-0.16.0/VERIFICATION.md). Use `npm run build` and `npm run release:package`; the package never includes local configuration, data or signing keys.
+
+`/studio` is personal learning; `/learn` preserves the learner centre portal; `/identity` is disclosed adult assigned practice; `/identity-review` is the examiner queue; `/account` includes authenticator setup. Production staff access requires MFA. Do not disable that policy on a public service.
+
+Earlier development and hosting notes follow; they are historical context, not the release deployment instructions.
+
 # SurakshaAr trainer dashboard
 
 Private trainer workspace for importing Android training exports, reviewing decisions, requesting and independently approving pilot simulation credentials, and checking signatures and revocations.
@@ -84,3 +92,8 @@ Run `npx tsx scripts/check-release-config.ts /absolute/path/to/project.env` to i
 The current local inspection reports a nonproduction account origin and missing production recovery delivery; account secret/operator configuration is present and the pilot issuer matches bundled trust. External contextual AI is disabled. Actual HTTPS hosting, recovery delivery, backup restore, privacy/retention ownership and qualified content review remain release prerequisites.
 
 Completed private learning copies can now be shared through a separate, revocable anonymous practice QR. This requires explicit consent and does not issue a professional certificate. See [formative QR scope and privacy](docs/formative-record-sharing.md) and the [current backend release checkpoint](docs/release-priorities-2026-10-10.md). Migration 0019 is local only so far.
+
+
+## Safety Updates staff pilot
+
+The local trainer/admin dashboard now includes a proposed-source registry, asynchronous TinyFish Fetch collection and institution-scoped review decisions. Staff approval does not publish learner content. See [setup, sources and boundaries](docs/safety-updates-pilot.md) and [verification evidence](docs/safety-updates-verification.md). Recurring collection is disabled by default.

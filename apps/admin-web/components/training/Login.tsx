@@ -11,7 +11,7 @@ export default function Login({mode="login"}:{mode?:Mode}) {
  const [signup,setSignup]=useState(mode==='signup'),[busy,setBusy]=useState(false),[error,setError]=useState(''),[message,setMessage]=useState('');
  const pending=useRef(false);
  const [challenge,setChallenge]=useState(false),[backup,setBackup]=useState(false);
- const destination=()=>returnPath(new URLSearchParams(window.location.search).get('next'),window.location.pathname==='/learn'?window.location.pathname+window.location.hash:'/');
+ const destination=()=>returnPath(new URLSearchParams(window.location.search).get('next'),['/learn','/identity','/identity-review'].includes(window.location.pathname)?window.location.pathname+window.location.hash:'/');
  const forgot=mode==='forgot',reset=mode==='reset';
  async function submit(e:React.FormEvent<HTMLFormElement>) {
   e.preventDefault();if(pending.current)return;pending.current=true;
@@ -39,5 +39,5 @@ export default function Login({mode="login"}:{mode?:Mode}) {
  {message&&<p className="notice success" role="status">{message}</p>}
  <div className="account-switch" hidden={challenge}>{forgot||reset?<a href="/login">Back to sign in</a>:<><span>{signup?'Already have an account?':'New to SurakshaAr?'}</span><Button variant="link" disabled={busy} onClick={()=>{setSignup(!signup);setError('');setMessage('')}}>{signup?'Sign in':'Create an account'}</Button></>}</div>
  {!forgot&&(!signup||reset)&&!(reset&&message)&&<p><a href="/forgot-password">{reset?'Request a new reset link':'Forgot password?'}</a></p>}
- </section><p className="account-offline"><a href="/learn">Learner portal</a> · <a href="/login?next=%2F%23access">Staff workspace</a><br/>Use the Android app for offline lessons and AR practice.<br/>Your training centre account requires a connection.</p></main>;
+ </section><p className="account-offline"><a href="/studio">Learn without an account</a> · <a href="/learn">Learner portal</a> · <a href="/login?next=%2F%23access">Staff workspace</a><br/>Use the Android app for offline lessons and AR practice.<br/>Your training centre account requires a connection.</p></main>;
 }

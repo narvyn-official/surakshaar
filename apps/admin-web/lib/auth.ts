@@ -20,7 +20,7 @@ export function auth() {
    emailVerification:{sendOnSignUp:false,autoSignInAfterVerification:false,sendVerificationEmail:async({user,url}:{user:{email:string};url:string})=>sendAccountVerification(config,user.email,url)},
    session:{expiresIn:60*60*24*7,updateAge:60*60*24,cookieCache:{enabled:false}},
    rateLimit:{enabled:true,storage:"database",window:60,max:60,customRules:{"/sign-in/email":{window:60,max:8},"/sign-up/email":{window:60,max:5},"/request-password-reset":{window:60,max:3},"/reset-password":{window:60,max:5}}},
-   advanced:{ipAddress:{ipAddressHeaders:["cf-connecting-ip"]}},
+   advanced:{ipAddress:{ipAddressHeaders:["x-real-ip"]}},
  });
 }
 export async function getAppUser() {
@@ -36,4 +36,12 @@ export async function freshUser() {
 }
 export function isOperator(userId:string) {
  return ((env as unknown as Record<string,string>).PLATFORM_OPERATOR_IDS??'').split(',').map(v=>v.trim()).filter(Boolean).includes(userId);
+}
+
+/** Default-on staff second-factor policy for the production Node release. */
+export async function requireStaffMfa(userId:string){
+ const config=env as unknown as Record<string,string>;
+ if(config.REQUIRE_STAFF_MFA==='false')return;
+ const user=await (env.DB as D1Database).prepare('SELECT two_factor_enabled FROM auth_user WHERE id=?').bind(userId).first<{two_factor_enabled:number}>();
+ if(!user?.two_factor_enabled)throw new Error('Forbidden: enable an authenticator in Account security before opening institutional records.');
 }

@@ -1,6 +1,6 @@
 import vinext from "vinext";
 import {fileURLToPath} from "node:url";
-import { defineConfig } from "vite";
+import { defineConfig, type UserConfig } from "vite";
 import hostingConfig from "./.openai/hosting.json";
 import { sites } from "./build/sites-vite-plugin";
 
@@ -34,7 +34,7 @@ const localBindingConfig = {
     : [],
 };
 
-export default defineConfig(async () => {
+export default defineConfig(async ():Promise<UserConfig> => {
   if(process.env.SURAKSHA_RUNTIME==="node")return {
     plugins:[vinext()],
     resolve:{alias:{"cloudflare:workers":fileURLToPath(new URL("./lib/runtime-node.ts",import.meta.url))}},
@@ -54,6 +54,7 @@ export default defineConfig(async () => {
   const { cloudflare } = await import("@cloudflare/vite-plugin");
 
   return {
+    resolve:{alias:{"@/lib/runtime-env":fileURLToPath(new URL("./lib/runtime-cloudflare.ts",import.meta.url))}},
     server: isCodexSeatbeltSandbox
       ? { watch: { useFsEvents: false, usePolling: true } }
       : undefined,

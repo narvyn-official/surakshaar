@@ -1,7 +1,7 @@
 import { env } from "@/lib/runtime-env";
 import { headers } from "next/headers";
 import { permitted, type Role, type Permission } from "@/lib/access";
-import { getAppUser } from "@/lib/auth";
+import { getAppUser, requireStaffMfa } from "@/lib/auth";
 export function db() {
   if (!env.DB) throw new Error("Training storage is unavailable.");
   return env.DB as D1Database;
@@ -22,6 +22,7 @@ export async function access(permission: Permission = "read"): Promise<Access> {
     if (!member || !["admin", "trainer", "viewer", "certifier"].includes(member.role)) throw new Error("Forbidden workspace. Choose an approved workspace or join a centre.");
     role = member.role;
   }
+  await requireStaffMfa(user.userId);
   if (!permitted(role, permission)) throw new Error("Forbidden: your role does not allow this action.");
   return {owner: who, role, user};
 }
@@ -45,7 +46,9 @@ export function failure(error: unknown) {
     { headers: {"Cache-Control":"no-store"}, status: message.startsWith("Sign in") ? 401 : message.startsWith("Forbidden") ? 403 : 400 },
   );
 }
-export { readJson as json } from "./http";
+import {readJson} from "./http";
+/** Next self-hosting may use an internal request URL behind a TLS proxy. */
+export function json(request:Request,limit?:number){return readJson(request,limit,typeof env.BETTER_AUTH_URL==="string"?env.BETTER_AUTH_URL:undefined);}
 export function canonical(value: unknown): string {
   if (Array.isArray(value)) return `[${value.map(canonical).join(",")}]`;
   if (value !== null && typeof value === "object")

@@ -58,6 +58,7 @@ import {
 } from "@/components/ui/empty";
 import { Skeleton } from "@/components/ui/skeleton";
 import {lazy,Suspense} from "react";
+const SafetyUpdates=lazy(()=>import("./SafetyUpdates").then(m=>({default:m.SafetyUpdates})));
 const TrainingInsights=lazy(()=>import("./Insights").then(m=>({default:m.TrainingInsights})));
 const WorkerDirectory=lazy(()=>import("./Insights").then(m=>({default:m.WorkerDirectory})));
 import { curriculum, curriculumFor } from "@/lib/grading";
@@ -97,7 +98,7 @@ export default function Home() {
   const [session, setSession] = useState<AdminSession | null>(null);
   const writable = session?.current != null && permitted(session.current.role,"write");
   const [requestedTab, setActiveTab] = useState("insights");
-  const tab=session&&!session.current?"access":session?.current?.role!=="admin"&&["settings","team"].includes(requestedTab)?"insights":requestedTab;
+  const tab=session&&!session.current?"access":(session?.current?.role!=="admin"&&["settings","team"].includes(requestedTab)||requestedTab==="safety-updates"&&session?.current!=null&&!["admin","trainer"].includes(session.current.role))?"insights":requestedTab;
   const [workerView,setWorkerView]=useState("register");
   const setTab = useCallback((id:string) => {
     if (!destinations.some(d=>d.id===id)) return;
@@ -317,6 +318,7 @@ export default function Home() {
           </div>
         )}
         {session?.current && <Suspense fallback={<p role="status">Loading workspace tools…</p>}>
+        {tab==="safety-updates"&&session?.current&&["admin","trainer"].includes(session.current.role)&&<SafetyUpdates key={session.current.owner} refreshVersion={refreshVersion}/>}
         {tab==="instructors"&&session&&<InstructorPanel session={session} refreshVersion={refreshVersion}/>}
         {tab==="credentials"&&session&&<CertificationQueue session={session} refreshVersion={refreshVersion} onChange={load} onReview={id=>void run(async()=>{const row=await api<Row>(`records?attemptId=${encodeURIComponent(id)}`);selectRecord(row)})}/>}
         {coverage.truncated && (

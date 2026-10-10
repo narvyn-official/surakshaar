@@ -1,2 +1,2 @@
-/** Cloudflare target. The Node build aliases this module to runtime-node.ts. */
-export {env} from 'cloudflare:workers';
+/** The release target is Node. The optional Cloudflare build aliases this module. */
+export {env} from './runtime-node';

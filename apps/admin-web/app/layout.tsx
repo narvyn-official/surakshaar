@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import "./spatial-studio.css";
 
 export const metadata: Metadata = {
-  title: "SurakshaAr · Training centre",
+  title: {default:"SurakshaAR · Learn. Explore. Prepare.",template:"%s · SurakshaAR"},
   referrer: "no-referrer",
   robots: {index:false,follow:false},
   description:
-    "Review offline safety training and verify pilot simulation credentials.",
+    "Practise safety decisions, explore equipment and manage institutional learning with SurakshaAR.",
   other: {
     "codex-preview": "development",
   },
@@ -23,7 +24,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="antialiased">{children}</body>
+      <body className="antialiased spatial-light">{children}</body>
     </html>
   );
 }

@@ -39,6 +39,7 @@ class RoomMissionActivity:Activity() {
     private var placementCount=0;private var tracking=false
     private lateinit var title:TextView;private lateinit var prompt:TextView;private lateinit var status:TextView
     private lateinit var control:Button;private lateinit var progress:ProgressBar
+    private var compactLandscape=false
     private var hintUntil=0L
     private var lastPhase="";private var lastPlaced=-1;private var lastTracked=false;private var lastCanPlace=false;private var lastRetry=false
     private var lastPlacementLabel=""
@@ -69,30 +70,64 @@ class RoomMissionActivity:Activity() {
         val root=column().apply{setBackgroundColor(Palette.canvas)}
         root.setOnApplyWindowInsetsListener{v,i->if(android.os.Build.VERSION.SDK_INT>=30){val b=i.getInsets(WindowInsets.Type.systemBars());v.setPadding(b.left,b.top,b.right,b.bottom)}else{v.setPadding(i.systemWindowInsetLeft,i.systemWindowInsetTop,i.systemWindowInsetRight,i.systemWindowInsetBottom)};i}
         val landscape=resources.configuration.orientation==android.content.res.Configuration.ORIENTATION_LANDSCAPE
-        val header=LinearLayout(this).apply{orientation=LinearLayout.HORIZONTAL;gravity=Gravity.CENTER_VERTICAL;setPadding(dp(12),dp(8),dp(12),dp(8))}
+        compactLandscape=module=="fire"&&landscape&&(resources.configuration.fontScale>=1.6f||resources.configuration.screenHeightDp<360)
+        val header=LinearLayout(this).apply{orientation=LinearLayout.HORIZONTAL;gravity=Gravity.CENTER_VERTICAL;setPadding(dp(12),dp(if(compactLandscape)4 else 8),dp(12),dp(if(compactLandscape)4 else 8))}
         header.addView(practiceTool("",PracticeIcon.BACK,t("Save and return to learning","सहेजकर सीखने पर लौटें")){leavePractice()},LinearLayout.LayoutParams(dp(48),dp(48)).apply{rightMargin=dp(8)})
-        title=label("",18f,bold=true).apply{maxLines=1;ellipsize=android.text.TextUtils.TruncateAt.END;isAccessibilityHeading=true};header.addView(title,LinearLayout.LayoutParams(0,-2,1f))
+        title=label("",if(compactLandscape)16f else 18f,bold=true).apply{maxLines=1;ellipsize=android.text.TextUtils.TruncateAt.END;isAccessibilityHeading=true};header.addView(title,LinearLayout.LayoutParams(0,-2,1f))
         cueButton=action(t("Coach","मार्गदर्शन"),false,ActionRole.REVIEW){if(camera&&placementCount<3)placementHelp()else if(coaching.recall)requestCue()else showCoach()}
-        val menu=action(t("Options","विकल्प"),false,ActionRole.NEUTRAL){options()}.apply{contentDescription=t("Options and saved missions","विकल्प और सहेजे मिशन");minHeight=dp(44);minimumHeight=dp(44)};header.addView(menu,LinearLayout.LayoutParams(-2,-2).apply{leftMargin=dp(8)})
+        val menu=action(t("Options","विकल्प"),false,ActionRole.NEUTRAL){options()}.apply{
+            contentDescription=t("Options and saved missions","विकल्प और सहेजे मिशन");minHeight=dp(if(compactLandscape)48 else 44);minimumHeight=dp(if(compactLandscape)48 else 44)
+            if(compactLandscape){textSize=14f;maxLines=1;setPadding(dp(8),0,dp(8),0)}
+        }
+        header.addView(menu,LinearLayout.LayoutParams(if(compactLandscape)dp(120)else -2,if(compactLandscape)dp(48)else -2).apply{leftMargin=dp(8)})
         root.addView(header,LinearLayout.LayoutParams(-1,-2))
         scene=RoomMissionView(this,module,camera,identity.hi)
-        val panel=column(12);prompt=label("",17f,bold=true);panel.add(prompt)
-        status=label("",13f,Palette.muted);panel.add(status,top=4)
-        progress=ProgressBar(this,null,android.R.attr.progressBarStyleHorizontal).apply{max=100;progressTintList=android.content.res.ColorStateList.valueOf(Palette.teal)};panel.add(progress,top=6)
-        if(landscape){
-            val row=LinearLayout(this).apply{orientation=LinearLayout.HORIZONTAL}
-            row.addView(scene,LinearLayout.LayoutParams(0,-1,.64f))
-            row.addView(paged(panel,identity.hi),LinearLayout.LayoutParams(0,-1,.36f))
-            root.addView(row,LinearLayout.LayoutParams(-1,0,1f))
-        }else{root.addView(scene,LinearLayout.LayoutParams(-1,0,1f));root.addView(capped(panel,.24f,180,fixed=true),LinearLayout.LayoutParams(-1,-2))}
-        val toolsRow=LinearLayout(this).apply{orientation=LinearLayout.HORIZONTAL;isBaselineAligned=false;setPadding(dp(12),dp(4),dp(12),0)}
+        val panel=column(12);prompt=label("",17f,bold=true)
+        status=label("",13f,Palette.muted)
+        progress=ProgressBar(this,null,android.R.attr.progressBarStyleHorizontal).apply{max=100;progressTintList=android.content.res.ColorStateList.valueOf(Palette.teal)}
+        if(compactLandscape){
+            // The scene includes its own decision dock. A second instruction column left
+            // only one third of a short, large-text display available for the actual model.
+            root.addView(progress,LinearLayout.LayoutParams(-1,dp(3)))
+            root.addView(scene,LinearLayout.LayoutParams(-1,0,1f))
+        }else{
+            panel.add(prompt);panel.add(status,top=4);panel.add(progress,top=6)
+            if(landscape){
+                val row=LinearLayout(this).apply{orientation=LinearLayout.HORIZONTAL}
+                row.addView(scene,LinearLayout.LayoutParams(0,-1,.64f))
+                row.addView(paged(panel,identity.hi),LinearLayout.LayoutParams(0,-1,.36f))
+                root.addView(row,LinearLayout.LayoutParams(-1,0,1f))
+            }else{root.addView(scene,LinearLayout.LayoutParams(-1,0,1f));root.addView(capped(panel,.24f,180,fixed=true),LinearLayout.LayoutParams(-1,-2))}
+        }
+        val toolsRow=LinearLayout(this).apply{orientation=LinearLayout.HORIZONTAL;gravity=Gravity.CENTER_VERTICAL;isBaselineAligned=false;setPadding(dp(12),dp(4),dp(12),if(compactLandscape)dp(4)else 0);tag="room-tools"}
         speakButton=action(t("Audio","आवाज़"),false,ActionRole.LEARN){audioControls()}.apply{tag="room-speak";textSize=14f}
-        toolsRow.addView(speakButton,LinearLayout.LayoutParams(0,-2,1.15f).apply{rightMargin=dp(8)})
         cueButton.textSize=14f;cueButton.tag="room-help"
-        toolsRow.addView(cueButton,LinearLayout.LayoutParams(0,-2,1f))
-        root.addView(toolsRow,LinearLayout.LayoutParams(-1,-2))
         control=action("",role=ActionRole.CAMERA){primary()}.apply{tag="room-mission-control"}
-        root.addView(control,LinearLayout.LayoutParams(-1,-2).apply{setMargins(dp(12),dp(4),dp(12),dp(8))})
+        if(compactLandscape){
+            status.apply{
+                tag="room-step-details";maxLines=1;ellipsize=android.text.TextUtils.TruncateAt.END
+                gravity=Gravity.CENTER_VERTICAL;isFocusable=true;minHeight=dp(48)
+                background=shape(Palette.surface,10,Palette.line);setPadding(dp(10),0,dp(10),0)
+                setOnClickListener{stepDetails()}
+                tooltipText=t("Read current step and status","वर्तमान क्रिया और स्थिति पढ़ें")
+            }
+            toolsRow.addView(status,LinearLayout.LayoutParams(0,dp(48),1f).apply{rightMargin=dp(8)})
+            speakButton.contentDescription=t("Audio instruction controls","आवाज़ में निर्देश के नियंत्रण")
+            setPracticeIcon(speakButton,PracticeIcon.AUDIO,iconOnly=true)
+            setPracticeIcon(cueButton,PracticeIcon.INFO,iconOnly=true)
+            for(button in listOf(speakButton,cueButton)){
+                button.minHeight=dp(48);button.minimumHeight=dp(48);button.setPadding(0,0,0,0)
+                toolsRow.addView(button,LinearLayout.LayoutParams(dp(48),dp(48)).apply{rightMargin=dp(8)})
+            }
+            control.apply{textSize=14f;maxLines=1;ellipsize=android.text.TextUtils.TruncateAt.END;setPadding(dp(8),0,dp(8),0);minHeight=dp(48);minimumHeight=dp(48)}
+            toolsRow.addView(control,LinearLayout.LayoutParams(dp(160),dp(48)))
+            root.addView(toolsRow,LinearLayout.LayoutParams(-1,dp(56)))
+        }else{
+            toolsRow.addView(speakButton,LinearLayout.LayoutParams(0,-2,1.15f).apply{rightMargin=dp(8)})
+            toolsRow.addView(cueButton,LinearLayout.LayoutParams(0,-2,1f))
+            root.addView(toolsRow,LinearLayout.LayoutParams(-1,-2))
+            root.addView(control,LinearLayout.LayoutParams(-1,-2).apply{setMargins(dp(12),dp(4),dp(12),dp(8))})
+        }
         control.setOnTouchListener{v,e->
             if(held && e.actionMasked==MotionEvent.ACTION_UP){release();return@setOnTouchListener true}
             if(e.actionMasked in listOf(MotionEvent.ACTION_CANCEL,MotionEvent.ACTION_POINTER_DOWN)){cancelGesture();return@setOnTouchListener true}
@@ -217,9 +252,18 @@ class RoomMissionActivity:Activity() {
         return when{
             placing->prompt.text.toString()+". "+t("Move the phone sideways slowly over a textured surface. Tap inside the teal outline, hold steady, then tap Place station. Keep virtual footprints twenty centimetres apart. Do not walk backwards or approach real hazards.","पैटर्न वाली सतह पर फ़ोन धीरे दाएँ-बाएँ हिलाएँ। हरी रूपरेखा के अंदर छुएँ, स्थिर रखें, फिर स्थल रखें दबाएँ। काल्पनिक रूपरेखाओं में बीस सेंटीमीटर अंतर रखें। पीछे न चलें और वास्तविक खतरे के पास न जाएँ।")
             mission.completed->prompt.text.toString()
-            coaching.recall->recallPrompt(mission.phase)+". "+t("This reads the task only. Use Hint if you need recorded help.","यह केवल कार्य पढ़ता है। दर्ज सहायता के लिए संकेत दबाएँ।")
+            coaching.recall->recallPrompt(mission.phase)
             else->prompt.text.toString()+"\n\n"+t("Do not: ","यह न करें: ")+RoomLearning.doNot(mission.phase).local(identity.hi)+"\n\n"+RoomLearning.forPhase(mission.phase,explosionRisk).why.local(identity.hi)
         }
+    }
+    /** Full text remains available without reserving a permanent second landscape column. */
+    private fun stepDetails(){
+        if(!active||!identity.isCurrentProfile())return
+        val details=prompt.text.toString()+"\n\n"+status.text.toString()
+        modalCount++;cancelGesture();scene.pause()
+        PageDialogBuilder(this).setTitle(t("Current step and status","वर्तमान क्रिया और स्थिति"))
+            .setMessage(details).setPositiveButton(t("Close","बंद करें"),null)
+            .setOnDismissListener{dismissModal()}.show()
     }
     private fun audioControls(){
         if(!active||!safe||saveFailed||!identity.isCurrentProfile())return
@@ -379,6 +423,9 @@ class RoomMissionActivity:Activity() {
         lastPlacementLabel=scene.placementControlLabel
         title.text=t(if(module=="fire")"Fire practice"else"Confined space",if(module=="fire")"अग्नि अभ्यास"else"बंद स्थान")+if(coaching.recall)t(" · Recall"," · याद करके")else if(camera)" · AR"else" · 3D"
         val phase=mission.phase
+        if(compactLandscape&&!mission.completed&&(!camera||placementCount==3)){
+            title.text=(if(module=="fire")t("Fire","आग")else t("Gas","गैस"))+" · "+RoomLearning.forPhase(phase,explosionRisk).title.local(identity.hi)
+        }
         // Coach already provides this action; leave the inspection model more room.
         control.visibility=if(safe&&!saveFailed&&!scene.needsRetry&&placementCount==3&&RoomMissionChoices.isEquipmentInspection(phase))View.GONE else View.VISIBLE
         prompt.text=if(camera&&placementCount<3)t(listOf("1 / 3 · Place the equipment station","2 / 3 · Place the virtual hazard","3 / 3 · Mark a clear withdrawal point")[placementCount],listOf("1 / 3 · उपकरण स्थल रखें","2 / 3 · काल्पनिक खतरा रखें","3 / 3 · खाली वापसी बिंदु रखें")[placementCount])else RoomMissionChoices.instruction(phase,identity.hi)?:when(phase){
@@ -409,6 +456,20 @@ class RoomMissionActivity:Activity() {
             phase=="SWEEP"&&camera->t("Hold to discharge","डिस्चार्ज के लिए दबाएँ")
             phase=="WITHDRAW"->t("Release discharge","डिस्चार्ज छोड़ें")
             else->if(coaching.recall)if(coaching.cueCount>=RoomCoaching.MAX_CUES)t("Guided rehearsal","निर्देशों के साथ अभ्यास")else t("Show hint · 7 seconds","संकेत दिखाएँ · 7 सेकंड")else t("How to do this action","यह क्रिया कैसे करें")
+        }
+        if(compactLandscape){
+            cueButton.text="";cueButton.tooltipText=cueButton.contentDescription
+            control.contentDescription=control.text
+            control.text=when{
+                saveFailed->t("Retry save","फिर सहेजें")
+                mission.completed->t("Review","समीक्षा")
+                camera&&checkSelfPermission(Manifest.permission.CAMERA)!=PackageManager.PERMISSION_GRANTED->t("Camera","कैमरा")
+                camera&&scene.needsRetry->t("Retry camera","कैमरा फिर चलाएँ")
+                placementCount<3->t("Place","रखें")
+                phase=="SWEEP"&&camera->t("Discharge","डिस्चार्ज")
+                phase=="WITHDRAW"->t("Release","छोड़ें")
+                else->if(coaching.recall)t("Hint","संकेत")else t("Coach","मार्गदर्शन")
+            }
         }
         control.isEnabled=saveFailed || mission.completed || !camera || scene.needsRetry || checkSelfPermission(Manifest.permission.CAMERA)!=PackageManager.PERMISSION_GRANTED || placementCount>=3 || scene.canPlace
         control.actionRole(if(phase=="WITHDRAW")ActionRole.DANGER else if(phase=="SWEEP"&&camera)ActionRole.PRIMARY else ActionRole.CAMERA)

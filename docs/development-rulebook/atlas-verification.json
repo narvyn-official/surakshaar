@@ -1,0 +1,18 @@
+{
+  "version": "2.0",
+  "data_sha256": "c6fcfedf10e73bc29bef6a0f1cdbaf1b239e5467d9b3b0c4cb7aa7c0c825892a",
+  "patterns": 120,
+  "mapped_21st_categories": 78,
+  "extended_patterns": 42,
+  "art_directions": 18,
+  "source_records": 34,
+  "local_interaction_studies": 8,
+  "unique_ids": true,
+  "internal_links_resolve": true,
+  "external_runtime_dependencies": 0,
+  "limits": [
+    "Recipes are not verified integrations.",
+    "External references checked as described, not every linked demo.",
+    "Visual and interaction checks are recorded separately."
+  ]
+}

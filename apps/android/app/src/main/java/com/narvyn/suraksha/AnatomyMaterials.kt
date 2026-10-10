@@ -26,6 +26,10 @@ internal object AnatomyMaterials {
     private val display=AnatomySurfaceMaterial(.20f,.46f,0f,0f)
     fun forPart(part:AnatomyPart):AnatomySurfaceMaterial=when {
         part.layer=="clothing"->fabric
+        part.layer=="teaching"&&listOf("sleeve","dressing","gauze","cloth","cushion","supports","blanket").any{it in part.id}->fabric
+        part.layer=="teaching"&&("tap" in part.id||"tray" in part.id||part.id=="teaching:embedded")->AnatomySurfaceMaterial(.24f,.62f,0f,.003f)
+        part.layer=="teaching"&&("water" in part.id||"film" in part.id)->display
+        part.layer=="teaching"->polymer
         part.layer=="skin"->skin
         part.layer=="skeleton"->bone
         part.layer=="muscles"->muscle

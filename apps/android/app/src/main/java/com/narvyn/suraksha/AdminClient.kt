@@ -36,7 +36,7 @@ class AdminClient(private val context:Context) {
         require(uri.host!=null && uri.userInfo==null && uri.query==null && uri.fragment==null && uri.path.orEmpty() in listOf("","/") && (uri.scheme=="https" || debug&&uri.scheme=="http"&&uri.host in listOf("localhost","127.0.0.1"))) { "Enter your training centre’s HTTPS server address." }
         val clean=uri.toString().trimEnd('/');if(clean!=base)sessionGuard.replace{clearTokens();base=clean}
     }
-    companion object { const val DEFAULT_ORIGIN="https://surakshaar.213-210-36-82.sslip.io"; private val sessionGuard=SessionRequestGuard(); private var sessionCookies:JSONObject?=null; private var sessionOrigin:String?=null }
+    companion object { val DEFAULT_ORIGIN=BuildConfig.API_ORIGIN; private val sessionGuard=SessionRequestGuard(); private var sessionCookies:JSONObject?=null; private var sessionOrigin:String?=null }
     fun remember(value:Boolean){prefs.edit().putBoolean("remember",value).apply();if(!value)prefs.edit().remove("cookies").apply()}
     private fun cookies():JSONObject { return try {
         if(!prefs.getBoolean("remember",true))return if(sessionOrigin==base)JSONObject(sessionCookies?.toString()?:"{}")else JSONObject()

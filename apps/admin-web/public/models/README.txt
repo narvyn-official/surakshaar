@@ -1,0 +1,1 @@
+SurakshaAR browser adaptation of the balanced anatomy pack. Internal anatomy only; no skin layer. Geometry and source attribution retain the terms in LICENSE.txt and LICENSE-LUNGS.txt. Original source/provenance is recorded in content/anatomy/manifest.json. Not for diagnosis or measurement of physical competence.

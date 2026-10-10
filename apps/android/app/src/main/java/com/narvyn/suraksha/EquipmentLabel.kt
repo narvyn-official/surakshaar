@@ -13,14 +13,17 @@ import kotlin.math.cos
 import kotlin.math.sin
 
 /** Original bilingual training decal. No manufacturer, certification or real pressure claim. */
-internal class EquipmentLabel {
+internal class EquipmentLabel(private val tag:Boolean=false) {
     private var program=0
     private var texture=0
     private var position=0
     private var uv=0
     private var transform=0
     private var lighting=0
-    private val vertices=ByteBuffer.allocateDirect(32*6*5*4).order(ByteOrder.nativeOrder()).asFloatBuffer().apply {
+    private val vertices=if(tag)ByteBuffer.allocateDirect(6*5*4).order(ByteOrder.nativeOrder()).asFloatBuffer().apply{
+        val x=-.117f;val y=.373f;val z=.026f;val w=.023f;val h=.036f
+        put(floatArrayOf(x-w,y-h,z,0f,1f, x+w,y-h,z,1f,1f, x+w,y+h,z,1f,0f, x-w,y-h,z,0f,1f, x+w,y+h,z,1f,0f, x-w,y+h,z,0f,0f));position(0)
+    }else ByteBuffer.allocateDirect(32*6*5*4).order(ByteOrder.nativeOrder()).asFloatBuffer().apply {
         fun vertex(section:Int,top:Boolean){
             val u=section/32f
             val angle=(u-.5f)*1.38f
@@ -65,7 +68,14 @@ internal class EquipmentLabel {
         GLES20.glDrawArrays(GLES20.GL_TRIANGLES,0,vertices.capacity()/5)
         GLES20.glDisableVertexAttribArray(position);GLES20.glDisableVertexAttribArray(uv);GLES20.glBindTexture(GLES20.GL_TEXTURE_2D,0)
     }
-    private fun bitmap():Bitmap=Bitmap.createBitmap(1024,1024,Bitmap.Config.ARGB_8888).also { bitmap->
+    private fun tagBitmap():Bitmap=Bitmap.createBitmap(512,1024,Bitmap.Config.ARGB_8888).also { b->
+        val c=Canvas(b);val p=Paint(Paint.ANTI_ALIAS_FLAG);c.drawColor(Color.rgb(240,230,190));p.color=Color.rgb(26,50,65);p.textAlign=Paint.Align.CENTER
+        fun line(s:String,y:Float,size:Float=34f){p.textSize=size;p.typeface=Typeface.create("sans-serif",Typeface.BOLD);c.drawText(s,256f,y,p)}
+        line("INSPECTION",120f,45f);line("TRAINER ONLY",190f,32f);line("प्रशिक्षण नमूना",250f,30f)
+        p.strokeWidth=3f;for(y in listOf(310f,430f,550f,670f,790f))c.drawLine(30f,y,482f,y,p)
+        line("STATUS",380f);line("UNVERIFIED",505f);line("NOT A",635f);line("SERVICE RECORD",755f,29f);line("Read the real tag",905f,28f)
+    }
+    private fun bitmap():Bitmap=if(tag)tagBitmap()else Bitmap.createBitmap(1024,1024,Bitmap.Config.ARGB_8888).also { bitmap->
         val c=Canvas(bitmap);val p=Paint(Paint.ANTI_ALIAS_FLAG)
         c.drawColor(Color.rgb(246,244,235))
         p.color=Color.rgb(157,31,39);c.drawRect(0f,0f,1024f,174f,p)

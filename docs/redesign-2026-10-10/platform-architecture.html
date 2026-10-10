@@ -1,0 +1,711 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>SurakshaAR platform architecture</title><style>
+  :root{color-scheme:light;--canvas:#F6F4EF;--surface:#fff;--text:#162B3B;--muted:#4D5F6D;--action:#006B63;--line:#d4dcd8;--wash:#e9f3ee}
+  *{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:30px}body{margin:0;background:var(--canvas);color:var(--text);font:16px/1.65 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}a{color:var(--action);text-underline-offset:3px}a:focus-visible,[tabindex]:focus-visible{outline:3px solid var(--action);outline-offset:4px}.skip{position:absolute;top:-100px;left:15px;background:var(--surface);padding:12px;z-index:3}.skip:focus{top:10px}.layout{max-width:1460px;margin:auto;display:grid;grid-template-columns:276px minmax(0,1fr);gap:52px;padding:44px 42px 100px}.rail{position:sticky;top:30px;align-self:start;max-height:calc(100vh - 60px);overflow:auto;padding-right:14px}.brand{font-size:24px;font-weight:760;letter-spacing:-.6px}.eyebrow{font-size:12px;letter-spacing:1.4px;text-transform:uppercase;color:var(--muted);margin:3px 0 24px}.rail nav{display:grid;gap:3px}.rail nav a{display:grid;grid-template-columns:24px 1fr;gap:10px;padding:8px 4px;text-decoration:none;color:var(--muted);font-size:13px;line-height:1.4;border-radius:6px}.rail nav a:hover{background:var(--wash);color:var(--text)}.rail nav span{font-variant-numeric:tabular-nums;color:var(--action);font-size:11px;padding-top:2px}.source-link{display:inline-block;margin-top:24px;font-size:13px}main{min-width:0;max-width:1040px;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:46px 46px 56px;box-shadow:0 10px 35px #162b3b06}h1{font-size:clamp(30px,3.5vw,46px);line-height:1.12;letter-spacing:-1.6px;max-width:720px;margin:0 0 18px}h1+p{color:var(--muted);font-size:13px;border-bottom:1px solid var(--line);padding-bottom:24px;margin-bottom:28px}p{margin:16px 0}h2{font-size:24px;line-height:1.3;letter-spacing:-.45px;display:flex;gap:14px;align-items:baseline;border-top:1px solid var(--line);padding-top:34px;margin:44px 0 20px}h2 span{font-size:13px;color:var(--action);letter-spacing:0;font-weight:650;flex:none}.table-scroll{overflow:auto;margin:22px 0 28px;border:1px solid var(--line);border-radius:10px}table{border-collapse:collapse;width:100%;font-size:14px;line-height:1.5}th,td{padding:13px 15px;text-align:left;vertical-align:top;border-bottom:1px solid var(--line)}tr:last-child td{border-bottom:0}th{background:var(--wash);font-weight:700}td:first-child{font-weight:600;min-width:140px}td:not(:first-child){min-width:185px}pre{overflow:auto;background:var(--wash);border:1px solid var(--line);padding:22px;border-radius:10px;font-size:12px;line-height:1.7}code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace}li{margin-bottom:10px}strong{font-weight:700}.label{display:inline-block;padding:5px 9px;background:var(--wash);border:1px solid var(--line);font-size:11px;font-weight:650;letter-spacing:.3px;border-radius:5px;margin-bottom:18px}
+  @media(max-width:1000px){.layout{grid-template-columns:220px minmax(0,1fr);gap:24px;padding:25px 22px}main{padding:32px 26px}}
+  @media(max-width:760px){.layout{display:block;padding:22px 14px 50px}.rail{position:static;max-height:none;padding:0 5px 22px}.rail nav{display:none}.rail .eyebrow{margin:0}.source-link{margin-top:12px}.brand{font-size:21px}main{padding:25px 20px;border-radius:12px}h1{font-size:33px;letter-spacing:-1px}h2{font-size:22px;gap:10px}body{font-size:16px;line-height:1.65}th,td{padding:12px}pre{font-size:11px;padding:15px}}
+  @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+  @media print{body{background:#fff;font-size:10pt}.layout{display:block;padding:0}.rail,.skip,.label{display:none}main{border:0;padding:0;max-width:none;box-shadow:none}h1{font-size:28pt}h2{font-size:15pt;break-after:avoid;margin-top:25px;padding-top:18px}.table-scroll{overflow:visible}table{font-size:9pt}th,td{min-width:0!important;padding:7px}tr{break-inside:avoid}pre{white-space:pre-wrap;font-size:8pt}a{color:inherit}p{orphans:3;widows:3}}
+  </style></head><body><a class="skip" href="#main">Skip to document</a><div class="layout"><aside class="rail"><div class="brand">SurakshaAR</div><p class="eyebrow">Architecture baseline</p><nav aria-label="Document sections"><a href="#section-1"><span>01</span>Product decisions</a><a href="#section-2"><span>02</span>Audiences and learning contexts</a><a href="#section-3"><span>03</span>Platform surfaces and navigation</a><a href="#section-4"><span>04</span>Institutional onboarding and independence</a><a href="#section-5"><span>05</span>Roles and authority</a><a href="#section-6"><span>06</span>Personal login and institutional login</a><a href="#section-7"><span>07</span>Curriculum and shared learning engine</a><a href="#section-8"><span>08</span>Courses, exploration and assessment</a><a href="#section-9"><span>09</span>Assessment identity and snapshot verification</a><a href="#section-10"><span>10</span>Face matching and liveness logic</a><a href="#section-11"><span>11</span>Camera ownership and AR examinations</a><a href="#section-12"><span>12</span>Examination lifecycle and decision logic</a><a href="#section-13"><span>13</span>Institutional certificates</a><a href="#section-14"><span>14</span>Institutional configuration and limits</a><a href="#section-15"><span>15</span>Data architecture</a><a href="#section-16"><span>16</span>System architecture</a><a href="#section-17"><span>17</span>Recommended technology stack</a><a href="#section-18"><span>18</span>Offline and synchronisation rules</a><a href="#section-19"><span>19</span>Privacy and verification governance</a><a href="#section-20"><span>20</span>Visual identity and interaction design</a><a href="#section-21"><span>21</span>Performance and cost controls</a><a href="#section-22"><span>22</span>Deployment and operational recovery</a><a href="#section-23"><span>23</span>Revenue and institutional packaging</a><a href="#section-24"><span>24</span>Existing project migration</a><a href="#section-25"><span>25</span>Delivery sequence and release acceptance</a><a href="#section-26"><span>26</span>Distinctive value and judge questions</a></nav><a class="source-link" href="platform-architecture.md">Open editable Markdown</a></aside><main id="main"><span class="label">PROPOSED REDESIGN · 10 OCTOBER 2026</span><h1>SurakshaAR platform architecture</h1>
+<p>Architecture baseline for the proposed redesign · 10 October 2026</p>
+<p>SurakshaAR will serve personal learners, households, schools, colleges, ITIs, workers and community programmes through a common learning platform. Personal learning will be easy to enter and unproctored. Each onboarded institution will operate its own learner directory, training programmes, examinations, examiner reviews and certificates. The platform owner will provide the service, reviewed shared content and governance controls; routine institutional certification will not require the owner&#39;s approval.</p>
+<p>This is the proposed implementation specification. Existing preview features are reusable inputs, not evidence that the new architecture has been implemented or validated. Delivery covers every audience from the first release; richer curriculum and automation can expand within that shared structure.</p>
+<h2 id="section-1"><span>01</span>Product decisions</h2>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Scrollable comparison table"><table>
+<thead>
+<tr>
+<th>Area</th>
+<th>Architecture decision</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Product model</td>
+<td>One platform, multiple personal and institutional contexts</td>
+</tr>
+<tr>
+<td>Learning modes</td>
+<td>Structured courses, open exploration, guided practice, independent simulation assessment and supervised practical observation</td>
+</tr>
+<tr>
+<td>Institutional ownership</td>
+<td>Institutions enrol their own people, appoint staff, configure programmes and issue their own certificates</td>
+</tr>
+<tr>
+<td>Personal access</td>
+<td>Guest exploration; optional Google sign-in or email OTP to save and synchronise progress</td>
+</tr>
+<tr>
+<td>Institutional access</td>
+<td>Verified membership, normal authentication and a fresh selfie at the start of each new learner institutional session; another identity check before a protected assessment</td>
+</tr>
+<tr>
+<td>Assessment verification</td>
+<td>Disclosed random snapshots with examiner review; optional one-to-one face matching and liveness checks</td>
+</tr>
+<tr>
+<td>Certification</td>
+<td>Evidence and issuer are explicit; learning completion, simulation assessment and observed practical performance remain distinguishable</td>
+</tr>
+<tr>
+<td>Implementation</td>
+<td>Native Android learning and AR; responsive web learning and institutional administration; shared API and content contracts</td>
+</tr>
+<tr>
+<td>Backend structure</td>
+<td>A modular monolith with a separately runnable background worker</td>
+</tr>
+<tr>
+<td>Privacy boundary</td>
+<td>Personal records, each institution&#39;s records and examination images have separate access rules</td>
+</tr>
+<tr>
+<td>Customisation</td>
+<td>Versioned configuration, templates and approved content extensions; a common codebase</td>
+</tr>
+</tbody></table></div>
+<h2 id="section-2"><span>02</span>Audiences and learning contexts</h2>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Scrollable comparison table"><table>
+<thead>
+<tr>
+<th>Context</th>
+<th>Relevant users</th>
+<th>Complete initial journey</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Personal and household</td>
+<td>Individuals, parents, caregivers and older people</td>
+<td>Explore a topic, practise a scenario, understand mistakes and revisit progress</td>
+</tr>
+<tr>
+<td>School and campus</td>
+<td>School students, college students, ITI learners and educators</td>
+<td>Join a programme, complete assigned work and receive suitable feedback or observation</td>
+</tr>
+<tr>
+<td>Workplace</td>
+<td>Workers, apprentices, contractors, supervisors and trainers</td>
+<td>Enrol, complete role-specific training, take an assessment and receive the institution&#39;s decision</td>
+</tr>
+<tr>
+<td>Community</td>
+<td>NGOs, facilitators and programme participants</td>
+<td>Join a cohort, use shared devices where needed and complete facilitated learning</td>
+</tr>
+</tbody></table></div>
+<p>Audience selection changes recommendations, vocabulary, age suitability and scenario context. It does not grant staff permissions. A person may belong to multiple institutions while retaining a separate personal space. Each workspace selection is visible throughout the journey. Children use an age-appropriate route and linked adult or institutional arrangements where required; child accounts do not inherit adult workplace surveillance settings.</p>
+<h2 id="section-3"><span>03</span>Platform surfaces and navigation</h2>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Scrollable comparison table"><table>
+<thead>
+<tr>
+<th>Surface</th>
+<th>Main navigation and responsibility</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Public website</td>
+<td>Purpose, interactive demonstration, learning catalogue, institutional offering, pricing explanation, sources, support and account entry</td>
+</tr>
+<tr>
+<td>Learner app and web</td>
+<td>Home, Learn, Explore, My work and My record; Downloads and Settings are secondary destinations</td>
+</tr>
+<tr>
+<td>Institution workspace</td>
+<td>Overview, People, Programmes, Assignments, Examinations, Review, Certificates, Reports and Settings</td>
+</tr>
+<tr>
+<td>Platform owner workspace</td>
+<td>Institutions, Plans, Shared content, Content reviews, Service health, Support access and Audit</td>
+</tr>
+<tr>
+<td>Certificate verification</td>
+<td>A minimal public record reached through an unguessable QR link, showing issuer, qualification scope and current status</td>
+</tr>
+</tbody></table></div>
+<p>Learner Home prioritises Continue, assigned work and recent exploration. Institution staff receive a stable navigation shell with filtered lists and detail views. On a phone, a detailed examiner review becomes a full page. Private examination evidence is excluded from public search, general analytics and normal learner sharing.</p>
+<p>Every primary flow includes entry requirements, saved state, success, cancellation, permission denial, service failure and recovery. Notifications link directly to the relevant assignment, review or certificate. A successful action produces a durable record, not only a temporary toast.</p>
+<h2 id="section-4"><span>04</span>Institutional onboarding and independence</h2>
+<p>The platform owner creates or approves an institution, verifies its named administrator and allocates the contracted plan, module entitlements, storage and assessment allowances. That administrator completes a setup wizard: identity and branding, branches, learner groups, staff permissions, assessment rules, privacy notices, retention settings and certificate templates.</p>
+<p>The institution then independently imports workers or students, sends invitations, verifies institutional enrolment, assigns learning, appoints examiners, reviews submissions and issues certificates. Invitations can be distributed by authorised staff as links or printed QR codes; an institution code and employee number alone are never sufficient authentication.</p>
+<p>Institution states are Draft, Active, Restricted and Closed. Restrictions may stop new assignments or issuance, while preserving existing learner records and certificate verification according to the service agreement. Subscription expiry does not silently invalidate a legitimately issued certificate. Closure includes export, access removal, retention and key-history handling.</p>
+<h2 id="section-5"><span>05</span>Roles and authority</h2>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Scrollable comparison table"><table>
+<thead>
+<tr>
+<th>Role</th>
+<th>Allowed responsibility</th>
+<th>Boundary</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Platform owner</td>
+<td>Provision institutions, manage plans, publish shared content and administer service operations</td>
+<td>Routine access does not expose examination photos or alter institutional grades</td>
+</tr>
+<tr>
+<td>Institution administrator</td>
+<td>Manage members, branches, policies, programmes, templates and delegated roles</td>
+<td>Authority is limited to that institution</td>
+</tr>
+<tr>
+<td>Instructor</td>
+<td>Assign learning, give feedback and record permitted practical observations</td>
+<td>Cannot automatically issue certificates or browse unrelated cohorts</td>
+</tr>
+<tr>
+<td>Examiner</td>
+<td>Review assigned attempts, authorised identity evidence and practical observations; request clarification or retest</td>
+<td>Cannot rewrite submitted answers or approve their own attempt</td>
+</tr>
+<tr>
+<td>Certificate issuer</td>
+<td>Approve and issue qualifying institutional certificates, revoke or replace them with reasons</td>
+<td>Cannot bypass missing evidence by editing a score</td>
+</tr>
+<tr>
+<td>Content author and reviewer</td>
+<td>Prepare and approve scoped content revisions</td>
+<td>Draft content cannot become approved through an ordinary administrator edit</td>
+</tr>
+<tr>
+<td>Learner</td>
+<td>Access personal and assigned learning, submit work, view decisions and appeal</td>
+<td></td>
+</tr>
+<tr>
+<td>Guardian or facilitator</td>
+<td>Assist explicitly linked profiles within the permitted scope</td>
+<td>Does not acquire unrestricted access to an adult&#39;s records</td>
+</tr>
+</tbody></table></div>
+<p>An institution may assign examiner and issuer responsibilities to the same qualified staff member for ordinary programmes. A separate reviewer and issuer can be required for higher-assurance programmes. Neither arrangement requires SurakshaAR owner approval for each certificate. Staff cannot assess or certify themselves. Support access requires a recorded reason, time-limited scope and an audit trail.</p>
+<h2 id="section-6"><span>06</span>Personal login and institutional login</h2>
+<p>Personal learning starts with language and topic selection. Guest progress stays on that device. Google sign-in or email OTP adds account recovery and synchronisation without examiner approval, selfie collection or face analysis. Guest history is merged only after the user confirms the correct profile. Personal completion records clearly state that identity and practical performance were not independently verified.</p>
+<p>Institutional learners authenticate through an invitation-activated account, supported institutional SSO or an issued credential with an appropriate recovery route. Staff accounts require MFA. Before entering a new institutional learner session, the app explains the configured identity policy and captures a current selfie. During assessment preflight it captures a fresh attempt-specific check, preventing an old login session from being treated as current presence evidence.</p>
+<p>An institution must first approve the learner&#39;s reference identity through a supervised enrolment check or a trusted institutional identity process. A self-uploaded photograph alone is insufficient: a substitute could otherwise enrol themselves and pass subsequent comparisons. Changing a reference photo requires reapproval, records a new version and does not rewrite old attempts.</p>
+<p>In manual-review mode, the session selfie is labelled Captured, awaiting review. In face-assisted mode, a passing check is labelled Automated check passed, with its method and time. Neither label implies government identity verification. Failed or unavailable verification offers bounded retries, examiner assistance or an approved supervised route; personal learning remains accessible.</p>
+<h2 id="section-7"><span>07</span>Curriculum and shared learning engine</h2>
+<p>The content model connects Domain, Competency, Course, Lesson, Scenario, Asset, Assessment rubric and Revision activity. Topic, setting, age suitability, language, prerequisites and delivery format are metadata, allowing reviewed components to be reused without presenting every learner with identical procedures.</p>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Scrollable comparison table"><table>
+<thead>
+<tr>
+<th>Domain</th>
+<th>Main learning purpose</th>
+<th>Spatial learning opportunity</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Fire and burns</td>
+<td>Prevention, alarm, evacuation decisions, equipment familiarity and reviewed burn response</td>
+<td>Inspect a scene, locate hazards and examine equipment</td>
+</tr>
+<tr>
+<td>First aid</td>
+<td>Recognition, escalation and reviewed response to selected casualty situations</td>
+<td>Body relationships and practice around a training manikin</td>
+</tr>
+<tr>
+<td>Electrical safety</td>
+<td>Recognise exposure, energy sources and unsafe approach decisions</td>
+<td>Explain hidden paths and equipment boundaries</td>
+</tr>
+<tr>
+<td>Machinery</td>
+<td>Guards, moving parts, pre-use inspection and approved isolation sequences</td>
+<td>Part identification, exclusion zones and stored-energy models</td>
+</tr>
+<tr>
+<td>Falls and surroundings</td>
+<td>Home, campus and workplace hazard recognition</td>
+<td>Inspect stairs, access routes and working areas</td>
+</tr>
+<tr>
+<td>Laboratory and chemical safety</td>
+<td>Labels, exposure prevention and approved response decisions</td>
+<td>Equipment and containment relationships</td>
+</tr>
+<tr>
+<td>Water and rural safety</td>
+<td>Prevention, safe assistance decisions and referral awareness</td>
+<td>Selected visual scenarios; AR only where useful</td>
+</tr>
+<tr>
+<td>Disaster preparedness</td>
+<td>Setting-specific preparedness, evacuation and role coordination</td>
+<td>Rehearse an approved practice setting</td>
+</tr>
+</tbody></table></div>
+<p>The first release includes a reviewed common fire and first-aid foundation for all audiences, setting-specific variants and initial electrical and machinery pathways for relevant learners. Other domains enter through the same contracts as content is reviewed. Broad audience access does not imply that every specialist procedure is available or validated at launch.</p>
+<p>Anatomy supports emergency decisions through simplified heart, lung, airway, circulation, skin and skeletal models. Equipment exploration supports hotspots, section views, labels, narrated explanations and guided inspection. Medical and engineering reviewers approve the relevant representations. No phone-camera feature diagnoses injuries, certifies electrical isolation or detects hazardous gas.</p>
+<h2 id="section-8"><span>08</span>Courses, exploration and assessment</h2>
+<p>Structured courses establish prerequisites and progression. Explore allows users to inspect bodies, equipment and hazards freely. Guided practice permits hints and retries. Independent simulation assessment records choices without directional hints. Practical observation records an authorised instructor&#39;s assessment of physical skills that the screen cannot establish.</p>
+<p>Use a versioned, declarative scenario specification containing states, allowed actions, consequences, explanations, assessment criteria and renderer-independent object IDs. Android and web interpret the same specification through platform adapters. The server re-evaluates submitted evidence against the pinned rubric. Shared test fixtures verify equivalent scoring across implementations; visual similarity alone does not establish parity.</p>
+<p>Unsafe critical actions can require remediation regardless of an overall numeric score. The content reviewer defines those gates. Server-issued assessment variants vary equivalent reviewed situations, not arbitrary difficulty. Learner assistance, presentation mode and assessment version are recorded. Anonymous exploration and self-assessed practice never silently become verified institutional evidence.</p>
+<p>An optional learning coach can explain the current lesson using retrieved, approved content and visible source references. It remains available during learning and guided practice, and is disabled during independent examinations. Expert-authored rubrics determine grades. The coach receives no examination photos, biometric templates or another learner&#39;s records, and cannot publish new safety procedures, diagnose a casualty or approve a certificate. Authored explanations remain available when the model is unavailable or the answer lacks support.</p>
+<h2 id="section-9"><span>09</span>Assessment identity and snapshot verification</h2>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Scrollable comparison table"><table>
+<thead>
+<tr>
+<th>Policy</th>
+<th>Behaviour</th>
+<th>Suitable use</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Self-directed</td>
+<td>No proctoring photos or biometric checks</td>
+<td>Personal learning</td>
+</tr>
+<tr>
+<td>Examiner-reviewed snapshots</td>
+<td>Approved reference identity, session and preflight selfies, random assessment snapshots, examiner review</td>
+<td>Default institutional remote assessment</td>
+</tr>
+<tr>
+<td>Face-assisted verification</td>
+<td>The same evidence plus one-to-one comparison and a validated liveness step</td>
+<td>Institutions that enable and validate biometric verification</td>
+</tr>
+<tr>
+<td>Supervised assessment</td>
+<td>In-person identity and practical observation by authorised staff</td>
+<td>Physical skills, camera limitations or an approved accommodation</td>
+</tr>
+</tbody></table></div>
+<p>Automatic photography is disclosed before the learner starts. The assessment displays a persistent Camera verification active indicator. Once permission and the applicable acknowledgement are obtained, each snapshot can be captured and saved without a separate click. Photography stops on submission, cancellation, timeout or leaving the active assessment. Encrypted upload of already captured images can continue later when the operating system permits it. Background saving is not covert camera operation.</p>
+<p>During non-AR examination segments, an initial policy can request randomly timed snapshots at intervals between 90 and 180 seconds, bounded by a per-attempt limit. These are proposed defaults to validate, not a research-proven anti-cheating interval. Additional checkpoints occur at the start, after an authorised interruption and at submission. No audio or continuous video is recorded by default. A separate liveness check may require a disclosed short video.</p>
+<p>The server creates a short-lived capture challenge bound to the institution, learner, session and attempt. Each evidence record contains the challenge, sequence, image digest, device capture time, elapsed session time, server receipt time, camera result, quality result and optional face-check result. Device time is untrusted; delayed uploads retain that uncertainty. Duplicate challenges, replayed evidence and conflicting event sequences require review. Hashes and device integrity signals help detect some tampering but cannot prove a photograph is authentic.</p>
+<p>Images live in private encrypted storage, never in a public gallery. The examiner sees a chronological timeline beside the approved reference photo, answers, interruptions and evidence gaps. Opening or exporting evidence is logged. Ordinary institution administrators do not receive examination-photo access unless assigned the relevant review permission. Downloads are disabled by default and narrowly authorised when necessary.</p>
+<h2 id="section-10"><span>10</span>Face matching and liveness logic</h2>
+<p>Face verification compares the current learner only with the institution-approved reference for that learner. It does not search the entire population or create a cross-institution face directory. Face detection first checks whether a usable face is present. It is not identity verification: Google&#39;s ML Kit explicitly distinguishes detection from recognising individuals. <a href="https://developers.google.com/ml-kit/vision/face-detection">ML Kit documentation</a></p>
+<p>A provider adapter separates detection, image quality, liveness and comparison. The initial optional cloud candidate is AWS Rekognition CompareFaces with Face Liveness, subject to supported region, contracts, SDK integration, cost and representative-device evaluation. Snapshots remain usable with manual review when the provider is disabled. A new or unlicensed face model is not assumed to be production-ready. <a href="https://docs.aws.amazon.com/rekognition/latest/dg/faces-comparefaces.html">Face comparison</a>, <a href="https://docs.aws.amazon.com/rekognition/latest/dg/face-liveness.html">Face Liveness</a></p>
+<p>Automated outcomes are Check passed, Retry needed and Examiner review required. Low quality, multiple faces, liveness uncertainty, a comparison mismatch or provider outage must not produce an automatic accusation of cheating. The examiner considers the context, can request a supervised retest and records a reasoned decision. The learner can appeal. A successful face match supports presence continuity; it cannot establish that no off-camera assistance occurred.</p>
+<p>Thresholds are selected using measured false-match and false-rejection rates on the intended population and devices. A similarity score is not a calibrated probability that a person is genuine. NIST documents the effects of image quality and demographic variation, making local evaluation and an alternative verification route material requirements. <a href="https://pages.nist.gov/frvt/html/frvt_demographics.html">NIST demographic evaluation</a></p>
+<h2 id="section-11"><span>11</span>Camera ownership and AR examinations</h2>
+<p>One app-owned camera coordinator grants exclusive use to AR tracking, selfie capture or another approved camera task. It controls acquisition, pause, release and recovery. Native AR state and attempt state are separate, so switching camera ownership does not lose submitted actions.</p>
+<p>Rear-camera AR and front-camera verification are not assumed to operate together. CameraX concurrent-camera support is device-dependent, and support for that API does not establish compatibility with an active ARCore session. ARCore camera sharing also needs its own tested integration. <a href="https://developer.android.com/reference/androidx/camera/core/ConcurrentCamera">Android concurrent cameras</a>, <a href="https://developers.google.com/ar/develop/java/camera-sharing">ARCore camera sharing</a></p>
+<p>The default AR assessment flow verifies identity before the spatial segment, at safe checkpoints and afterward. At a checkpoint the app saves the scene state, pauses the task and timer as policy permits, releases the rear camera, explains the selfie check, then restores and re-localises the scene. A learner is never prompted to manipulate a phone while operating live hazardous equipment. Uninterrupted front-camera evidence during AR requires a tested compatible device, approved second device or supervised session; the resulting evidence method is recorded honestly.</p>
+<p>Leaving the app or hiding a browser tab records an interruption. Capture stops and the pre-agreed examination rule determines whether time continues, the attempt pauses or a retake is required. Camera permission denial offers recovery or a supervised route. Android has while-in-use restrictions on camera permissions; the design does not depend on unrestricted background photography. <a href="https://developer.android.com/about/versions/14/changes/fgs-types-required">Android camera-service restrictions</a></p>
+<h2 id="section-12"><span>12</span>Examination lifecycle and decision logic</h2>
+<p>The attempt lifecycle is Assigned, Eligible, Preflight, In progress, Paused when permitted, Submitted, Evidence processing, Examiner review, then Accepted, Retest required or Rejected with reasons. A successful acceptance can proceed to Certificate eligible and Issued. An appeal creates a separate review record; it never erases the original decision.</p>
+<p>Preflight checks enrolment, prerequisites, reference approval, current policy, required permissions, device capability, connectivity and available storage. The learner sees the time rule, permitted breaks, required evidence, submission behaviour and alternative route before committing.</p>
+<p>The server is authoritative for deadlines, attempts allowed, scoring, reviewer authority and certificate eligibility. It atomically accepts submission once. Retried requests return the existing receipt. An outstanding evidence upload produces Submitted, evidence pending rather than an inaccurate success or failure message. The final decision uses separate fields for learning performance, practical observation, identity review and evidence completeness.</p>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Scrollable comparison table"><table>
+<thead>
+<tr>
+<th>Problem</th>
+<th>Required behaviour</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Camera unavailable or image unusable</td>
+<td>Explain, allow bounded retry, preserve work and route to the configured alternative</td>
+</tr>
+<tr>
+<td>Network loss</td>
+<td>Apply the frozen attempt policy; retain permitted encrypted evidence and show its status</td>
+</tr>
+<tr>
+<td>App crash or restart</td>
+<td>Restore allowed state, record the gap and repeat preflight identity checks where required</td>
+</tr>
+<tr>
+<td>Storage full</td>
+<td>Stop new capture safely and display recovery; do not discard answers silently</td>
+</tr>
+<tr>
+<td>Face provider outage</td>
+<td>Mark processing pending or use authorised manual review; never invent a match</td>
+</tr>
+<tr>
+<td>Examiner access revoked</td>
+<td>Block further evidence access, revoke streaming access and reassign the review</td>
+</tr>
+<tr>
+<td>Policy changes during an attempt</td>
+<td>Keep the recorded policy version, except an explicit safety withdrawal that invalidates further use</td>
+</tr>
+<tr>
+<td>Duplicate submission or issuance</td>
+<td>Use idempotency and database constraints to prevent duplicate outcomes</td>
+</tr>
+</tbody></table></div>
+<h2 id="section-13"><span>13</span>Institutional certificates</h2>
+<p>The institution controls templates, signatories, programme names, required competencies, validity periods and renewal rules. The shared certificate engine checks eligibility, records the authorised decision and signs an issuer-specific credential. A staff member cannot convert missing practical evidence into an observed-practical claim by changing the template.</p>
+<p>Three evidence descriptions are supported: personal learning completion, institution-assessed simulation completion and institution-observed practical assessment. Certificates can combine assessed components while identifying each component&#39;s method. They do not imply statutory recognition, professional registration or permission to operate equipment unless the issuer has a separately established authority and explicitly valid scheme.</p>
+<p>Each credential contains a unique identifier, issuer, learner identity appropriate to the programme, competencies, content/rubric versions, assessment methods, issue date, expiry where applicable and status reference. Sign with an institution-specific key managed through a key-management service; the platform never gives signing secrets to browsers. A replacement preserves the predecessor link. Revocation records a reason and takes effect on online verification.</p>
+<p>The QR points to an unguessable verification record with minimal public data. It never exposes selfies, employee numbers, answers or detailed marks. Full name disclosure is controlled and explained. Verification shows Active, Expired, Revoked or Replaced. Offline signature checking can establish signature validity but must label revocation status as last checked or unavailable. Leaving an institution does not automatically erase or revoke a valid credential.</p>
+<h2 id="section-14"><span>14</span>Institutional configuration and limits</h2>
+<p>Institutions can configure branding, branches, departments, cohort names, learner fields, course selection, approved local procedures, languages, deadlines, attempt limits, reviewed passing criteria, identity mode, bounded snapshot frequency, review assignments, signatories, certificate templates and permitted retention periods. SSO, custom domains, bulk import, reports and integrations are entitlement-controlled capabilities.</p>
+<p>A policy is drafted, validated, previewed and published as a version. Existing attempts retain the version they started with. Platform safeguards prevent an institution from disabling tenant isolation, hiding capture notices, allowing self-certification, suppressing appeals, bypassing required practical evidence or publishing unsafe unreviewed instructions as approved shared content. An administrator&#39;s custom text cannot execute code or arbitrary scripts.</p>
+<p>Content approval and student examination approval are different authorities. An institution can appoint its own qualified reviewer for local procedures. Public catalogue publication remains a separate platform editorial decision.</p>
+<h2 id="section-15"><span>15</span>Data architecture</h2>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Scrollable comparison table"><table>
+<thead>
+<tr>
+<th>Entity group</th>
+<th>Principal records</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Identity</td>
+<td>User, Login identity, Session, Learner profile, Guardian relationship</td>
+</tr>
+<tr>
+<td>Institution</td>
+<td>Organisation, Branch, Membership, Role grant, Cohort, Invitation</td>
+</tr>
+<tr>
+<td>Policy</td>
+<td>Policy version, Entitlement, Notice version, Acknowledgement, Retention rule</td>
+</tr>
+<tr>
+<td>Learning</td>
+<td>Competency, Course version, Lesson, Scenario version, Asset manifest, Localisation review</td>
+</tr>
+<tr>
+<td>Delivery</td>
+<td>Enrolment, Assignment, Practice attempt, Examination attempt, Action event</td>
+</tr>
+<tr>
+<td>Verification</td>
+<td>Identity reference, Reference approval, Capture challenge, Evidence object, Check result</td>
+</tr>
+<tr>
+<td>Review</td>
+<td>Practical observation, Review case, Decision, Appeal</td>
+</tr>
+<tr>
+<td>Certification</td>
+<td>Issuer, Certificate template, Credential, Signing key reference, Revocation</td>
+</tr>
+<tr>
+<td>Operations</td>
+<td>Audit event, Outbox job, Notification, Subscription, Usage counter, Deletion job</td>
+</tr>
+</tbody></table></div>
+<p>Institution-owned records carry organisation identifiers with composite foreign keys and scoped uniqueness. Employee numbers are unique within an institution, not globally. Personal learning uses a separate ownership scope rather than a magic institution ID. Evidence objects are bound to a specific attempt and membership. Reference photos and biometric templates are sensitive records with their own retention and access controls.</p>
+<p>PostgreSQL row-level policies provide a second enforcement layer alongside application authorisation. Runtime database roles cannot own protected tables or bypass row security. Tenant context is set and cleared within each transaction, including pooled connections and worker jobs. Database owners and superusers can bypass ordinary policies, so merely enabling RLS is insufficient. <a href="https://www.postgresql.org/docs/current/ddl-rowsecurity.html">PostgreSQL row security</a></p>
+<p>Keep raw images in object storage and metadata in PostgreSQL. Do not place images, face templates, OTPs or tokens in ordinary logs, analytics, crash reports or public URLs. Search, exports, notification links and storage retrieval enforce the same ownership rules as ordinary pages.</p>
+<h2 id="section-16"><span>16</span>System architecture</h2>
+<pre><code class="language-text">Android learner app       Responsive learner and staff web
+        |                             |
+        +---------- HTTPS API --------+
+                         |
+                Modular application
+  Identity | Institutions | Curriculum | Assignments
+  Attempts | Evidence | Reviews | Certificates | Billing
+                         |
+       +-----------------+------------------+
+       |                 |                  |
+   PostgreSQL       Private object      Job worker
+   and job queue       storage       processing and delivery
+       |                 |                  |
+       +------ Audit and observability -----+
+                         |
+       Optional adapters: identity verification, SSO,
+       email/SMS, payments and certificate integrations
+
+Reviewed learning assets are distributed separately through a CDN.
+Private examination evidence never enters the public asset cache.
+</code></pre>
+<p>Keep module boundaries in code and contracts, without operating a service for every feature. The API is stateless apart from durable data; workers process uploads, comparison jobs, reports, certificates, notifications and deletions. Use a transactional outbox so a committed decision cannot silently lose its corresponding job. Retry-safe handlers and unique issuance constraints protect against repeated delivery.</p>
+<p>One REST API with OpenAPI contracts serves Android and web. Stream or poll review progress where useful; do not introduce permanent socket connections for every learner by default. Database transactions own final submission, accepted reviews and issuance. Content and evidence uploads use bounded upload sessions and server-side validation before becoming reviewable.</p>
+<h2 id="section-17"><span>17</span>Recommended technology stack</h2>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Scrollable comparison table"><table>
+<thead>
+<tr>
+<th>Layer</th>
+<th>Selected direction</th>
+<th>Reason and implementation boundary</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Android</td>
+<td>Kotlin, Jetpack Compose for new UI, existing native components behind adapters</td>
+<td>Retain working native learning and AR foundations; migrate incrementally</td>
+</tr>
+<tr>
+<td>Android AR and rendering</td>
+<td>ARCore plus Filament, through one app-owned runtime adapter</td>
+<td>Separate tracking, rendering, camera ownership and scenario state</td>
+</tr>
+<tr>
+<td>Android persistence</td>
+<td>Room over SQLite, app-private encrypted evidence files, WorkManager upload queue</td>
+<td>Durable learning and retryable upload; WorkManager does not take background selfies</td>
+</tr>
+<tr>
+<td>Web</td>
+<td>TypeScript, React, stable Next.js App Router</td>
+<td>Public site, learner routes and institutional workspaces in one web codebase</td>
+</tr>
+<tr>
+<td>Web controls</td>
+<td>Existing Base UI-based primitives and semantic CSS/Tailwind tokens</td>
+<td>One component system with accessible forms and consistent behaviour</td>
+</tr>
+<tr>
+<td>Web 3D</td>
+<td>Three.js with React Three Fiber and selected helpers</td>
+<td>Custom anatomy/equipment interactions; scene rendering loaded only when needed</td>
+</tr>
+<tr>
+<td>Content assets</td>
+<td>glTF/GLB with versioned manifests and validated compression</td>
+<td>Share authored assets while using platform-specific renderers</td>
+</tr>
+<tr>
+<td>API</td>
+<td>TypeScript on supported Node.js LTS, Fastify, OpenAPI and schema validation</td>
+<td>Shared mobile/web business rules and explicit module boundaries</td>
+</tr>
+<tr>
+<td>Authentication</td>
+<td>Better Auth with reviewed provider and organisation integrations</td>
+<td>Reuse current direction; Google/email OTP for personal use, stronger institutional controls</td>
+</tr>
+<tr>
+<td>Database</td>
+<td>Managed PostgreSQL with Drizzle migrations</td>
+<td>Relational records, transactions, scoped access and evidence integrity</td>
+</tr>
+<tr>
+<td>Jobs</td>
+<td>PostgreSQL-backed pg-boss plus transactional outbox</td>
+<td>Begin with one durable data system; add queue infrastructure when measurements justify it</td>
+</tr>
+<tr>
+<td>Storage</td>
+<td>Private S3-compatible object storage; separate public content storage/CDN</td>
+<td>Encrypted evidence, lifecycle deletion and direct bounded uploads</td>
+</tr>
+<tr>
+<td>Face checks</td>
+<td>ML Kit for native face presence/quality cues; optional provider adapter for matching and liveness</td>
+<td>Detection is not recognition; manual review works independently</td>
+</tr>
+<tr>
+<td>Operations</td>
+<td>OCI containers, reverse proxy/TLS, managed secrets/KMS and OpenTelemetry</td>
+<td>Portable deployment, controlled credentials and observable failures</td>
+</tr>
+<tr>
+<td>Verification</td>
+<td>Unit and contract tests, Playwright, Android device tests, accessibility checks and load tests</td>
+<td>Validate workflows and trust boundaries, not just screens</td>
+</tr>
+</tbody></table></div>
+<p>Primary capability references: <a href="https://developer.android.com/develop/ui/compose/migrate/interoperability-apis">Compose interoperability</a>, <a href="https://github.com/google/filament">Filament</a>, <a href="https://developer.android.com/training/data-storage/room">Room</a>, <a href="https://developer.android.com/develop/background-work/background-tasks/persistent">WorkManager</a>, <a href="https://nextjs.org/docs/app/guides/self-hosting">Next.js self-hosting</a>, <a href="https://fastify.dev/docs/latest/">Fastify</a>, <a href="https://better-auth.com/docs/introduction">Better Auth</a>, <a href="https://better-auth.com/docs/plugins/email-otp">email OTP</a>, <a href="https://orm.drizzle.team/docs/rls">Drizzle RLS</a>, <a href="https://github.com/timgit/pg-boss">pg-boss</a>, <a href="https://www.khronos.org/gltf/">glTF</a>.</p>
+<p>Exact package versions, licences, provider regions and interoperability are locked during implementation and maintained thereafter. Native Android carries the initial spatial-assessment implementation. iPhone/iPad and other supported devices receive web learning and capability-tested assessments; native iOS AR is an extension of the same contracts, not an assumed first-release equivalent. Device support must be published honestly before enrolment into a required assessment.</p>
+<h2 id="section-18"><span>18</span>Offline and synchronisation rules</h2>
+<p>Personal lessons, downloaded exploration and practice work offline. Their records queue for synchronisation with visible Pending, Uploaded or Needs attention states. Each profile has separate local storage access, and switching accounts cannot show a previous learner&#39;s cached results.</p>
+<p>Remote verified examinations require connectivity at start, submission and required verification checkpoints. A policy may permit a bounded outage with encrypted local evidence, but the gap remains visible and certification waits for required evidence and review. Fully offline institutional examinations use an approved supervised route; uploaded local logs alone do not prove identity continuity.</p>
+<p>Content manifests are signed, versioned and expire or refresh according to policy. Active attempts pin their content and rubric versions. Server-side safety withdrawals can block new starts and require intervention for affected attempts. Deletions propagate to originals, thumbnails and derived biometric data; offline copies are removed at next contact or local expiry. Immediate deletion from a disconnected device is not promised.</p>
+<h2 id="section-19"><span>19</span>Privacy and verification governance</h2>
+<p>Before enabling assessment capture, the institution records the purpose, applicable processing basis, users affected, evidence recipients, provider, retention period and alternative route. A camera permission prompt is not a substitute for this notice. Where consent is the appropriate basis it must be specific and recorded; workplace or school consent must not be assumed to resolve every legal obligation. Institutions and SurakshaAR allocate responsibilities for their actual data-processing roles in their agreement.</p>
+<p>The initial product default is to delete raw assessment snapshots 30 days after the final decision, with a 90-day maximum from capture for unresolved ordinary cases. A justified, access-restricted appeal or required preservation can extend this under a recorded rule. These are proposed product defaults, not statutory retention periods. Approved identity references have a separate lifecycle tied to membership and legitimate verification needs. Certificate metadata and audit events follow a separately justified schedule; photography is not retained simply because a certificate lasts longer.</p>
+<p>Support correction, access requests, withdrawal where relevant, deletion and review of identity disputes. Disclose backup expiry and approved preservation exceptions. Biometric verification is disabled by default for minors and requires separate legal and product review before any institution can enable it. A supervised alternative remains available. Exam photos cannot be repurposed for attendance, advertising, disciplinary profiling or model training under the examination notice.</p>
+<p>India&#39;s final Digital Personal Data Protection Rules 2025 use phased commencement. The release review must consider the provisions actually in force, subsequent corrections and the deployment context; this architecture is not a claim of legal compliance. <a href="https://www.meity.gov.in/static/uploads/2025/11/53450e6e5dc0bfa85ebd78686cadad39.pdf">MeitY rules notification</a>, <a href="https://www.meity.gov.in/documents/act-and-policies/digital-personal-data-protection-rules-2025-gDOxUjMtQWa?pageTitle=Digit">MeitY rules and corrigendum listing</a></p>
+<h2 id="section-20"><span>20</span>Visual identity and interaction design</h2>
+<p>Use a contemporary technical field-guide direction: warm neutral reading surfaces, deep navy text, teal actions, realistic equipment cutaways, numbered procedures and clear evidence timelines. Preserve the recognisable navy/teal foundation while replacing dense or inconsistent layouts through the redesign. The signature interaction connects a selected object or action to a plain-language explanation of its mechanism and consequence.</p>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Scrollable comparison table"><table>
+<thead>
+<tr>
+<th>Token</th>
+<th>Light appearance</th>
+<th>Dark appearance</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Canvas</td>
+<td>#F6F4EF</td>
+<td>#101C24</td>
+</tr>
+<tr>
+<td>Surface</td>
+<td>#FFFFFF</td>
+<td>#182932</td>
+</tr>
+<tr>
+<td>Primary text</td>
+<td>#162B3B</td>
+<td>#EAF3F2</td>
+</tr>
+<tr>
+<td>Secondary text</td>
+<td>#4D5F6D</td>
+<td>#B8C9D0</td>
+</tr>
+<tr>
+<td>Action</td>
+<td>#006B63</td>
+<td>#74D9C6</td>
+</tr>
+<tr>
+<td>Text on action</td>
+<td>#FFFFFF</td>
+<td>#101C24</td>
+</tr>
+<tr>
+<td>Warning text</td>
+<td>#854A00</td>
+<td>#FFD28A</td>
+</tr>
+<tr>
+<td>Error text</td>
+<td>#B42318</td>
+<td>#FFB4A9</td>
+</tr>
+</tbody></table></div>
+<p>These tokens require complete state and rendered-contrast checks. System, Light and Dark are independent of the institution&#39;s brand accent. Institution branding cannot override accessible status colours or camouflage verification notices. Use system font stacks initially, with reviewed Indic-script fallbacks and tested large-text behaviour.</p>
+<p>The learner experience uses one clear next action, a visible learning path and generous touch controls. The exploration workspace places the model beside a labelled inspector, with rotate, zoom, reset and text alternatives. The examination view is quiet: task, remaining time where applicable, verification status and save status. The examiner view places submission details beside an evidence timeline and persistent decision controls. Selection, warnings and scores always have text cues in addition to colour.</p>
+<p>Use short functional transitions, optional haptics and reduced-motion support. Avoid decorative glass over instructions, automatic scene movement during reading, flashing effects, four-point sparkle/starburst decorations and northeast arrow icons. Protect keyboard navigation, focus, zoom, screen-reader meaning and useful alternatives to dragging. The design atlas patterns selected are stable workspace navigation, straightforward account entry and responsive list/detail review; no external component design is copied.</p>
+<h2 id="section-21"><span>21</span>Performance and cost controls</h2>
+<p>Keep account entry, text lessons and review tools usable without loading a 3D engine. Fetch only the current module and selected language. Reuse geometry and textures, provide quality levels, cap expensive effects and stop rendering inactive scenes. Own camera and GPU resources explicitly so repeated entry and exit does not leak them. Demand rendering is suitable for resting web models. <a href="https://r3f.docs.pmnd.rs/advanced/scaling-performance">React Three Fiber performance guidance</a></p>
+<p>Initial engineering targets are p95 ordinary API responses below 500 ms at the agreed load, useful non-3D content within 2.5 seconds under the chosen test conditions, and sustained 30 fps for the minimum supported spatial-training device. These are targets to benchmark, not current results or national-scale guarantees. Define representative devices, networks, concurrent attempts and test duration before accepting them.</p>
+<p>Use indexed institution/cohort/attempt queries, keyset pagination for evidence, thumbnails for review and background report generation. Public assets may be cached globally; private responses and evidence have separate cache rules. Queue jobs per institution fairly, cap upload sizes and rates, and avoid one tenant exhausting capacity for others.</p>
+<p>Estimate evidence cost from actual usage. For illustration, 15 images at 100 KB each are approximately 1.5 MB per attempt; 10,000 attempts produce approximately 15 GB of originals before thumbnails, backups and overhead. Provider checks, email/SMS, rendering assets and examiner effort are additional costs. Short retention and occasional snapshots bound costs; actual image quality requirements determine compression.</p>
+<h2 id="section-22"><span>22</span>Deployment and operational recovery</h2>
+<p>Use separate development, staging and production environments. Deploy a web process, an API process and a worker against managed PostgreSQL and private object storage. The processes can begin on a modest container deployment; each can scale independently when load tests identify the need. Choose an Indian hosting region for the initial service where the selected providers support the required functions. No biometric payload is routed to another region merely because an SDK defaults there; provider placement is an explicit configuration and contractual decision.</p>
+<p>Store credentials and signing keys in approved secret management. Use scoped workload identities, TLS, expiring sessions, rate limits, upload validation, MFA for privileged staff and audited administrative actions. Rotate credentials and support issuer-key rotation while keeping old public keys available for historical verification. Isolate third-party provider failure from core learning.</p>
+<p>Backups include database recovery and protected object metadata. Establish and test recovery targets before launch; initial proposed targets are a 15-minute database recovery-point objective and a four-hour recovery-time objective. Raw-image lifecycle, backup expiry and certificate verification continuity must agree with the retention policy. Monitor queue lag, missing evidence, failed uploads, provider errors, review delays and credential issuance failures without logging sensitive payloads.</p>
+<p>CI verifies contract compatibility, security-sensitive invariants, migrations, dependencies and asset licences. Releases use staged rollout, reversible application changes and expand/contract database migrations. Content can be rolled back separately from application code. A deployment is not considered successful until real primary workflows and restoration procedures have been exercised.</p>
+<h2 id="section-23"><span>23</span>Revenue and institutional packaging</h2>
+<p>Keep an accessible personal learning tier. Institutional plans can charge for active learners, programme administration, examiner workflows, certificate issuance capacity, reviewed specialist content and support. Face-assisted checks have transparent usage allowances or a separate metered charge. Enterprise options include SSO, custom domains, integrations and negotiated hosting arrangements.</p>
+<p>Sponsored school or community cohorts and commissioned equipment-specific modules provide additional commercial paths. Prices remain a validation decision based on actual delivery cost and customer interviews. Personal data is not a revenue product. Essential safety corrections, access to appeals and accurate verification status are not optional paid safeguards.</p>
+<p>Entitlements control purchased capabilities while permissions control who may use them. Payment webhooks are authenticated, retry-safe and server-authoritative. Renewal, cancellation, grace periods and export are clear. A billing error must not alter an examination score or erase an issued credential.</p>
+<h2 id="section-24"><span>24</span>Existing project migration</h2>
+<p>The workspace already contains native Android learning, AR, local progress, institutional records, React-based staff tools, Better Auth and Drizzle. Preserve those assets and verified behaviours. The current tree contains unrelated ongoing work; this architecture does not authorise resetting it or rewriting current releases.</p>
+<p>Introduce the new scenario, attempt and policy contracts first. Add institute provisioning and independent issuance as bounded modules. Move shared persistence to PostgreSQL through versioned migrations and reconciliation checks. Keep compatibility adapters for existing mobile records and distinguish imported legacy evidence from newly verified attempts. Replace web runtime or UI components only through tested routes; a stable Next.js production target is not a claim that the current vinext-based application has already migrated.</p>
+<p>Validate the new AR renderer behind the existing app-owned runtime contract. Preserve local records, account ownership, historical certificate signatures and access boundaries. New proctoring policies apply prospectively and cannot manufacture missing evidence for old assessments.</p>
+<h2 id="section-25"><span>25</span>Delivery sequence and release acceptance</h2>
+<p>Implementation proceeds through complete journeys while keeping all audiences in scope:</p>
+<ol>
+<li>Establish shared contracts, account contexts, institute onboarding, role enforcement and configuration.</li>
+<li>Deliver the common learning foundation, open exploration and audience-specific assignments on app and web.</li>
+<li>Deliver approved identity enrolment, institutional session selfies, disclosed snapshot capture, examiner review and independent issuance.</li>
+<li>Add optional face matching and liveness after provider, camera and accuracy validation; retain manual and supervised routes.</li>
+<li>Complete content review, device testing, accessibility, recovery exercises and a pilot spanning household, campus, workplace and community contexts.</li>
+</ol>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Scrollable comparison table"><table>
+<thead>
+<tr>
+<th>Acceptance check</th>
+<th>Required evidence before release</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Personal entry</td>
+<td>A new learner can learn and save progress without an examiner, selfie or institutional membership</td>
+</tr>
+<tr>
+<td>Institutional autonomy</td>
+<td>An onboarded institute can enrol, assign, review and issue without owner intervention</td>
+</tr>
+<tr>
+<td>Access boundaries</td>
+<td>Attempts to read another learner, cohort or institution through APIs, exports, storage and deep links fail</td>
+</tr>
+<tr>
+<td>Reference identity</td>
+<td>An unapproved or replaced reference cannot silently satisfy the enrolment requirement</td>
+</tr>
+<tr>
+<td>Capture scope</td>
+<td>No proctoring image is captured outside a disclosed active verification or assessment flow</td>
+</tr>
+<tr>
+<td>Camera recovery</td>
+<td>Real supported phones survive front/rear transitions, tracking loss and interruptions without losing work</td>
+</tr>
+<tr>
+<td>Evidence integrity</td>
+<td>Replays, duplicate uploads, missing sequences and timestamp uncertainty are represented correctly</td>
+</tr>
+<tr>
+<td>Face reliability</td>
+<td>False matches, false rejections, poor lighting, accessibility needs and presentation attacks are evaluated</td>
+</tr>
+<tr>
+<td>Examiner decision</td>
+<td>A false flag can be corrected with reasons and appealed; automation never labels a person a cheater</td>
+</tr>
+<tr>
+<td>Certification</td>
+<td>Required practical evidence cannot be bypassed; duplicate issuance is prevented; revocation and key rotation work</td>
+</tr>
+<tr>
+<td>Offline behaviour</td>
+<td>Queued work, stale permissions, expired manifests and reconnect conflicts resolve without false success</td>
+</tr>
+<tr>
+<td>Data lifecycle</td>
+<td>Originals, thumbnails, templates and backups follow declared retention and deletion behaviour</td>
+</tr>
+<tr>
+<td>Accessibility</td>
+<td>Primary journeys work with keyboard, screen readers, large text, reduced motion and accessible alternatives</td>
+</tr>
+<tr>
+<td>Content quality</td>
+<td>Domain reviewers approve instructions; language reviewers approve each released translation</td>
+</tr>
+<tr>
+<td>Operations</td>
+<td>Load, cost, backup restoration and rollback are measured against the agreed targets</td>
+</tr>
+</tbody></table></div>
+<p>A hackathon demonstration should show one household learner completing practice and one institution independently enrolling a learner, assigning a scenario, reviewing disclosed evidence and issuing a QR-verifiable certificate. A simulated identity flag must be labelled as demo data. It must not be presented as a tested recognition model or a real misconduct incident.</p>
+<h2 id="section-26"><span>26</span>Distinctive value and judge questions</h2>
+<p>SurakshaAR combines contextual practice with institutional ownership of assessment and certification. Its distinguishing design is the connection between a hazard, the mechanism behind it, the learner&#39;s recorded decision and the evidence supporting the resulting qualification. This is a product position to validate, not a claim that no competing system has similar features.</p>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Scrollable comparison table"><table>
+<thead>
+<tr>
+<th>Likely question</th>
+<th>Defensible answer</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Why AR instead of video?</td>
+<td>Use it for spatial relationships, equipment interaction and contextual decisions; compare practical performance against an equivalent conventional lesson</td>
+</tr>
+<tr>
+<td>How can this serve everyone?</td>
+<td>Reuse competencies and assets, adapt context and language, and provide accessible non-AR routes</td>
+</tr>
+<tr>
+<td>Does a selfie stop cheating?</td>
+<td>It supports identity continuity; it does not prove independent thought or exclude off-camera assistance</td>
+</tr>
+<tr>
+<td>Who certifies the learner?</td>
+<td>The authorised institution, under a disclosed rubric and evidence method</td>
+</tr>
+<tr>
+<td>Is the certificate government approved?</td>
+<td>Only if a separately established authorised scheme applies; the platform itself makes no blanket claim</td>
+</tr>
+<tr>
+<td>What happens when the model is wrong?</td>
+<td>Retry, examiner review, supervised alternatives and appeal; no automatic disciplinary decision</td>
+</tr>
+<tr>
+<td>What about inexpensive phones?</td>
+<td>Downloaded lessons, quality levels and non-AR learning; required assessment capabilities are checked before the attempt</td>
+</tr>
+<tr>
+<td>Can institutions customise everything?</td>
+<td>Programmes and policies are configurable inside enforced safety, privacy and access boundaries</td>
+</tr>
+<tr>
+<td>How is impact established?</td>
+<td>Compare critical mistakes, decision quality, practical observation and delayed retention, with instructor workload and verification errors as guardrails</td>
+</tr>
+<tr>
+<td>How does it make money?</td>
+<td>Institutional administration, reviewed specialist content, support and transparent verification usage; prices follow cost and demand validation</td>
+</tr>
+</tbody></table></div>
+<p>The remaining implementation gates are qualified content reviewers, representative test devices, acceptable biometric-provider terms and region, local verification benchmarks, institutional agreements, and field validation of the learning benefit. The architecture supports delivery without waiting for automated face verification: examiner-reviewed snapshots and supervised observation are complete operating modes.</p>
+</main></div></body></html>

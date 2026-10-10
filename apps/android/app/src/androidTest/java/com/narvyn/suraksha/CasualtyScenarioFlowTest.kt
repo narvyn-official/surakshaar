@@ -82,7 +82,9 @@ class CasualtyScenarioFlowTest {
         return result
     }
     private fun enter(scenario: ActivityScenario<FirstAidBayActivity>) {
-        tap("Use 3D practice")
+        val resume = ins.uiAutomation.rootInActiveWindow?.findAccessibilityNodeInfosByText("Start from step 1")
+            ?.any { it.text?.toString() == "Start from step 1" && it.isVisibleToUser } == true
+        if (resume) { tap("3D screen"); tap("Continue") } else tap("Use 3D practice")
         waitUntil("Body scene did not become interactive") { var ready = false; scenario.onActivity { ready = (field(it, "scene") as? AnatomyScene)?.interactionReady() == true }; ready }
         rendered(scene(scenario))
     }

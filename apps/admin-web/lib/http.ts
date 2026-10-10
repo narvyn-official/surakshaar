@@ -1,7 +1,7 @@
 /** Bound UTF-8 bytes while reading, including requests without Content-Length. */
-export async function readJson(request: Request, limit = 1_000_000): Promise<Record<string, unknown>> {
+export async function readJson(request: Request, limit = 1_000_000, canonicalOrigin?: string): Promise<Record<string, unknown>> {
   const origin = request.headers.get("origin");
-  if ((origin && origin !== new URL(request.url).origin) || request.headers.get("sec-fetch-site") === "cross-site")
+  if ((origin && origin !== new URL(canonicalOrigin ?? request.url).origin) || request.headers.get("sec-fetch-site") === "cross-site")
     throw new Error("Invalid request origin.");
   if (request.headers.get("content-type")?.split(";")[0].trim().toLowerCase() !== "application/json")
     throw new Error("Invalid content type. Send application/json.");

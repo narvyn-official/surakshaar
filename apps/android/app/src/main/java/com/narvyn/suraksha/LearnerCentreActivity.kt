@@ -115,7 +115,7 @@ class LearnerCentreActivity:Activity(){
         body.add(action(t("Institution assignments","संस्था के अभ्यास कार्य"),false){LearningCentreDialog.showLearner(this,identity)},bottom=8)
         body.add(action(t("Join or manage institution","संस्था जोड़ें या प्रबंधित करें"),false){if(links.isEmpty())join()else chooseCentre()},bottom=8)
         body.add(action(t("Account security","खाता सुरक्षा"),false){security()},bottom=8)
-        logout()
+        body.add(action(t("Assigned identity practice (browser)","पहचान सहित निर्धारित अभ्यास (ब्राउज़र)"),false){startActivity(Intent(Intent.ACTION_VIEW,Uri.parse(api.base+"/identity")))},top=10);logout()
     }
     private fun selectCentre(link:JSONObject){owner=link.getString("owner");centreName=link.getString("centre");showRecord()}
     private fun chooseCentre(){screen(t("Choose institution","संस्था चुनें"),"choose");links.forEach{link->body.add(action(link.getString("centre")){selectCentre(link)},bottom=10)};body.add(action(t("Join another institution","दूसरी संस्था से जुड़ें"),false){join()},top=8)}

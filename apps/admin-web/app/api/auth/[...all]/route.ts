@@ -5,7 +5,7 @@ import { recoveryReady } from "@/lib/recovery-mail";
 import { readJson } from "@/lib/http";
 export async function POST(request:Request) {
  try {
- const body=await readJson(request,32_000);
+ const body=await readJson(request,32_000,typeof env.BETTER_AUTH_URL==="string"?env.BETTER_AUTH_URL:undefined);
  const headers=new Headers(request.headers);headers.delete("content-length");
  request=new Request(request.url,{method:"POST",headers,body:JSON.stringify(body)});
  if(new URL(request.url).pathname==="/api/auth/request-password-reset"&&!recoveryReady(env as unknown as Record<string,string>))

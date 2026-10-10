@@ -1,0 +1,1141 @@
+{
+  "version": 1,
+  "units": "metres",
+  "axis": "Y-up",
+  "models": {
+    "fire": {
+      "id": "fire",
+      "name": "Fire extinguisher",
+      "parts": [
+        {
+          "id": "cylinder",
+          "name": "Vessel & foot ring",
+          "point": [
+            0,
+            0.23,
+            0
+          ],
+          "distance": 0.75,
+          "description": "Rounded vessel, neck, foot ring and drainage notches. Generic training construction; actual equipment varies."
+        },
+        {
+          "id": "label",
+          "name": "Instruction label",
+          "point": [
+            0,
+            0.256,
+            0.085
+          ],
+          "distance": 0.23,
+          "description": "The native decal describes the simulated training unit. Real agent compatibility and instructions must come from the actual unit label."
+        },
+        {
+          "id": "pin",
+          "name": "Safety pin & retaining ring",
+          "point": [
+            -0.055,
+            0.478,
+            0.015
+          ],
+          "distance": 0.15,
+          "description": "Metal pin, ring, seal loop and flag. Removed-state inspection retains the pin on the tray."
+        },
+        {
+          "id": "seal",
+          "name": "Tamper seal & flag",
+          "point": [
+            -0.024,
+            0.478,
+            0.024
+          ],
+          "distance": 0.12,
+          "description": "A loop and paper flag illustrate a tamper-evident attachment. No invented approval or serial number is presented."
+        },
+        {
+          "id": "tag",
+          "name": "Inspection tag & tie",
+          "point": [
+            -0.117,
+            0.384,
+            0.026
+          ],
+          "distance": 0.16,
+          "description": "A separate folded card, eyelet, cord and knot. The illustration is not evidence that a real unit has been inspected."
+        },
+        {
+          "id": "thread",
+          "name": "Valve-neck thread",
+          "point": [
+            0,
+            0.435,
+            0
+          ],
+          "distance": 0.2,
+          "description": "A helical machined ridge shows how a threaded fitting differs from a smooth collar. Inspection only; do not dismantle equipment.",
+          "yaw": 70
+        },
+        {
+          "id": "handle",
+          "name": "Lever, pivot & washer",
+          "point": [
+            0.02,
+            0.49,
+            0
+          ],
+          "distance": 0.22,
+          "description": "Separate lever, pivot fastener, washer and screw slot; the procedure shows ordered operating states."
+        },
+        {
+          "id": "gauge",
+          "name": "Gauge face & needle",
+          "point": [
+            0,
+            0.455,
+            0.059
+          ],
+          "distance": 0.14,
+          "description": "Ticks, a coloured sector and an authored needle position. This is not a live pressure measurement."
+        },
+        {
+          "id": "hose",
+          "name": "Hose, grip & coupling",
+          "point": [
+            0.13,
+            0.31,
+            0
+          ],
+          "distance": 0.38,
+          "description": "Curved hose, ribbed grip and coupling. The damaged specimen exposes a split and illustrative reinforcement strands."
+        },
+        {
+          "id": "fibre",
+          "name": "Split hose reinforcement",
+          "point": [
+            0.17,
+            0.335,
+            0.025
+          ],
+          "distance": 0.14,
+          "description": "Visible reinforcement strands in the damaged specimen. The damage is illustrative, not a manufacturer-specific hose cross-section."
+        }
+      ]
+    },
+    "gas": {
+      "id": "gas",
+      "name": "Gas detector",
+      "parts": [
+        {
+          "id": "display",
+          "name": "Display & controls",
+          "point": [
+            0,
+            0.3,
+            0.082
+          ],
+          "distance": 0.3,
+          "description": "Illustrative SIM display and controls; never a live gas reading."
+        },
+        {
+          "id": "sensor",
+          "name": "Sensor grille & inlet",
+          "point": [
+            -0.04,
+            0.42,
+            0.062
+          ],
+          "distance": 0.2,
+          "description": "Separate grille openings, inlet collar and fitting ridges."
+        },
+        {
+          "id": "tag",
+          "name": "Service slip & belt clip",
+          "point": [
+            0.05,
+            0.23,
+            -0.085
+          ],
+          "distance": 0.3,
+          "description": "Back-mounted slip, hinge and clip. Rotate to the back to inspect."
+        },
+        {
+          "id": "lanyard",
+          "name": "Lanyard & grip",
+          "point": [
+            -0.14,
+            0.34,
+            -0.08
+          ],
+          "distance": 0.32,
+          "description": "Curved carrying loop and grip ribs. The illustration does not establish suitability for an atmosphere."
+        }
+      ]
+    },
+    "machinery": {
+      "id": "machinery",
+      "name": "Machinery isolation station",
+      "parts": [
+        {
+          "id": "guard",
+          "name": "Guard & fasteners",
+          "point": [
+            -0.05,
+            0.26,
+            0.22
+          ],
+          "distance": 0.52,
+          "description": "Separate guard mesh, frame and screw heads; compare the missing-guard specimen."
+        },
+        {
+          "id": "lock",
+          "name": "Lock & keyway",
+          "point": [
+            0.287,
+            0.25,
+            0.14
+          ],
+          "distance": 0.18,
+          "description": "Distinct lock body, shackle and keyway. Model inspection does not establish safe isolation."
+        },
+        {
+          "id": "tag",
+          "name": "Lockout tag & tie",
+          "point": [
+            0.328,
+            0.175,
+            0.149
+          ],
+          "distance": 0.18,
+          "description": "Attached warning tag, eyelet, tie and folded slip. Follow the authorised site isolation procedure."
+        },
+        {
+          "id": "cable",
+          "name": "Cable & strain relief",
+          "point": [
+            -0.2,
+            0.3,
+            -0.19
+          ],
+          "distance": 0.4,
+          "description": "Routing, protective sleeve and ridges on the cable gland."
+        },
+        {
+          "id": "control",
+          "name": "Emergency-stop control",
+          "point": [
+            0.287,
+            0.37,
+            0.145
+          ],
+          "distance": 0.19,
+          "description": "A separate control; stopping alone is not verified energy isolation."
+        }
+      ]
+    },
+    "ppe": {
+      "id": "ppe",
+      "name": "Protective equipment",
+      "parts": [
+        {
+          "id": "shell",
+          "name": "Helmet shell & brim",
+          "point": [
+            0,
+            0.43,
+            0
+          ],
+          "distance": 0.6,
+          "description": "Crown, ribs and brim; compare the authored cracked specimen."
+        },
+        {
+          "id": "webbing",
+          "name": "Suspension webbing & stitches",
+          "point": [
+            -0.045,
+            0.323,
+            -0.09
+          ],
+          "distance": 0.18,
+          "description": "Under-brim suspension straps, individual stitch runs and adjustable buckles. Woven detail is illustrative, not a material-strength simulation.",
+          "elevation": -20,
+          "yaw": 180
+        },
+        {
+          "id": "tag",
+          "name": "Care slip",
+          "point": [
+            0.06,
+            0.338,
+            -0.145
+          ],
+          "distance": 0.19,
+          "description": "Under-brim care slip with folded corner. Actual care and replacement instructions vary."
+        },
+        {
+          "id": "lens",
+          "name": "Lenses, frame & hinges",
+          "point": [
+            0,
+            0.26,
+            0.19
+          ],
+          "distance": 0.38,
+          "description": "Separate lens surfaces, frame, bridge and hinges; inspect the damage specimen."
+        },
+        {
+          "id": "cushion",
+          "name": "Ear cushions & seams",
+          "point": [
+            -0.253,
+            0.24,
+            0.055
+          ],
+          "distance": 0.25,
+          "description": "Cushion seams and adjustment hardware; protection and fit require appropriate real equipment."
+        }
+      ]
+    },
+    "emergency": {
+      "id": "emergency",
+      "name": "Emergency response station",
+      "parts": [
+        {
+          "id": "communication",
+          "name": "Communication & reporting",
+          "point": [
+            0,
+            0.29,
+            0
+          ],
+          "distance": 0.75,
+          "description": "Illustrative communication equipment and reporting supplies."
+        },
+        {
+          "id": "slip",
+          "name": "Supply card & folded slip",
+          "point": [
+            -0.16,
+            0.059,
+            0.16
+          ],
+          "distance": 0.19,
+          "description": "Folded instruction card and fine printed rows. Use approved local emergency procedures."
+        },
+        {
+          "id": "assembly",
+          "name": "Assembly and route cues",
+          "point": [
+            0,
+            0.16,
+            0
+          ],
+          "distance": 0.7,
+          "description": "Miniature orientation cues; not navigation through a real building."
+        }
+      ]
+    }
+  },
+  "steps": {
+    "escape-first/notice": {
+      "model": "fire-smoke-cue",
+      "part": "",
+      "kind": "equipment",
+      "audience": "awareness",
+      "title": "Recognise uncertainty",
+      "boundary": "Inspection and decision rehearsal; physical competence requires supervised practice."
+    },
+    "escape-first/exit": {
+      "model": "fire-blocked-exit",
+      "part": "",
+      "kind": "equipment",
+      "audience": "awareness",
+      "title": "Choose a different route",
+      "boundary": "Inspection and decision rehearsal; physical competence requires supervised practice."
+    },
+    "escape-first/role": {
+      "model": "fire-alarm-stand",
+      "part": "",
+      "kind": "equipment",
+      "audience": "awareness",
+      "title": "Know your role",
+      "boundary": "Inspection and decision rehearsal; physical competence requires supervised practice."
+    },
+    "escape-first/belongings": {
+      "model": "fire-exit",
+      "part": "",
+      "kind": "equipment",
+      "audience": "awareness",
+      "title": "Keep moving to safety",
+      "boundary": "Inspection and decision rehearsal; physical competence requires supervised practice."
+    },
+    "escape-first/assembly": {
+      "model": "fire-rollcall",
+      "part": "",
+      "kind": "equipment",
+      "audience": "awareness",
+      "title": "Account for the group",
+      "boundary": "Inspection and decision rehearsal; physical competence requires supervised practice."
+    },
+    "escape-first/transfer": {
+      "model": "fire-exit",
+      "part": "",
+      "kind": "equipment",
+      "audience": "awareness",
+      "title": "Apply it in another place",
+      "boundary": "Inspection and decision rehearsal; physical competence requires supervised practice."
+    },
+    "extinguisher-check/authority": {
+      "model": "fire-exit",
+      "part": "",
+      "kind": "equipment",
+      "audience": "adult",
+      "title": "Check response conditions",
+      "boundary": "Inspection and decision rehearsal; physical competence requires supervised practice."
+    },
+    "extinguisher-check/label": {
+      "model": "fire",
+      "part": "label",
+      "kind": "equipment",
+      "audience": "adult",
+      "title": "Read the unit label",
+      "boundary": "Inspection and decision rehearsal; physical competence requires supervised practice."
+    },
+    "extinguisher-check/fault": {
+      "model": "fire-damaged",
+      "part": "fibre",
+      "kind": "equipment",
+      "audience": "adult",
+      "title": "Find the hidden fault",
+      "boundary": "Inspection and decision rehearsal; physical competence requires supervised practice."
+    },
+    "extinguisher-check/gauge": {
+      "model": "fire",
+      "part": "gauge",
+      "kind": "equipment",
+      "audience": "adult",
+      "title": "Check the right indicators",
+      "boundary": "Inspection and decision rehearsal; physical competence requires supervised practice."
+    },
+    "extinguisher-check/sequence": {
+      "model": "fire",
+      "part": "pin",
+      "kind": "equipment",
+      "audience": "adult",
+      "title": "Understand operation",
+      "boundary": "Inspection and decision rehearsal; physical competence requires supervised practice."
+    },
+    "extinguisher-check/change": {
+      "model": "fire-smoke-cue",
+      "part": "",
+      "kind": "equipment",
+      "audience": "adult",
+      "title": "Conditions change",
+      "boundary": "Inspection and decision rehearsal; physical competence requires supervised practice."
+    },
+    "extinguisher-check/report": {
+      "model": "fire-handover",
+      "part": "",
+      "kind": "equipment",
+      "audience": "adult",
+      "title": "Handover observations",
+      "boundary": "Inspection and decision rehearsal; physical competence requires supervised practice."
+    },
+    "agent-choice/oil": {
+      "model": "fire-fryer",
+      "part": "",
+      "kind": "equipment",
+      "audience": "adult",
+      "title": "A burning pan",
+      "boundary": "Inspection and decision rehearsal; physical competence requires supervised practice."
+    },
+    "agent-choice/electrical": {
+      "model": "fire-electrical",
+      "part": "",
+      "kind": "equipment",
+      "audience": "adult",
+      "title": "An energised appliance",
+      "boundary": "Inspection and decision rehearsal; physical competence requires supervised practice."
+    },
+    "agent-choice/labels": {
+      "model": "fire",
+      "part": "label",
+      "kind": "equipment",
+      "audience": "adult",
+      "title": "Compare two labelled units",
+      "boundary": "Inspection and decision rehearsal; physical competence requires supervised practice."
+    },
+    "agent-choice/sand": {
+      "model": "fire-sand-bucket",
+      "part": "",
+      "kind": "equipment",
+      "audience": "adult",
+      "title": "Reject a universal rule",
+      "boundary": "Inspection and decision rehearsal; physical competence requires supervised practice."
+    },
+    "agent-choice/transfer": {
+      "model": "fire-smoke-cue",
+      "part": "",
+      "kind": "equipment",
+      "audience": "adult",
+      "title": "The scene is uncertain",
+      "boundary": "Inspection and decision rehearsal; physical competence requires supervised practice."
+    },
+    "school-fire-help/alarm": {
+      "model": "fire-alarm-stand",
+      "part": "",
+      "kind": "equipment",
+      "audience": "awareness",
+      "title": "The alarm sounds",
+      "boundary": "Inspection and decision rehearsal; physical competence requires supervised practice."
+    },
+    "school-fire-help/blocked": {
+      "model": "fire-blocked-exit",
+      "part": "",
+      "kind": "equipment",
+      "audience": "awareness",
+      "title": "The usual exit is blocked",
+      "boundary": "Inspection and decision rehearsal; physical competence requires supervised practice."
+    },
+    "school-fire-help/count": {
+      "model": "fire-rollcall",
+      "part": "",
+      "kind": "equipment",
+      "audience": "awareness",
+      "title": "Reach the meeting point",
+      "boundary": "Inspection and decision rehearsal; physical competence requires supervised practice."
+    },
+    "laboratory-evacuation/unknown": {
+      "model": "fire-electrical",
+      "part": "",
+      "kind": "equipment",
+      "audience": "awareness",
+      "title": "Respect an unknown hazard",
+      "boundary": "Inspection and decision rehearsal; physical competence requires supervised practice."
+    },
+    "laboratory-evacuation/route": {
+      "model": "fire-exit",
+      "part": "",
+      "kind": "equipment",
+      "audience": "awareness",
+      "title": "Choose the safe route",
+      "boundary": "Inspection and decision rehearsal; physical competence requires supervised practice."
+    },
+    "laboratory-evacuation/information": {
+      "model": "fire-handover",
+      "part": "",
+      "kind": "equipment",
+      "audience": "awareness",
+      "title": "Give facts from safety",
+      "boundary": "Inspection and decision rehearsal; physical competence requires supervised practice."
+    },
+    "laboratory-evacuation/account": {
+      "model": "fire-rollcall",
+      "part": "",
+      "kind": "equipment",
+      "audience": "awareness",
+      "title": "Stay available",
+      "boundary": "Inspection and decision rehearsal; physical competence requires supervised practice."
+    },
+    "home-kitchen-transfer/oil": {
+      "model": "fire-fryer",
+      "part": "",
+      "kind": "equipment",
+      "audience": "awareness",
+      "title": "Identify the fuel",
+      "boundary": "Inspection and decision rehearsal; physical competence requires supervised practice."
+    },
+    "home-kitchen-transfer/switch": {
+      "model": "fire-fryer",
+      "part": "",
+      "kind": "equipment",
+      "audience": "awareness",
+      "title": "Do not reach through flames",
+      "boundary": "Inspection and decision rehearsal; physical competence requires supervised practice."
+    },
+    "home-kitchen-transfer/outside": {
+      "model": "fire-exit",
+      "part": "",
+      "kind": "equipment",
+      "audience": "awareness",
+      "title": "Stay out",
+      "boundary": "Inspection and decision rehearsal; physical competence requires supervised practice."
+    },
+    "workplace-handover/role": {
+      "model": "fire-exit",
+      "part": "",
+      "kind": "equipment",
+      "audience": "adult",
+      "title": "Read your role correctly",
+      "boundary": "Inspection and decision rehearsal; physical competence requires supervised practice."
+    },
+    "workplace-handover/condition": {
+      "model": "fire-damaged",
+      "part": "hose",
+      "kind": "equipment",
+      "audience": "adult",
+      "title": "Inspect before relying on it",
+      "boundary": "Inspection and decision rehearsal; physical competence requires supervised practice."
+    },
+    "workplace-handover/label": {
+      "model": "fire",
+      "part": "label",
+      "kind": "equipment",
+      "audience": "adult",
+      "title": "Do not guess compatibility",
+      "boundary": "Inspection and decision rehearsal; physical competence requires supervised practice."
+    },
+    "workplace-handover/blocked": {
+      "model": "fire-blocked-exit",
+      "part": "",
+      "kind": "equipment",
+      "audience": "adult",
+      "title": "Preserve your exit",
+      "boundary": "Inspection and decision rehearsal; physical competence requires supervised practice."
+    },
+    "workplace-handover/handover": {
+      "model": "fire-handover",
+      "part": "",
+      "kind": "equipment",
+      "audience": "adult",
+      "title": "Report without returning",
+      "boundary": "Inspection and decision rehearsal; physical competence requires supervised practice."
+    },
+    "adult-collapse/safe": {
+      "model": "anatomy",
+      "part": "",
+      "kind": "teaching",
+      "teachingKey": "adult-collapse-response/safe_space",
+      "audience": "adult",
+      "title": "Pause at the scene",
+      "boundary": "Inspection and decision rehearsal; physical competence requires supervised practice."
+    },
+    "adult-collapse/response": {
+      "model": "anatomy",
+      "part": "",
+      "kind": "teaching",
+      "teachingKey": "adult-collapse-response/response",
+      "audience": "adult",
+      "title": "Check responsiveness",
+      "boundary": "Inspection and decision rehearsal; physical competence requires supervised practice."
+    },
+    "adult-collapse/breathing": {
+      "model": "anatomy",
+      "part": "",
+      "kind": "teaching",
+      "teachingKey": "adult-collapse-response/breathing",
+      "audience": "adult",
+      "title": "Recognise the cue",
+      "observationPart": "FMA7309",
+      "boundary": "Inspection and decision rehearsal; physical competence requires supervised practice."
+    },
+    "adult-collapse/buddy": {
+      "model": "anatomy",
+      "part": "",
+      "kind": "teaching",
+      "teachingKey": "adult-collapse-response/response",
+      "audience": "adult",
+      "title": "Give your buddy a clear task",
+      "boundary": "Inspection and decision rehearsal; physical competence requires supervised practice."
+    },
+    "adult-collapse/cpr": {
+      "model": "anatomy",
+      "part": "",
+      "kind": "teaching",
+      "teachingKey": "adult-collapse-response/begin_cpr",
+      "audience": "adult",
+      "title": "Begin simulated CPR learning",
+      "observationPart": "FMA7485",
+      "boundary": "Inspection and decision rehearsal; physical competence requires supervised practice."
+    },
+    "adult-collapse/landmark": {
+      "model": "anatomy",
+      "part": "",
+      "kind": "teaching",
+      "teachingKey": "adult-collapse-response/begin_cpr",
+      "audience": "adult",
+      "title": "Understand the chest landmark",
+      "observationPart": "FMA7485",
+      "boundary": "Inspection and decision rehearsal; physical competence requires supervised practice."
+    },
+    "adult-collapse/aed": {
+      "model": "anatomy",
+      "part": "",
+      "kind": "teaching",
+      "teachingKey": "adult-collapse-response/aed_power",
+      "audience": "adult",
+      "title": "The AED arrives",
+      "boundary": "Inspection and decision rehearsal; physical competence requires supervised practice."
+    },
+    "adult-collapse/clear": {
+      "model": "anatomy",
+      "part": "",
+      "kind": "teaching",
+      "teachingKey": "adult-collapse-response/clear",
+      "audience": "adult",
+      "title": "Analysis and shock prompts",
+      "boundary": "Inspection and decision rehearsal; physical competence requires supervised practice."
+    },
+    "adult-collapse/resume": {
+      "model": "anatomy",
+      "part": "",
+      "kind": "teaching",
+      "teachingKey": "adult-collapse-response/resume_cpr",
+      "audience": "adult",
+      "title": "Continue after the prompt",
+      "boundary": "Inspection and decision rehearsal; physical competence requires supervised practice."
+    },
+    "adult-collapse/handover": {
+      "model": "anatomy",
+      "part": "",
+      "kind": "teaching",
+      "teachingKey": "adult-collapse-response/handover",
+      "audience": "adult",
+      "title": "Explain what happened",
+      "boundary": "Inspection and decision rehearsal; physical competence requires supervised practice."
+    },
+    "bleeding-control/consent": {
+      "model": "anatomy",
+      "part": "",
+      "kind": "teaching",
+      "teachingKey": "bleeding-injury/protect",
+      "audience": "adult",
+      "title": "Approach with care",
+      "boundary": "Inspection and decision rehearsal; physical competence requires supervised practice."
+    },
+    "bleeding-control/pressure": {
+      "model": "anatomy",
+      "part": "",
+      "kind": "teaching",
+      "teachingKey": "bleeding-injury/pressure",
+      "audience": "adult",
+      "title": "Control the bleeding",
+      "boundary": "Inspection and decision rehearsal; physical competence requires supervised practice."
+    },
+    "bleeding-control/embedded": {
+      "model": "anatomy",
+      "part": "",
+      "kind": "teaching",
+      "teachingKey": "bleeding-injury/embedded",
+      "audience": "adult",
+      "title": "A different wound",
+      "boundary": "Inspection and decision rehearsal; physical competence requires supervised practice."
+    },
+    "bleeding-control/escalate": {
+      "model": "anatomy",
+      "part": "",
+      "kind": "teaching",
+      "teachingKey": "bleeding-injury/pressure",
+      "audience": "adult",
+      "title": "Pressure is not enough",
+      "boundary": "Inspection and decision rehearsal; physical competence requires supervised practice."
+    },
+    "bleeding-control/handover": {
+      "model": "anatomy",
+      "part": "",
+      "kind": "teaching",
+      "teachingKey": "bleeding-injury/handover",
+      "audience": "adult",
+      "title": "Keep the handover factual",
+      "boundary": "Inspection and decision rehearsal; physical competence requires supervised practice."
+    },
+    "thermal-burn/heat": {
+      "model": "anatomy",
+      "part": "",
+      "kind": "teaching",
+      "teachingKey": "thermal-burn-response/safe_space",
+      "audience": "adult",
+      "title": "Stop further injury",
+      "boundary": "Inspection and decision rehearsal; physical competence requires supervised practice."
+    },
+    "thermal-burn/cool": {
+      "model": "anatomy",
+      "part": "",
+      "kind": "teaching",
+      "teachingKey": "thermal-burn-response/cool",
+      "audience": "adult",
+      "title": "Choose cooling",
+      "boundary": "Inspection and decision rehearsal; physical competence requires supervised practice."
+    },
+    "thermal-burn/stuck": {
+      "model": "anatomy",
+      "part": "",
+      "kind": "teaching",
+      "teachingKey": "thermal-burn-response/clothing",
+      "audience": "adult",
+      "title": "Check clothing and jewellery",
+      "boundary": "Inspection and decision rehearsal; physical competence requires supervised practice."
+    },
+    "thermal-burn/cover": {
+      "model": "anatomy",
+      "part": "",
+      "kind": "teaching",
+      "teachingKey": "thermal-burn-response/cover-help",
+      "audience": "adult",
+      "title": "After cooling",
+      "boundary": "Inspection and decision rehearsal; physical competence requires supervised practice."
+    },
+    "thermal-burn/escalate": {
+      "model": "anatomy",
+      "part": "",
+      "kind": "teaching",
+      "teachingKey": "thermal-burn-response/handover",
+      "audience": "adult",
+      "title": "Recognise a different severity",
+      "boundary": "Inspection and decision rehearsal; physical competence requires supervised practice."
+    },
+    "recovery-monitor/recognise": {
+      "model": "anatomy",
+      "part": "",
+      "kind": "teaching",
+      "teachingKey": "unresponsive-normal-breathing/breathing",
+      "audience": "adult",
+      "title": "Choose the correct branch",
+      "observationPart": "FMA7394",
+      "boundary": "Inspection and decision rehearsal; physical competence requires supervised practice."
+    },
+    "recovery-monitor/anatomy": {
+      "model": "anatomy",
+      "part": "",
+      "kind": "teaching",
+      "teachingKey": "unresponsive-normal-breathing/position",
+      "audience": "adult",
+      "title": "Inspect the airway",
+      "observationPart": "FMA7394",
+      "boundary": "Inspection and decision rehearsal; physical competence requires supervised practice."
+    },
+    "recovery-monitor/monitor": {
+      "model": "anatomy",
+      "part": "",
+      "kind": "teaching",
+      "teachingKey": "unresponsive-normal-breathing/monitor",
+      "audience": "adult",
+      "title": "Keep checking",
+      "observationPart": "FMA7310",
+      "boundary": "Inspection and decision rehearsal; physical competence requires supervised practice."
+    },
+    "recovery-monitor/trauma": {
+      "model": "anatomy",
+      "part": "",
+      "kind": "teaching",
+      "teachingKey": "unresponsive-normal-breathing/safe_space",
+      "audience": "adult",
+      "title": "Do not generalise the manoeuvre",
+      "boundary": "Inspection and decision rehearsal; physical competence requires supervised practice."
+    },
+    "seizure-safety/space": {
+      "model": "anatomy",
+      "part": "",
+      "kind": "teaching",
+      "teachingKey": "seizure-response/protect",
+      "audience": "adult",
+      "title": "Reduce injury risk",
+      "observationPart": "FMA50801",
+      "boundary": "Inspection and decision rehearsal; physical competence requires supervised practice."
+    },
+    "seizure-safety/mouth": {
+      "model": "anatomy",
+      "part": "",
+      "kind": "teaching",
+      "teachingKey": "seizure-response/mouth",
+      "audience": "adult",
+      "title": "Reject the mouth myth",
+      "boundary": "Inspection and decision rehearsal; physical competence requires supervised practice."
+    },
+    "seizure-safety/call": {
+      "model": "anatomy",
+      "part": "",
+      "kind": "teaching",
+      "teachingKey": "seizure-response/call",
+      "audience": "adult",
+      "title": "Recognise an emergency",
+      "boundary": "Inspection and decision rehearsal; physical competence requires supervised practice."
+    },
+    "seizure-safety/after": {
+      "model": "anatomy",
+      "part": "",
+      "kind": "teaching",
+      "teachingKey": "seizure-response/after",
+      "audience": "adult",
+      "title": "The movements stop",
+      "boundary": "Inspection and decision rehearsal; physical competence requires supervised practice."
+    },
+    "seizure-safety/report": {
+      "model": "anatomy",
+      "part": "",
+      "kind": "teaching",
+      "teachingKey": "seizure-response/handover",
+      "audience": "adult",
+      "title": "Give a useful handover",
+      "boundary": "Inspection and decision rehearsal; physical competence requires supervised practice."
+    },
+    "fracture-support/still": {
+      "model": "anatomy",
+      "part": "",
+      "kind": "teaching",
+      "teachingKey": "suspected-limb-injury/observe",
+      "audience": "adult",
+      "title": "Do not test the injury",
+      "boundary": "Inspection and decision rehearsal; physical competence requires supervised practice."
+    },
+    "fracture-support/support": {
+      "model": "anatomy",
+      "part": "",
+      "kind": "teaching",
+      "teachingKey": "suspected-limb-injury/support",
+      "audience": "adult",
+      "title": "Keep the limb supported",
+      "boundary": "Inspection and decision rehearsal; physical competence requires supervised practice."
+    },
+    "fracture-support/urgent": {
+      "model": "anatomy",
+      "part": "",
+      "kind": "teaching",
+      "teachingKey": "suspected-limb-injury/red-flags",
+      "audience": "adult",
+      "title": "Spot a warning sign",
+      "boundary": "Inspection and decision rehearsal; physical competence requires supervised practice."
+    },
+    "fainting-response/warning": {
+      "model": "anatomy",
+      "part": "",
+      "kind": "teaching",
+      "teachingKey": "fainting-response-bay/support",
+      "audience": "adult",
+      "title": "Act before a fall",
+      "boundary": "Inspection and decision rehearsal; physical competence requires supervised practice."
+    },
+    "fainting-response/recover": {
+      "model": "anatomy",
+      "part": "",
+      "kind": "teaching",
+      "teachingKey": "fainting-response-bay/recover",
+      "audience": "adult",
+      "title": "Reassess before moving",
+      "boundary": "Inspection and decision rehearsal; physical competence requires supervised practice."
+    },
+    "fainting-response/not-faint": {
+      "model": "anatomy",
+      "part": "",
+      "kind": "teaching",
+      "teachingKey": "fainting-response-bay/change",
+      "audience": "adult",
+      "title": "Do not assume a diagnosis",
+      "boundary": "Inspection and decision rehearsal; physical competence requires supervised practice."
+    },
+    "fainting-response/red-flags": {
+      "model": "anatomy",
+      "part": "",
+      "kind": "teaching",
+      "teachingKey": "fainting-response-bay/change",
+      "audience": "adult",
+      "title": "Recognise a serious change",
+      "boundary": "Inspection and decision rehearsal; physical competence requires supervised practice."
+    },
+    "heat-illness/early": {
+      "model": "anatomy",
+      "part": "",
+      "kind": "teaching",
+      "teachingKey": "heat-illness-response/safe_space",
+      "audience": "adult",
+      "title": "Stop the exposure",
+      "boundary": "Inspection and decision rehearsal; physical competence requires supervised practice."
+    },
+    "heat-illness/cool": {
+      "model": "anatomy",
+      "part": "",
+      "kind": "teaching",
+      "teachingKey": "heat-illness-response/cool",
+      "audience": "adult",
+      "title": "Begin simple cooling",
+      "boundary": "Inspection and decision rehearsal; physical competence requires supervised practice."
+    },
+    "heat-illness/change": {
+      "model": "anatomy",
+      "part": "",
+      "kind": "teaching",
+      "teachingKey": "heat-illness-response/confusion",
+      "audience": "adult",
+      "title": "Escalate immediately",
+      "boundary": "Inspection and decision rehearsal; physical competence requires supervised practice."
+    },
+    "heat-illness/swallow": {
+      "model": "anatomy",
+      "part": "",
+      "kind": "teaching",
+      "teachingKey": "heat-illness-response/swallow",
+      "audience": "adult",
+      "title": "Protect the airway",
+      "boundary": "Inspection and decision rehearsal; physical competence requires supervised practice."
+    },
+    "heat-illness/handover": {
+      "model": "anatomy",
+      "part": "",
+      "kind": "teaching",
+      "teachingKey": "heat-illness-response/handover",
+      "audience": "adult",
+      "title": "Describe the timeline",
+      "boundary": "Inspection and decision rehearsal; physical competence requires supervised practice."
+    },
+    "adult-choking/cough": {
+      "model": "anatomy",
+      "part": "FMA7394",
+      "kind": "anatomy",
+      "audience": "adult",
+      "title": "Notice the change",
+      "observationPart": "FMA7394",
+      "boundary": "Inspection and decision rehearsal; physical competence requires supervised practice."
+    },
+    "adult-choking/severe": {
+      "model": "anatomy",
+      "part": "FMA7394",
+      "kind": "anatomy",
+      "audience": "adult",
+      "title": "The cough becomes silent",
+      "boundary": "Inspection and decision rehearsal; physical competence requires supervised practice."
+    },
+    "adult-choking/sweep": {
+      "model": "anatomy",
+      "part": "FMA7394",
+      "kind": "anatomy",
+      "audience": "adult",
+      "title": "Avoid a harmful shortcut",
+      "boundary": "Inspection and decision rehearsal; physical competence requires supervised practice."
+    },
+    "adult-choking/collapse": {
+      "model": "anatomy",
+      "part": "FMA7485",
+      "kind": "anatomy",
+      "audience": "adult",
+      "title": "The adult becomes unresponsive",
+      "observationPart": "FMA7485",
+      "boundary": "Inspection and decision rehearsal; physical competence requires supervised practice."
+    },
+    "adult-choking/aftercare": {
+      "model": "anatomy",
+      "part": "FMA7394",
+      "kind": "anatomy",
+      "audience": "adult",
+      "title": "The blockage clears",
+      "boundary": "Inspection and decision rehearsal; physical competence requires supervised practice."
+    },
+    "sprain-support/stop": {
+      "model": "anatomy",
+      "part": "FMA24478",
+      "kind": "anatomy",
+      "audience": "adult",
+      "title": "Protect the injury",
+      "boundary": "Inspection and decision rehearsal; physical competence requires supervised practice."
+    },
+    "sprain-support/cold": {
+      "model": "anatomy",
+      "part": "FMA24478",
+      "kind": "anatomy",
+      "audience": "adult",
+      "title": "Use a barrier",
+      "boundary": "Inspection and decision rehearsal; physical competence requires supervised practice."
+    },
+    "sprain-support/review": {
+      "model": "anatomy",
+      "part": "FMA24478",
+      "kind": "anatomy",
+      "audience": "adult",
+      "title": "Escalate the uncertainty",
+      "boundary": "Inspection and decision rehearsal; physical competence requires supervised practice."
+    },
+    "sprain-support/urgent": {
+      "model": "anatomy",
+      "part": "FMA24478",
+      "kind": "anatomy",
+      "audience": "adult",
+      "title": "Recognise an emergency",
+      "boundary": "Inspection and decision rehearsal; physical competence requires supervised practice."
+    },
+    "minor-wound-care/scope": {
+      "model": "anatomy",
+      "part": "FMA7163",
+      "kind": "anatomy",
+      "audience": "adult",
+      "title": "Check whether it is minor",
+      "boundary": "Inspection and decision rehearsal; physical competence requires supervised practice."
+    },
+    "minor-wound-care/clean": {
+      "model": "anatomy",
+      "part": "FMA7163",
+      "kind": "anatomy",
+      "audience": "adult",
+      "title": "Clean with care",
+      "boundary": "Inspection and decision rehearsal; physical competence requires supervised practice."
+    },
+    "minor-wound-care/object": {
+      "model": "anatomy",
+      "part": "FMA7163",
+      "kind": "anatomy",
+      "audience": "adult",
+      "title": "Change the plan",
+      "boundary": "Inspection and decision rehearsal; physical competence requires supervised practice."
+    },
+    "minor-wound-care/followup": {
+      "model": "anatomy",
+      "part": "FMA7163",
+      "kind": "anatomy",
+      "audience": "adult",
+      "title": "Spot a worsening wound",
+      "boundary": "Inspection and decision rehearsal; physical competence requires supervised practice."
+    },
+    "school-help/notice": {
+      "model": "emergency",
+      "part": "communication",
+      "kind": "equipment",
+      "audience": "awareness",
+      "title": "Notice and keep safe",
+      "boundary": "Inspection and decision rehearsal; physical competence requires supervised practice."
+    },
+    "school-help/tell": {
+      "model": "emergency",
+      "part": "communication",
+      "kind": "equipment",
+      "audience": "awareness",
+      "title": "Communicate clearly",
+      "boundary": "Inspection and decision rehearsal; physical competence requires supervised practice."
+    },
+    "school-help/space": {
+      "model": "emergency",
+      "part": "communication",
+      "kind": "equipment",
+      "audience": "awareness",
+      "title": "Make room for help",
+      "boundary": "Inspection and decision rehearsal; physical competence requires supervised practice."
+    },
+    "school-help/limits": {
+      "model": "emergency",
+      "part": "communication",
+      "kind": "equipment",
+      "audience": "awareness",
+      "title": "Know your role",
+      "boundary": "Inspection and decision rehearsal; physical competence requires supervised practice."
+    },
+    "school-injury-help/space": {
+      "model": "emergency",
+      "part": "communication",
+      "kind": "equipment",
+      "audience": "awareness",
+      "title": "Make room for help",
+      "boundary": "Inspection and decision rehearsal; physical competence requires supervised practice."
+    },
+    "school-injury-help/message": {
+      "model": "emergency",
+      "part": "communication",
+      "kind": "equipment",
+      "audience": "awareness",
+      "title": "Give useful information",
+      "boundary": "Inspection and decision rehearsal; physical competence requires supervised practice."
+    },
+    "school-injury-help/change": {
+      "model": "emergency",
+      "part": "communication",
+      "kind": "equipment",
+      "audience": "awareness",
+      "title": "Report deterioration",
+      "boundary": "Inspection and decision rehearsal; physical competence requires supervised practice."
+    }
+  }
+}

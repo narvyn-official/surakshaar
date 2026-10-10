@@ -25,6 +25,74 @@ import org.junit.runner.RunWith
 /** Controls/state test only. It does not claim the emulator produced audible, correct pronunciation. */
 @RunWith(AndroidJUnit4::class)
 class NarrationControlsTest {
+    @Test fun voicePreviewPreservesLessonPositionAndUsesTheSameDialog() {
+        assumeTrue(Build.HARDWARE in listOf("ranchu", "goldfish") || Build.MODEL.contains("sdk_gphone"))
+        val context = InstrumentationRegistry.getInstrumentation().targetContext
+        val voice = context.getSharedPreferences("room-voice", 0)
+        val language = context.getSharedPreferences("preferences", 0)
+        val oldVoicePreferences = voice.all.filterKeys { it.startsWith("voice:") }
+        val hadAutomatic = voice.contains("automatic"); val oldAutomatic = voice.getBoolean("automatic", true)
+        val hadRate = voice.contains("rate"); val oldRate = voice.getFloat("rate", 1f)
+        val oldHi = language.getBoolean("hi", false)
+        voice.edit().putBoolean("automatic", false).remove("rate").commit(); language.edit().putBoolean("hi", false).commit()
+        try {
+            ActivityScenario.launch(DemonstrationActivity::class.java).use { activity ->
+                if (InstrumentationRegistry.getArguments().getString("orientation") == "landscape") {
+                    activity.onActivity { it.requestedOrientation = android.content.pm.ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE }
+                    var landscape = false
+                    repeat(50) { activity.onActivity { landscape = it.resources.configuration.orientation == android.content.res.Configuration.ORIENTATION_LANDSCAPE }; if (!landscape) Thread.sleep(100) }
+                    assertTrue(landscape)
+                }
+                lateinit var narrator: TrainingNarrator
+                lateinit var queue: NarrationPlayback
+                lateinit var dialog: AlertDialog
+                val instruction = "First practice instruction.\n\nSecond practice instruction."
+                activity.onActivity { host ->
+                    val field = DemonstrationActivity::class.java.getDeclaredField("narrator").apply { isAccessible = true }
+                    narrator = field.get(host) as TrainingNarrator
+                    assertEquals("New installs use the engine's normal rate", 1f, narrator.speechRate, .001f)
+                    narrator.show(instruction, "en-IN")
+                    queue = TrainingNarrator::class.java.getDeclaredField("queue").apply { isAccessible = true }.get(narrator) as NarrationPlayback
+                    assertTrue(queue.complete(queue.begin()!!.id)); narrator.pause()
+                    dialog = narrator.showControls()
+                }
+                onView(withText("Voice settings")).inRoot(isDialog()).perform(click())
+                onView(withTagValue(`is`("narration-voice-choice" as Any))).inRoot(isDialog()).check(matches(withText(containsString("English"))))
+                for (tag in listOf("narration-voice-previous", "narration-voice-next", "narration-voice-preview")) {
+                    onView(withTagValue(`is`(tag as Any))).inRoot(isDialog()).check { view, missing ->
+                        if (missing != null) throw missing
+                        val bounds = Rect(); assertTrue(view.getGlobalVisibleRect(bounds))
+                        assertTrue("Voice controls remain visible", bounds.height() >= view.height * .95f)
+                        assertTrue("Voice controls retain 48 dp touch targets", view.height >= context.dp(48))
+                    }
+                }
+                for (label in listOf("Android voices", "Back")) onView(withText(label)).inRoot(isDialog()).check(matches(isDisplayed()))
+                var previewEnabled = false
+                onView(withTagValue(`is`("narration-voice-preview" as Any))).inRoot(isDialog()).check { view, _ -> previewEnabled = view.isEnabled }
+                if (previewEnabled) onView(withTagValue(`is`("narration-voice-preview" as Any))).inRoot(isDialog()).perform(click())
+                activity.onActivity {
+                    assertTrue("Voice settings retain the host's existing dialog", dialog.isShowing)
+                    assertEquals(instruction, queue.text); assertEquals(1, queue.index); assertFalse(queue.playing)
+                }
+                val screenshot = InstrumentationRegistry.getInstrumentation().uiAutomation.takeScreenshot() ?: error("No screenshot")
+                val config = context.resources.configuration
+                File(context.getExternalFilesDir("validation"), "narration-voice-${config.orientation}-${config.fontScale}.png")
+                    .outputStream().use { screenshot.compress(Bitmap.CompressFormat.PNG, 100, it) }; screenshot.recycle()
+                onView(withText("Back")).inRoot(isDialog()).perform(click())
+                onView(withTagValue(`is`("narration-play" as Any))).inRoot(isDialog()).check(matches(isDisplayed()))
+                activity.onActivity { assertFalse(narrator.isSpeaking); assertEquals(1, queue.index); assertEquals(instruction, queue.text) }
+                onView(withText("Done")).inRoot(isDialog()).perform(click())
+                activity.onActivity { host -> assertFalse(dialog.isShowing); assertFalse(host.isFinishing) }
+            }
+        } finally {
+            val edit = voice.edit()
+            voice.all.keys.filter { it.startsWith("voice:") }.forEach { edit.remove(it) }
+            oldVoicePreferences.forEach { (key, value) -> edit.putString(key, value as? String) }
+            if (hadAutomatic) edit.putBoolean("automatic", oldAutomatic) else edit.remove("automatic")
+            if (hadRate) edit.putFloat("rate", oldRate) else edit.remove("rate")
+            edit.commit(); language.edit().putBoolean("hi", oldHi).commit()
+        }
+    }
     @Test fun audioControlsKeepLanguageHonestRememberSpeedAndCloseWithoutLeavingLesson() {
         assumeTrue(Build.HARDWARE in listOf("ranchu", "goldfish") || Build.MODEL.contains("sdk_gphone"))
         val context = InstrumentationRegistry.getInstrumentation().targetContext

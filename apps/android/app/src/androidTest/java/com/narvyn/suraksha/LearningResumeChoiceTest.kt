@@ -45,7 +45,9 @@ class LearningResumeChoiceTest {
             var blue = 0
             for (y in image.height / 4 until image.height * 9 / 10 step 8) for (x in 0 until image.width step 8) {
                 val pixel = image.getPixel(x, y)
-                if (android.graphics.Color.red(pixel) < 90 && android.graphics.Color.green(pixel) < 140 && android.graphics.Color.blue(pixel) > 170) blue++
+                if (kotlin.math.abs(android.graphics.Color.red(pixel)-android.graphics.Color.red(Palette.blue))<30 &&
+                    kotlin.math.abs(android.graphics.Color.green(pixel)-android.graphics.Color.green(Palette.blue))<30 &&
+                    kotlin.math.abs(android.graphics.Color.blue(pixel)-android.graphics.Color.blue(Palette.blue))<30) blue++
             }
             if (blue > 80) {
                 File(context.getExternalFilesDir("validation"), "resume-choice-$name.png").outputStream().use { image.compress(Bitmap.CompressFormat.PNG, 100, it) }

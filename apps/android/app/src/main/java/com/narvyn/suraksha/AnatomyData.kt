@@ -11,21 +11,33 @@ internal data class AnatomyPart(val id:String,val name:String,val layer:String,v
 internal class AnatomyData(val manifest:JSONObject,val parts:List<AnatomyPart>) {
     val height=manifest.getDouble("heightMetres").toFloat()
     companion object {
-        fun load(context:Context):AnatomyData {
+        // Verified geometry contains no learner data and is read-only after construction.
+        // Sharing live arrays prevents overlapping Activities from duplicating a detailed pack.
+        // A weak reference lets Android reclaim everything when no scene needs it.
+        private var cachedKey=""
+        private var cached=java.lang.ref.WeakReference<AnatomyData>(null)
+        private fun shared(key:String,read:()->AnatomyData):AnatomyData {
+            cached.get()?.takeIf{cachedKey==key}?.let{return it}
+            return read().also{cachedKey=key;cached=java.lang.ref.WeakReference(it)}
+        }
+        @Synchronized fun load(context:Context):AnatomyData {
+            if(Thread.currentThread().isInterrupted)throw java.util.concurrent.CancellationException("Anatomy loading cancelled")
             val store=AnatomyPackStore(context)
             val preparationFallback=store.prepareDefaultQuality { Thread.currentThread().isInterrupted }
+            fun balanced(message:String?=null):AnatomyData {
+                val model=shared("bundled-balanced"){loadPack({name->context.assets.open(name)},"anatomy/manifest.json","Balanced")}
+                return if(message==null)model else AnatomyData(JSONObject(model.manifest.toString()).put("qualityFallback",message),model.parts)
+            }
             val requested=store.requestedDetailed()
             store.activeDirectory()?.let { directory ->
-                try { return loadPack({name->PackIntegrity.safeFile(directory,name).inputStream()},"manifest.json","Detailed") }
+                try { return shared("detailed:${directory.canonicalPath}:${store.catalogue?.optString("sha256")}"){loadPack({name->PackIntegrity.safeFile(directory,name).inputStream()},"manifest.json","Detailed")} }
                 catch(cancelled:java.util.concurrent.CancellationException){throw cancelled}
-                catch(invalid:Exception){ /* Invalid content can fall back; interruption is not corruption. */ }
+                catch(invalid:Exception){ /* Verified in-memory geometry is reused; new input must pass integrity checks. */ }
                 store.invalidate()
-                return loadPack({name->context.assets.open(name)},"anatomy/manifest.json","Balanced").also { it.manifest.put("qualityFallback","The detailed pack could not be verified. Balanced models are in use; reinstall the optional pack in Offline content.") }
+                return balanced("The detailed pack could not be verified. Balanced models are in use; reinstall the optional pack in Offline content.")
             }
-            if(requested){store.invalidate();return loadPack({name->context.assets.open(name)},"anatomy/manifest.json","Balanced").also { it.manifest.put("qualityFallback","The detailed pack is incomplete. Balanced models are in use; reinstall the optional pack in Offline content.") }}
-            return loadPack({name->context.assets.open(name)},"anatomy/manifest.json","Balanced").also { model ->
-                preparationFallback?.let { model.manifest.put("qualityFallback",it) }
-            }
+            if(requested){store.invalidate();return balanced("The detailed pack is incomplete. Balanced models are in use; reinstall the optional pack in Offline content.")}
+            return balanced(preparationFallback)
         }
         private fun loadPack(open:(String)->java.io.InputStream,manifestPath:String,quality:String):AnatomyData {
             val manifest=JSONObject(open(manifestPath).use{String(PackIntegrity.readBounded(it,1_000_000),Charsets.UTF_8)})
@@ -39,18 +51,37 @@ internal class AnatomyData(val manifest:JSONObject,val parts:List<AnatomyPart>) 
                 check(bytes.size==p.getInt("bytes")) {"Anatomy pack size mismatch"}
                 val hash=MessageDigest.getInstance("SHA-256").digest(bytes).joinToString(""){"%02x".format(it)}
                 check(hash==p.getString("sha256")){"Anatomy pack integrity failure"}
-                val raw=GZIPInputStream(bytes.inputStream()).use{PackIntegrity.readBounded(it,24_000_008)}
-                totalBytes+=raw.size;require(totalBytes<=90_000_000){"Anatomy pack exceeds the memory budget"}
-                val buffer=ByteBuffer.wrap(raw).order(ByteOrder.LITTLE_ENDIAN)
-                check(String(raw.copyOfRange(0,4),Charsets.US_ASCII)=="ARA1")
-                buffer.position(4);val count=buffer.int;check(count in 3..1_000_000 && count%3==0 && raw.size==8+count*24)
-                val vertices=FloatArray(count*6);buffer.asFloatBuffer().get(vertices);check(vertices.all{it.isFinite()})
+                val decoded=AnatomyMeshDecoder.decode(bytes,90_000_000-totalBytes)
+                totalBytes+=decoded.rawBytes
+                val vertices=decoded.vertices
                 fun numbers(key:String)=p.getJSONArray(key).let{a->FloatArray(a.length()){a.getDouble(it).toFloat()}}
                 AnatomyPart(p.getString("id"),p.getString("name"),p.getString("layer"),p.getString("explanation"),numbers("bounds"),numbers("colour"),vertices).let(AnatomyClothing::protectedSkin)
             }
             manifest.put("loadedQuality",quality)
             return AnatomyData(manifest,parts)
         }
+    }
+}
+
+/** Stream into primitive storage; enforce the decompressed budget before allocating geometry. */
+internal object AnatomyMeshDecoder {
+    data class Decoded(val vertices:FloatArray,val rawBytes:Long)
+    fun decode(bytes:ByteArray,remainingBudget:Long):Decoded=GZIPInputStream(bytes.inputStream()).use { input ->
+        fun readFully(target:ByteArray,length:Int){var offset=0;while(offset<length){val n=input.read(target,offset,length-offset);check(n>0){"Anatomy mesh is truncated"};offset+=n}}
+        val header=ByteArray(8);readFully(header,8)
+        check(String(header,0,4,Charsets.US_ASCII)=="ARA1")
+        val count=ByteBuffer.wrap(header).order(ByteOrder.LITTLE_ENDIAN).getInt(4)
+        check(count in 3..1_000_000 && count%3==0)
+        val rawBytes=8L+count*24L;require(rawBytes<=remainingBudget){"Anatomy pack exceeds the memory budget"}
+        // A growing decompressed ByteArray used to duplicate the largest skin mesh
+        // during scene transitions. Only a small staging buffer is needed here.
+        val result=FloatArray(count*6);val chunk=ByteArray(24*1024);var offset=0
+        while(offset<result.size){
+            if(Thread.currentThread().isInterrupted)throw java.util.concurrent.CancellationException("Anatomy loading cancelled")
+            val floats=minOf(chunk.size/4,result.size-offset);readFully(chunk,floats*4)
+            ByteBuffer.wrap(chunk,0,floats*4).order(ByteOrder.LITTLE_ENDIAN).asFloatBuffer().get(result,offset,floats);offset+=floats
+        }
+        check(input.read()==-1){"Unexpected trailing anatomy data"};check(result.all{it.isFinite()});Decoded(result,rawBytes)
     }
 }
 

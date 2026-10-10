@@ -121,19 +121,19 @@ class MainActivity: Activity() {
         root.add(header)
         body=column(if(compactWorkspace&&page in listOf("home","courses"))10 else 18).apply{tag="main-page-$page"};pages=paged(body,hi).apply{onPageChanged={backNavigation.enabled(page!="home"||hasPrevious)}}
         root.addView(pages,LinearLayout.LayoutParams(-1,0,1f))
-        when(page){"home"->home();"courses"->courses();"library"->library();"module"->module();"lesson"->lesson();"practice"->practiceOptions();"training"->training();"records"->records();"legacy-records"->legacyRecords();"help"->help();"verify"->verifyPage();else->home()}
-        body.accessibilityPaneTitle=when(page){"home"->t("Learning home","सीखने का होम");"courses"->t("Course catalog","पाठ्यक्रम सूची");"library"->t("Industrial learning library","औद्योगिक सीखने की लाइब्रेरी");"lesson"->t("Lesson ${lessonIndex+1}","पाठ ${lessonIndex+1}");"practice"->t("Practice options","अभ्यास के विकल्प");"module"->curriculum.module(selected).local("title",hi);"training"->t("Training","प्रशिक्षण");"records"->t("My learning record","मेरा सीखने का रिकॉर्ड");"verify"->t("Verify a record","रिकॉर्ड जाँचें");else->t("Help","मदद")}
+        when(page){"home"->home();"courses"->courses();"explore"->explore();"library"->library();"module"->module();"lesson"->lesson();"practice"->practiceOptions();"training"->training();"records"->records();"legacy-records"->legacyRecords();"help"->help();"verify"->verifyPage();else->home()}
+        body.accessibilityPaneTitle=when(page){"home"->t("Learning home","सीखने का होम");"courses"->t("Course catalog","पाठ्यक्रम सूची");"explore"->t("Spatial explorer","मॉडल देखें");"library"->t("Industrial learning library","औद्योगिक सीखने की लाइब्रेरी");"lesson"->t("Lesson ${lessonIndex+1}","पाठ ${lessonIndex+1}");"practice"->t("Practice options","अभ्यास के विकल्प");"module"->curriculum.module(selected).local("title",hi);"training"->t("Training","प्रशिक्षण");"records"->t("My learning record","मेरा सीखने का रिकॉर्ड");"verify"->t("Verify a record","रिकॉर्ड जाँचें");else->t("Help","मदद")}
         if(page=="lesson")root.add(lessonNavigation())
         root.addView(View(this).apply{setBackgroundColor(Palette.line)},LinearLayout.LayoutParams(-1,dp(1)))
         val nav=LinearLayout(this).apply{setPadding(dp(16),dp(6),dp(16),dp(6));setBackgroundColor(Palette.surface);gravity=Gravity.CENTER_VERTICAL}
-        listOf(Triple("home","Home","होम"),Triple("courses","Learn","सीखें"),Triple("records","Progress","प्रगति")).forEach{(dest,en,h)->
+        listOf(Triple("home","Home","होम"),Triple("courses","Learn","सीखें"),Triple("explore","Explore","देखें"),Triple("records","Progress","प्रगति")).forEach{(dest,en,h)->
             val active=page==dest||(dest=="courses"&&page in listOf("module","training","lesson","practice","library"))||(dest=="records"&&page in listOf("verify","legacy-records"))
             nav.addView(action(t(en,h),false,role=ActionRole.NEUTRAL){go(dest)}.apply {
                 tag="main-nav-$dest";isSelected=active;textSize=12f;minHeight=dp(if(compactWorkspace)48 else 62);minimumHeight=dp(if(compactWorkspace)48 else 62)
                 setPadding(dp(4),dp(6),dp(4),dp(6));compoundDrawablePadding=dp(3)
                 setTextColor(if(active)Palette.blue else Palette.muted)
                 background=android.graphics.drawable.RippleDrawable(android.content.res.ColorStateList.valueOf(0x18086f62),shape(if(active)Palette.soft else Palette.surface,16),null)
-                val icon=if(dest=="home")homeIcon(if(active)Palette.blue else Palette.muted)else appIcon(if(dest=="courses")"learn"else dest,if(active)Palette.blue else Palette.muted,22)
+                val icon=if(dest=="home")homeIcon(if(active)Palette.blue else Palette.muted)else appIcon(if(dest=="courses")"learn"else if(dest=="explore")"camera"else dest,if(active)Palette.blue else Palette.muted,22)
                 if(compactWorkspace){setCompoundDrawables(icon,null,null,null);compoundDrawablePadding=dp(8)}else setCompoundDrawables(null,icon,null,null)
                 contentDescription=t(en,h)+if(active)t(", selected",", चयनित")else ""
             },LinearLayout.LayoutParams(0,-2,1f).apply{if(dest!="help")marginEnd=dp(8)})
@@ -225,9 +225,13 @@ class MainActivity: Activity() {
     }
     private fun home(){
         val history=homePractices();val next=history.firstOrNull{it.resumable}
-        if(!compactWorkspace)title(t("Your learning","आपकी सीख"))
+        if(!compactWorkspace)title(t("Preparedness starts here.","तैयारी यहाँ से शुरू होती है।"))
         if(!compactWorkspace&&store.name.isNotBlank())body.add(label(store.name,14f,Palette.muted).apply{tag="main-home-learner"},bottom=12)
-        val focus=column(if(compactWorkspace)10 else 14).apply{background=shape(Palette.tealBg,18);tag="main-home-focus"}
+        if(!compactWorkspace){
+            val preview=SpatialPreview(this).apply{tag="main-studio-preview";contentDescription=t("Open the interactive equipment explorer","उपकरण का इंटरैक्टिव मॉडल खोलें");isClickable=true;isFocusable=true;setOnClickListener{startActivity(Intent(this@MainActivity,EquipmentActivity::class.java).putExtra("moduleId","fire"))}}
+            body.addView(preview,LinearLayout.LayoutParams(-1,dp(164)).apply{bottomMargin=dp(12)})
+        }
+        val focus=column(if(compactWorkspace)10 else 16).apply{background=shape(Palette.surface,12,Palette.line);tag="main-home-focus"}
         if(compactWorkspace&&store.name.isNotBlank())focus.add(label(store.name,12f,Palette.teal).apply{tag="main-home-learner"},bottom=4)
         if(next==null){
             focus.add(label(t(if(history.isEmpty())"Start your first practice"else"Ready for your next practice?",if(history.isEmpty())"अपना पहला अभ्यास शुरू करें"else"अगले अभ्यास के लिए तैयार?"),if(compactWorkspace)16f else 19f,Palette.ink,true).asHeading(),bottom=6)
@@ -263,6 +267,13 @@ class MainActivity: Activity() {
             row.addView(focus,LinearLayout.LayoutParams(0,-2,1f).apply{marginEnd=dp(12)})
             row.addView(details,LinearLayout.LayoutParams(0,-2,1f));body.add(row)
         }
+    }
+    private fun explore(){
+        title(t("See how things work.","समझें कि चीज़ें कैसे काम करती हैं।"),t("Rotate, inspect and connect what you see with what it does.","मॉडल घुमाएँ, भाग देखें और उनका काम समझें।"))
+        body.add(action(t("Equipment explorer","उपकरण देखें")){startActivity(Intent(this,EquipmentActivity::class.java).putExtra("moduleId","fire"))}.apply{tag="studio-equipment"},bottom=12)
+        for((id,name) in listOf("gas" to "Gas detector", "machinery" to "Machinery isolation", "ppe" to "Protective equipment", "emergency" to "Emergency station"))body.add(action(name,false){startActivity(Intent(this,EquipmentActivity::class.java).putExtra("moduleId",id))}.apply{tag="studio-equipment-$id"},bottom=8)
+        body.add(action(t("Human body explorer","मानव शरीर देखें"),false){startActivity(Intent(this,AnatomyActivity::class.java))}.apply{tag="studio-anatomy"},bottom=12)
+        body.add(label(t("3D exploration works without a camera. Camera AR is available inside supported practice scenes. These models teach understanding; physical skills need supervised practice.","3D मॉडल कैमरे के बिना देखे जा सकते हैं। समर्थित अभ्यास में कैमरा AR उपलब्ध है। शारीरिक कौशल के लिए प्रशिक्षक के साथ अभ्यास ज़रूरी है।"),15f,Palette.muted))
     }
     private fun launchCards(){
         val row=if(compactWorkspace)LinearLayout(this).apply{orientation=LinearLayout.HORIZONTAL;isBaselineAligned=false}else null

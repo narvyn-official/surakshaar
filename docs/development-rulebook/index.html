@@ -1,0 +1,1736 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light dark"><title>The Development Rulebook</title><script>try{let t=localStorage.getItem('rulebook-theme')||'system';document.documentElement.dataset.theme=t==='dark'||(t==='system'&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light'}catch{}</script><style>
+:root{color-scheme:light;--bg:#f4f6f8;--paper:#fff;--text:#0f172a;--muted:#475569;--line:#cbd5e1;--link:#1d4ed8;--soft:#eef2f7;--control:#64748b}
+:root[data-theme=dark]{color-scheme:dark;--bg:#0b1220;--paper:#0f172a;--text:#f8fafc;--muted:#cbd5e1;--line:#475569;--link:#93c5fd;--soft:#1e293b;--control:#94a3b8}
+*{box-sizing:border-box}html{scroll-padding-top:24px}body{margin:0;background:var(--bg);color:var(--text);font:16px/1.7 -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+a{color:var(--link);text-underline-offset:3px}a:hover{text-decoration-thickness:2px}a:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible,.table-scroll:focus-visible{outline:3px solid var(--link);outline-offset:4px}
+.skip{position:absolute;top:-100px;left:10px;padding:12px;background:var(--paper);z-index:5}.skip:focus{top:10px}
+.layout{display:grid;grid-template-columns:288px minmax(0,1fr);max-width:1600px;margin:auto}
+aside{position:sticky;top:0;height:100vh;overflow-y:auto;border-right:1px solid var(--line);padding:28px 20px 36px;background:var(--paper)}
+.brand{font-size:13px;font-weight:750;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:20px}.brand b{display:block;letter-spacing:-.035em;font-size:25px;color:var(--text);text-transform:none}
+label{display:block;font-size:13px;font-weight:650;margin:12px 0 5px}input,select{font:inherit;font-size:15px;width:100%;min-height:44px;border:1px solid var(--control);border-radius:7px;padding:8px 10px;background:var(--paper);color:var(--text)}
+.nav-links{display:flex;flex-wrap:wrap;gap:14px;margin:18px 0;font-size:14px}.nav-links a{padding:7px 0}.toc ul{list-style:none;padding:0;margin:0}.toc li{margin:3px 0}.toc a{display:block;text-decoration:none;color:var(--muted);font-size:13px;line-height:1.45;padding:8px;border-radius:5px}.toc a:hover{background:var(--soft);color:var(--text)}.toc ul ul{display:none}
+details>summary{font-weight:700;cursor:pointer;min-height:44px;padding:9px 0}main{min-width:0;padding:38px 48px 72px;max-width:1170px}
+.hero{padding:40px 44px;background:#0f172a;color:#f8fafc;border-radius:16px;margin-bottom:28px}.eyebrow{font-size:12px;text-transform:uppercase;letter-spacing:.15em;color:#93c5fd;font-weight:700}.hero h1{font-size:clamp(32px,4vw,54px);line-height:1.08;letter-spacing:-.045em;margin:16px 0 20px;max-width:680px}.hero p{color:#cbd5e1;max-width:620px;font-size:17px}.stats{display:flex;flex-wrap:wrap;gap:14px 32px;border-top:1px solid #475569;margin-top:26px;padding-top:20px}.stats b{font-size:24px;display:block;color:#f8fafc}.stats span{font-size:12px;color:#cbd5e1;text-transform:uppercase;letter-spacing:.08em}
+.intro,.chapter{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:28px 34px;margin-bottom:22px}.chapter{scroll-margin-top:24px}h2{font-size:27px;line-height:1.25;letter-spacing:-.025em;margin:6px 0 22px}h3{font-size:20px;line-height:1.35;margin:32px 0 14px}p{margin:0 0 18px}p:last-child{margin-bottom:0}strong{font-weight:700}code{font-size:.88em;background:var(--soft);padding:2px 5px;border-radius:4px;overflow-wrap:anywhere}pre{background:var(--soft);padding:20px;overflow:auto;border-radius:8px;line-height:1.6}pre code{background:none;padding:0}.table-scroll{overflow-x:auto;border:1px solid var(--line);border-radius:8px;margin:20px 0 24px}table{width:100%;border-collapse:collapse;min-width:560px;font-size:14px;line-height:1.6}th,td{padding:13px 15px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}th{background:var(--soft);font-weight:700}tr:last-child td{border-bottom:0}td a{overflow-wrap:anywhere}ul,ol{padding-left:24px}li{margin:8px 0}.rule:target{outline:3px solid var(--link);outline-offset:8px;border-radius:3px}.swatch{display:inline-block;width:16px;height:16px;border:1px solid var(--control);border-radius:4px;vertical-align:middle;margin-right:6px}.search-results{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:22px 28px;margin-bottom:24px}.search-results a{display:block;padding:8px 0;font-size:15px}#search-status{font-size:13px;color:var(--muted)}.foot{font-size:13px;color:var(--muted);padding:16px 5px}.mobile-note{font-size:13px;color:var(--muted)}
+@media(max-width:1050px){.layout{grid-template-columns:240px minmax(0,1fr)}main{padding:28px 22px}.hero{padding:30px}.chapter,.intro{padding:25px}}
+@media(max-width:760px){.layout{display:block}aside{position:static;height:auto;padding:18px 20px;border-right:0;border-bottom:1px solid var(--line)}.brand{margin-bottom:12px}.brand b{font-size:22px}main{padding:18px 12px 40px}.hero{border-radius:10px;padding:26px 23px}.hero h1{font-size:36px}.chapter,.intro{padding:23px 20px}h2{font-size:24px}.toc{max-height:50vh;overflow:auto}.nav-links{margin:8px 0}.stats{gap:20px}.table-scroll{margin-left:0;margin-right:0}p{overflow-wrap:break-word}}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
+@media print{:root,:root[data-theme=dark]{color-scheme:light;--bg:#fff;--paper:#fff;--text:#000;--muted:#333;--line:#aaa;--link:#000;--soft:#f5f5f5}body{font-size:10pt;line-height:1.5}.layout{display:block}aside,.skip,.search-results{display:none}main{padding:0;max-width:none}.hero{background:#fff;color:#000;border:1px solid #aaa;padding:25px;break-after:page}.hero p,.eyebrow,.stats span,.stats b{color:#000}.hero h1{font-size:36pt}.chapter,.intro{border:0;padding:0;margin:0 0 25px}.chapter h2{break-before:page;font-size:22pt}h2,h3{break-after:avoid}p,li{orphans:3;widows:3}table{min-width:0;font-size:9pt;table-layout:fixed}thead{display:table-header-group}tr{break-inside:avoid}th,td{padding:7px;overflow-wrap:anywhere}.table-scroll{overflow:visible;border:0}pre{white-space:pre-wrap}a{text-decoration:none}}
+</style></head>
+<body><a class="skip" href="#main">Skip to handbook</a><div class="layout">
+<aside><div class="brand">Akash’s development standard<b>The Rulebook</b></div>
+<label for="search">Find a rule</label><input type="search" id="search" placeholder="Password, sheet, SEC-01" aria-describedby="search-status"><div id="search-status" role="status" aria-live="polite"></div>
+<label for="theme">Appearance</label><select id="theme"><option value="system">System</option><option value="light">Light</option><option value="dark">Dark</option></select>
+<div class="nav-links"><a href="index.html">Rulebook</a><a href="checklist.html">Release checklist</a><a href="design-atlas.html">Design atlas</a></div>
+<details id="contents" open><summary>Contents</summary><nav aria-label="Chapters"><div class="toc">
+<ul>
+<li><a href="#01-how-to-apply-the-rules">01 · How to apply the rules</a></li>
+<li><a href="#02-product-discovery-and-the-attraction-principle">02 · Product discovery and the attraction principle</a></li>
+<li><a href="#03-interaction-principles-and-useful-ux-heuristics">03 · Interaction principles and useful UX heuristics</a></li>
+<li><a href="#04-information-architecture-navigation-and-search">04 · Information architecture, navigation, and search</a></li>
+<li><a href="#05-visual-hierarchy-typography-and-spacing">05 · Visual hierarchy, typography, and spacing</a></li>
+<li><a href="#06-color-theory-and-semantic-color">06 · Color theory and semantic color</a></li>
+<li><a href="#07-light-and-dark-themes">07 · Light and dark themes</a></li>
+<li><a href="#08-responsive-web-mobile-tablet-and-desktop">08 · Responsive web, mobile, tablet, and desktop</a></li>
+<li><a href="#09-accessibility-as-a-release-requirement">09 · Accessibility as a release requirement</a></li>
+<li><a href="#10-forms-and-data-entry">10 · Forms and data entry</a></li>
+<li><a href="#11-login-signup-and-password-ux">11 · Login, signup, and password UX</a></li>
+<li><a href="#12-password-policy-mfa-and-recovery">12 · Password policy, MFA, and recovery</a></li>
+<li><a href="#13-sessions-sso-and-account-lifecycle">13 · Sessions, SSO, and account lifecycle</a></li>
+<li><a href="#14-application-and-api-security">14 · Application and API security</a></li>
+<li><a href="#15-privacy-consent-and-user-control">15 · Privacy, consent, and user control</a></li>
+<li><a href="#16-activation-retention-and-customer-trust">16 · Activation, retention, and customer trust</a></li>
+<li><a href="#17-measurement-and-responsible-experiments">17 · Measurement and responsible experiments</a></li>
+<li><a href="#18-performance-and-perceived-speed">18 · Performance and perceived speed</a></li>
+<li><a href="#19-loading-empty-offline-and-failure-states">19 · Loading, empty, offline, and failure states</a></li>
+<li><a href="#20-content-internationalization-and-localization">20 · Content, internationalization, and localization</a></li>
+<li><a href="#21-public-websites-discovery-and-seo">21 · Public websites, discovery, and SEO</a></li>
+<li><a href="#22-payments-subscriptions-and-commerce">22 · Payments, subscriptions, and commerce</a></li>
+<li><a href="#23-native-apps-permissions-and-platform-behavior">23 · Native apps, permissions, and platform behavior</a></li>
+<li><a href="#24-engineering-quality-delivery-and-operations">24 · Engineering quality, delivery, and operations</a></li>
+<li><a href="#25-ai-features-when-present">25 · AI features, when present</a></li>
+<li><a href="#26-complete-user-workflows-and-access-paths">26 · Complete user workflows and access paths</a></li>
+<li><a href="#27-what-belongs-where-screen-anatomy">27 · What belongs where: screen anatomy</a></li>
+<li><a href="#28-screen-changes-history-and-state-transitions">28 · Screen changes, history, and state transitions</a></li>
+<li><a href="#29-overlays-drawers-half-screen-sheets-and-popovers">29 · Overlays, drawers, half-screen sheets, and popovers</a></li>
+<li><a href="#30-notifications-banners-toasts-and-alerts">30 · Notifications, banners, toasts, and alerts</a></li>
+<li><a href="#31-micro-actions-and-component-behavior">31 · Micro-actions and component behavior</a></li>
+<li><a href="#32-dashboards-tables-charts-and-complex-client-tools">32 · Dashboards, tables, charts, and complex client tools</a></li>
+<li><a href="#33-human-factors-and-psychology-without-manipulation">33 · Human factors and psychology without manipulation</a></li>
+<li><a href="#34-devsecops-and-software-supply-chain-discipline">34 · DevSecOps and software supply-chain discipline</a></li>
+<li><a href="#35-review-from-every-relevant-professional-perspective">35 · Review from every relevant professional perspective</a></li>
+<li><a href="#36-definition-of-done-and-maintenance">36 · Definition of done and maintenance</a></li>
+<li><a href="#37-art-direction-and-coherent-visual-identity">37 · Art direction and coherent visual identity</a></li>
+<li><a href="#38-interaction-choreography-and-motion-systems">38 · Interaction choreography and motion systems</a></li>
+<li><a href="#39-themes-materials-and-responsive-composition">39 · Themes, materials, and responsive composition</a></li>
+<li><a href="#40-inspiration-component-adoption-and-design-verification">40 · Inspiration, component adoption, and design verification</a></li>
+<li><a href="#sources-and-evidence-notes">Sources and evidence notes</a></li>
+</ul>
+</div>
+</nav></details>
+<p class="mobile-note">Version 2.0 · 18 Sep 2026<br>Use browser Find for all text. Print to save a reading copy.</p></aside>
+<main id="main" tabindex="-1"><header class="hero"><div class="eyebrow">Research → principles → practice</div><h1>The Development Rulebook</h1><p>A practical standard for building products that people can understand, use, trust, and return to.</p><div class="stats"><div><b>308</b><span>numbered rules</span></div><div><b>40</b><span>chapters</span></div><div><b>84</b><span>sources</span></div></div></header>
+<div id="search-results" class="search-results" hidden></div><section class="intro">
+<p><strong>Practical standards for useful, accessible, trustworthy apps and websites</strong><br/>
+Version 2.0 · Expanded design research 18 September 2026 · Owner: Akash Yadav · Review before major releases</p>
+<p>This is the default handbook for our development work: discovery, design, implementation, verification, release, and maintenance. Apply the chapters relevant to the actual task. A small content edit does not require an authentication redesign; a prototype must identify its production gaps.</p>
+<p>There is no finite collection of “all rules” that guarantees a successful product. This book provides a broad, actionable baseline, links to deeper standards, and a process for making exceptions. Sector-specific products, children’s services, medical or financial features, and regulated markets need additional requirements.</p>
+</section><section class="chapter"><h2 id="01-how-to-apply-the-rules">01 · How to apply the rules</h2>
+<div aria-label="01 · How to apply the rules table" class="table-scroll" role="region" tabindex="0"><table>
+<thead>
+<tr>
+<th scope="col">Label</th>
+<th scope="col">Meaning</th>
+<th scope="col">How to use it</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>MUST</strong></td>
+<td>Our baseline requirement when the feature is in scope</td>
+<td>Verify before calling the feature production-ready. Explain unmet requirements.</td>
+</tr>
+<tr>
+<td><strong>SHOULD</strong></td>
+<td>Recommended default</td>
+<td>Depart when user needs, evidence, or project constraints justify it; record significant tradeoffs.</td>
+</tr>
+<tr>
+<td><strong>MAY</strong></td>
+<td>Optional technique</td>
+<td>Adopt only when it solves an actual problem.</td>
+</tr>
+<tr>
+<td><strong>Standard</strong></td>
+<td>A requirement from a named standard</td>
+<td>Preserve its scope, level, and exceptions.</td>
+</tr>
+<tr>
+<td><strong>Practice</strong></td>
+<td>Practitioner or official implementation guidance</td>
+<td>Adapt to the stack and threat model.</td>
+</tr>
+<tr>
+<td><strong>Heuristic</strong></td>
+<td>A useful design hypothesis</td>
+<td>Test with the intended audience; do not promise conversion gains.</td>
+</tr>
+<tr>
+<td><strong>House default</strong></td>
+<td>Our chosen starting point</td>
+<td>A preference, not a universal scientific or legal rule.</td>
+</tr>
+</tbody>
+</table></div>
+<p class="rule" id="gov-01"><strong>GOV-01 — MUST:</strong> Establish the product’s audience, primary task, platforms, data sensitivity, markets, and operational owner. For existing projects, inspect instructions, architecture, and the current design system first.</p>
+<p class="rule" id="gov-02"><strong>GOV-02 — MUST:</strong> Apply rules proportionately to changed behavior. Respect explicit user requirements, applicable project instructions, and authorization boundaries. Identify conflicts instead of silently weakening protections or expanding scope.</p>
+<p class="rule" id="gov-03"><strong>GOV-03 — SHOULD:</strong> Prefer these baselines: WCAG 2.2 AA for web accessibility; OWASP ASVS 5.0.0 as a web security verification catalogue; MASVS for native mobile security; NIST SP 800-63B-4 for password and authenticator guidance. These references have different purposes and do not automatically establish legal compliance. <a href="https://www.w3.org/TR/WCAG22/">S01</a>, <a href="https://github.com/OWASP/ASVS">S16</a>, <a href="https://mas.owasp.org/MASVS/">S17</a>, <a href="https://pages.nist.gov/800-63-4/sp800-63b/authenticators/">S18</a></p>
+<p class="rule" id="gov-04"><strong>GOV-04 — MUST:</strong> Distinguish tested, partially tested, not tested, and not applicable. A polished screen, passing scanner, or successful build alone does not prove product readiness.</p>
+<p class="rule" id="gov-05"><strong>GOV-05 — SHOULD:</strong> Record material exceptions with the rule ID, scope, reason, compensating protection, owner, review date, and evidence. Never turn a documented exception into a claim of standards compliance.</p>
+</section><section class="chapter"><h2 id="02-product-discovery-and-the-attraction-principle">02 · Product discovery and the attraction principle</h2>
+<p>Attraction means helping the right person recognize useful value and trust the next step. There is no single established “attraction rule” that dictates a layout or color.</p>
+<p class="rule" id="pro-01"><strong>PRO-01 — MUST:</strong> Express the primary user need as a concrete outcome: “A returning customer can reorder a previous purchase,” rather than “Build an engaging dashboard.” Define success before choosing components.</p>
+<p class="rule" id="pro-02"><strong>PRO-02 — SHOULD:</strong> Research representative users, including people using assistive technology, lower-end devices, slow connections, and the languages we plan to support. Validate assumptions with observed tasks and interviews.</p>
+<p class="rule" id="pro-03"><strong>PRO-03 — SHOULD:</strong> Make the first screen explain who the product helps, what it does, why it is credible, and the next useful action. Use a specific headline and genuine product evidence.</p>
+<p class="rule" id="pro-04"><strong>PRO-04 — SHOULD:</strong> Give each task area a clear primary action. Secondary actions can coexist; avoid equal visual emphasis for competing actions. Button text should describe the result: “Create invoice,” “Save address,” or “Start free trial.”</p>
+<p class="rule" id="pro-05"><strong>PRO-05 — MUST:</strong> Make prices, recurring charges, eligibility, limitations, and consequential commitments understandable before commitment. Testimonials, ratings, customer counts, security badges, and scarcity claims must be authentic. <a href="https://www.ftc.gov/reports/bringing-dark-patterns-light">S12</a></p>
+<p class="rule" id="pro-06"><strong>PRO-06 — SHOULD:</strong> Prefer relevant screenshots, examples, and useful content over decorative motion. Offer a demo or sample when it helps explain an unfamiliar product.</p>
+<p class="rule" id="pro-07"><strong>PRO-07 — SHOULD:</strong> Evaluate attraction using qualified task starts and downstream success, alongside comprehension and trust. Raw clicks are insufficient; misleading promises can increase clicks while damaging retention.</p>
+<p class="rule" id="pro-08"><strong>PRO-08 — MAY:</strong> Use a short comprehension test on the opening screen. Treat the chosen time limit as a research method, not evidence of a universal human attention span.</p>
+</section><section class="chapter"><h2 id="03-interaction-principles-and-useful-ux-heuristics">03 · Interaction principles and useful UX heuristics</h2>
+<p>These principles guide decisions; their simplified names are not automatic design prescriptions.</p>
+<div aria-label="03 · Interaction principles and useful UX heuristics table" class="table-scroll" role="region" tabindex="0"><table>
+<thead>
+<tr>
+<th scope="col">Principle</th>
+<th scope="col">Development rule</th>
+<th scope="col">Common misuse to avoid</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Visibility of status</td>
+<td>Show saving, success, failure, and current location.</td>
+<td>Endless unexplained spinners.</td>
+</tr>
+<tr>
+<td>Familiar language</td>
+<td>Name actions and objects as users understand them.</td>
+<td>Database or internal team terminology in product copy.</td>
+</tr>
+<tr>
+<td>User control</td>
+<td>Support cancel, back, and undo where feasible.</td>
+<td>Trapping users in flows.</td>
+</tr>
+<tr>
+<td>Consistency</td>
+<td>Similar appearance should mean similar behavior.</td>
+<td>Identical buttons with surprising outcomes.</td>
+</tr>
+<tr>
+<td>Error prevention</td>
+<td>Constrain invalid actions and clarify consequences.</td>
+<td>Asking for confirmation on every harmless click.</td>
+</tr>
+<tr>
+<td>Recognition over recall</td>
+<td>Keep relevant choices and context available.</td>
+<td>Making users memorize IDs between screens.</td>
+</tr>
+<tr>
+<td>Efficient expert use</td>
+<td>Offer shortcuts and bulk actions when useful.</td>
+<td>Requiring every user to learn shortcuts.</td>
+</tr>
+<tr>
+<td>Minimalism</td>
+<td>Prioritize information necessary for the task.</td>
+<td>Hiding essential information to make a sparse screen.</td>
+</tr>
+<tr>
+<td>Recovery</td>
+<td>Explain the problem and a workable next step.</td>
+<td>Blame, opaque codes, or a dead end.</td>
+</tr>
+<tr>
+<td>Contextual help</td>
+<td>Place concise help near the difficult decision.</td>
+<td>Treating a long tutorial as a substitute for usability.</td>
+</tr>
+</tbody>
+</table></div>
+<p>The ten rows above adapt Nielsen’s usability heuristics. <a href="https://www.nngroup.com/articles/ten-usability-heuristics/">S02</a></p>
+<div aria-label="03 · Interaction principles and useful UX heuristics table" class="table-scroll" role="region" tabindex="0"><table>
+<thead>
+<tr>
+<th scope="col">Additional principle</th>
+<th scope="col">Practical interpretation</th>
+<th scope="col">Evidence boundary</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Aesthetic–usability effect</td>
+<td>Use coherent typography, alignment, and spacing; test task performance separately.</td>
+<td>Attractive interfaces may be perceived as easier; appearance does not fix failure. <a href="https://www.nngroup.com/articles/aesthetic-usability-effect/">S03</a></td>
+</tr>
+<tr>
+<td>Fitts’s law</td>
+<td>Make frequent targets easy to reach and select; separate destructive controls.</td>
+<td>There is no single ideal button size for all devices. <a href="https://www.nngroup.com/articles/fitts-law/">S04</a></td>
+</tr>
+<tr>
+<td>Hick–Hyman law</td>
+<td>Organize complex choices with categories, search, or sensible defaults.</td>
+<td>Do not arbitrarily delete useful options or prescribe a universal menu count. <a href="https://lawsofux.com/hicks-law/">S05</a></td>
+</tr>
+<tr>
+<td>Gestalt proximity</td>
+<td>Keep labels, inputs, errors, and related information together.</td>
+<td>Responsive wrapping can destroy an apparent relationship. <a href="https://www.nngroup.com/articles/gestalt-proximity/">S06</a></td>
+</tr>
+<tr>
+<td>Gestalt similarity</td>
+<td>Reuse styles to express a shared role.</td>
+<td>Similar decorative and interactive objects cause ambiguity. <a href="https://www.nngroup.com/articles/gestalt-similarity/">S07</a></td>
+</tr>
+<tr>
+<td>Common region</td>
+<td>Use boundaries or backgrounds to group related content.</td>
+<td>Putting everything in nested cards adds clutter. <a href="https://www.nngroup.com/articles/common-region/">S08</a></td>
+</tr>
+<tr>
+<td>Progressive disclosure</td>
+<td>Show frequent actions first; reveal advanced options when needed.</td>
+<td>Never hide price, consent, or critical warnings. <a href="https://www.nngroup.com/articles/progressive-disclosure/">S09</a></td>
+</tr>
+<tr>
+<td>Response-time guidance</td>
+<td>Acknowledge actions promptly and explain longer waits.</td>
+<td>The familiar 0.1/1/10-second guidance is approximate, not a service-level guarantee. <a href="https://www.nngroup.com/articles/response-times-3-important-limits/">S10</a></td>
+</tr>
+</tbody>
+</table></div>
+<p class="rule" id="ux-01"><strong>UX-01 — SHOULD:</strong> Prefer established platform conventions for navigation, selection, and editing. Innovate where the product benefits justify relearning.</p>
+<p class="rule" id="ux-02"><strong>UX-02 — SHOULD:</strong> Chunk related information and preserve context. Neither “seven menu items,” “three clicks,” nor “one screen only” is our universal rule.</p>
+<p class="rule" id="ux-03"><strong>UX-03 — SHOULD:</strong> Make interactive elements recognizable without hover. Use real links for navigation and buttons for actions; avoid clickable generic containers when a semantic element fits.</p>
+<p class="rule" id="ux-04"><strong>UX-04 — MUST:</strong> Ensure high-impact actions have clear consequences and an appropriate opportunity to review, confirm, or reverse. Scale friction to impact.</p>
+</section><section class="chapter"><h2 id="04-information-architecture-navigation-and-search">04 · Information architecture, navigation, and search</h2>
+<p class="rule" id="nav-01"><strong>NAV-01 — SHOULD:</strong> Organize navigation around user tasks and recognizable categories. Validate labels and grouping with representative users.</p>
+<p class="rule" id="nav-02"><strong>NAV-02 — MUST:</strong> Show the current location and selection. Keep navigation, help placement, and action names consistent across the experience.</p>
+<p class="rule" id="nav-03"><strong>NAV-03 — SHOULD:</strong> Preserve browser back/forward behavior, meaningful URLs, and deep links. Restore filters, scroll position, and draft context when users return.</p>
+<p class="rule" id="nav-04"><strong>NAV-04 — MUST:</strong> Route invalid or unavailable destinations to a useful explanation with recovery options. Distinguish no results, no permission, removed content, and server failure where disclosure is safe.</p>
+<p class="rule" id="nav-05"><strong>NAV-05 — SHOULD:</strong> Provide search when content volume or task needs justify it. Keep the query visible; support clearing, useful filters, understandable sorting, result counts, and a recoverable no-results state.</p>
+<p class="rule" id="nav-06"><strong>NAV-06 — MUST:</strong> Enforce permissions on search results, snippets, suggestions, counts, exports, and direct URLs. Hiding a navigation item does not restrict access. <a href="https://cheatsheetseries.owasp.org/cheatsheets/Authorization_Cheat_Sheet.html">S22</a></p>
+<p class="rule" id="nav-07"><strong>NAV-07 — SHOULD:</strong> Prefer pagination or an explicit “Load more” where people need position, comparison, a reachable footer, or shareable results. Infinite scroll is a contextual choice.</p>
+</section><section class="chapter"><h2 id="05-visual-hierarchy-typography-and-spacing">05 · Visual hierarchy, typography, and spacing</h2>
+<p class="rule" id="vis-01"><strong>VIS-01 — SHOULD:</strong> Use a documented scale for text, spacing, corners, elevation, and icons. Extend the existing design system before introducing competing conventions.</p>
+<p class="rule" id="vis-02"><strong>VIS-02 — SHOULD — House defaults:</strong> Begin with readable body text around 16–18 CSS px, line height around 1.5, and prose widths around 45–75 characters. Choose a small family of type sizes and a 4/8-unit spacing scale. Adjust for script, font, density, audience, and platform; these are not WCAG minimums.</p>
+<p class="rule" id="vis-03"><strong>VIS-03 — MUST:</strong> Keep text selectable and adaptable. Avoid rendering ordinary interface text as images. Let headings, labels, and buttons wrap where necessary.</p>
+<p class="rule" id="vis-04"><strong>VIS-04 — SHOULD:</strong> Use size, weight, placement, and spacing to establish hierarchy before adding more colors. Keep secondary copy readable rather than merely pale.</p>
+<p class="rule" id="vis-05"><strong>VIS-05 — MUST:</strong> Test truncation against real content: long names, large values, errors, localization, and empty content. Make essential truncated content accessible without a mouse.</p>
+<p class="rule" id="vis-06"><strong>VIS-06 — SHOULD:</strong> Pair unfamiliar icons with labels. Use a consistent icon family and meaningful alternative text for informative images; decorative images should not add screen-reader noise.</p>
+<p class="rule" id="vis-07"><strong>VIS-07 — MUST:</strong> Support user text-spacing overrides without lost content or functionality: line height 1.5 times font size, paragraph spacing 2 times, letter spacing 0.12 times, and word spacing 0.16 times, with the criterion’s language/script qualifications. These are override test values, not compulsory visual defaults. <a href="https://www.w3.org/WAI/WCAG22/Understanding/text-spacing.html">S35</a></p>
+</section><section class="chapter"><h2 id="06-color-theory-and-semantic-color">06 · Color theory and semantic color</h2>
+<p class="rule" id="col-01"><strong>COL-01 — SHOULD:</strong> Choose a palette for the brand, audience, content, and environment. Hue identifies a color family; saturation expresses intensity; lightness affects appearance. None alone guarantees readable contrast.</p>
+<p class="rule" id="col-02"><strong>COL-02 — MAY:</strong> Use monochromatic colors for cohesion, analogous hues for closely related visual groups, complementary hues for distinction, or a restrained triadic palette for variety. Harmony is a starting tool, not an accessibility test. <a href="https://helpx.adobe.com/in_hi/illustrator/how-to/experiment-with-color-combinations-hybrid.html">S13</a></p>
+<p class="rule" id="col-03"><strong>COL-03 — SHOULD:</strong> Use mostly neutral surfaces, a purposeful accent, and distinct status colors. The “60–30–10 rule” is an optional composition heuristic, not a literal pixel quota or scientific conversion formula.</p>
+<p class="rule" id="col-04"><strong>COL-04 — MUST:</strong> Name colors by role: <code>surface</code>, <code>text</code>, <code>text-muted</code>, <code>border-control</code>, <code>action</code>, <code>on-action</code>, <code>focus</code>, <code>danger</code>, <code>warning</code>, <code>success</code>, and <code>info</code>. Components consume roles rather than scattered hard-coded hex values. Define paired foreground/background roles. <a href="https://developer.android.com/develop/ui/compose/designsystems/material3">S14</a></p>
+<p class="rule" id="col-05"><strong>COL-05 — MUST:</strong> Meet WCAG AA text contrast: at least <strong>4.5:1</strong> for ordinary text and <strong>3:1</strong> for large text. Large means at least 18 pt (24 CSS px), or 14 pt (about 18.67 CSS px) bold. Preserve the standard’s exceptions for logotypes, incidental/decorative content, and inactive controls. Do not round a failing ratio upward. <a href="https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum.html">S31</a></p>
+<p class="rule" id="col-06"><strong>COL-06 — MUST:</strong> Essential component boundaries, state indicators, and meaningful graphics must meet applicable <strong>3:1</strong> non-text contrast against adjacent colors. Decorative dividers do not automatically require this ratio. <a href="https://www.w3.org/WAI/WCAG22/Understanding/non-text-contrast">S34</a></p>
+<p class="rule" id="col-07"><strong>COL-07 — MUST:</strong> Never communicate an error, selection, chart series, or availability through color alone. Add text, icons, shapes, patterns, or other cues. Links within prose should normally be underlined. <a href="https://www.w3.org/TR/WCAG22/">S01</a></p>
+<p class="rule" id="col-08"><strong>COL-08 — SHOULD:</strong> Test color-vision differences and forced-colors/high-contrast modes. Do not remove system focus treatment without an effective replacement. Check gradients, overlays, transparency, and text over photography using the actual rendered background.</p>
+<p class="rule" id="col-09"><strong>COL-09 — SHOULD:</strong> Validate cultural and domain meanings. “Blue creates trust” and “red always increases conversion” are hypotheses, not rules we can guarantee.</p>
+<h3 id="starter-palette-a-house-example-not-a-mandatory-brand">Starter palette: a house example, not a mandatory brand</h3>
+<p>These opaque sRGB values are a reusable starting point. Test every actual pairing and state; mixing arbitrary rows is not guaranteed to pass.</p>
+<div aria-label="Starter palette: a house example, not a mandatory brand table" class="table-scroll" role="region" tabindex="0"><table>
+<thead>
+<tr>
+<th scope="col">Semantic role</th>
+<th scope="col">Light</th>
+<th scope="col">Dark</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Canvas</td>
+<td><span aria-hidden="true" class="swatch" style="background:#FFFFFF"></span><code>#FFFFFF</code></td>
+<td><span aria-hidden="true" class="swatch" style="background:#0F172A"></span><code>#0F172A</code></td>
+</tr>
+<tr>
+<td>Raised surface</td>
+<td><span aria-hidden="true" class="swatch" style="background:#F8FAFC"></span><code>#F8FAFC</code></td>
+<td><span aria-hidden="true" class="swatch" style="background:#1E293B"></span><code>#1E293B</code></td>
+</tr>
+<tr>
+<td>Primary text</td>
+<td><span aria-hidden="true" class="swatch" style="background:#0F172A"></span><code>#0F172A</code></td>
+<td><span aria-hidden="true" class="swatch" style="background:#F8FAFC"></span><code>#F8FAFC</code></td>
+</tr>
+<tr>
+<td>Secondary text</td>
+<td><span aria-hidden="true" class="swatch" style="background:#475569"></span><code>#475569</code></td>
+<td><span aria-hidden="true" class="swatch" style="background:#CBD5E1"></span><code>#CBD5E1</code></td>
+</tr>
+<tr>
+<td>Link / action</td>
+<td><span aria-hidden="true" class="swatch" style="background:#1D4ED8"></span><code>#1D4ED8</code></td>
+<td><span aria-hidden="true" class="swatch" style="background:#93C5FD"></span><code>#93C5FD</code></td>
+</tr>
+<tr>
+<td>Text on solid action</td>
+<td><span aria-hidden="true" class="swatch" style="background:#FFFFFF"></span><code>#FFFFFF</code></td>
+<td><span aria-hidden="true" class="swatch" style="background:#0F172A"></span><code>#0F172A</code></td>
+</tr>
+<tr>
+<td>Essential control border</td>
+<td><span aria-hidden="true" class="swatch" style="background:#64748B"></span><code>#64748B</code></td>
+<td><span aria-hidden="true" class="swatch" style="background:#94A3B8"></span><code>#94A3B8</code></td>
+</tr>
+<tr>
+<td>Focus indicator on neutral surfaces</td>
+<td><span aria-hidden="true" class="swatch" style="background:#1D4ED8"></span><code>#1D4ED8</code></td>
+<td><span aria-hidden="true" class="swatch" style="background:#93C5FD"></span><code>#93C5FD</code></td>
+</tr>
+<tr>
+<td>Danger text</td>
+<td><span aria-hidden="true" class="swatch" style="background:#B91C1C"></span><code>#B91C1C</code></td>
+<td><span aria-hidden="true" class="swatch" style="background:#FCA5A5"></span><code>#FCA5A5</code></td>
+</tr>
+<tr>
+<td>Success text</td>
+<td><span aria-hidden="true" class="swatch" style="background:#166534"></span><code>#166534</code></td>
+<td><span aria-hidden="true" class="swatch" style="background:#86EFAC"></span><code>#86EFAC</code></td>
+</tr>
+<tr>
+<td>Warning text</td>
+<td><span aria-hidden="true" class="swatch" style="background:#92400E"></span><code>#92400E</code></td>
+<td><span aria-hidden="true" class="swatch" style="background:#FDE68A"></span><code>#FDE68A</code></td>
+</tr>
+</tbody>
+</table></div>
+<p>The accompanying <code>contrast-report.json</code> records computed ratios for text/status/link colors on both neutral surfaces, button label pairs, and control borders/focus colors against those surfaces. It does not validate hover states, disabled controls, transparency, or focus rings against a same-colored button. Use a contrasting offset or dual ring when necessary.</p>
+</section><section class="chapter"><h2 id="07-light-and-dark-themes">07 · Light and dark themes</h2>
+<p class="rule" id="thm-01"><strong>THM-01 — SHOULD:</strong> When both themes are in scope, offer <strong>System / Light / Dark</strong>. Default to system preference and persist explicit user choice. A fixed-theme brand site may justify one theme; do not silently add unnecessary scope.</p>
+<p class="rule" id="thm-02"><strong>THM-02 — MUST:</strong> Implement each theme with semantic tokens and explicit foreground/background pairs. Do not invert the entire page or assume one palette passes in both modes. <a href="https://developer.android.com/develop/ui/compose/designsystems/material3">S14</a></p>
+<p class="rule" id="thm-03"><strong>THM-03 — MUST:</strong> On the web, align <code>color-scheme</code> with supported/effective themes and use <code>prefers-color-scheme</code> for system mode. Update system-mode rendering when the OS preference changes. Native apps should use equivalent platform theme APIs. <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/At-rules/@media/prefers-color-scheme">S36</a>, <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/color-scheme">S37</a></p>
+<p class="rule" id="thm-04"><strong>THM-04 — SHOULD:</strong> Resolve the effective theme before first paint when practical; handle server rendering, stored-preference failures, and hydration consistently. A saved preference should not cause a bright flash on every navigation.</p>
+<p class="rule" id="thm-05"><strong>THM-05 — MUST:</strong> Check all component states in both themes: focus, hover, selection, disabled, validation, loading, charts, code blocks, menus, dialogs, tooltips, and third-party widgets.</p>
+<p class="rule" id="thm-06"><strong>THM-06 — SHOULD:</strong> Give dark surfaces distinguishable layers using tone and borders. Shadows alone may not separate them. Pure black and pure white are permissible when appropriate; avoid rigid bans and test comfort and contrast.</p>
+<p class="rule" id="thm-07"><strong>THM-07 — MUST:</strong> Keep image, logo, illustration, and chart content legible. Supply alternate assets where needed; do not recolor informative images indiscriminately.</p>
+<p class="rule" id="thm-08"><strong>THM-08 — SHOULD:</strong> Respect forced colors and reduced motion independently of theme. Dark mode is a preference, not proof of accessibility or lower power use on every display.</p>
+</section><section class="chapter"><h2 id="08-responsive-web-mobile-tablet-and-desktop">08 · Responsive web, mobile, tablet, and desktop</h2>
+<p class="rule" id="rsp-01"><strong>RSP-01 — MUST:</strong> Support the intended screen sizes, orientation, input methods, and browser/platform versions. Use a viewport configuration that preserves user zoom.</p>
+<p class="rule" id="rsp-02"><strong>RSP-02 — SHOULD:</strong> Build flexible layouts using intrinsic sizing, grids, wrapping, and content-led breakpoints. Component/container queries may be appropriate. Do not identify layout solely from device names or user-agent strings. <a href="https://web.dev/articles/responsive-web-design-basics">S38</a></p>
+<p class="rule" id="rsp-03"><strong>RSP-03 — MUST:</strong> For ordinary vertically scrolling web content, verify reflow at <strong>320 CSS px</strong> without loss of content/function or two-dimensional scrolling. The standard allows exceptions for content genuinely requiring a two-dimensional layout, such as some tables and maps. A 1280-wide viewport at 400% zoom is one relevant test. <a href="https://www.w3.org/WAI/WCAG22/Understanding/reflow.html">S32</a></p>
+<p class="rule" id="rsp-04"><strong>RSP-04 — MUST:</strong> Keep focused fields, validation, and primary actions reachable with the software keyboard open. Check safe areas, browser bars, sticky elements, landscape, and short windows.</p>
+<p class="rule" id="rsp-05"><strong>RSP-05 — MUST:</strong> Follow applicable target-size requirements. WCAG 2.2 AA specifies 24×24 CSS px with defined exceptions, including spacing. Our touch-friendly web default is 44×44 CSS px or larger where feasible. Apple’s guidance uses 44×44 points; Android recommends 48×48 dp. These units are not interchangeable. <a href="https://www.w3.org/WAI/WCAG22/Understanding/target-size-minimum.html">S33</a>, <a href="https://developer.apple.com/design/tips/">S39</a>, <a href="https://developer.android.com/guide/topics/ui/accessibility/apps">S40</a></p>
+<p class="rule" id="rsp-06"><strong>RSP-06 — MUST:</strong> Provide alternatives for essential hover-only, drag-only, swipe-only, or multi-touch actions. Support keyboard operation and meaningful pointer/touch behavior.</p>
+<p class="rule" id="rsp-07"><strong>RSP-07 — SHOULD:</strong> Adapt information priority: a desktop sidebar might become a drawer; a dense comparison table may need labeled horizontal scrolling or a task-specific mobile presentation. Do not simply shrink the desktop layout.</p>
+<p class="rule" id="rsp-08"><strong>RSP-08 — SHOULD:</strong> For desktop apps, support window resizing, keyboard shortcuts, focus order, standard menus, and pointer interaction. For mobile apps, support platform back behavior, text scaling, permission states, and interruptions.</p>
+<p class="rule" id="rsp-09"><strong>RSP-09 — MUST:</strong> Test widths between breakpoints and real devices when available. A useful house sample is 320, 360/390, 768, 1024, 1440, and 1920 CSS px; select actual coverage from the audience, not this list alone.</p>
+</section><section class="chapter"><h2 id="09-accessibility-as-a-release-requirement">09 · Accessibility as a release requirement</h2>
+<p class="rule" id="a11y-01"><strong>A11Y-01 — MUST:</strong> For web work, evaluate the applicable WCAG 2.2 A and AA criteria across complete user processes, not only selected screenshots. Native apps also need platform-specific assistive-technology checks. The checklist here is not the full conformance standard. <a href="https://www.w3.org/TR/WCAG22/">S01</a></p>
+<p class="rule" id="a11y-02"><strong>A11Y-02 — MUST:</strong> Prefer native semantic controls, logical headings, landmarks, meaningful page titles, an appropriate document language, and a way to bypass repeated navigation.</p>
+<p class="rule" id="a11y-03"><strong>A11Y-03 — MUST:</strong> Test every primary task using only a keyboard. Keep focus visible and not entirely hidden by authored sticky content; avoid traps and unexpected focus movement. Our stronger default is to keep the whole focused control visible.</p>
+<p class="rule" id="a11y-04"><strong>A11Y-04 — MUST:</strong> Associate labels, descriptions, errors, and state with controls programmatically. Announce important asynchronous status without unnecessarily interrupting the screen reader. <a href="https://www.w3.org/WAI/tutorials/forms/">S41</a></p>
+<p class="rule" id="a11y-05"><strong>A11Y-05 — MUST:</strong> Accessible dialogs need an accessible name, appropriate initial focus, contained focus while modal, a clear close path, and sensible focus restoration. Follow the platform/APG pattern, including Escape behavior where appropriate. <a href="https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/">S42</a></p>
+<p class="rule" id="a11y-06"><strong>A11Y-06 — MUST:</strong> Supply appropriate text alternatives, captions, transcripts, and audio description for media according to the applicable criteria. Provide nonvisual access to meaningful chart data.</p>
+<p class="rule" id="a11y-07"><strong>A11Y-07 — MUST:</strong> Support 200% text resizing, reflow, text-spacing overrides, and essential tasks without sensory-only instructions. Do not assume “click the green circle” identifies an action for everyone. <a href="https://www.w3.org/TR/WCAG22/">S01</a>, <a href="https://www.w3.org/WAI/WCAG22/Understanding/reflow.html">S32</a>, <a href="https://www.w3.org/WAI/WCAG22/Understanding/text-spacing.html">S35</a></p>
+<p class="rule" id="a11y-08"><strong>A11Y-08 — SHOULD:</strong> Respect reduced motion, avoid unnecessary auto-play, and offer pause/stop controls where required. Avoid content that violates flash thresholds. Animation should explain change rather than obstruct reading.</p>
+<p class="rule" id="a11y-09"><strong>A11Y-09 — MUST:</strong> Combine automated checks with manual keyboard and screen-reader testing. Test errors, authentication, dialogs, navigation, and dynamic updates; include disabled users in research where feasible.</p>
+</section><section class="chapter"><h2 id="10-forms-and-data-entry">10 · Forms and data entry</h2>
+<p class="rule" id="frm-01"><strong>FRM-01 — SHOULD:</strong> Ask only for data necessary at this point. Use progressive profiling; make optional fields visibly optional and explain unusual requests.</p>
+<p class="rule" id="frm-02"><strong>FRM-02 — MUST:</strong> Use persistent labels. Placeholders may illustrate an example but cannot replace the label. Group related choices with appropriate semantics. <a href="https://www.w3.org/WAI/tutorials/forms/">S41</a></p>
+<p class="rule" id="frm-03"><strong>FRM-03 — SHOULD:</strong> Use sensible input types, input modes, autofill tokens, defaults, and formatting. Accept realistic names, international numbers, pasted content, and local address variations.</p>
+<p class="rule" id="frm-04"><strong>FRM-04 — MUST:</strong> Validate on the server. Client validation improves feedback but is not a trust boundary. Explain expected formats before submission when they are genuinely constrained.</p>
+<p class="rule" id="frm-05"><strong>FRM-05 — SHOULD:</strong> Validate at a useful time, such as blur or submit, rather than scolding users during incomplete entry. Show errors next to fields and provide an error summary for complex forms.</p>
+<p class="rule" id="frm-06"><strong>FRM-06 — MUST:</strong> Preserve valid entries after errors. Identify what failed and how to fix it. Do not expose internal exceptions or sensitive details in public error messages.</p>
+<p class="rule" id="frm-07"><strong>FRM-07 — SHOULD:</strong> Use a single column for ordinary forms, clear steps for long tasks, optional save/resume when needed, and review before consequential submission.</p>
+<p class="rule" id="frm-08"><strong>FRM-08 — MUST:</strong> Prevent accidental duplicate submissions and make pending/success states explicit. Use server-side idempotency where repeating a request could charge, duplicate, or corrupt data.</p>
+<p class="rule" id="frm-09"><strong>FRM-09 — SHOULD:</strong> Explain why an action is unavailable. Avoid silent disabled submission buttons that give no discoverable way to correct the form.</p>
+<p class="rule" id="frm-10"><strong>FRM-10 — MUST:</strong> Reuse or let users select previously entered information in the same process where WCAG requires it, accounting for its security, essential-use, and invalid-information exceptions. <a href="https://www.w3.org/TR/WCAG22/">S01</a></p>
+</section><section class="chapter"><h2 id="11-login-signup-and-password-ux">11 · Login, signup, and password UX</h2>
+<p>These rules apply when accounts are needed. A public brochure site does not need signup. A passkey-only product needs an appropriate recovery method rather than a nonfunctional password-reset link.</p>
+<p class="rule" id="auth-01"><strong>AUTH-01 — SHOULD:</strong> Allow browsing or guest use where an account is unnecessary. Ask users to register when saving, purchasing, collaborating, or another actual requirement makes the account useful.</p>
+<p class="rule" id="auth-02"><strong>AUTH-02 — MUST:</strong> For password login, provide visibly labeled identifier and password fields, a working <strong>Show / Hide password</strong> button, a clear submit action, and a discoverable <strong>Forgot password?</strong> route.</p>
+<p class="rule" id="auth-03"><strong>AUTH-03 — MUST:</strong> The visibility toggle must be keyboard accessible, have a meaningful accessible label/state, avoid submitting the form (<code>type="button"</code> on web), and preserve the value and focus. Start masked. Disable spellcheck and autocapitalization on password input. <a href="https://design-system.service.gov.uk/components/password-input/">S15</a></p>
+<p class="rule" id="auth-04"><strong>AUTH-04 — MUST:</strong> Support password managers, paste, and autofill. Use <code>autocomplete="username"</code>, <code>current-password</code>, or <code>new-password</code> appropriately. Keep input identifiers stable. Do not require manual memorization/transcription where an accessible mechanism or alternative is needed. <a href="https://design-system.service.gov.uk/components/password-input/">S15</a>, <a href="https://www.w3.org/WAI/WCAG22/Understanding/accessible-authentication-minimum.html">S30</a></p>
+<p class="rule" id="auth-05"><strong>AUTH-05 — SHOULD:</strong> Avoid redundant password-confirmation fields when a reveal control and appropriate recovery address the need. If confirmation is retained for a justified flow, support paste and autofill there too.</p>
+<p class="rule" id="auth-06"><strong>AUTH-06 — MUST:</strong> Show login pending, failure, offline, rate-limited, and successful states. Public failures must avoid disclosing whether an account exists, is disabled, or has a wrong password; consider timing as well as wording. <a href="https://cheatsheetseries.owasp.org/cheatsheets/Authentication_Cheat_Sheet.html">S19</a></p>
+<p class="rule" id="auth-07"><strong>AUTH-07 — SHOULD:</strong> Offer appropriate passkey, enterprise SSO, or established identity-provider support when it helps the audience. Use maintained identity libraries/services; do not invent an authentication protocol.</p>
+<p class="rule" id="auth-08"><strong>AUTH-08 — MUST:</strong> Keep signup, login, recovery, verification, MFA, cancellation, and logout routes connected. Social/provider login must handle denial, provider failure, and account-linking conflicts safely.</p>
+<p class="rule" id="auth-09"><strong>AUTH-09 — MUST:</strong> Restore the intended destination after authentication using a validated internal return path. Never accept an arbitrary untrusted redirect URL.</p>
+<p class="rule" id="auth-10"><strong>AUTH-10 — SHOULD:</strong> Explain “Remember me” or persistent login clearly, especially on shared devices. Keep marketing consent separate from account creation.</p>
+<p class="rule" id="auth-11"><strong>AUTH-11 — MUST:</strong> Test password-manager behavior, Enter-to-submit, reveal toggling, autofill, keyboard focus, small screens, long credentials, and failure recovery.</p>
+</section><section class="chapter"><h2 id="12-password-policy-mfa-and-recovery">12 · Password policy, MFA, and recovery</h2>
+<h3 id="password-policy">Password policy</h3>
+<p class="rule" id="pwd-01"><strong>PWD-01 — SHOULD — NIST baseline:</strong> Require at least <strong>15 characters</strong> for a password used as the sole factor. NIST permits <strong>8 or more</strong> only when it is always part of MFA; merely offering optional MFA does not qualify. Accept a maximum of at least 64 characters. <a href="https://pages.nist.gov/800-63-4/sp800-63b/authenticators/">S18</a></p>
+<p class="rule" id="pwd-02"><strong>PWD-02 — MUST:</strong> Permit spaces and password-manager-generated values; verify the whole password without silent truncation. Define Unicode handling consistently. Reject commonly used, expected, or compromised values. Avoid composition puzzles and routine forced expiry; require a change when compromise is indicated. Do not use security questions. <a href="https://pages.nist.gov/800-63-4/sp800-63b/authenticators/">S18</a></p>
+<p class="rule" id="pwd-03"><strong>PWD-03 — MUST:</strong> Store passwords with a maintained, salted password-hashing implementation. Prefer Argon2id where supported; OWASP’s cited baseline includes 19 MiB, two iterations, parallelism one. Benchmark and recheck current guidance; select alternatives for platform/compliance constraints. Plaintext, reversible storage, and fast general-purpose hashes are unsuitable. <a href="https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html">S20</a></p>
+<h3 id="recovery">Recovery</h3>
+<p class="rule" id="rec-01"><strong>REC-01 — MUST:</strong> Password recovery must return an account-neutral response; throttle requests without letting attackers trivially lock out a victim. Use comparable response timing. <a href="https://cheatsheetseries.owasp.org/cheatsheets/Forgot_Password_Cheat_Sheet.html">S21</a></p>
+<p class="rule" id="rec-02"><strong>REC-02 — MUST:</strong> Issue cryptographically random, sufficiently strong, single-use, expiring recovery tokens. Store them securely, preferably as a hash for random lookup tokens. Bind them to the intended account and purpose. <a href="https://cheatsheetseries.owasp.org/cheatsheets/Forgot_Password_Cheat_Sheet.html">S21</a></p>
+<p class="rule" id="rec-03"><strong>REC-03 — MUST:</strong> Construct reset links from trusted configuration over HTTPS. Prevent token leakage through logs, analytics, third-party content, and referrers. Consume tokens atomically so concurrent requests cannot reuse them. <a href="https://cheatsheetseries.owasp.org/cheatsheets/Forgot_Password_Cheat_Sheet.html">S21</a></p>
+<p class="rule" id="rec-04"><strong>REC-04 — MUST:</strong> After reset, notify the user without including the password; invalidate sessions according to risk and offer appropriate session control. Return to normal login rather than automatically authenticating solely because a reset finished. Password recovery must not bypass MFA. <a href="https://cheatsheetseries.owasp.org/cheatsheets/Forgot_Password_Cheat_Sheet.html">S21</a>, <a href="https://cheatsheetseries.owasp.org/cheatsheets/Authentication_Cheat_Sheet.html">S19</a></p>
+<p class="rule" id="rec-05"><strong>REC-05 — MUST:</strong> Test expired, reused, malformed, replaced, wrong-account, and concurrently used tokens. Make recovery messages usable, with resend guidance and help when mail fails.</p>
+<h3 id="mfa-and-passkeys">MFA and passkeys</h3>
+<p class="rule" id="mfa-01"><strong>MFA-01 — MUST — House baseline:</strong> Require appropriate MFA for production administrative/privileged accounts. Prefer phishing-resistant authenticators where feasible; select assurance requirements for the actual threat model.</p>
+<p class="rule" id="mfa-02"><strong>MFA-02 — MUST:</strong> Make enrollment, factor changes, recovery, and removal as carefully protected as login. Require suitable reauthentication for sensitive changes; do not let support or an email link casually bypass stronger factors. <a href="https://cheatsheetseries.owasp.org/cheatsheets/Authentication_Cheat_Sheet.html">S19</a></p>
+<p class="rule" id="mfa-03"><strong>MFA-03 — SHOULD:</strong> Provide securely stored, single-use recovery codes or another suitable recovery route. Explain recovery before a device is lost. OTPs must expire, be rate-limited, and resist replay; support paste/autofill for entry.</p>
+<p class="rule" id="mfa-04"><strong>MFA-04 — MUST:</strong> With passkeys, validate challenges, origin, relying-party identity, and relevant user-verification requirements through a maintained WebAuthn implementation. Address lost devices and multiple authenticators. Do not claim email or SMS OTP is phishing-resistant. <a href="https://pages.nist.gov/800-63-4/sp800-63b/authenticators/">S18</a></p>
+</section><section class="chapter"><h2 id="13-sessions-sso-and-account-lifecycle">13 · Sessions, SSO, and account lifecycle</h2>
+<p class="rule" id="ses-01"><strong>SES-01 — SHOULD:</strong> Prefer established server-managed sessions or a suitable backend-for-frontend for browser apps. Choose token architecture deliberately; avoid putting long-lived bearer credentials in JavaScript-readable storage by default. <a href="https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html">S23</a></p>
+<p class="rule" id="ses-02"><strong>SES-02 — MUST:</strong> For cookie sessions, use HTTPS, <code>Secure</code>, <code>HttpOnly</code>, narrow scope, and an appropriate <code>SameSite</code> policy. Rotate session IDs on login/privilege changes; enforce idle and absolute expiry server-side. <code>HttpOnly</code> does not make XSS harmless. <a href="https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html">S23</a></p>
+<p class="rule" id="ses-03"><strong>SES-03 — MUST:</strong> Make logout revoke the relevant server-side session/refresh credential and clear sensitive client state. Test logout, back navigation, expiry, revocation, and switching between accounts. <a href="https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html">S23</a></p>
+<p class="rule" id="ses-04"><strong>SES-04 — MUST:</strong> Require appropriate reauthentication before changing recovery email, password, MFA, or other sensitive account attributes. Provide session/device management where warranted and notify meaningful security changes. <a href="https://cheatsheetseries.owasp.org/cheatsheets/Authentication_Cheat_Sheet.html">S19</a></p>
+<p class="rule" id="ses-05"><strong>SES-05 — MUST:</strong> Use maintained OAuth/OIDC integrations. Prefer authorization code flow with PKCE; validate redirects and transaction binding, and verify token signature, issuer, audience, and expiry. Use state/nonce as required by the flow. Never put a confidential client secret in a browser or mobile binary. <a href="https://www.rfc-editor.org/rfc/rfc9700.html">S24</a>, <a href="https://cheatsheetseries.owasp.org/cheatsheets/REST_Security_Cheat_Sheet.html">S29</a></p>
+<p class="rule" id="ses-06"><strong>SES-06 — MUST:</strong> Link identities only with adequate proof of control. Matching an unverified email string is insufficient. Account merging must preserve authorization and prevent takeover.</p>
+<p class="rule" id="ses-07"><strong>SES-07 — MUST:</strong> Define what suspension, cancellation, deletion, team removal, and email changes do to access, shared data, billing, and integrations. Provide accurate user-visible outcomes.</p>
+</section><section class="chapter"><h2 id="14-application-and-api-security">14 · Application and API security</h2>
+<p>Use a small threat model for the feature: what is valuable, who may act, what input is untrusted, which boundaries exist, and how abuse would happen. Use ASVS as a verification catalogue, not a claim that a checklist makes software secure. <a href="https://github.com/OWASP/ASVS">S16</a></p>
+<div aria-label="14 · Application and API security table" class="table-scroll" role="region" tabindex="0"><table>
+<thead>
+<tr>
+<th scope="col">ID</th>
+<th scope="col">Requirement</th>
+<th scope="col">Concrete verification</th>
+</tr>
+</thead>
+<tbody>
+<tr class="rule" id="sec-01">
+<td>SEC-01</td>
+<td><strong>MUST:</strong> Deny by default and authorize every server-side operation, object, property, and tenant.</td>
+<td>A different user/tenant cannot read, edit, export, or enumerate protected data by changing identifiers. <a href="https://cheatsheetseries.owasp.org/cheatsheets/Authorization_Cheat_Sheet.html">S22</a></td>
+</tr>
+<tr class="rule" id="sec-02">
+<td>SEC-02</td>
+<td><strong>MUST:</strong> Validate input schemas, sizes, allowed fields, and business invariants on the server.</td>
+<td>Extra fields cannot set roles, prices, ownership, or protected status.</td>
+</tr>
+<tr class="rule" id="sec-03">
+<td>SEC-03</td>
+<td><strong>MUST:</strong> Parameterize database queries; allowlist dynamic identifiers that cannot be parameterized.</td>
+<td>Untrusted input cannot change query structure. <a href="https://cheatsheetseries.owasp.org/cheatsheets/SQL_Injection_Prevention_Cheat_Sheet.html">S25</a></td>
+</tr>
+<tr class="rule" id="sec-04">
+<td>SEC-04</td>
+<td><strong>MUST:</strong> Use context-appropriate output encoding and safe DOM APIs; sanitize intentionally accepted rich HTML.</td>
+<td>Stored/reflected content and unsafe URL schemes cannot execute as code. CSP is additional protection. <a href="https://cheatsheetseries.owasp.org/cheatsheets/Cross_Site_Scripting_Prevention_Cheat_Sheet.html">S26</a></td>
+</tr>
+<tr class="rule" id="sec-05">
+<td>SEC-05</td>
+<td><strong>MUST:</strong> Protect state-changing cookie-authenticated requests from CSRF using the framework’s appropriate controls.</td>
+<td>Cross-origin form/request attempts fail; GET does not mutate important state. SameSite alone is not a universal solution. <a href="https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html">S27</a></td>
+</tr>
+<tr class="rule" id="sec-06">
+<td>SEC-06</td>
+<td><strong>MUST:</strong> Treat CORS as a browser sharing policy, not authorization.</td>
+<td>Allow only required origins; credentialed access and preflight behavior match the design. <a href="https://cheatsheetseries.owasp.org/cheatsheets/REST_Security_Cheat_Sheet.html">S29</a></td>
+</tr>
+<tr class="rule" id="sec-07">
+<td>SEC-07</td>
+<td><strong>MUST:</strong> Validate file type/content, size, filename handling, and upload authorization; isolate untrusted files.</td>
+<td>Malicious content cannot execute from a trusted origin; private downloads remain protected. Scan/quarantine as appropriate. <a href="https://cheatsheetseries.owasp.org/cheatsheets/File_Upload_Cheat_Sheet.html">S28</a></td>
+</tr>
+<tr class="rule" id="sec-08">
+<td>SEC-08</td>
+<td><strong>MUST:</strong> Constrain server-side URL fetching and network egress.</td>
+<td>Block unauthorized internal/metadata destinations, including redirects and DNS tricks; prefer destination allowlists. <a href="https://cheatsheetseries.owasp.org/cheatsheets/Server_Side_Request_Forgery_Prevention_Cheat_Sheet.html">S43</a></td>
+</tr>
+<tr class="rule" id="sec-09">
+<td>SEC-09</td>
+<td><strong>MUST:</strong> Keep secrets in approved secret storage with least-privilege access, rotation, and revocation.</td>
+<td>No secret appears in source, frontend bundles, logs, examples, or build artifacts. <a href="https://cheatsheetseries.owasp.org/cheatsheets/Secrets_Management_Cheat_Sheet.html">S44</a></td>
+</tr>
+<tr class="rule" id="sec-10">
+<td>SEC-10</td>
+<td><strong>MUST:</strong> Rate-limit and bound expensive operations, authentication, exports, uploads, and external calls.</td>
+<td>Limits protect users, shared tenants, infrastructure, and spend without creating easy account-lockout abuse.</td>
+</tr>
+<tr class="rule" id="sec-11">
+<td>SEC-11</td>
+<td><strong>MUST:</strong> Use maintained TLS and cryptographic libraries; verify certificates and isolate encryption keys.</td>
+<td>No production “skip verification” flags or homemade crypto.</td>
+</tr>
+<tr class="rule" id="sec-12">
+<td>SEC-12</td>
+<td><strong>MUST:</strong> Minimize error detail exposed publicly; retain redacted diagnostics internally.</td>
+<td>Exceptions do not reveal credentials, personal records, stack details, or queries. <a href="https://cheatsheetseries.owasp.org/cheatsheets/Logging_Cheat_Sheet.html">S45</a></td>
+</tr>
+<tr class="rule" id="sec-13">
+<td>SEC-13</td>
+<td><strong>SHOULD:</strong> Set suitable CSP, anti-framing policy, MIME-sniffing prevention, referrer policy, and secure transport policy.</td>
+<td>Test application compatibility; do not enable irreversible HSTS scope/preload without validating all affected hosts.</td>
+</tr>
+<tr class="rule" id="sec-14">
+<td>SEC-14</td>
+<td><strong>MUST:</strong> Verify webhook authenticity and handle retries, replay, duplicates, and out-of-order delivery.</td>
+<td>A forged or repeated payment notification cannot grant extra credit or duplicate an action. <a href="https://docs.stripe.com/webhooks">S46</a></td>
+</tr>
+<tr class="rule" id="sec-15">
+<td>SEC-15</td>
+<td><strong>MUST:</strong> Test business logic abuse and concurrency.</td>
+<td>Repeated coupons, concurrent purchases, stale permissions, and duplicate requests cannot violate invariants.</td>
+</tr>
+<tr class="rule" id="sec-16">
+<td>SEC-16</td>
+<td><strong>SHOULD:</strong> Assess dependency provenance, supported versions, advisories, and transitive risks; retain lockfiles.</td>
+<td>Scans and updates are triaged by reachability/impact, with owners for remediation. <a href="https://csrc.nist.gov/pubs/sp/800/218/final">S48</a></td>
+</tr>
+</tbody>
+</table></div>
+<p>Do not expose administrative tools or development endpoints merely because their URLs are obscure. Apply access control to storage, queues, scheduled jobs, backups, and internal dashboards as well as API routes.</p>
+</section><section class="chapter"><h2 id="15-privacy-consent-and-user-control">15 · Privacy, consent, and user control</h2>
+<p class="rule" id="pri-01"><strong>PRI-01 — MUST:</strong> Inventory personal data, purpose, recipients, storage locations, retention, and deletion behavior. Collect the minimum useful data; avoid logging form contents or recording sensitive screens by default.</p>
+<p class="rule" id="pri-02"><strong>PRI-02 — MUST:</strong> Provide truthful notices and user controls appropriate to the actual processing. Where consent is required, make it specific, informed, affirmative, and withdrawable. Determine applicable law from users, markets, processing, and contracts. <a href="https://ico.org.uk/for-organisations/uk-gdpr-guidance-and-resources/data-protection-principles/a-guide-to-the-data-protection-principles/">S47</a></p>
+<p class="rule" id="pri-03"><strong>PRI-03 — SHOULD:</strong> Make optional tracking and marketing easy to refuse. Do not use preselected paid extras, misleading consent controls, fabricated urgency, or obstructive cancellation. <a href="https://www.ftc.gov/reports/bringing-dark-patterns-light">S12</a></p>
+<p class="rule" id="pri-04"><strong>PRI-04 — MUST:</strong> Implement export, correction, deletion, and retention requirements where applicable; verify the requester appropriately. Explain legal retention, shared records, and backup expiry accurately rather than promising instant erasure everywhere.</p>
+<p class="rule" id="pri-05"><strong>PRI-05 — MUST:</strong> Evaluate analytics, session replay, crash reporters, and SDKs for data collection and third-party transfer. Redact secrets and sensitive personal data before transmission. <a href="https://cheatsheetseries.owasp.org/cheatsheets/Logging_Cheat_Sheet.html">S45</a></p>
+<p class="rule" id="pri-06"><strong>PRI-06 — SHOULD:</strong> Restrict production data in development and support tooling. Prefer synthetic/redacted test data. Record who can access sensitive information and why.</p>
+<p class="rule" id="pri-07"><strong>PRI-07 — MUST:</strong> Recheck current jurisdiction-specific requirements before deployment. UK GDPR principles are one referenced example, not a universal legal checklist; verify India’s applicable DPDP requirements, EU/UK rules, US sector/state rules, and store policies only where relevant. <a href="https://ico.org.uk/for-organisations/uk-gdpr-guidance-and-resources/data-protection-principles/a-guide-to-the-data-protection-principles/">S47</a></p>
+</section><section class="chapter"><h2 id="16-activation-retention-and-customer-trust">16 · Activation, retention, and customer trust</h2>
+<p>Retention means people return because the product continues to solve their problem. A successful infrequent service may correctly have low daily engagement.</p>
+<p class="rule" id="ret-01"><strong>RET-01 — MUST:</strong> Define the first meaningful success event and the recurring value event. Completing signup or opening a push notification is not necessarily receiving value.</p>
+<p class="rule" id="ret-02"><strong>RET-02 — SHOULD:</strong> Shorten the path to that first success with relevant templates, sample data, sensible defaults, and optional guidance. Avoid mandatory feature tours before useful work. <a href="https://www.nngroup.com/articles/onboarding-tutorials/">S50</a></p>
+<p class="rule" id="ret-03"><strong>RET-03 — SHOULD:</strong> Preserve drafts, preferences, history, saved work, and useful context securely. Show the next relevant action rather than repeatedly resetting users to a generic starting point.</p>
+<p class="rule" id="ret-04"><strong>RET-04 — SHOULD:</strong> Explain empty states with what the area is for, how to start, and an example when helpful. Distinguish first use, filtered-out results, and data-loading failure.</p>
+<p class="rule" id="ret-05"><strong>RET-05 — MUST:</strong> Keep reminders and notifications relevant, permission-based where required, controllable by channel/frequency, and consistent with quiet hours. Respect unsubscribe, dismissal, and opt-out choices. Avoid sensitive lock-screen content by default.</p>
+<p class="rule" id="ret-06"><strong>RET-06 — SHOULD:</strong> Use progress, milestones, or streaks only when they support the user’s chosen objective. Provide humane recovery; do not penalize breaks or exploit anxiety to increase visits.</p>
+<p class="rule" id="ret-07"><strong>RET-07 — SHOULD:</strong> Provide accessible help, useful support escalation, clear incident messages, and feedback channels. Analyze repeated support problems as product defects, not just support workload.</p>
+<p class="rule" id="ret-08"><strong>RET-08 — MUST:</strong> Make cancellation and account deletion discoverable. Explain consequences and alternatives fairly; do not require a maze, hidden button, or irrelevant survey to leave. <a href="https://www.ftc.gov/reports/bringing-dark-patterns-light">S12</a></p>
+<p class="rule" id="ret-09"><strong>RET-09 — SHOULD:</strong> Segment retention by acquisition source, first-use experience, platform, and user need. Investigate churn with task research and optional feedback rather than inventing a cause from analytics alone.</p>
+<p class="rule" id="ret-10"><strong>RET-10 — MUST:</strong> Do not optimize engagement by degrading user control, privacy, accessibility, honesty, or well-being. Evaluate retention changes against guardrail metrics.</p>
+</section><section class="chapter"><h2 id="17-measurement-and-responsible-experiments">17 · Measurement and responsible experiments</h2>
+<p>Use goals → observable signals → metrics. HEART offers useful categories: happiness, engagement, adoption, retention, and task success. Select the categories that match the product; every project does not need all of them. <a href="https://research.google/pubs/measuring-the-user-experience-on-a-large-scale-user-centered-metrics-for-web-applications/">S11</a></p>
+<div aria-label="17 · Measurement and responsible experiments table" class="table-scroll" role="region" tabindex="0"><table>
+<thead>
+<tr>
+<th scope="col">Measure</th>
+<th scope="col">Operational definition to document</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Activation</td>
+<td>Eligible new users reaching the defined value event within a named time window / eligible new users.</td>
+</tr>
+<tr>
+<td>Time to first value</td>
+<td>Elapsed time from a defined start to that event; include incomplete attempts separately to avoid survivor bias.</td>
+</tr>
+<tr>
+<td>Cohort retention</td>
+<td>Members of a fixed starting cohort performing the return event in a defined later window / original eligible cohort.</td>
+</tr>
+<tr>
+<td>Task success</td>
+<td>Successful task attempts / eligible attempts, with success, abandonment, and retries defined.</td>
+</tr>
+<tr>
+<td>Customer churn</td>
+<td>Customers lost during the period / customers at its start; define cancellations, pauses, and reactivations.</td>
+</tr>
+<tr>
+<td>Satisfaction</td>
+<td>A clearly worded survey with sampling, response rate, and collection timing recorded.</td>
+</tr>
+<tr>
+<td>Reliability guardrails</td>
+<td>Error rate, failed payments, data loss, auth failures, performance, support contacts, opt-outs, and accessibility regressions.</td>
+</tr>
+</tbody>
+</table></div>
+<p class="rule" id="met-01"><strong>MET-01 — MUST:</strong> Define event names, eligibility, denominators, windows, time zone, identity resolution, exclusions, and consent behavior before comparing results. Distinguish exact-day, rolling, and bracketed retention.</p>
+<p class="rule" id="met-02"><strong>MET-02 — SHOULD:</strong> Use D1/D7/D30 only when the product has a suitable cadence. Monthly invoicing and emergency help should not inherit a daily habit target.</p>
+<p class="rule" id="met-03"><strong>MET-03 — MUST:</strong> For experiments, state a hypothesis, primary outcome, guardrails, assignment unit, sample plan, and stopping rule. Avoid treating repeated peeking, tiny samples, or many uncorrected comparisons as reliable wins.</p>
+<p class="rule" id="met-04"><strong>MET-04 — SHOULD:</strong> Pair quantitative evidence with usability research. Report uncertainty and practical effect size; correlations and before/after changes do not by themselves establish causation.</p>
+<p class="rule" id="met-05"><strong>MET-05 — MUST:</strong> Verify analytics with test events and privacy controls. Dashboards must distinguish unknown/missing values from zero and real users from test/bot traffic.</p>
+</section><section class="chapter"><h2 id="18-performance-and-perceived-speed">18 · Performance and perceived speed</h2>
+<p class="rule" id="perf-01"><strong>PERF-01 — SHOULD:</strong> For websites, target Core Web Vitals at the <strong>75th percentile</strong>, segmented for mobile and desktop: <strong>LCP ≤2.5 s</strong>, <strong>INP ≤200 ms</strong>, <strong>CLS ≤0.1</strong>. Meet all three; these are field targets, not a promise that every request finishes in 200 ms. <a href="https://web.dev/articles/vitals">S49</a></p>
+<p class="rule" id="perf-02"><strong>PERF-02 — MUST:</strong> Separate lab and real-user measurements. A Lighthouse load test cannot establish field INP or whole-product accessibility. Record device/network conditions, route, measurement window, and sample limitations. <a href="https://web.dev/articles/vitals">S49</a></p>
+<p class="rule" id="perf-03"><strong>PERF-03 — SHOULD:</strong> Set explicit budgets for JavaScript, images, fonts, memory, network calls, and API latency on representative devices. Budgets are product decisions, not a universal bundle-size rule.</p>
+<p class="rule" id="perf-04"><strong>PERF-04 — SHOULD:</strong> Send appropriately sized responsive images, compress assets, limit third-party scripts, split/defer nonessential code, reserve media dimensions, and avoid needless font variants. Do not lazy-load the main above-the-fold image blindly.</p>
+<p class="rule" id="perf-05"><strong>PERF-05 — MUST:</strong> Keep interactions responsive during long work. Use appropriate loading feedback, cancellation/retry where feasible, and truthful progress. Never show a saved or paid state before it is confirmed unless an explicit optimistic state can recover safely.</p>
+<p class="rule" id="perf-06"><strong>PERF-06 — SHOULD:</strong> Cache deliberately with correct ownership, invalidation, and freshness. Never allow a shared cache or service worker to expose another user’s private data.</p>
+<p class="rule" id="perf-07"><strong>PERF-07 — SHOULD:</strong> Measure native startup, scrolling/jank, memory, battery, and background activity separately from web metrics. Test midrange/older supported hardware, not only the developer’s machine.</p>
+</section><section class="chapter"><h2 id="19-loading-empty-offline-and-failure-states">19 · Loading, empty, offline, and failure states</h2>
+<p class="rule" id="sta-01"><strong>STA-01 — MUST:</strong> Specify applicable default, hover, focus, pressed, selected, disabled, loading, empty, error, success, and permission-denied states for each interactive component.</p>
+<p class="rule" id="sta-02"><strong>STA-02 — MUST:</strong> Distinguish “not loaded,” “nothing exists,” and “could not load.” A failed request must not silently display “You have no orders.”</p>
+<p class="rule" id="sta-03"><strong>STA-03 — SHOULD:</strong> Preserve the last valid data with clear freshness information when appropriate. Explain partial results and synchronization status.</p>
+<p class="rule" id="sta-04"><strong>STA-04 — MUST:</strong> Retry safely using bounded backoff and idempotency as appropriate. Do not repeatedly charge, send mail, or create records because a response was lost.</p>
+<p class="rule" id="sta-05"><strong>STA-05 — SHOULD:</strong> Provide offline reading or queued changes only where it benefits the use case. Define storage security, synchronization, conflict resolution, and the moment a write is actually committed.</p>
+<p class="rule" id="sta-06"><strong>STA-06 — MUST:</strong> Handle interruption, slow service, expired sessions, lost connectivity, permission changes, and stale data without silently discarding important user work.</p>
+</section><section class="chapter"><h2 id="20-content-internationalization-and-localization">20 · Content, internationalization, and localization</h2>
+<p class="rule" id="cnt-01"><strong>CNT-01 — SHOULD:</strong> Write concise, concrete product copy. Explain consequences and next steps; use consistent terminology across screens, support, and emails.</p>
+<p class="rule" id="cnt-02"><strong>CNT-02 — MUST:</strong> Keep secrets, internal implementation details, and unnecessary jargon out of product flows. Technical detail belongs only where it helps the intended user decide or act.</p>
+<p class="rule" id="cnt-03"><strong>CNT-03 — MUST:</strong> Use Unicode, appropriate language metadata, and explicit direction where needed. Separate translatable strings from code; support pluralization and context rather than concatenated sentence fragments. <a href="https://www.w3.org/International/quicktips/index.en">S51</a></p>
+<p class="rule" id="cnt-04"><strong>CNT-04 — SHOULD:</strong> Test long translations, right-to-left layouts, non-Latin fonts, names without assumed first/last structure, and culturally appropriate imagery. Mirror directional UI thoughtfully; not every symbol reverses.</p>
+<p class="rule" id="cnt-05"><strong>CNT-05 — MUST:</strong> Make currency, units, date/time, locale, and time-zone behavior unambiguous. Distinguish instants from dates and recurring local times; test daylight-saving transitions where relevant.</p>
+<p class="rule" id="cnt-06"><strong>CNT-06 — SHOULD:</strong> Make search, sorting, input validation, and formatting appropriate to supported locales. Language detection should not prevent users from choosing another language.</p>
+</section><section class="chapter"><h2 id="21-public-websites-discovery-and-seo">21 · Public websites, discovery, and SEO</h2>
+<p class="rule" id="seo-01"><strong>SEO-01 — SHOULD:</strong> For public indexable content, use descriptive titles, headings, crawlable links, useful text, and stable URLs. Ensure rendering choices expose the intended content to crawlers. <a href="https://developers.google.com/search/docs/fundamentals/seo-starter-guide">S52</a></p>
+<p class="rule" id="seo-02"><strong>SEO-02 — SHOULD:</strong> Configure canonicals, redirects, sitemaps, indexability, and structured data when appropriate. Structured data must describe visible, truthful content; none of these guarantees ranking. <a href="https://developers.google.com/search/docs/fundamentals/seo-starter-guide">S52</a></p>
+<p class="rule" id="seo-03"><strong>SEO-03 — MUST:</strong> Use authorization for private content. <code>robots.txt</code> and <code>noindex</code> are not security controls. Prevent accidental indexing of previews, staging, and sensitive routes using the appropriate combination of access restrictions and indexing controls.</p>
+<p class="rule" id="seo-04"><strong>SEO-04 — SHOULD:</strong> Provide useful social previews, favicon/app icons, meaningful 404/410 behavior, and working share links. Avoid manipulative keyword stuffing and intrusive interstitials.</p>
+<p class="rule" id="seo-05"><strong>SEO-05 — MUST:</strong> Keep factual claims, contact information, pricing, and support links accurate and maintainable. Assign content ownership where stale information can cause harm.</p>
+</section><section class="chapter"><h2 id="22-payments-subscriptions-and-commerce">22 · Payments, subscriptions, and commerce</h2>
+<p class="rule" id="pay-01"><strong>PAY-01 — MUST:</strong> Show total cost, currency, billing cadence, trial conversion, delivery constraints, and cancellation/refund terms before commitment. Never fabricate savings or scarcity. <a href="https://www.ftc.gov/reports/bringing-dark-patterns-light">S12</a></p>
+<p class="rule" id="pay-02"><strong>PAY-02 — SHOULD:</strong> Prefer a reputable provider’s hosted/tokenized payment flow to reduce direct handling of card data. Determine actual PCI obligations for the integration; outsourcing does not automatically remove every responsibility.</p>
+<p class="rule" id="pay-03"><strong>PAY-03 — MUST:</strong> Calculate authoritative amounts, discounts, entitlements, and stock on the server. Never trust prices or “payment successful” flags supplied by the browser.</p>
+<p class="rule" id="pay-04"><strong>PAY-04 — MUST:</strong> Verify provider callbacks/webhooks, deduplicate, handle delivery out of order, and reconcile with provider state. Use idempotency for payment creation where supported. <a href="https://docs.stripe.com/webhooks">S46</a></p>
+<p class="rule" id="pay-05"><strong>PAY-05 — MUST:</strong> Handle pending, failed, canceled, refunded, partially refunded, and disputed states. Keep receipts, billing history, and support paths understandable.</p>
+<p class="rule" id="pay-06"><strong>PAY-06 — MUST:</strong> Test renewals, trial end, failed retries, cancellation timing, and concurrent checkout before release. A successful sandbox payment is not evidence that production settlement is configured correctly.</p>
+</section><section class="chapter"><h2 id="23-native-apps-permissions-and-platform-behavior">23 · Native apps, permissions, and platform behavior</h2>
+<p class="rule" id="nat-01"><strong>NAT-01 — MUST:</strong> Use platform secure storage for device-held credentials. Treat the app binary and ordinary local storage as inspectable; do not embed server secrets. Apply relevant MASVS controls. <a href="https://mas.owasp.org/MASVS/">S17</a></p>
+<p class="rule" id="nat-02"><strong>NAT-02 — MUST:</strong> Request camera, location, photos, contacts, notifications, and other permissions at a relevant moment with an explanation. Handle denial, limited access, revocation, and manual alternatives.</p>
+<p class="rule" id="nat-03"><strong>NAT-03 — MUST:</strong> Validate deep links and associated domains, protect sensitive exported components, and use appropriate system authentication/browser flows. <a href="https://mas.owasp.org/MASVS/">S17</a></p>
+<p class="rule" id="nat-04"><strong>NAT-04 — SHOULD:</strong> Follow platform conventions for back navigation, safe areas, selection, menus, sharing, text scaling, and screen-reader navigation. Honor system preferences where appropriate. <a href="https://developer.apple.com/design/tips/">S39</a>, <a href="https://developer.android.com/guide/topics/ui/accessibility/apps">S40</a></p>
+<p class="rule" id="nat-05"><strong>NAT-05 — MUST:</strong> Test cold/warm launch, background/foreground transitions, process termination, interrupted network requests, and upgrades with existing data.</p>
+<p class="rule" id="nat-06"><strong>NAT-06 — MUST:</strong> Before distribution, recheck current store policies, permission declarations, privacy disclosures, signing, and account-deletion obligations for the target platform and app category.</p>
+</section><section class="chapter"><h2 id="24-engineering-quality-delivery-and-operations">24 · Engineering quality, delivery, and operations</h2>
+<p class="rule" id="eng-01"><strong>ENG-01 — SHOULD:</strong> Choose the simplest maintainable architecture that meets real scale, reliability, security, and team constraints. Do not require microservices, a particular framework, or a database type for every project.</p>
+<p class="rule" id="eng-02"><strong>ENG-02 — MUST:</strong> Keep domain rules, authorization, and important invariants enforceable centrally. Use database constraints and transactions where appropriate; handle concurrency explicitly.</p>
+<p class="rule" id="eng-03"><strong>ENG-03 — SHOULD:</strong> Maintain typed/schema-validated boundaries, clear module responsibilities, reusable components, migration discipline, and documented non-obvious decisions. Reuse vetted libraries rather than recreating fragile infrastructure.</p>
+<p class="rule" id="eng-04"><strong>ENG-04 — MUST:</strong> Separate development, staging, and production configuration and credentials. Make builds reproducible; avoid debug settings in production. <a href="https://csrc.nist.gov/pubs/sp/800/218/final">S48</a></p>
+<p class="rule" id="eng-05"><strong>ENG-05 — MUST:</strong> Use checks suited to the change: build/type/lint where relevant, unit tests for meaningful logic, integration tests for boundaries, and end-to-end tests for critical user journeys. Preserve unrelated work.</p>
+<p class="rule" id="eng-06"><strong>ENG-06 — MUST:</strong> Test important negative paths: unauthorized access, cross-tenant access, invalid input, timeout, concurrent submission, recovery, and rollback. Test observable behavior rather than mirroring implementation details.</p>
+<p class="rule" id="eng-07"><strong>ENG-07 — SHOULD:</strong> Make deployment incremental and reversible where possible. Validate migrations against representative data; use compatibility windows for mixed app versions.</p>
+<p class="rule" id="ops-01"><strong>OPS-01 — MUST:</strong> Establish who owns production, how incidents are detected, how users get help, and how to roll back. An app is not operationally ready merely because it has a public URL.</p>
+<p class="rule" id="ops-02"><strong>OPS-02 — SHOULD:</strong> Define service indicators and objectives for availability, successful operations, latency, and correctness based on user needs. Avoid inventing “99.99%” targets without cost and recovery planning. <a href="https://sre.google/sre-book/service-level-objectives/">S53</a></p>
+<p class="rule" id="ops-03"><strong>OPS-03 — MUST:</strong> Collect useful, redacted diagnostics with correlation identifiers, access controls, retention, and actionable alerts. Avoid raw passwords, tokens, payment details, and unnecessary personal data. <a href="https://cheatsheetseries.owasp.org/cheatsheets/Logging_Cheat_Sheet.html">S45</a></p>
+<p class="rule" id="ops-04"><strong>OPS-04 — MUST:</strong> For important persistent data, define backup frequency, recovery-point and recovery-time objectives, and verify an actual restore. A configured backup job alone is not proof of recoverability.</p>
+<p class="rule" id="ops-05"><strong>OPS-05 — SHOULD:</strong> Monitor dependency/service changes, certificate expiry, storage and queue growth, mail delivery, external API failure, and spending. Set response ownership and remove unactionable alerts.</p>
+<p class="rule" id="ops-06"><strong>OPS-06 — MUST:</strong> Maintain an incident process, access revocation path, and vulnerability-remediation ownership proportionate to risk. Reassess affected rules after failures and significant changes. <a href="https://csrc.nist.gov/pubs/sp/800/218/final">S48</a></p>
+</section><section class="chapter"><h2 id="25-ai-features-when-present">25 · AI features, when present</h2>
+<p class="rule" id="ai-01"><strong>AI-01 — MUST:</strong> Treat model output, retrieved content, uploaded files, and tool results as untrusted input. Prompt text is not an authorization boundary. <a href="https://cheatsheetseries.owasp.org/cheatsheets/LLM_Prompt_Injection_Prevention_Cheat_Sheet.html">S54</a></p>
+<p class="rule" id="ai-02"><strong>AI-02 — MUST:</strong> Enforce user/tenant permissions outside the model for retrieval and actions. Restrict tool scope, credentials, spend, and data exposure. Require appropriate user authorization for consequential operations. <a href="https://cheatsheetseries.owasp.org/cheatsheets/LLM_Prompt_Injection_Prevention_Cheat_Sheet.html">S54</a></p>
+<p class="rule" id="ai-03"><strong>AI-03 — MUST:</strong> Evaluate hallucination, prompt injection, sensitive-data leakage, and harmful failure modes on representative tasks. State uncertainty and provide correction/recovery paths.</p>
+<p class="rule" id="ai-04"><strong>AI-04 — SHOULD:</strong> Offer cancellation, understandable progress, output editing, and a non-AI fallback where important. Do not suggest an external action succeeded before the actual system confirms it.</p>
+<p class="rule" id="ai-05"><strong>AI-05 — MUST:</strong> Clarify data handling and retention for the selected provider and configuration. Do not assume all models or plans have identical privacy, cost, or quality properties.</p>
+</section><section class="chapter"><h2 id="26-complete-user-workflows-and-access-paths">26 · Complete user workflows and access paths</h2>
+<p>Design both the <strong>journey</strong> across channels and time, and the <strong>flow</strong> through specific product screens. A client’s experience may start in an invitation email and finish with a receipt, support conversation, or exported file. <a href="https://www.nngroup.com/articles/user-journeys-vs-user-flows/">S56</a></p>
+<p class="rule" id="flow-01"><strong>FLOW-01 — MUST:</strong> For each primary task, identify the entry point, required access, prerequisite information, normal steps, successful outcome, exit, and recovery paths. Include returning users and deep links, not only the homepage.</p>
+<p class="rule" id="flow-02"><strong>FLOW-02 — MUST:</strong> Build an access matrix for relevant roles such as visitor, customer, team member, manager, support operator, and administrator. Specify view/create/edit/delete/export/share rights, object ownership, and tenant scope. Enforce the matrix in the backend.</p>
+<p class="rule" id="flow-03"><strong>FLOW-03 — SHOULD:</strong> Make frequent tasks easy to discover from the user’s natural starting point. Use recognizable navigation for broad areas and contextual controls for actions on an object. Command palettes and shortcuts supplement visible access.</p>
+<p class="rule" id="flow-04"><strong>FLOW-04 — MUST:</strong> Include branches for missing prerequisites, no data, rejected input, pending approval, denied access, expired login, lost connectivity, and service failure. Specify what happens to entered data in each branch.</p>
+<p class="rule" id="flow-05"><strong>FLOW-05 — SHOULD:</strong> Let users review consequential information and change an answer without repeating unrelated steps. Return them to the review context after an edit. <a href="https://design-system.service.gov.uk/patterns/check-answers/">S57</a></p>
+<p class="rule" id="flow-06"><strong>FLOW-06 — MUST:</strong> End important flows with an accurate confirmation, relevant reference/status, next step, and access to the resulting record or help. A tiny disappearing toast is insufficient as the only receipt for an important transaction. <a href="https://design-system.service.gov.uk/patterns/confirmation-pages/">S58</a></p>
+<p class="rule" id="flow-07"><strong>FLOW-07 — SHOULD:</strong> Permit resuming longer tasks where appropriate; explain whether progress is saved locally, to an account, or not yet saved. Protect drafts according to data sensitivity.</p>
+<p class="rule" id="flow-08"><strong>FLOW-08 — MUST:</strong> Test flows by role and entry path: direct URL, email link, notification, internal navigation, browser back, refresh, and a new session. A screen accessible only through the developer’s exact click sequence is unfinished.</p>
+<h3 id="reusable-flow-blueprints">Reusable flow blueprints</h3>
+<div aria-label="Reusable flow blueprints table" class="table-scroll" role="region" tabindex="0"><table>
+<thead>
+<tr>
+<th scope="col">Workflow</th>
+<th scope="col">Normal path</th>
+<th scope="col">Recovery / edge paths</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>First-time use</td>
+<td>Relevant landing → value explanation → necessary access/signup → first useful task → result</td>
+<td>Skip optional setup; resume after verification; accessible support</td>
+</tr>
+<tr>
+<td>Returning use</td>
+<td>Login/deep link → intended page → recent/contextual work → useful outcome</td>
+<td>Expired session; wrong workspace; deleted destination</td>
+</tr>
+<tr>
+<td>Find an item</td>
+<td>Browse/search → refine → inspect detail → take action</td>
+<td>Typo; no results; unavailable item; permission change</td>
+</tr>
+<tr>
+<td>Create/edit</td>
+<td>List or context → editor → validation → save/review → detail/confirmation</td>
+<td>Draft; cancel; server error; concurrent edit; retry</td>
+</tr>
+<tr>
+<td>Consequential submission</td>
+<td>Enter information → check answers → commit → receipt/status</td>
+<td>Change answer; duplicate request; uncertain/pending result</td>
+</tr>
+<tr>
+<td>Purchase/subscription</td>
+<td>Product/plan → full cost → checkout → provider confirmation → receipt/access</td>
+<td>Failure; pending payment; refund; renewal; cancellation</td>
+</tr>
+<tr>
+<td>Invitation/team access</td>
+<td>Invitation → authenticate intended identity → accept scope → workspace</td>
+<td>Expired/revoked invite; wrong account; existing membership</td>
+</tr>
+<tr>
+<td>Recovery</td>
+<td>Login → recovery request → out-of-band proof → reset/recover → login</td>
+<td>Expired/replayed link; unavailable factor; delayed email</td>
+</tr>
+<tr>
+<td>Export</td>
+<td>Select scope → authorize → generate → secure download</td>
+<td>Large job; expired link; partial failure; removed permission</td>
+</tr>
+<tr>
+<td>Leave/delete</td>
+<td>Settings → explain consequences → appropriate verification → confirm → status</td>
+<td>Shared data; retention obligations; outstanding billing</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Acceptance check:</strong> A representative client can find, complete, recover from, and later revisit each primary task without being told which control to click. Record observed failures; do not substitute a developer walkthrough for usability evidence.</p>
+</section><section class="chapter"><h2 id="27-what-belongs-where-screen-anatomy">27 · What belongs where: screen anatomy</h2>
+<p>The placements below are <strong>house starting points</strong> for common interfaces. Adapt to platform conventions, reading direction, task frequency, information density, and user testing. There is no universal right-hand side for every action.</p>
+<div aria-label="27 · What belongs where: screen anatomy table" class="table-scroll" role="region" tabindex="0"><table>
+<thead>
+<tr>
+<th scope="col">Element</th>
+<th scope="col">Default location / behavior</th>
+<th scope="col">Why and when to adapt</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Product identity / home</td>
+<td>Stable global header or platform navigation</td>
+<td>Helps orientation; do not let branding crowd the task.</td>
+</tr>
+<tr>
+<td>Primary navigation</td>
+<td>Top navigation for small sites; sidebar for broad desktop tools; suitable platform navigation on mobile</td>
+<td>Keep stable destinations distinct from one-off actions.</td>
+</tr>
+<tr>
+<td>Current page title</td>
+<td>Start of main content, with short context if needed</td>
+<td>Makes location and purpose immediately understandable.</td>
+</tr>
+<tr>
+<td>Breadcrumbs</td>
+<td>Above the title for meaningful hierarchical structures</td>
+<td>Use for hierarchy, not as a substitute for browser back.</td>
+</tr>
+<tr>
+<td>Page-level primary action</td>
+<td>Near the title or start of the task area</td>
+<td>Frequent work stays discoverable; dense tools may use a toolbar.</td>
+</tr>
+<tr>
+<td>Search</td>
+<td>Near the collection it searches; global search in global chrome if it spans the app</td>
+<td>State scope clearly.</td>
+</tr>
+<tr>
+<td>Filters / sorting</td>
+<td>Before or beside the result set; compact mobile sheet when suitable</td>
+<td>Show active filters and make reset available.</td>
+</tr>
+<tr>
+<td>Object actions</td>
+<td>In the row, card, detail header, or contextual toolbar belonging to that object</td>
+<td>Avoid ambiguity about which item will change.</td>
+</tr>
+<tr>
+<td>Form labels / hints / errors</td>
+<td>Adjacent to the relevant field</td>
+<td>Preserve association when wrapping or zooming.</td>
+</tr>
+<tr>
+<td>Form submit / next</td>
+<td>After the fields, with secondary back/cancel logically separated</td>
+<td>Sticky actions may help long mobile tasks if they never cover content.</td>
+</tr>
+<tr>
+<td>Destructive actions</td>
+<td>Clearly named, separated from routine actions, often within object/settings context</td>
+<td>Reduce slips while keeping legitimate removal discoverable.</td>
+</tr>
+<tr>
+<td>Global account / workspace</td>
+<td>Stable account or workspace control in application chrome</td>
+<td>Distinguish personal settings from organization administration.</td>
+</tr>
+<tr>
+<td>Help</td>
+<td>Consistent help location plus contextual help near hard decisions</td>
+<td>Clients should not lose their draft to get help.</td>
+</tr>
+<tr>
+<td>Site-wide notice</td>
+<td>Reserved area near the top of the layout</td>
+<td>Its importance should match its scope; avoid covering navigation.</td>
+</tr>
+<tr>
+<td>Notification center</td>
+<td>Stable accessible location when durable messages justify one</td>
+<td>It supplements, rather than replaces, inline feedback.</td>
+</tr>
+<tr>
+<td>Footer</td>
+<td>Supporting, contact, policy, and secondary links</td>
+<td>Do not place the only path to a primary task at the bottom.</td>
+</tr>
+</tbody>
+</table></div>
+<p class="rule" id="lay-01"><strong>LAY-01 — MUST:</strong> Define a clear reading order and DOM/accessibility order. Visual reordering must not produce a confusing keyboard or screen-reader sequence.</p>
+<p class="rule" id="lay-02"><strong>LAY-02 — SHOULD:</strong> Keep controls near the object or decision they affect. Separate global, page, selection, and item actions so the action scope is clear.</p>
+<p class="rule" id="lay-03"><strong>LAY-03 — MUST:</strong> Labels, prices, selected counts, and consequences must remain understandable in compact layouts. A mobile overflow menu must not become an undiscoverable hiding place for the core task.</p>
+<p class="rule" id="lay-04"><strong>LAY-04 — SHOULD:</strong> Reserve sticky positioning for controls people genuinely need while scrolling. Account for banners, navigation, software keyboards, and assistive-technology focus before making a footer sticky.</p>
+<p class="rule" id="lay-05"><strong>LAY-05 — SHOULD:</strong> Keep the primary task visually dominant. Marketing popups, chat launchers, surveys, and installation prompts must not compete with checkout, recovery, or urgent work.</p>
+</section><section class="chapter"><h2 id="28-screen-changes-history-and-state-transitions">28 · Screen changes, history, and state transitions</h2>
+<p class="rule" id="trn-01"><strong>TRN-01 — MUST:</strong> Specify what changes after every meaningful action: route, selected object, data, scroll, focus, URL/history, and feedback. Model asynchronous work explicitly rather than scattering unrelated booleans.</p>
+<div aria-label="28 · Screen changes, history, and state transitions table" class="table-scroll" role="region" tabindex="0"><table>
+<thead>
+<tr>
+<th scope="col">Transition</th>
+<th scope="col">Expected behavior</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Navigate to a new page</td>
+<td>Update title/location and route history; orient focus appropriately; normally start at the relevant heading/content.</td>
+</tr>
+<tr>
+<td>Return to a collection</td>
+<td>Restore useful filters, selection, pagination, and scroll when safe.</td>
+</tr>
+<tr>
+<td>Change a local tab</td>
+<td>Update the selected panel and tab semantics; preserve other page context.</td>
+</tr>
+<tr>
+<td>Expand disclosure</td>
+<td>Reveal nearby content without pretending the user navigated away.</td>
+</tr>
+<tr>
+<td>Submit form</td>
+<td>Keep entered data; show pending; move to success only on a confirmed result; expose recoverable errors.</td>
+</tr>
+<tr>
+<td>Open detail drawer</td>
+<td>Preserve the originating collection; define whether the detail has a shareable URL and what Back does.</td>
+</tr>
+<tr>
+<td>Start background job</td>
+<td>Confirm job acceptance separately from completion; provide durable status and failure recovery.</td>
+</tr>
+<tr>
+<td>Session expires</td>
+<td>Explain reauthentication, protect the data, and preserve eligible non-sensitive work.</td>
+</tr>
+<tr>
+<td>Refresh / reconnect</td>
+<td>Reconcile server state; do not repeat consequential writes automatically.</td>
+</tr>
+</tbody>
+</table></div>
+<p class="rule" id="trn-02"><strong>TRN-02 — MUST:</strong> Handle out-of-order responses and races. A slow response to an older search must not overwrite a newer query’s results. Cancel or ignore obsolete requests appropriately.</p>
+<p class="rule" id="trn-03"><strong>TRN-03 — MUST:</strong> Define dirty-form behavior. Warn about unsaved work only when real work could be lost; offer save/discard/cancel where appropriate. Avoid repeated false alarms.</p>
+<p class="rule" id="trn-04"><strong>TRN-04 — SHOULD:</strong> Use motion to clarify continuity, hierarchy, or feedback. Keep it restrained and interruptible; honor reduced-motion preferences. Do not hold completed work behind a decorative animation. <a href="https://www.nngroup.com/articles/animation-purpose-ux/">S59</a></p>
+<p class="rule" id="trn-05"><strong>TRN-05 — MAY — House default:</strong> Start with roughly 100–200 ms for small state feedback and 200–300 ms for larger transitions, then tune to platform guidance and testing. These ranges are not standards or guarantees of usability.</p>
+<p class="rule" id="trn-06"><strong>TRN-06 — MUST:</strong> Deep links and browser/platform Back must behave coherently with drawers, dialogs, tabs, and routing. Do not add a browser-history entry for every hover, toast, or minor animation.</p>
+<p class="rule" id="trn-07"><strong>TRN-07 — MUST:</strong> Test interruptions mid-transition: rapid clicks, navigation away, rotation/resizing, keyboard opening, network loss, and permission revocation.</p>
+</section><section class="chapter"><h2 id="29-overlays-drawers-half-screen-sheets-and-popovers">29 · Overlays, drawers, half-screen sheets, and popovers</h2>
+<p>Choose a surface by task complexity, need for surrounding context, and whether interaction outside must stop. Its visual position does not determine modality. A drawer or bottom sheet can be modal or nonmodal; implement its actual behavior consistently. <a href="https://www.nngroup.com/articles/modal-nonmodal-dialog/">S60</a>, <a href="https://developer.android.com/develop/ui/compose/components/bottom-sheets">S61</a></p>
+<div aria-label="29 · Overlays, drawers, half-screen sheets, and popovers table" class="table-scroll" role="region" tabindex="0"><table>
+<thead>
+<tr>
+<th scope="col">Surface</th>
+<th scope="col">Use when</th>
+<th scope="col">Avoid when</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Inline expansion</td>
+<td>Small details or settings belong directly in context</td>
+<td>A separate, complex workflow is required</td>
+</tr>
+<tr>
+<td>Tooltip</td>
+<td>Brief supplementary explanation for a labeled control</td>
+<td>Essential instructions, interactive links/forms, or mobile-only discovery</td>
+</tr>
+<tr>
+<td>Popover</td>
+<td>A short contextual choice, picker, or supplementary interactive content</td>
+<td>A long multi-step task or information needing a persistent URL</td>
+</tr>
+<tr>
+<td>Nonmodal side panel</td>
+<td>Inspect/edit while referring to the underlying collection</td>
+<td>Background interaction would invalidate a critical decision</td>
+</tr>
+<tr>
+<td>Modal dialog</td>
+<td>A focused interruption is necessary and the task is short</td>
+<td>Routine navigation, promotional announcements, or long forms</td>
+</tr>
+<tr>
+<td>Bottom / partial-height sheet</td>
+<td>A short mobile action, filter, picker, or contextual detail</td>
+<td>A fixed “half-screen” height would clip text, keyboard, or controls</td>
+</tr>
+<tr>
+<td>Full screen / page</td>
+<td>Complex creation, long reading, multi-step editing, or deep-linkable work</td>
+<td>A tiny contextual action would need needless navigation</td>
+</tr>
+<tr>
+<td>Alert dialog</td>
+<td>An urgent message needs a decision before work continues</td>
+<td>Ordinary success feedback or nonurgent news</td>
+</tr>
+</tbody>
+</table></div>
+<p class="rule" id="ovr-01"><strong>OVR-01 — MUST:</strong> Declare modal vs nonmodal behavior. A modal blocks background interaction, has an accessible name and proper semantics, and manages focus. A nonmodal panel must not trap focus or falsely use modal semantics. <a href="https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/">S42</a>, <a href="https://www.w3.org/WAI/ARIA/apg/patterns/alertdialog/">S63</a></p>
+<p class="rule" id="ovr-02"><strong>OVR-02 — MUST:</strong> Provide a visible, accessible dismissal path, sensible Escape/platform Back behavior, and focus restoration. For unsaved changes, dismissal may require a clear save/discard decision. Backdrop taps must not silently discard important work.</p>
+<p class="rule" id="ovr-03"><strong>OVR-03 — SHOULD:</strong> Avoid nested modals. Prefer replacing the current dialog, expanding to a page, or using inline secondary content. If unavoidable, explicitly test the active focus boundary, dismissal order, and screen-reader behavior.</p>
+<p class="rule" id="ovr-04"><strong>OVR-04 — MUST:</strong> Define layering centrally: normal content → sticky navigation → contextual overlay → active modal/backdrop → emergency feedback as appropriate. Use platform top-layer APIs when suitable; arbitrary huge <code>z-index</code> values cannot solve every stacking context.</p>
+<p class="rule" id="ovr-05"><strong>OVR-05 — MUST:</strong> Keep overlays within the usable viewport. Reposition anchored popovers on collision; preserve their association with the trigger. Test zoom, scroll, keyboard, RTL, and viewport resizing.</p>
+<p class="rule" id="ovr-06"><strong>OVR-06 — MUST:</strong> For sheets, support content-appropriate height and scrolling. Do not impose an exact 50% height as a universal rule. Provide a button alternative to dragging the sheet handle and distinguish scrolling content from moving the sheet. <a href="https://developer.android.com/develop/ui/compose/components/bottom-sheets">S61</a></p>
+<p class="rule" id="ovr-07"><strong>OVR-07 — MUST:</strong> Prevent unwanted background scroll for modal surfaces and restore the original scroll position on close. Keep the dialog’s own content scrollable and its actions reachable.</p>
+<p class="rule" id="ovr-08"><strong>OVR-08 — MUST:</strong> Hover/focus content must meet applicable dismissible, hoverable, and persistent behavior. Tooltips keep focus on their trigger and must not contain interactive controls; use a suitable popover/dialog for those. <a href="https://www.w3.org/WAI/ARIA/apg/patterns/tooltip/">S64</a>, <a href="https://www.w3.org/WAI/WCAG22/Understanding/content-on-hover-or-focus.html">S67</a></p>
+<p class="rule" id="ovr-09"><strong>OVR-09 — MUST:</strong> Prevent overlays from hiding primary actions, error messages, another overlay’s close control, or keyboard focus. Test cookie UI, chat launchers, toasts, and mobile bottom bars together.</p>
+</section><section class="chapter"><h2 id="30-notifications-banners-toasts-and-alerts">30 · Notifications, banners, toasts, and alerts</h2>
+<p>Start with <strong>urgency, scope, required action, and persistence</strong>. Default to the least disruptive surface that makes the message discoverable. Banner and notification systems provide useful patterns, but their exact placement/focus conventions are design-system specific. <a href="https://carbondesignsystem.com/patterns/notification-pattern/">S62</a>, <a href="https://design-system.service.gov.uk/components/notification-banner/">S68</a></p>
+<div aria-label="30 · Notifications, banners, toasts, and alerts table" class="table-scroll" role="region" tabindex="0"><table>
+<thead>
+<tr>
+<th scope="col">Message</th>
+<th scope="col">Preferred pattern</th>
+<th scope="col">Placement / lifetime</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Invalid field</td>
+<td>Inline error plus summary for complex forms</td>
+<td>At the field; until corrected</td>
+</tr>
+<tr>
+<td>“Copied” / small completed action</td>
+<td>Local status or polite toast</td>
+<td>Near context or a consistent non-obstructive region; transient</td>
+</tr>
+<tr>
+<td>Save in progress</td>
+<td>Adjacent status / progress</td>
+<td>At the action or editor; until resolved</td>
+</tr>
+<tr>
+<td>Failed save / payment uncertainty</td>
+<td>Persistent inline/page message with recovery</td>
+<td>At the affected task; not only a disappearing toast</td>
+</tr>
+<tr>
+<td>Page-level requirement</td>
+<td>Inline notice or page banner</td>
+<td>Near relevant heading/content; until resolved or acknowledged appropriately</td>
+</tr>
+<tr>
+<td>Service-wide disruption</td>
+<td>Global banner / status area</td>
+<td>Consistent site-wide region; deduplicate and update</td>
+</tr>
+<tr>
+<td>Destructive/urgent decision</td>
+<td>Suitable confirmation or alert dialog</td>
+<td>Modal only when response is genuinely necessary</td>
+</tr>
+<tr>
+<td>Background export completed</td>
+<td>Notification center, contextual update; optional chosen channel</td>
+<td>Durable link/status with access checks</td>
+</tr>
+<tr>
+<td>New feature / promotion</td>
+<td>Optional nonblocking content</td>
+<td>Never interrupt a consequential flow</td>
+</tr>
+<tr>
+<td>Time-sensitive external reminder</td>
+<td>Opted-in push/email/SMS as appropriate</td>
+<td>Respect preferences, local time, and privacy</td>
+</tr>
+</tbody>
+</table></div>
+<p class="rule" id="msg-01"><strong>MSG-01 — MUST:</strong> Every message should identify the event or issue, its relevant consequence, and any available next step. Use severity words/icons as well as color.</p>
+<p class="rule" id="msg-02"><strong>MSG-02 — MUST:</strong> Use suitable announcement semantics. Routine updates are usually polite status messages; reserve assertive alerts for urgency. An <code>alert</code> does not need focus or a decision; an <code>alertdialog</code> does. <a href="https://www.w3.org/WAI/ARIA/apg/patterns/alertdialog/">S63</a></p>
+<p class="rule" id="msg-03"><strong>MSG-03 — MUST:</strong> Do not auto-focus every background notification. Place focus deliberately for actual navigation, errors, or modal tasks; verify announcements without duplication.</p>
+<p class="rule" id="msg-04"><strong>MSG-04 — SHOULD:</strong> Coalesce repeated messages and cap simultaneous visible toasts. A house default is one visible toast with a short queue; do not lose important messages when suppressing duplicates.</p>
+<p class="rule" id="msg-05"><strong>MSG-05 — MUST:</strong> A disappearing toast cannot be the only route to important information or a required action. Provide durable status/history or keep the notice available. If timing limits apply, satisfy the relevant accessibility requirements.</p>
+<p class="rule" id="msg-06"><strong>MSG-06 — SHOULD:</strong> Give dismiss controls meaningful names and adequate targets. Define whether dismissal lasts for the session, user, message version, or until the underlying problem changes; avoid repeatedly resurfacing irrelevant messages.</p>
+<p class="rule" id="msg-07"><strong>MSG-07 — MUST:</strong> Link notifications to the correct authorized destination. Handle expired/deleted objects, different workspaces, logged-out users, and changed permissions without leaking content.</p>
+<p class="rule" id="msg-08"><strong>MSG-08 — SHOULD:</strong> A notification center, when needed, should show understandable timestamps, read/unread state, grouping, preferences, and bulk controls. Badges should represent real actionable/unread items rather than manufactured urgency.</p>
+<p class="rule" id="msg-09"><strong>MSG-09 — MUST:</strong> Test notification priority under failure: an informational toast must not cover a payment error; chat bubbles and banners must not hide dialog actions or focus.</p>
+</section><section class="chapter"><h2 id="31-micro-actions-and-component-behavior">31 · Micro-actions and component behavior</h2>
+<p class="rule" id="mic-01"><strong>MIC-01 — MUST:</strong> Specify each micro-action as <strong>trigger → pending/state change → feedback → failure/reversal</strong>. Small actions still need clear meaning, accessibility, and trustworthy persistence.</p>
+<div aria-label="31 · Micro-actions and component behavior table" class="table-scroll" role="region" tabindex="0"><table>
+<thead>
+<tr>
+<th scope="col">Action / component</th>
+<th scope="col">Required or preferred behavior</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Save</td>
+<td>Distinguish unsaved, saving, saved, and failed; define whether manual save, autosave, or both apply.</td>
+</tr>
+<tr>
+<td>Autosave</td>
+<td>Show actual persistence; avoid saving invalid intermediate states as final; handle conflicts and reconnect.</td>
+</tr>
+<tr>
+<td>Copy</td>
+<td>Confirm only after clipboard success; give a fallback if permission/API support fails.</td>
+</tr>
+<tr>
+<td>Favorite / bookmark</td>
+<td>Expose selected state; optimistic updates may revert with clear feedback on failure.</td>
+</tr>
+<tr>
+<td>Toggle / switch</td>
+<td>Use for an immediate binary setting; if Save is required, make that interaction model explicit.</td>
+</tr>
+<tr>
+<td>Checkbox</td>
+<td>Represent independent selection or consent; a group needs a clear name and mixed-state behavior where relevant.</td>
+</tr>
+<tr>
+<td>Radio group</td>
+<td>Represent one selection among visible options; do not use it as disguised navigation.</td>
+</tr>
+<tr>
+<td>Tabs</td>
+<td>Switch related peer panels; apply the matching keyboard model; use links for actual navigation when appropriate.</td>
+</tr>
+<tr>
+<td>Accordion</td>
+<td>Keep the header operable and expose expanded state; do not hide essential validation without indicating it.</td>
+</tr>
+<tr>
+<td>Delete / archive</td>
+<td>State the item and effect; prefer recoverable deletion/undo when appropriate; irreversible deletion needs suitable review.</td>
+</tr>
+<tr>
+<td>Undo</td>
+<td>Reverse the real operation, not just its animation; disclose limits and preserve an accessible recovery route.</td>
+</tr>
+<tr>
+<td>Drag / reorder</td>
+<td>Provide keyboard/button alternatives; show the proposed result and commit it reliably.</td>
+</tr>
+<tr>
+<td>Upload</td>
+<td>Show restrictions, progress, cancel/retry, per-file errors, and confirmed completion.</td>
+</tr>
+<tr>
+<td>Download / export</td>
+<td>Indicate generation vs download; give useful file type/scope; authorize the actual download.</td>
+</tr>
+<tr>
+<td>Autocomplete</td>
+<td>Follow an accessible combobox pattern; differentiate typed text, active suggestion, and committed value. <a href="https://www.w3.org/WAI/ARIA/apg/patterns/combobox/">S65</a></td>
+</tr>
+<tr>
+<td>Overflow action menu</td>
+<td>Name the menu’s context; use the menu-button interaction model where it is genuinely an action menu. <a href="https://www.w3.org/WAI/ARIA/apg/patterns/menu-button/">S66</a></td>
+</tr>
+<tr>
+<td>Bulk action</td>
+<td>Show selected count and scope, especially “this page” vs “all matches”; handle partial failures explicitly.</td>
+</tr>
+<tr>
+<td>Refresh</td>
+<td>Preserve user context; distinguish current, refreshing, and stale content.</td>
+</tr>
+</tbody>
+</table></div>
+<p class="rule" id="mic-02"><strong>MIC-02 — MUST:</strong> Provide keyboard, touch, and assistive-technology operation for the chosen component pattern. Do not apply ARIA menu/grid roles merely for appearance.</p>
+<p class="rule" id="mic-03"><strong>MIC-03 — SHOULD:</strong> Use brief visual feedback to show cause and effect. Avoid confetti, sound, vibration, or animation on routine actions unless justified by the product and user preferences.</p>
+<p class="rule" id="mic-04"><strong>MIC-04 — MUST:</strong> Protect micro-actions against rapid activation, stale state, offline retries, and permission changes. Optimistic feedback must never create false certainty about a charge or irreversible operation.</p>
+<p class="rule" id="mic-05"><strong>MIC-05 — SHOULD:</strong> Hover/pressed/focus states should be consistent and visually distinguishable. Hover is supplementary; focus is essential for keyboard use. Test every state in both themes.</p>
+</section><section class="chapter"><h2 id="32-dashboards-tables-charts-and-complex-client-tools">32 · Dashboards, tables, charts, and complex client tools</h2>
+<p class="rule" id="data-01"><strong>DATA-01 — SHOULD:</strong> Start a dashboard with the decisions users need to make, not the number of charts available. Show exceptions and next actions with enough context to interpret them.</p>
+<p class="rule" id="data-02"><strong>DATA-02 — MUST:</strong> Label measures with units, date range, time zone, comparison baseline, and freshness. Distinguish zero, missing, loading, unavailable, and withheld values.</p>
+<p class="rule" id="data-03"><strong>DATA-03 — SHOULD:</strong> Use tables for precise comparison and charts for patterns; provide accessible summaries or data alternatives. Avoid misleading axes, ambiguous denominators, and decorative 3D effects.</p>
+<p class="rule" id="data-04"><strong>DATA-04 — MUST:</strong> Preserve table header relationships, sorting state, row-action context, and selection semantics. Do not turn a simple static table into an ARIA grid unless the richer keyboard interaction is implemented.</p>
+<p class="rule" id="data-05"><strong>DATA-05 — SHOULD:</strong> Allow useful filtering, sorting, search, pagination, and saved views according to the task. Make current scope visible and clearable. A filter must not silently apply to only a loaded page while appearing global.</p>
+<p class="rule" id="data-06"><strong>DATA-06 — MUST:</strong> Provide appropriate empty and partial-result states. For large/virtualized collections, verify keyboard access, screen-reader exposure, search behavior, and selection across unloaded rows.</p>
+<p class="rule" id="data-07"><strong>DATA-07 — MUST:</strong> Apply row/column/tenant permissions to on-screen data, charts, counts, exports, drill-downs, and shared links. A chart tooltip must not reveal data hidden by the table.</p>
+<p class="rule" id="data-08"><strong>DATA-08 — SHOULD:</strong> Let clients move from summary → detail → action → confirmation without losing the original collection context.</p>
+</section><section class="chapter"><h2 id="33-human-factors-and-psychology-without-manipulation">33 · Human factors and psychology without manipulation</h2>
+<p class="rule" id="psy-01"><strong>PSY-01 — SHOULD:</strong> Reduce avoidable cognitive effort: keep necessary context visible, use familiar language, group related information, and avoid making users remember details across steps. <a href="https://www.nngroup.com/articles/minimize-cognitive-load/">S69</a></p>
+<p class="rule" id="psy-02"><strong>PSY-02 — SHOULD:</strong> Distinguish slips from misunderstandings. Prevent slips with spacing and reversible actions; correct misunderstandings with clearer concepts, labels, examples, and feedback.</p>
+<p class="rule" id="psy-03"><strong>PSY-03 — SHOULD:</strong> Match perceived effort to actual effort. State requirements early, show truthful progress, allow saving, and do not present a surprise set of extra steps after claiming completion.</p>
+<p class="rule" id="psy-04"><strong>PSY-04 — SHOULD:</strong> Support confidence through predictable behavior, accurate status, transparent consequences, and consistent control placement. Visual polish should strengthen that trust rather than substitute for it.</p>
+<p class="rule" id="psy-05"><strong>PSY-05 — MUST:</strong> Use defaults carefully. Default to a useful, safe, reversible choice; do not preselect marketing consent, surprise spending, public exposure, or irreversible disclosure.</p>
+<p class="rule" id="psy-06"><strong>PSY-06 — MAY:</strong> Use genuine social proof, reminders, and progress cues when relevant. Treat anchoring, scarcity, gamification, and loss-framed messaging as context-sensitive influences with ethical risks, not automatic conversion tricks.</p>
+<p class="rule" id="psy-07"><strong>PSY-07 — MUST:</strong> Account for stress, interruption, fatigue, limited literacy, and temporary disability. Recovery, security, billing problems, and urgent workflows deserve especially direct language and low memory demand.</p>
+<p class="rule" id="psy-08"><strong>PSY-08 — SHOULD:</strong> Observe real task behavior, not only stated preference. A user may like a beautiful screen but fail the task; success, error recovery, confidence, and accessibility all matter.</p>
+<p class="rule" id="psy-09"><strong>PSY-09 — MUST:</strong> Do not turn popular claims into requirements without evidence: “everyone scans in an F,” “people have an eight-second attention span,” “red always sells,” and “more time in app means success” are not universal rules.</p>
+</section><section class="chapter"><h2 id="34-devsecops-and-software-supply-chain-discipline">34 · DevSecOps and software supply-chain discipline</h2>
+<p>Security belongs throughout delivery, with concrete ownership and checks proportionate to risk. Tools support a process; adding scanners does not by itself establish secure development.</p>
+<p class="rule" id="dso-01"><strong>DSO-01 — MUST:</strong> Before implementation, identify trust boundaries, data classes, abuse cases, and security acceptance criteria for sensitive changes. Update the threat assessment when identity, payments, integrations, or privileges change.</p>
+<p class="rule" id="dso-02"><strong>DSO-02 — MUST:</strong> Protect repositories and CI/CD configuration with appropriate access controls and review. Untrusted pull-request/build code must not receive production secrets or a privileged deployment identity. <a href="https://cheatsheetseries.owasp.org/cheatsheets/CI_CD_Security_Cheat_Sheet.html">S70</a></p>
+<p class="rule" id="dso-03"><strong>DSO-03 — SHOULD:</strong> Prefer short-lived, narrowly scoped workload credentials and isolated build environments. Separate build, approval, and deployment permissions where risk warrants it. <a href="https://cheatsheetseries.owasp.org/cheatsheets/CI_CD_Security_Cheat_Sheet.html">S70</a></p>
+<p class="rule" id="dso-04"><strong>DSO-04 — MUST:</strong> Run appropriate secret detection, dependency analysis, code analysis, and infrastructure checks in the delivery path. Add dynamic testing where relevant; triage findings with context, ownership, and deadlines rather than silently ignoring scanner noise. <a href="https://cheatsheetseries.owasp.org/cheatsheets/CI_CD_Security_Cheat_Sheet.html">S70</a></p>
+<p class="rule" id="dso-05"><strong>DSO-05 — SHOULD:</strong> Pin dependencies and CI actions appropriately, use trusted registries, track dependencies/SBOMs where useful, and retain artifact provenance. Verify that the artifact deployed is the reviewed/tested artifact. <a href="https://slsa.dev/spec/v1.2/">S71</a></p>
+<p class="rule" id="dso-06"><strong>DSO-06 — MUST:</strong> Design deploy credentials and environments to prevent untrusted builds from modifying release artifacts, poisoning shared caches, or escalating into production. <a href="https://cheatsheetseries.owasp.org/cheatsheets/CI_CD_Security_Cheat_Sheet.html">S70</a></p>
+<p class="rule" id="dso-07"><strong>DSO-07 — SHOULD:</strong> Use staged release, canary or feature-flag controls when justified; define rollback criteria and who responds. Remove stale flags and obsolete access.</p>
+<p class="rule" id="dso-08"><strong>DSO-08 — MUST:</strong> Handle leaked secrets as compromised: revoke/rotate and assess use. Merely deleting the value from the latest commit is insufficient.</p>
+<p class="rule" id="dso-09"><strong>DSO-09 — MUST:</strong> Track vulnerabilities through validation, remediation, regression verification, and monitored release. Prioritize exploitability, exposure, and business impact; document risk acceptance and review dates.</p>
+<p class="rule" id="dso-10"><strong>DSO-10 — SHOULD:</strong> Rehearse meaningful failure scenarios, including rollback, restore, revoked credentials, third-party outages, and compromised accounts. Turn incident lessons into narrow improvements to controls and tests.</p>
+</section><section class="chapter"><h2 id="35-review-from-every-relevant-professional-perspective">35 · Review from every relevant professional perspective</h2>
+<p>This handbook synthesizes published standards and specialist guidance. It does not claim that multiple professionals personally reviewed the product or that a document replaces years of experience. Use the following perspectives to expose blind spots.</p>
+<div aria-label="35 · Review from every relevant professional perspective table" class="table-scroll" role="region" tabindex="0"><table>
+<thead>
+<tr>
+<th scope="col">Perspective</th>
+<th scope="col">Questions the review must answer</th>
+<th scope="col">Useful evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Product manager / domain expert</td>
+<td>Does this solve the right problem, with a workable business process?</td>
+<td>Primary task, outcome metric, domain acceptance</td>
+</tr>
+<tr>
+<td>UX researcher</td>
+<td>Can real clients find, understand, complete, and recover from the task?</td>
+<td>Observed usability sessions, journey/flow findings</td>
+</tr>
+<tr>
+<td>Information architect</td>
+<td>Can people predict where features and information belong?</td>
+<td>Navigation/search tests, clear labels and scope</td>
+</tr>
+<tr>
+<td>UI / visual designer</td>
+<td>Is hierarchy coherent, readable, and consistent across states/themes?</td>
+<td>Rendered screens, token/state review</td>
+</tr>
+<tr>
+<td>Interaction / motion designer</td>
+<td>Are transitions, overlays, focus, gestures, and micro-actions coherent?</td>
+<td>Interaction specifications and interruption tests</td>
+</tr>
+<tr>
+<td>Human-factors specialist</td>
+<td>Where do memory demands, slips, stress, and misleading cues cause failure?</td>
+<td>Error/recovery observations, cognitive walkthrough</td>
+</tr>
+<tr>
+<td>Accessibility specialist</td>
+<td>Can disabled users complete the whole process?</td>
+<td>Manual assistive-technology checks plus automated findings</td>
+</tr>
+<tr>
+<td>Content designer / localizer</td>
+<td>Are instructions, errors, consequences, and translations understandable?</td>
+<td>Content review, long-text and RTL checks</td>
+</tr>
+<tr>
+<td>Frontend / mobile engineer</td>
+<td>Does the interface work across supported devices and input methods?</td>
+<td>Real-device/browser checks, runtime/performance evidence</td>
+</tr>
+<tr>
+<td>Backend / data engineer</td>
+<td>Are invariants, permissions, transactions, migrations, and data lifecycle correct?</td>
+<td>Integration/concurrency tests, schema and access checks</td>
+</tr>
+<tr>
+<td>Security engineer</td>
+<td>Can an attacker bypass authorization, steal credentials, or misuse a workflow?</td>
+<td>Threat model and focused abuse/security tests</td>
+</tr>
+<tr>
+<td>Privacy specialist</td>
+<td>Is collection justified and are user controls truthful and implementable?</td>
+<td>Data inventory, retention/export/deletion checks</td>
+</tr>
+<tr>
+<td>DevSecOps engineer</td>
+<td>Can source, builds, dependencies, or deployment identity be compromised?</td>
+<td>Pipeline permissions, scan triage, artifact provenance</td>
+</tr>
+<tr>
+<td>QA engineer</td>
+<td>Are expected, negative, boundary, and regression paths covered?</td>
+<td>Traceable acceptance results, reproducible defects</td>
+</tr>
+<tr>
+<td>SRE / operations</td>
+<td>Will failures be noticed, contained, communicated, and recovered?</td>
+<td>SLOs, actionable alerts, rollback and restore evidence</td>
+</tr>
+<tr>
+<td>Analyst / experimentation specialist</td>
+<td>Are metrics meaningful, correctly collected, and interpreted cautiously?</td>
+<td>Event validation, cohort definitions, experiment plan</td>
+</tr>
+<tr>
+<td>Support / customer success</td>
+<td>Can clients get help, resolve recurring problems, and leave fairly?</td>
+<td>Support paths, incident messaging, churn feedback</td>
+</tr>
+</tbody>
+</table></div>
+<p class="rule" id="rev-01"><strong>REV-01 — MUST:</strong> Review all relevant perspectives for major releases; for small changes, select affected perspectives. One person may cover multiple roles, but must not fabricate specialist sign-off.</p>
+<p class="rule" id="rev-02"><strong>REV-02 — SHOULD:</strong> Prioritize failures in this order: safety/data integrity and access control; completion of core tasks; accessibility and recovery; reliability/performance; clarity and visual polish; optional delight. Adjust for actual harm and audience.</p>
+<p class="rule" id="rev-03"><strong>REV-03 — MUST:</strong> Convert review findings into reproducible issues with affected users, steps, expected/actual behavior, severity, owner, and verification evidence. A list of opinions alone is not a quality process.</p>
+</section><section class="chapter"><h2 id="36-definition-of-done-and-maintenance">36 · Definition of done and maintenance</h2>
+<p class="rule" id="done-01"><strong>DONE-01 — MUST:</strong> Before design approval, identify primary journeys, data risks, relevant rules, and measurable acceptance criteria. Include loading, error, empty, permission, and narrow-screen states in the design.</p>
+<p class="rule" id="done-02"><strong>DONE-02 — MUST:</strong> Before implementation is complete, verify affected behavior and relevant accessibility/security requirements. Fix blockers or state them clearly; do not describe untested behavior as working.</p>
+<p class="rule" id="done-03"><strong>DONE-03 — MUST:</strong> Before release, complete the companion release checklist with evidence, owners, and justified N/A entries. Critical data exposure, privilege bypass, broken recovery, inaccessible primary flows, and unhandled data-loss risks block a production-ready claim.</p>
+<p class="rule" id="done-04"><strong>DONE-04 — SHOULD:</strong> After release, monitor real outcomes and compare them with the product’s baseline. Use incidents, support, usability studies, and field measurements to refine the product and this rulebook.</p>
+<p class="rule" id="done-05"><strong>DONE-05 — MUST:</strong> Recheck changing guidance at the point of implementation: security advisories, password-hashing parameters, identity-provider requirements, browser support, platform/store policies, and applicable law. The research date is not a permanent guarantee of currency.</p>
+<h3 id="practical-project-record">Practical project record</h3>
+<pre><code class="language-text">Product / feature:
+Primary users and task:
+Platforms and supported versions:
+Data sensitivity and applicable markets:
+Success event and guardrail metrics:
+Relevant rule IDs:
+Acceptance checks and evidence:
+Exceptions, rationale, compensating controls:
+Unverified items and owner:
+Release / rollback / recovery owner:
+Next review trigger or date:
+</code></pre>
+<h3 id="how-codex-uses-this-book">How Codex uses this book</h3>
+<p>For app/website work on this Mac, the personal <code>development-rulebook</code> skill and the global Codex instruction point to the maintained reference. Read the skill first, select relevant chapters, translate them into acceptance criteria, implement within the authorized scope, and report verification and gaps. This is not authorization to deploy, send messages, access unrelated systems, or redesign unrelated features.</p>
+<p>The workspace Markdown and HTML are a portable snapshot. The maintained personal reference is <code>~/.codex/skills/development-rulebook/references/rulebook.md</code>. Update the maintained reference and regenerate/synchronize the snapshot when revising the book. Global instructions apply through Codex’s supported instruction-loading mechanism; cloud tasks and other machines need their own copy/configuration. <a href="https://learn.chatgpt.com/docs/agent-configuration/agents-md">S55</a></p>
+</section><section class="chapter"><h2 id="37-art-direction-and-coherent-visual-identity">37 · Art direction and coherent visual identity</h2>
+<p>Use the <a href="DESIGN-ATLAS.md">Design &amp; Interaction Atlas</a> and <a href="PATTERN-CATALOG.md">pattern catalogue</a> for options. These references contain original recipes and a dated source register; they do not certify third-party components.</p>
+<p class="rule" id="art-01"><strong>ART-01 — MUST:</strong> Establish the affected audience, primary task, brand constraints, real content, platform, and performance/accessibility needs before choosing an expressive treatment. Preserve the existing system unless a change is within scope.</p>
+<p class="rule" id="art-02"><strong>ART-02 — SHOULD:</strong> For a substantial new visual design, explore two or three coherent directions internally and select using task clarity, identity, content fit, accessibility, and implementation cost. Do not ask the user to choose every routine detail.</p>
+<p class="rule" id="art-03"><strong>ART-03 — SHOULD:</strong> Make distinctiveness come from specific content, composition, typography, imagery, and a few meaningful interactions. Do not default every project to the same gradient hero, bento grid, glowing border, or glass card.</p>
+<p class="rule" id="art-04"><strong>ART-04 — MUST:</strong> Keep essential content, commands, reading order, and meaning available independently of decorative animation, canvas, hover, or unusual gestures. A distinctive style must preserve a usable baseline.</p>
+<p class="rule" id="art-05"><strong>ART-05 — SHOULD:</strong> Define an image grammar—subject, crop, viewpoint, lighting, palette, texture—and use it consistently. Use original or properly licensed assets and truthful product demonstrations.</p>
+<p class="rule" id="art-06"><strong>ART-06 — MUST:</strong> Distinguish decorative artwork, illustrative sample data, and actual evidence. Do not let a simulated interface, synthetic portrait, map, statistic, or certificate imply a real event, customer, capability, or assurance it does not represent.</p>
+<p class="rule" id="art-07"><strong>ART-07 — SHOULD:</strong> Use separators to support content rhythm: whitespace, rule, tonal zone, label, or a restrained thematic edge. Check that waves, diagonal cuts, and oversized type do not clip content or disturb reading order at narrow widths.</p>
+<p class="rule" id="art-08"><strong>ART-08 — MUST:</strong> Evaluate expressive designs with representative content, long text, touch, keyboard, zoom, both relevant themes, and task outcomes. Visual novelty or popularity is not evidence of improved retention or conversion.</p>
+</section><section class="chapter"><h2 id="38-interaction-choreography-and-motion-systems">38 · Interaction choreography and motion systems</h2>
+<p class="rule" id="mot-01"><strong>MOT-01 — MUST:</strong> Give each substantial interaction a contract: trigger; before/pending/committed/failed states; feedback; focus/history/scroll; cancellation; repeated input; recovery; and reduced-motion/static alternatives. Reuse chapters 28–31 for behavioral details.</p>
+<p class="rule" id="mot-02"><strong>MOT-02 — SHOULD:</strong> Separate routine functional feedback from occasional expressive moments. Keep repeated operational work quiet; make a signature interaction explain the product or acknowledge a meaningful outcome. <a href="https://carbondesignsystem.com/elements/motion/overview/">S76</a>, <a href="https://fluent2.microsoft.design/motion">S77</a></p>
+<p class="rule" id="mot-03"><strong>MOT-03 — MUST:</strong> Respect reduced-motion preferences for nonessential movement, including JavaScript, SVG, canvas, video, parallax, and scroll effects. This house baseline extends beyond WCAG AA; WCAG 2.3.3 itself is AAA. Do not rely on one CSS rule to stop every rendering engine. <a href="https://motion.dev/docs/react-accessibility">S78</a>, <a href="https://www.w3.org/WAI/WCAG22/Understanding/animation-from-interactions.html">S79</a></p>
+<p class="rule" id="mot-04"><strong>MOT-04 — MUST:</strong> Apply the relevant pause/stop/hide requirements for automatically moving, blinking, scrolling, or updating content. Provide an appropriate control when the criterion applies; a pause only while hovering is not a general substitute. Avoid flashing effects. <a href="https://www.w3.org/WAI/WCAG22/Understanding/pause-stop-hide.html">S80</a>, <a href="https://www.w3.org/TR/WCAG22/">S01</a></p>
+<p class="rule" id="mot-05"><strong>MOT-05 — MUST:</strong> Keep real hit targets, keyboard paths, and accessible state stable. Magnetic buttons, animated cursors, drag, tilt, or swipe must not be the sole route to essential functionality. Pointer ornament must not intercept input.</p>
+<p class="rule" id="mot-06"><strong>MOT-06 — MUST:</strong> Make navigation and completion work without the transition. Test rapid back/forward, direct URLs, repeated actions, interrupted animations, stale network responses, and focus restoration. A motion library does not implement the application's state contract. <a href="https://developer.mozilla.org/en-US/docs/Web/API/View_Transition_API">S81</a></p>
+<p class="rule" id="mot-07"><strong>MOT-07 — SHOULD:</strong> Use consistent motion tokens for duration, easing, distance, and staggering; fit platform conventions and task frequency. Treat the atlas timing ranges as house starting values, never mandatory scientific thresholds.</p>
+<p class="rule" id="mot-08"><strong>MOT-08 — MUST:</strong> For persistent or expensive effects, bound work, stop when not needed, clean up listeners/resources, handle rendering failure, and measure representative devices. A static poster or DOM equivalent must keep the task usable. Prefer the simplest implementation that meets the intent. <a href="https://web.dev/articles/animations-guide">S82</a></p>
+</section><section class="chapter"><h2 id="39-themes-materials-and-responsive-composition">39 · Themes, materials, and responsive composition</h2>
+<p class="rule" id="dsn-01"><strong>DSN-01 — SHOULD:</strong> Separate foundation, semantic, and component tokens. Keep brand, appearance, density, and motion preference independent where useful; avoid unnecessary combinations. Token formats support exchange but do not establish design quality or accessibility. <a href="https://www.designtokens.org/tr/2025.10/format/">S83</a></p>
+<p class="rule" id="dsn-02"><strong>DSN-02 — MUST:</strong> Verify actual foreground/background pairs and state affordances. Mood-board swatches and third-party color scales are not approved accessible pairings. Dynamic backgrounds require predictable text surfaces or demonstrated worst-case contrast.</p>
+<p class="rule" id="dsn-03"><strong>DSN-03 — MUST:</strong> Give blur, glass, blend modes, masks, gradients, and unusual shapes a readable fallback. Essential boundaries and focus cannot depend only on shadows, transparency, or subtle texture.</p>
+<p class="rule" id="dsn-04"><strong>DSN-04 — SHOULD:</strong> Adapt the composition to content and task: a desktop detail pane may become a routed page; a broad comparison may become labeled stacked groups. Do not merely scale the desktop layout down or hide difficult essential features.</p>
+<p class="rule" id="dsn-05"><strong>DSN-05 — MUST:</strong> Keep source/reading order meaningful despite masonry, bento, layering, and asymmetric layouts. Any visual reordering must preserve understandable keyboard and assistive-technology navigation.</p>
+<p class="rule" id="dsn-06"><strong>DSN-06 — SHOULD:</strong> Use a bounded fluid typography/spacing system where suitable, then test zoom, long labels, fallback fonts, script coverage, and layout stability. Avoid pure viewport sizing that defeats useful text enlargement.</p>
+<p class="rule" id="dsn-07"><strong>DSN-07 — MUST:</strong> Implement light/dark/system as real supported states when in scope, including first paint, preference changes, semantic status colors, media, overlays, and charts. Theme switching must not reset the user's task or draft.</p>
+<p class="rule" id="dsn-08"><strong>DSN-08 — SHOULD:</strong> Document the reusable anatomy and allowed variation of each adopted component. Include content limits, responsive transformations, density, states, and ownership so the system remains coherent as features grow.</p>
+</section><section class="chapter"><h2 id="40-inspiration-component-adoption-and-design-verification">40 · Inspiration, component adoption, and design verification</h2>
+<p class="rule" id="lib-01"><strong>LIB-01 — MUST:</strong> Distinguish inspiration, inspected source, adapted component, and verified integration. A directory listing or attractive demo is not evidence of security, performance, accessibility, compatibility, or permission to reuse.</p>
+<p class="rule" id="lib-02"><strong>LIB-02 — MUST:</strong> Before importing, inspect the exact component's author, version/commit, code license, dependencies, and separate asset/font rights. Preserve notices and redistribution restrictions. Recheck changing terms at adoption; community entries may have different terms. <a href="https://21st.dev/community/components">S72</a>, <a href="https://github.com/DavidHDev/react-bits/blob/main/LICENSE.md">S84</a></p>
+<p class="rule" id="lib-03"><strong>LIB-03 — MUST:</strong> Treat registry commands and downloaded code as third-party inputs. Review package scripts, remote requests, dynamic markup/SVG, event handlers, secret handling, and dependencies relevant to the integration. Follow the existing DevSecOps rules rather than trusting a familiar catalogue name.</p>
+<p class="rule" id="lib-04"><strong>LIB-04 — SHOULD:</strong> Reuse the project's framework, primitives, tokens, and motion engine. Adapt a useful idea instead of accumulating incompatible component systems or shipping a large dependency for one small effect.</p>
+<p class="rule" id="lib-05"><strong>LIB-05 — MUST:</strong> Record a meaningful acceptance check for every adopted enhancement: affected task, expected behavior, fallback, relevant devices/preferences, and actual verification evidence. Unimplemented recipes remain unverified ideas.</p>
+<p class="rule" id="lib-06"><strong>LIB-06 — SHOULD:</strong> Evaluate alternatives against task success, comprehension, error/recovery, performance, and maintenance as well as visual identity. An experiment needs a defined outcome and guardrails; do not promise a conversion increase from an aesthetic trend.</p>
+<p class="rule" id="lib-07"><strong>LIB-07 — MUST:</strong> Keep provenance and review status in the atlas and project adoption record. Do not describe category coverage as inspection of every example, or curated research as coverage of the complete internet.</p>
+<p class="rule" id="lib-08"><strong>LIB-08 — SHOULD:</strong> Revisit chosen sources before implementation and update the library as relevant needs emerge. The library's existence does not authorize purchases, ongoing scraping, package installation, deployment, or changes outside the requested scope.</p>
+</section><section class="chapter"><h2 id="sources-and-evidence-notes">Sources and evidence notes</h2>
+<p>Sources were consulted on <strong>18 September 2026</strong>. Standards supply scoped requirements; official implementation guides and practitioner research inform practices. The particular workflows, ID system, starter palette, sample test matrix, and release gates are our synthesis. They are not quoted external standards or promises of business results. The linked documents contain exceptions and detail beyond this handbook.</p>
+<div aria-label="Sources and evidence notes table" class="table-scroll" role="region" tabindex="0"><table>
+<thead>
+<tr>
+<th scope="col">Ref</th>
+<th scope="col">Source</th>
+<th scope="col">Used for</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>S01</td>
+<td><a href="https://www.w3.org/TR/WCAG22/">W3C: WCAG 2.2</a></td>
+<td>Web accessibility baseline, conformance scope, input and interaction criteria</td>
+</tr>
+<tr>
+<td>S02</td>
+<td><a href="https://www.nngroup.com/articles/ten-usability-heuristics/">Nielsen Norman Group: ten usability heuristics</a></td>
+<td>Interaction review principles</td>
+</tr>
+<tr>
+<td>S03</td>
+<td><a href="https://www.nngroup.com/articles/aesthetic-usability-effect/">NN/g: aesthetic–usability effect</a></td>
+<td>Attraction and perceived usability</td>
+</tr>
+<tr>
+<td>S04</td>
+<td><a href="https://www.nngroup.com/articles/fitts-law/">NN/g: Fitts’s law</a></td>
+<td>Target selection and reach</td>
+</tr>
+<tr>
+<td>S05</td>
+<td><a href="https://lawsofux.com/hicks-law/">Laws of UX: Hick’s law</a></td>
+<td>Practitioner interpretation of choice complexity; a heuristic</td>
+</tr>
+<tr>
+<td>S06</td>
+<td><a href="https://www.nngroup.com/articles/gestalt-proximity/">NN/g: proximity</a></td>
+<td>Visual grouping</td>
+</tr>
+<tr>
+<td>S07</td>
+<td><a href="https://www.nngroup.com/articles/gestalt-similarity/">NN/g: similarity</a></td>
+<td>Consistent visual meaning</td>
+</tr>
+<tr>
+<td>S08</td>
+<td><a href="https://www.nngroup.com/articles/common-region/">NN/g: common region</a></td>
+<td>Containers and grouping</td>
+</tr>
+<tr>
+<td>S09</td>
+<td><a href="https://www.nngroup.com/articles/progressive-disclosure/">NN/g: progressive disclosure</a></td>
+<td>Complexity and advanced options</td>
+</tr>
+<tr>
+<td>S10</td>
+<td><a href="https://www.nngroup.com/articles/response-times-3-important-limits/">NN/g: response-time limits</a></td>
+<td>Approximate perceived response guidance</td>
+</tr>
+<tr>
+<td>S11</td>
+<td><a href="https://research.google/pubs/measuring-the-user-experience-on-a-large-scale-user-centered-metrics-for-web-applications/">Google Research: HEART</a></td>
+<td>Goals, signals, user-centered metrics</td>
+</tr>
+<tr>
+<td>S12</td>
+<td><a href="https://www.ftc.gov/reports/bringing-dark-patterns-light">FTC: Bringing Dark Patterns to Light</a></td>
+<td>Deceptive design and user autonomy</td>
+</tr>
+<tr>
+<td>S13</td>
+<td><a href="https://helpx.adobe.com/in_hi/illustrator/how-to/experiment-with-color-combinations-hybrid.html">Adobe: color combinations</a></td>
+<td>Palette harmony</td>
+</tr>
+<tr>
+<td>S14</td>
+<td><a href="https://developer.android.com/develop/ui/compose/designsystems/material3">Android Developers: Material 3 theming</a></td>
+<td>Color roles and theme structure</td>
+</tr>
+<tr>
+<td>S15</td>
+<td><a href="https://design-system.service.gov.uk/components/password-input/">GOV.UK: password input</a></td>
+<td>Reveal toggle and password input behavior</td>
+</tr>
+<tr>
+<td>S16</td>
+<td><a href="https://github.com/OWASP/ASVS">OWASP: ASVS</a></td>
+<td>Web verification catalogue; stable 5.0.0 used</td>
+</tr>
+<tr>
+<td>S17</td>
+<td><a href="https://mas.owasp.org/MASVS/">OWASP: MASVS</a></td>
+<td>Native mobile security</td>
+</tr>
+<tr>
+<td>S18</td>
+<td><a href="https://pages.nist.gov/800-63-4/sp800-63b/authenticators/">NIST SP 800-63B-4: authenticators</a></td>
+<td>Password and authenticator policy</td>
+</tr>
+<tr>
+<td>S19</td>
+<td><a href="https://cheatsheetseries.owasp.org/cheatsheets/Authentication_Cheat_Sheet.html">OWASP: authentication</a></td>
+<td>Login, MFA, reauthentication</td>
+</tr>
+<tr>
+<td>S20</td>
+<td><a href="https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html">OWASP: password storage</a></td>
+<td>Hashing and current baseline parameters</td>
+</tr>
+<tr>
+<td>S21</td>
+<td><a href="https://cheatsheetseries.owasp.org/cheatsheets/Forgot_Password_Cheat_Sheet.html">OWASP: forgot password</a></td>
+<td>Secure recovery</td>
+</tr>
+<tr>
+<td>S22</td>
+<td><a href="https://cheatsheetseries.owasp.org/cheatsheets/Authorization_Cheat_Sheet.html">OWASP: authorization</a></td>
+<td>Object/tenant access and deny by default</td>
+</tr>
+<tr>
+<td>S23</td>
+<td><a href="https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html">OWASP: session management</a></td>
+<td>Cookies, token exposure, expiry and revocation</td>
+</tr>
+<tr>
+<td>S24</td>
+<td><a href="https://www.rfc-editor.org/rfc/rfc9700.html">IETF RFC 9700</a></td>
+<td>OAuth 2.0 security best current practice</td>
+</tr>
+<tr>
+<td>S25</td>
+<td><a href="https://cheatsheetseries.owasp.org/cheatsheets/SQL_Injection_Prevention_Cheat_Sheet.html">OWASP: SQL injection prevention</a></td>
+<td>Query parameterization</td>
+</tr>
+<tr>
+<td>S26</td>
+<td><a href="https://cheatsheetseries.owasp.org/cheatsheets/Cross_Site_Scripting_Prevention_Cheat_Sheet.html">OWASP: XSS prevention</a></td>
+<td>Output encoding and HTML sanitization</td>
+</tr>
+<tr>
+<td>S27</td>
+<td><a href="https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html">OWASP: CSRF prevention</a></td>
+<td>State-changing request protection</td>
+</tr>
+<tr>
+<td>S28</td>
+<td><a href="https://cheatsheetseries.owasp.org/cheatsheets/File_Upload_Cheat_Sheet.html">OWASP: file upload</a></td>
+<td>Untrusted upload controls</td>
+</tr>
+<tr>
+<td>S29</td>
+<td><a href="https://cheatsheetseries.owasp.org/cheatsheets/REST_Security_Cheat_Sheet.html">OWASP: REST security</a></td>
+<td>CORS and API token verification</td>
+</tr>
+<tr>
+<td>S30</td>
+<td><a href="https://www.w3.org/WAI/WCAG22/Understanding/accessible-authentication-minimum.html">W3C: accessible authentication</a></td>
+<td>Cognitive access and assistive mechanisms</td>
+</tr>
+<tr>
+<td>S31</td>
+<td><a href="https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum.html">W3C: minimum text contrast</a></td>
+<td>Numeric contrast targets and exceptions</td>
+</tr>
+<tr>
+<td>S32</td>
+<td><a href="https://www.w3.org/WAI/WCAG22/Understanding/reflow.html">W3C: reflow</a></td>
+<td>320 CSS px and zoom testing</td>
+</tr>
+<tr>
+<td>S33</td>
+<td><a href="https://www.w3.org/WAI/WCAG22/Understanding/target-size-minimum.html">W3C: target size minimum</a></td>
+<td>24 CSS px and scoped exceptions</td>
+</tr>
+<tr>
+<td>S34</td>
+<td><a href="https://www.w3.org/WAI/WCAG22/Understanding/non-text-contrast">W3C: non-text contrast</a></td>
+<td>Essential controls and graphics</td>
+</tr>
+<tr>
+<td>S35</td>
+<td><a href="https://www.w3.org/WAI/WCAG22/Understanding/text-spacing.html">W3C: text spacing</a></td>
+<td>User override testing</td>
+</tr>
+<tr>
+<td>S36</td>
+<td><a href="https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/At-rules/@media/prefers-color-scheme">MDN: prefers-color-scheme</a></td>
+<td>OS theme preference</td>
+</tr>
+<tr>
+<td>S37</td>
+<td><a href="https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/color-scheme">MDN: color-scheme</a></td>
+<td>Browser rendering of supported themes</td>
+</tr>
+<tr>
+<td>S38</td>
+<td><a href="https://web.dev/articles/responsive-web-design-basics">web.dev: responsive design basics</a></td>
+<td>Flexible layouts and content-driven breakpoints</td>
+</tr>
+<tr>
+<td>S39</td>
+<td><a href="https://developer.apple.com/design/tips/">Apple: UI design tips</a></td>
+<td>Touch target and platform design guidance</td>
+</tr>
+<tr>
+<td>S40</td>
+<td><a href="https://developer.android.com/guide/topics/ui/accessibility/apps">Android: accessible apps</a></td>
+<td>Touch targets and native accessibility</td>
+</tr>
+<tr>
+<td>S41</td>
+<td><a href="https://www.w3.org/WAI/tutorials/forms/">W3C WAI: forms tutorial</a></td>
+<td>Labels, grouping, and feedback</td>
+</tr>
+<tr>
+<td>S42</td>
+<td><a href="https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/">W3C APG: modal dialogs</a></td>
+<td>Focus and modal interaction</td>
+</tr>
+<tr>
+<td>S43</td>
+<td><a href="https://cheatsheetseries.owasp.org/cheatsheets/Server_Side_Request_Forgery_Prevention_Cheat_Sheet.html">OWASP: SSRF prevention</a></td>
+<td>Outbound request restrictions</td>
+</tr>
+<tr>
+<td>S44</td>
+<td><a href="https://cheatsheetseries.owasp.org/cheatsheets/Secrets_Management_Cheat_Sheet.html">OWASP: secrets management</a></td>
+<td>Credential lifecycle</td>
+</tr>
+<tr>
+<td>S45</td>
+<td><a href="https://cheatsheetseries.owasp.org/cheatsheets/Logging_Cheat_Sheet.html">OWASP: logging</a></td>
+<td>Redaction and safe diagnostics</td>
+</tr>
+<tr>
+<td>S46</td>
+<td><a href="https://docs.stripe.com/webhooks">Stripe: webhooks</a></td>
+<td>Provider-specific example of signatures and duplicate delivery</td>
+</tr>
+<tr>
+<td>S47</td>
+<td><a href="https://ico.org.uk/for-organisations/uk-gdpr-guidance-and-resources/data-protection-principles/a-guide-to-the-data-protection-principles/">ICO: data-protection principles</a></td>
+<td>UK-specific privacy principles; applicability must be checked</td>
+</tr>
+<tr>
+<td>S48</td>
+<td><a href="https://csrc.nist.gov/pubs/sp/800/218/final">NIST: SSDF 1.1</a></td>
+<td>Secure development and vulnerability response practices</td>
+</tr>
+<tr>
+<td>S49</td>
+<td><a href="https://web.dev/articles/vitals">web.dev: Web Vitals</a></td>
+<td>Field performance thresholds and lab limitations</td>
+</tr>
+<tr>
+<td>S50</td>
+<td><a href="https://www.nngroup.com/articles/onboarding-tutorials/">NN/g: onboarding tutorials vs contextual help</a></td>
+<td>Contextual onboarding</td>
+</tr>
+<tr>
+<td>S51</td>
+<td><a href="https://www.w3.org/International/quicktips/index.en">W3C: internationalization quick tips</a></td>
+<td>Language, Unicode, and direction</td>
+</tr>
+<tr>
+<td>S52</td>
+<td><a href="https://developers.google.com/search/docs/fundamentals/seo-starter-guide">Google Search: SEO starter guide</a></td>
+<td>Public-content discovery</td>
+</tr>
+<tr>
+<td>S53</td>
+<td><a href="https://sre.google/sre-book/service-level-objectives/">Google SRE: service-level objectives</a></td>
+<td>User-centered reliability objectives</td>
+</tr>
+<tr>
+<td>S54</td>
+<td><a href="https://cheatsheetseries.owasp.org/cheatsheets/LLM_Prompt_Injection_Prevention_Cheat_Sheet.html">OWASP: LLM prompt-injection prevention</a></td>
+<td>AI trust boundaries and defense in depth</td>
+</tr>
+<tr>
+<td>S55</td>
+<td><a href="https://learn.chatgpt.com/docs/agent-configuration/agents-md">OpenAI: AGENTS.md instructions</a></td>
+<td>Persistence mechanism and scope</td>
+</tr>
+<tr>
+<td>S56</td>
+<td><a href="https://www.nngroup.com/articles/user-journeys-vs-user-flows/">NN/g: journeys vs flows</a></td>
+<td>End-to-end journey and screen-flow distinction</td>
+</tr>
+<tr>
+<td>S57</td>
+<td><a href="https://design-system.service.gov.uk/patterns/check-answers/">GOV.UK: check answers</a></td>
+<td>Review and correction before submission</td>
+</tr>
+<tr>
+<td>S58</td>
+<td><a href="https://design-system.service.gov.uk/patterns/confirmation-pages/">GOV.UK: confirmation pages</a></td>
+<td>Completion, receipt, and next steps</td>
+</tr>
+<tr>
+<td>S59</td>
+<td><a href="https://www.nngroup.com/articles/animation-purpose-ux/">NN/g: purpose of animation</a></td>
+<td>Continuity, hierarchy, and feedback</td>
+</tr>
+<tr>
+<td>S60</td>
+<td><a href="https://www.nngroup.com/articles/modal-nonmodal-dialog/">NN/g: modal and nonmodal dialogs</a></td>
+<td>Interruption and context tradeoffs</td>
+</tr>
+<tr>
+<td>S61</td>
+<td><a href="https://developer.android.com/develop/ui/compose/components/bottom-sheets">Android: bottom sheets</a></td>
+<td>Sheet presentation and dismissal implementation</td>
+</tr>
+<tr>
+<td>S62</td>
+<td><a href="https://carbondesignsystem.com/patterns/notification-pattern/">Carbon: notification patterns</a></td>
+<td>Notification surface selection</td>
+</tr>
+<tr>
+<td>S63</td>
+<td><a href="https://www.w3.org/WAI/ARIA/apg/patterns/alertdialog/">W3C APG: alert dialogs</a></td>
+<td>Urgent decisions vs passive announcements</td>
+</tr>
+<tr>
+<td>S64</td>
+<td><a href="https://www.w3.org/WAI/ARIA/apg/patterns/tooltip/">W3C APG: tooltip pattern</a></td>
+<td>Supplementary, noninteractive tooltip behavior; pattern is work in progress</td>
+</tr>
+<tr>
+<td>S65</td>
+<td><a href="https://www.w3.org/WAI/ARIA/apg/patterns/combobox/">W3C APG: combobox pattern</a></td>
+<td>Accessible autocomplete behavior</td>
+</tr>
+<tr>
+<td>S66</td>
+<td><a href="https://www.w3.org/WAI/ARIA/apg/patterns/menu-button/">W3C APG: menu button pattern</a></td>
+<td>Action-menu keyboard behavior</td>
+</tr>
+<tr>
+<td>S67</td>
+<td><a href="https://www.w3.org/WAI/WCAG22/Understanding/content-on-hover-or-focus.html">W3C: content on hover or focus</a></td>
+<td>Dismissible, hoverable, persistent content</td>
+</tr>
+<tr>
+<td>S68</td>
+<td><a href="https://design-system.service.gov.uk/components/notification-banner/">GOV.UK: notification banner</a></td>
+<td>Page-level notice example</td>
+</tr>
+<tr>
+<td>S69</td>
+<td><a href="https://www.nngroup.com/articles/minimize-cognitive-load/">NN/g: cognitive load</a></td>
+<td>Memory and task effort</td>
+</tr>
+<tr>
+<td>S70</td>
+<td><a href="https://cheatsheetseries.owasp.org/cheatsheets/CI_CD_Security_Cheat_Sheet.html">OWASP: CI/CD security</a></td>
+<td>Delivery pipeline trust boundaries</td>
+</tr>
+<tr>
+<td>S71</td>
+<td><a href="https://slsa.dev/spec/v1.2/">SLSA specification 1.2</a></td>
+<td>Supply-chain provenance and assurance</td>
+</tr>
+<tr>
+<td>S72</td>
+<td><a href="https://21st.dev/community/components">21st.dev community directory</a></td>
+<td>Design expansion; reviewed 2026-09-18</td>
+</tr>
+<tr>
+<td>S73</td>
+<td><a href="https://ui.aceternity.com/components">Aceternity UI component directory</a></td>
+<td>Design expansion; reviewed 2026-09-18</td>
+</tr>
+<tr>
+<td>S74</td>
+<td><a href="https://magicui.design/docs/components">Magic UI component directory</a></td>
+<td>Design expansion; reviewed 2026-09-18</td>
+</tr>
+<tr>
+<td>S75</td>
+<td><a href="https://github.com/DavidHDev/react-bits">React Bits official repository</a></td>
+<td>Design expansion; reviewed 2026-09-18</td>
+</tr>
+<tr>
+<td>S76</td>
+<td><a href="https://carbondesignsystem.com/elements/motion/overview/">Carbon motion</a></td>
+<td>Design expansion; reviewed 2026-09-18</td>
+</tr>
+<tr>
+<td>S77</td>
+<td><a href="https://fluent2.microsoft.design/motion">Fluent motion</a></td>
+<td>Design expansion; reviewed 2026-09-18</td>
+</tr>
+<tr>
+<td>S78</td>
+<td><a href="https://motion.dev/docs/react-accessibility">Motion accessibility</a></td>
+<td>Design expansion; reviewed 2026-09-18</td>
+</tr>
+<tr>
+<td>S79</td>
+<td><a href="https://www.w3.org/WAI/WCAG22/Understanding/animation-from-interactions.html">WCAG animation from interactions (AAA)</a></td>
+<td>Design expansion; reviewed 2026-09-18</td>
+</tr>
+<tr>
+<td>S80</td>
+<td><a href="https://www.w3.org/WAI/WCAG22/Understanding/pause-stop-hide.html">WCAG pause stop hide</a></td>
+<td>Design expansion; reviewed 2026-09-18</td>
+</tr>
+<tr>
+<td>S81</td>
+<td><a href="https://developer.mozilla.org/en-US/docs/Web/API/View_Transition_API">MDN View Transition API</a></td>
+<td>Design expansion; reviewed 2026-09-18</td>
+</tr>
+<tr>
+<td>S82</td>
+<td><a href="https://web.dev/articles/animations-guide">web.dev animation performance</a></td>
+<td>Design expansion; reviewed 2026-09-18</td>
+</tr>
+<tr>
+<td>S83</td>
+<td><a href="https://www.designtokens.org/tr/2025.10/format/">Design Tokens Format 2025.10</a></td>
+<td>Design expansion; reviewed 2026-09-18</td>
+</tr>
+<tr>
+<td>S84</td>
+<td><a href="https://github.com/DavidHDev/react-bits/blob/main/LICENSE.md">React Bits license</a></td>
+<td>Design expansion; reviewed 2026-09-18</td>
+</tr>
+</tbody>
+</table></div></section>
+<footer class="foot">Research-backed defaults, with context and evidence. No checklist replaces judgment or verification. <a href="RULEBOOK.md">Markdown source</a> · <a href="contrast-report.json">Palette verification</a></footer></main></div><script>
+const picker=document.getElementById('theme');
+const media=matchMedia('(prefers-color-scheme: dark)');
+let preference='system';try{preference=localStorage.getItem('rulebook-theme')||'system'}catch{}
+if(!['system','light','dark'].includes(preference))preference='system';
+picker.value=preference;
+function applyTheme(){document.documentElement.dataset.theme=preference==='system'?(media.matches?'dark':'light'):preference}
+applyTheme();picker.addEventListener('change',()=>{preference=picker.value;try{localStorage.setItem('rulebook-theme',preference)}catch{}applyTheme()});media.addEventListener('change',applyTheme);
+const nav=document.getElementById('contents');nav.open=matchMedia('(min-width: 761px)').matches;
+const query=document.getElementById('search'),results=document.getElementById('search-results'),status=document.getElementById('search-status');
+const index=Array.from(document.querySelectorAll('.rule')).map(e=>({id:e.id,text:e.textContent}));
+query.addEventListener('input',()=>{const q=query.value.trim().toLowerCase();results.replaceChildren();results.hidden=!q;if(!q){status.textContent='';return}const terms=q.split(/\s+/);const matches=index.filter(e=>terms.every(t=>e.text.toLowerCase().includes(t)));status.textContent=matches.length+' matching rules'+(matches.length>20?' (first 20 shown)':'');const heading=document.createElement('h2');heading.textContent='Matching rules';results.append(heading);if(!matches.length){const p=document.createElement('p');p.textContent='No matching rule. Try one word, a rule ID, or your browser’s Find command for tables and other content.';results.append(p)}for(const e of matches.slice(0,20)){const a=document.createElement('a');a.href='#'+e.id;a.textContent=e.text.length>200?e.text.slice(0,200)+'…':e.text;a.addEventListener('click',()=>{const el=document.getElementById(e.id);el.tabIndex=-1;el.focus({preventScroll:true})});results.append(a)}});
+</script></body></html>

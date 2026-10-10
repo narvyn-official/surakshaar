@@ -171,6 +171,9 @@ class LearningScenarioActivity : Activity() {
                         }
                     }
                 }
+                body.add(action(t("Inspect this step in 3D / AR", "इस चरण को 3D / AR में देखें"), false, ActionRole.CAMERA) {
+                    if(store.isCurrentProfile() && allowed(a.scenario))startActivity(Intent(this,LearningSpatialActivity::class.java).putExtra("scenarioId",a.scenario.getString("id")).putExtra("stepId",step.getString("id")))
+                }.apply{tag="learning-step-spatial"},top=10)
                 narrator.show(when {
                     needsObservation(a) -> step.getString("cue") + ". Find " + (partNames[step.getString("part")] ?: "the structure") + " in the body viewer."
                     a.awaitingContinue -> step.getString("explanation")
