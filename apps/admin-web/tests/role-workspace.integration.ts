@@ -6,7 +6,7 @@ import {randomUUID} from 'node:crypto';
 const origin=process.env.BETTER_AUTH_URL!,path=process.env.SURAKSHA_DB_PATH!;
 assert(origin==='http://127.0.0.1:5196'&&path.includes('/.runtime/institution-0.17/'));
 const db=new DatabaseSync(path);db.exec('PRAGMA foreign_keys=ON;PRAGMA busy_timeout=5000');
-const f=JSON.parse(readFileSync('../../.runtime/institution-0.17/browser-fixture.json','utf8')),actors=f.actors;
+const f=JSON.parse(readFileSync(process.env.SURAKSHA_TEST_FIXTURE??'../../.runtime/institution-0.17/browser-fixture.json','utf8')),actors=f.actors;
 let checks=0,ip=0;
 async function call(actor:any,route:string,body?:unknown,status=200,base=origin){const r=await fetch(base+route,{method:body===undefined?'GET':'POST',redirect:'manual',headers:{Cookie:actor?.cookie??'',Origin:base,'Content-Type':'application/json','X-Real-IP':'198.51.100.'+(++ip%200+1)},body:body===undefined?undefined:JSON.stringify(body)});assert.equal(r.status,status,route+' '+await r.clone().text());checks++;return r;}
 async function data(actor:any,route='/api/dashboard'){return await (await call(actor,route)).json() as Record<string,any>;}
@@ -43,6 +43,6 @@ try{
  const switched={...auditor,cookie:auditor.cookie+'; suraksha_workspace='+actors.other.id};assert.equal((await data(switched)).context.role,'reviewer');await call(switched,'/api/institution-audit',undefined,403);checks++;
  db.prepare('DELETE FROM team_members WHERE owner=? AND user_id=?').run(actors.other.id,auditor.id);
  assert.equal(db.prepare('PRAGMA integrity_check').get()?.integrity_check,'ok');
- writeFileSync('../../.runtime/roles-0.18/browser-fixture.json',JSON.stringify({...f,actors}),{mode:0o600});
+ writeFileSync(process.env.SURAKSHA_ROLE_FIXTURE??'../../.runtime/roles-0.18/browser-fixture.json',JSON.stringify({...f,actors}),{mode:0o600});
  console.log('Role integration passed: '+checks+' assertions, 13 role homes, default and explicit workspace selection, metadata-only audit, mutation denial, revocation and tenant isolation.');
 }finally{db.close()}

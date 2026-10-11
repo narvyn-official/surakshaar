@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';import {DatabaseSync} from 'node:sqlite'
 import {encryptEvidence} from '../lib/identity-evidence';
 import {startPractice,practiceAction,studioVersion,studioScenarios} from '../lib/studio-learning';
 const origin=process.env.BETTER_AUTH_URL!,path=process.env.SURAKSHA_DB_PATH!;assert(origin==='http://127.0.0.1:5196'&&path.includes('/.runtime/institution-0.17/'));
-const f=JSON.parse(readFileSync('../../.runtime/roles-0.18/browser-fixture.json','utf8')),actors=f.actors,db=new DatabaseSync(path);db.exec('PRAGMA foreign_keys=ON;PRAGMA busy_timeout=5000');let checks=0;
+const f=JSON.parse(readFileSync(process.env.SURAKSHA_ROLE_FIXTURE??'../../.runtime/roles-0.18/browser-fixture.json','utf8')),actors=f.actors,db=new DatabaseSync(path);db.exec('PRAGMA foreign_keys=ON;PRAGMA busy_timeout=5000');let checks=0;
 async function call(actor:any,route:string,body?:unknown,status=200){const r=await fetch(origin+route,{method:body===undefined?'GET':'POST',headers:{Cookie:actor?.cookie??'',Origin:origin,'Content-Type':'application/json'},body:body===undefined?undefined:JSON.stringify(body),redirect:'manual'});assert.equal(r.status,status,route+' '+await r.clone().text());checks++;const t=r.headers.get('content-type');return t?.includes('json')?await r.json() as any:await r.text();}
 const now=Date.now(),outside=randomUUID(),unit=randomUUID(),branch=randomUUID(),otherunit=randomUUID(),owner=actors.admin.id;
 const oldPlacement=db.prepare('SELECT * FROM institution_people WHERE owner=? AND worker_id=?').get(owner,f.workerId)!;
@@ -56,6 +56,6 @@ try{
  assert.equal((await call(actors.learner,base)).assignment.reviews.length,2);
  await call(actors.learner,'/api/learning-enrolment',{action:'withdraw',owner,workerId:f.workerId,submissionId:submission});const viewed=await call(actors.examiner,'/api/learning-centre?assignmentId='+assignment);assert.equal(viewed.assignment.submissions[0].evidence,null);await call(actors.learner,'/api/learning-enrolment',sharing,409);
  await call(actors.other,base,undefined,403);
- writeFileSync('../../.runtime/completion-0.19/browser-fixture.json',JSON.stringify({...f,scopeBranch:branch,scopeUnit:unit,outside,otherunit,webAssignment:assignment}),{mode:0o600});
+ writeFileSync(process.env.SURAKSHA_ROLE_FIXTURE??'../../.runtime/completion-0.19/browser-fixture.json',JSON.stringify({...f,scopeBranch:branch,scopeUnit:unit,outside,otherunit,webAssignment:assignment}),{mode:0o600});
  console.log(JSON.stringify({checks,scopedRoles:5,descendants:true,movedLearner:true,revocation:true,protectedPaths:true,webSubmissionLifecycle:true}));
 }finally{db.prepare('UPDATE institution_people SET unit_id=?,archived_at=? WHERE owner=? AND worker_id=?').run(oldPlacement.unit_id,oldPlacement.archived_at,owner,f.workerId);for(const role of ['trainer','examiner','certifier','assessor','viewer']){db.prepare("UPDATE team_members SET scope_mode='all',active=1 WHERE owner=? AND email=?").run(owner,actors[role].email);db.prepare('DELETE FROM team_member_units WHERE owner=? AND email=?').run(owner,actors[role].email);}db.close();}

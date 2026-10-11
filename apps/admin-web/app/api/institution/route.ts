@@ -10,21 +10,32 @@ export async function GET(){try{
  const a=await access('workspace',true),canRead=permitted(a.role,'read'),canContent=!a.restricted&&permitted(a.role,'content');
  if(!canRead&&!canContent)throw Error('Forbidden: your role does not allow institution records.');
  const ps=learnerScope(a,"w.id"),us=unitScope(a,"u.id");
+ const contentWhere=a.role==='reviewer'?"author_id<>? AND status<>'draft'":a.role==='admin'?"(author_id=? OR status<>'draft')":'author_id=?';
  const [units,people,policy,procedures,plan]=await Promise.all([
  canRead?db().prepare('SELECT u.* FROM institution_units u WHERE u.owner=? AND '+us.sql+' ORDER BY u.kind,u.name LIMIT 300').bind(a.owner,...us.args).all():{results:[]},
  canRead?db().prepare('SELECT w.id,w.name,w.sector,p.employee_number,p.unit_id,p.archived_at,l.user_id IS NOT NULL AS linked FROM workers w LEFT JOIN institution_people p ON p.owner=w.owner AND p.worker_id=w.id LEFT JOIN learner_links l ON l.owner=w.owner AND l.worker_id=w.id WHERE w.owner=? AND '+ps.sql+' ORDER BY w.name,w.id LIMIT 1000').bind(a.owner,...ps.args).all():{results:[]},
  currentInstitutionPolicy(a.owner),
- canContent?db().prepare('SELECT * FROM local_procedures WHERE owner=? ORDER BY created_at DESC LIMIT 100').bind(a.owner).all():{results:[]},
+ canContent?db().prepare('SELECT * FROM local_procedures WHERE owner=? AND '+contentWhere+' ORDER BY created_at DESC,id DESC LIMIT 100').bind(a.owner,a.user.userId).all():{results:[]},
  canRead&&!a.restricted?db().prepare('SELECT name,learner_limit,valid_until,restricted,reason FROM institution_plans WHERE owner=?').bind(a.owner).first():null]);
  return reply({owner:a.owner,actor:a.user.userId,role:a.role,restricted:a.restricted,units:units.results,people:people.results,policy,procedures:procedures.results,plan,limits:{people:1000,units:300,procedures:100}});
 }catch(e){return failure(e)}}
 export async function POST(request:Request){try{
  const parsed=institutionCommand.safeParse(await json(request,150000));if(!parsed.success)throw Error('Invalid institution request. Check required fields and limits.');const c=parsed.data;
- const a=await access(c.action==='procedure'?'content':c.action==='procedure-review'?'content-review':'admin');await launchBudget(a.user.userId);const now=Date.now();
+ const a=await access(c.action==='procedure'||c.action==='procedure-update'?'content-write':c.action==='procedure-review'?'content-review':'admin');await launchBudget(a.user.userId);const now=Date.now();
+ if(c.action==='procedure-update'){
+  const row=await db().prepare('SELECT * FROM local_procedures WHERE owner=? AND id=? AND author_id=?').bind(a.owner,c.id,a.user.userId).first();
+  if(!row)throw Error('No editable procedure found.');
+  const status=c.submit?'submitted':'draft';
+  if(row.revision===c.revision+1&&row.status===status&&row.title===c.title&&row.body===c.body&&row.sources===c.sources&&row.language===c.language)return reply({saved:true,id:c.id,alreadySaved:true});
+  if(row.status!=='draft'||row.revision!==c.revision)throw Error('Record conflict: only your current draft can be edited. Reload it, or create a new revision of reviewed content.');
+  const result=await db().batch([db().prepare("UPDATE local_procedures SET title=?,body=?,sources=?,language=?,status=?,revision=revision+1 WHERE owner=? AND id=? AND author_id=? AND status='draft' AND revision=?").bind(c.title,c.body,c.sources,c.language,status,a.owner,c.id,a.user.userId,c.revision),audit(a,c.submit?'content.submit':'content.draft-save',c.id,{},true)]);
+  if(!result[0].meta.changes)throw Error('Record conflict: the draft changed in another session. Your entered text has not been saved.');
+  return reply({saved:true,id:c.id});
+ }
  if(c.action==='procedure'){
   const existing=await db().prepare('SELECT * FROM local_procedures WHERE owner=? AND id=?').bind(a.owner,c.id).first();
-  if(existing){if(existing.author_id!==a.user.userId||existing.title!==c.title||existing.body!==c.body||existing.sources!==c.sources||existing.language!==c.language)throw Error('Record conflict: use a new ID for a content revision.');return reply({saved:true,id:c.id});}
-  await db().batch([db().prepare('INSERT INTO local_procedures(owner,id,title,body,sources,language,author_id,created_at,status) VALUES(?,?,?,?,?,?,?,?,?)').bind(a.owner,c.id,c.title,c.body,c.sources,c.language,a.user.userId,now,c.submit?'submitted':'draft'),audit(a,'content.submit',c.id)]);return reply({saved:true,id:c.id});
+  if(existing){if(existing.author_id!==a.user.userId||existing.title!==c.title||existing.body!==c.body||existing.sources!==c.sources||existing.language!==c.language||existing.status!==(c.submit?'submitted':'draft'))throw Error('Record conflict: reload the saved draft or use a new ID for a content revision.');return reply({saved:true,id:c.id,alreadySaved:true});}
+  await db().batch([db().prepare('INSERT INTO local_procedures(owner,id,title,body,sources,language,author_id,created_at,status) VALUES(?,?,?,?,?,?,?,?,?)').bind(a.owner,c.id,c.title,c.body,c.sources,c.language,a.user.userId,now,c.submit?'submitted':'draft'),audit(a,c.submit?'content.submit':'content.draft-save',c.id)]);return reply({saved:true,id:c.id});
  }
  if(c.action==='procedure-review'){
   await freshUser();const row=await db().prepare('SELECT * FROM local_procedures WHERE owner=? AND id=?').bind(a.owner,c.id).first();if(!row)throw Error('No local procedure found.');if(row.author_id===a.user.userId)throw Error('Forbidden: another qualified reviewer must review your content.');

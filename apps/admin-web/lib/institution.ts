@@ -19,6 +19,7 @@ export const institutionCommand=z.discriminatedUnion('action',[
  z.object({action:z.literal('person'),workerId:uuid,employeeNumber:z.string().trim().min(1).max(80),unitId:uuid.nullable(),archived:z.boolean()}).strict(),
  z.object({action:z.literal('policy'),previousVersion:z.number().int().nonnegative(),policy:institutionPolicy}).strict(),
  z.object({action:z.literal('procedure'),id:uuid,title:z.string().trim().min(3).max(150),body:z.string().trim().min(80).max(15000),sources:z.string().trim().min(10).max(2000),language:z.enum(['en','hi']),submit:z.boolean()}).strict(),
+ z.object({action:z.literal('procedure-update'),id:uuid,revision:z.number().int().positive(),title:z.string().trim().min(3).max(150),body:z.string().trim().min(80).max(15000),sources:z.string().trim().min(10).max(2000),language:z.enum(['en','hi']),submit:z.boolean()}).strict(),
  z.object({action:z.literal('procedure-review'),id:uuid,revision:z.number().int().positive(),outcome:z.enum(['approved','rejected','withdrawn']),note:z.string().trim().min(20).max(2000),qualification:z.string().trim().min(10).max(500)}).strict(),
 ]);
 /** Strict small CSV: quoted commas/newlines are supported, no formulas executed. */

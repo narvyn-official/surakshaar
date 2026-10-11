@@ -1,12 +1,13 @@
 export const roles = ['admin','trainer','viewer','certifier','examiner','assessor','author','reviewer','auditor'] as const;
 export type Role = typeof roles[number];
-export type Permission = "workspace" | "read" | "write" | "admin" | "certify" | "revoke" | "review" | "identity" | "content" | "content-review" | "audit";
+export type Permission = "workspace" | "read" | "write" | "admin" | "certify" | "revoke" | "review" | "identity" | "content" | "content-write" | "content-review" | "audit";
 export function permitted(role: Role, permission: Permission) {
   if (!roles.includes(role)) return false;
   if(permission==='workspace')return true;
   if(permission==='audit')return ['admin','auditor','viewer','certifier','assessor'].includes(role);
   if(role==='auditor')return false;
   if(permission==='content')return ['admin','trainer','author','reviewer'].includes(role);
+  if(permission==='content-write')return ['admin','trainer','author'].includes(role);
   if(permission==='content-review')return ['reviewer'].includes(role);
   if(permission==='read')return !['author','reviewer'].includes(role);
   if(permission==='review')return ['admin','trainer','examiner','assessor'].includes(role);

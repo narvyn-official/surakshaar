@@ -31,6 +31,7 @@ class RoleDashboardFlowTest {
     ActivityScenario.launch<RoleDashboardActivity>(Intent(context,RoleDashboardActivity::class.java)).use{scenario->
      var texts=listOf<String>();var ready=false
      for(attempt in 0..60){scenario.onActivity{a->texts=allText(a.window.decorView)};ready=texts.contains(expected.getJSONObject("context").getString("label"))&&texts.contains("Refresh dashboard");if(ready)break;Thread.sleep(100)}
+     assertEquals("Institute access entry for $role",role!="platform",texts.contains("Institute access in browser"))
      assertTrue("Dashboard ready for $role",ready);assertEquals(role,api.lastWorkspaceRole())
      val learning=RoleDashboardPolicy.learningRole(role)
      assertEquals(role,learning,texts.contains("Your learning tools"))

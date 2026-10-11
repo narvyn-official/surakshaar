@@ -11,11 +11,19 @@ test('operational workspaces cannot land in learning or borrow another role thro
  for(const role of ['personal','learner'] as const)assert.equal(roleAllowsPage(role,'/studio'),true);
 });
 test('auditor is restricted to metadata; review, authorship and issuance stay distinct',()=>{
- for(const p of ['read','write','admin','certify','revoke','review','identity','content','content-review'] as const)assert.equal(permitted('auditor',p),false,p);
+ for(const p of ['read','write','admin','certify','revoke','review','identity','content','content-write','content-review'] as const)assert.equal(permitted('auditor',p),false,p);
  assert.equal(permitted('auditor','audit'),true);
  assert.equal(permitted('examiner','certify'),false);
  assert.equal(permitted('certifier','identity'),false);
  assert.equal(permitted('author','content-review'),false);
+ assert.equal(permitted('reviewer','content-write'),false);
+ assert.equal(permitted('author','content-write'),true);
  assert.equal(permitted('assessor','identity')&&permitted('assessor','certify'),true);
  assert.equal(workspaceDefinitions.reviewer.actions.length,1);
+});
+
+test('onboarding is reachable before staff access exists without granting task permissions',()=>{
+ for(const role of ['platform',...roles,'supporter','personal','learner'] as const)assert.equal(roleAllowsPage(role,'/institute-access'),true,role);
+ assert.equal(roleAllowsPage('personal','/institution'),false);
+ assert.equal(roleAllowsPage('supporter','/coursework'),false);
 });

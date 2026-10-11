@@ -39,9 +39,9 @@ class RoleDashboardActivity:Activity(){
  path.startsWith("/workspace#")&&path.substringAfter('#') in RoleDashboardPolicy.legacySections(role)->startActivity(Intent(this,AdminActivity::class.java).putExtra("section",path.substringAfter('#')))
  else->web(path)
  }};body.add(label(a.getString("description")+(if(!path.startsWith("/workspace#")&&id!="coursework"&&!RoleDashboardPolicy.learningRole(role))" Opens in your browser." else ""),13f,Palette.muted),top=4)}
- val queue=value.getJSONArray("queue").objects();body.add(label(if(role=="platform")"Institute applications" else if(role=="supporter")"Shared with you" else "Current work",20f,bold=true).asHeading(),top=28);if(queue.isEmpty())body.add(label("Nothing waiting here yet.",15f,Palette.muted),top=10);for(q in queue){val card=card(Palette.surface);card.add(label(q.getString("title"),16f,bold=true));card.add(label(q.getString("detail"),13f,Palette.muted),top=8);card.add(action("Open",role=ActionRole.NEUTRAL){web(q.getString("href"))},top=10);body.add(card,top=10)}
+ val queue=value.getJSONArray("queue").objects();body.add(label(value.optString("queueTitle",if(role=="platform")"Institute applications" else if(role=="supporter")"Shared with you" else "Current work"),20f,bold=true).asHeading(),top=28);if(queue.isEmpty())body.add(label("Nothing waiting here yet.",15f,Palette.muted),top=10);for(q in queue){val card=card(Palette.surface);card.add(label(q.getString("title"),16f,bold=true));card.add(label(q.getString("detail"),13f,Palette.muted),top=8);card.add(action("Open",role=ActionRole.NEUTRAL){web(q.getString("href"))},top=10);body.add(card,top=10)}
  }
- button("Refresh dashboard"){load()};button("Account security in browser"){web("/account")};button("Sign out"){request("/api/auth/sign-out",JSONObject()){api.clear();data=null;startActivity(Intent(this,MainActivity::class.java));finish()}}
+ button("Refresh dashboard"){load()};if(role!="platform")button("Institute access in browser"){web("/institute-access")};button("Account security in browser"){web("/account")};button("Sign out"){request("/api/auth/sign-out",JSONObject()){api.clear();data=null;startActivity(Intent(this,MainActivity::class.java));finish()}}
  body.add(label("SurakshaAR · ${c.getString("label")}\nAccess is checked by the service for every task.",12f,Palette.muted),top=24)
  }
 }

@@ -29,5 +29,7 @@ cpSync(join(root,'docs/surakshaar-0.16.0'),join(target,'docs/baseline-0.16.0'),{
 cpSync(join(root,'docs/surakshaar-0.17.0'),join(target,'docs/institution-0.17.0'),{recursive:true});
 cpSync(join(root,'docs/surakshaar-0.18.0'),join(target,'docs/roles-0.18.0'),{recursive:true});
 cpSync(join(root,'docs/surakshaar-0.19.0'),join(target,'docs/completion-0.19.0'),{recursive:true});
+cpSync(join(root,'docs/surakshaar-0.19.1'),join(target,'docs/role-workflows-0.19.1'),{recursive:true});
+cpSync(join(root,'docs/role-access-checklist.md'),join(target,'docs/role-access-checklist.md'));
 execFileSync('tar',['-czf',join(target,`surakshaar-${version}-web.tar.gz`),'-C',target,'web','source','THIRD-PARTY-NOTICES.txt','BUILD.json','docs']);
 const archive=join(target,`surakshaar-${version}-web.tar.gz`);console.log(JSON.stringify({archive,sha256:createHash('sha256').update(readFileSync(archive)).digest('hex'),bytes:statSync(archive).size},null,2));
