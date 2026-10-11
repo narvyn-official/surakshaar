@@ -14,3 +14,14 @@
 .institution-workspace .studio-policy-form .studio-button{white-space:normal;height:auto;min-height:44px}
 
 .assigned-coursework .studio-notice{display:block}.assigned-coursework .review-card{overflow-wrap:anywhere}.assigned-coursework h2:focus{outline:2px solid var(--studio-teal,#0d756d);outline-offset:4px}
+
+.admin-panel .admin-form,.admin-panel .admin-form label,.admin-panel .form-grid{min-width:0;max-width:100%}
+.admin-panel .form-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+.admin-panel .admin-form :is(input:not([type=checkbox]),select,textarea){min-width:0;width:100%;max-width:100%;box-sizing:border-box}
+.admin-panel .admin-form button{height:auto;min-height:44px;white-space:normal;max-width:100%}
+.team-member-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:16px}
+.team-member-card{padding:18px;border:1px solid #d8e5ed;border-radius:14px;min-width:0;background:#f9fcff}
+.team-member-card h3{font-size:14px;overflow-wrap:anywhere;margin:0 0 14px}
+.team-member-card dl{display:grid;gap:10px;margin:0 0 18px}.team-member-card dt{font-size:12px;color:#526a7e}.team-member-card dd{margin:2px 0 0;font-size:14px;overflow-wrap:anywhere}
+.team-member-actions{display:flex;flex-wrap:wrap;gap:10px}.team-member-actions button{min-height:44px;white-space:normal;height:auto}
+@media(max-width:600px){.admin-panel .form-grid{grid-template-columns:minmax(0,1fr)}.admin-panel .admin-form{padding:12px}.admin-panel .admin-form fieldset{min-width:0}}

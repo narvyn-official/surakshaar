@@ -4,7 +4,7 @@ import {dirname,isAbsolute,join} from 'node:path';
 import {execFileSync} from 'node:child_process';
 const output=process.env.SURAKSHA_OPS_STATUS_FILE,dbPath=process.env.SURAKSHA_DB_PATH,backups=process.env.SURAKSHA_BACKUP_DIR;
 if(!output||!dbPath||!backups||![output,dbPath,backups].every(isAbsolute))throw Error('Absolute status, database and backup paths are required.');
-process.umask(0o077);const checks=[];
+process.umask(0o027);const checks=[];
 async function check(id,label,run){try{checks.push({id,label,...await run()});}catch{checks.push({id,label,status:'fail',detail:'Check could not complete. Inspect the service journal.'});}}
 await check('web','Web readiness',async()=>{const port=Number(process.env.PORT??3197);if(!Number.isInteger(port)||port<1||port>65535)throw Error('port');const response=await fetch('http://127.0.0.1:'+port+'/api/health',{signal:AbortSignal.timeout(5000),redirect:'error'});const value=await response.json();return {status:response.ok&&value.status==='ready'?'pass':'fail',detail:response.ok?'Service and database responded.':'Service readiness failed.'};});
 await check('disk','Database volume capacity',()=>{const fs=statfsSync(dirname(dbPath));const free=fs.bavail*fs.bsize,total=fs.blocks*fs.bsize,ok=free>=1024**3&&free/total>=.1;return {status:ok?'pass':'fail',detail:Math.round(free/1024**3*10)/10+' GiB available; '+Math.round(free/total*100)+'% free.'};});
