@@ -23,7 +23,7 @@ The delivery closes cohort-scoped access and the web coursework submission journ
 - A separate 161-assertion role regression passed for all 13 role homes and negative tenant/access cases.
 - Linux x64 package from [CI run 38100505323](https://github.com/narvyn-official/surakshaar/actions/runs/38100505323), source `c0321deb1793f074fd898ac6e9d2c84e7d9ff132`, passed both CI jobs. Archive SHA-256 `e72f5eef7a4b9777be4c0c3481acce4754ffc474cb4bfcfff13f6d1e165cd306` was verified on the VPS.
 - Rehearsal and live migration applied two additive migrations, preserving original values in all 61 existing tables and adding two tables. Integrity and foreign-key checks passed. Cutover took six seconds; previous application and private recovery files were retained.
-- Live HTTPS passed 12 readiness, public-route, authentication and cache checks. All 14 demo accounts retained their role homes, unrestricted default scope and required staff MFA; no credentials changed.
+- Live HTTPS passed 12 readiness, public-route, authentication and cache checks. All 14 demo accounts retained their role homes, unrestricted default scope and required staff MFA; no credentials changed. A live 390-pixel browser pass covered all 14 accounts with correct role routing, MFA state, no horizontal overflow, no failed HTTP resources and no runtime errors; owner, learner and auditor views were captured, with owner and learner screenshots inspected.
 - Five local operational checks passed. A fresh scheduled backup was copied and opened independently: integrity, foreign keys and all 31 schema migrations passed. Root owns the monitor report, with read-only group access for the app.
 - New Google/email OTP integrations remain disabled; the existing TinyFish configuration is retained. Payments and offsite services remain unconfigured by owner decision.
 
@@ -40,3 +40,5 @@ Rollback constraint: once any active staff member has restricted unit access, do
 ## CI maintenance
 
 Updated pinned actions after current GitHub release/runner guidance review: [checkout v7.0.1](https://github.com/actions/checkout/releases/tag/v7.0.1), [setup-node v7.1.0](https://github.com/actions/setup-node/releases/tag/v7.1.0), [setup-java v6.0.1](https://github.com/actions/setup-java/releases/tag/v6.0.1), [upload-artifact v7.0.2](https://github.com/actions/upload-artifact/releases/tag/v7.0.2). All use the Node 24 action runtime. Ubuntu is pinned to 24.04 to avoid an unreviewed major runner-image switch. This changes future CI; it does not replace the verified deployed artifact.
+
+The updated CI workflow passed both web and Android jobs in [run 38100986817](https://github.com/narvyn-official/surakshaar/actions/runs/38100986817), commit `5339f18e321389c224688d0cca73d29a3ac6ec92`. This is a workflow/documentation change; deployed runtime source remains `c0321de`.

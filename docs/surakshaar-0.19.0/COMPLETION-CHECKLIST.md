@@ -2,7 +2,7 @@
 
 11 October 2026. Owner decision: keep new external login/recovery, payment and offsite-backup services disabled for now. Existing configured TinyFish service is unchanged.
 
-Baseline: the 26-section architecture dated 10 October, the 0.17 implementation checklist, and the deployed 0.18 role release. This replaces neither historical evidence nor qualified safety review. “Implemented” means code exists; release verification is recorded separately. There is no defensible “perfect” or field-certified status.
+Baseline: the 26-section architecture dated 10 October, the 0.17 implementation checklist, and the deployed 0.18 role release. This replaces neither historical evidence nor qualified safety review. “Implemented” means code exists; release verification is recorded in [RELEASE-EVIDENCE.md](RELEASE-EVIDENCE.md). There is no defensible “perfect” or field-certified status.
 
 ## Completed in this release
 
@@ -14,7 +14,7 @@ Baseline: the 26-section architecture dated 10 October, the 0.17 implementation 
 | L01 | Web assigned practice, save/resume, explicit submission | Implemented, tested and deployed | Correct institute/profile/version/mode; private save distinct from sharing; failed save recoverable |
 | L02 | Web learner feedback, correction, withdrawal and pagination | Implemented, tested and deployed | Original decisions immutable; reviewed history visible; withdrawal immediately removes future staff evidence access |
 | O01 | Local operations monitor and owner status panel | Active on VPS; five checks passed | Readiness, disk, verified backup freshness, worker and retention timer; distinguish stale/unavailable |
-| V01 | Unit, integration, browser, native and release validation | Release checks and migration rehearsal passed; live verification recorded below | Test logs, migration preservation, signed APK, deployed smoke checks |
+| V01 | Unit, integration, browser, native and release validation | Passed; see release evidence | Test logs, migration preservation, signed APK, deployed smoke checks |
 
 CI maintenance: the workflow now pins Ubuntu 24.04 and Node 24-compatible GitHub actions to immutable commit hashes. Acceptance is the green validation workflow on the published commit.
 
