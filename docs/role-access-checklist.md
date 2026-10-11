@@ -1,6 +1,6 @@
 # SurakshaAR role and workflow checklist
 
-11 October 2026. Scope: make each existing role able to discover and complete its intended work, and verify both allowed and forbidden operations. Implementation and verification are complete for the role-workflow scope below. These are local verification results, not a deployment or field-certification claim. External login/recovery, payment and offsite-backup providers remain disabled by the owner's decision. Existing light Spatial Studio styling is retained.
+11 October 2026. Scope: make each existing role able to discover and complete its intended work, and verify both allowed and forbidden operations. Implementation and verification are complete for the role-workflow scope below. The role-workflow update is deployed as 0.19.1-rc.1 (Android build 37); local verification and live checks are distinguished below. This is not a field-certification claim. External login/recovery, payment and offsite-backup providers remain disabled by the owner's decision. Existing light Spatial Studio styling is retained.
 
 ## Role contract
 
@@ -40,16 +40,16 @@
 
 | ID | Gap | Required repair | Status |
 | --- | --- | --- | --- |
-| R01 | Invitation acceptance is inside a legacy workspace inaccessible to newly invited staff | Add a reachable authenticated institute-access page and entry links, including MFA/revoked recovery states | Implemented and verified locally |
-| R02 | The institute application form is no longer reachable from a personal dashboard | Expose application/status and approved-dashboard continuation without bypassing approval | Implemented and verified locally |
-| R03 | Content drafts cannot be edited or promoted to review; reviewer API can author despite UI separation | Revision-checked draft commands, separate author permission, own draft visibility, immutable reviewed revisions and complete editor | Implemented and verified locally |
-| R04 | Several nested task screens advertise links/actions outside the current role | Use the same role contract for local navigation and empty-state actions | Implemented and verified locally |
-| R05 | Restricted dashboards use generic counts and queues; some unrestricted counts include no-longer-actionable records | Role-specific, scope-filtered actionable counts and destinations | Implemented and verified locally |
-| R06 | Previous checks cover routes but do not prove all current role journeys together | Repeat isolated end-to-end workflow and negative-access checks, then rendered browser and Android verification | Implemented and verified locally |
+| R01 | Invitation acceptance is inside a legacy workspace inaccessible to newly invited staff | Add a reachable authenticated institute-access page and entry links, including MFA/revoked recovery states | Implemented, locally verified and deployed |
+| R02 | The institute application form is no longer reachable from a personal dashboard | Expose application/status and approved-dashboard continuation without bypassing approval | Implemented, locally verified and deployed |
+| R03 | Content drafts cannot be edited or promoted to review; reviewer API can author despite UI separation | Revision-checked draft commands, separate author permission, own draft visibility, immutable reviewed revisions and complete editor | Implemented, locally verified and deployed |
+| R04 | Several nested task screens advertise links/actions outside the current role | Use the same role contract for local navigation and empty-state actions | Implemented, locally verified and deployed |
+| R05 | Restricted dashboards use generic counts and queues; some unrestricted counts include no-longer-actionable records | Role-specific, scope-filtered actionable counts and destinations | Implemented, locally verified and deployed |
+| R06 | Previous checks cover routes but do not prove all current role journeys together | Repeat isolated end-to-end workflow and negative-access checks, then rendered browser and Android verification | Implemented, locally verified and deployed |
 
 ## Evidence and honest limits
 
-The evidence below was executed against an isolated synthetic SQLite database and local Next.js service. Staff MFA was enabled for a separate production-build verification pass. Tests use isolated synthetic users/data, not real learner records. Local changes are not claimed deployed until a release is actually deployed and checked.
+The evidence below was executed against an isolated synthetic SQLite database and local Next.js service. Staff MFA was enabled for a separate production-build verification pass. Tests use isolated synthetic users/data, not real learner records. The same application source was pushed and deployed after CI and a restored-database rehearsal. See the release evidence below.
 
 Physical AR device coverage, qualified safety/clinical review, actual accreditation, biometric provider validation and unavailable external services remain separate gates in `surakshaar-0.19.0/COMPLETION-CHECKLIST.md`. These cannot be established merely by passing role-access tests.
 
@@ -89,8 +89,19 @@ Local execution records are under `.runtime/institution-0.17/role-workflows-2026
 
 ## Boundaries and remaining work
 
-- **Not deployed:** these source changes and build checks are local. The existing VPS and distributed release APK have not been updated by this task.
+- **Deployed:** web 0.19.1-rc.1 and signed Android build 37 are published. The live owner account requires its enrolled authenticator; the deployment check preserved that challenge and did not bypass it. Full owner workflows were verified with synthetic accounts locally.
 - Browser-based operational tools remain the supported path for some Android roles. The separate browser requires its own authentication and MFA; native session cookies are not transferred in URLs.
 - Camera/AR mechanics, low-end physical-device coverage, qualified curriculum review, accessibility with actual assistive devices, and actual learning effectiveness remain separate validation work. The isolated identity test uses synthetic encrypted evidence, not human facial recognition or liveness verification.
 - Google/OTP/SSO, delivered recovery mail, payment automation and offsite services remain disabled as requested. Manual institutional plans and existing configured production integrations are unchanged.
 - Source-level role authorization follows least privilege and per-request checks. [OWASP's authorization guidance](https://cheatsheetseries.owasp.org/cheatsheets/Authorization_Cheat_Sheet.html) was checked on 11 October 2026. This verification is not an OWASP/WCAG certification.
+
+## Release evidence — 11 October 2026
+
+- Application source [9955f03](https://github.com/narvyn-official/surakshaar/commit/9955f033774649382edb71e0a666b4271bfa6e17) is on GitHub; [CI 38115733837](https://github.com/narvyn-official/surakshaar/actions/runs/38115733837) passed both web and Android jobs, including the production dependency audit.
+- [Live dashboard](https://surakshaar.213-210-36-82.sslip.io/dashboard) runs the verified Linux x64 package. Backup rehearsal applied zero migrations, preserved all 63 tables and passed integrity/foreign-key checks. Cutover returned ready in four seconds, retaining the runtime environment, credentials, MFA and provider settings.
+- Live HTTP checks passed 13 public/protected/cache/readiness checks. Thirteen demo accounts passed dashboard dispatch and onboarding-access checks. The fourteenth account (platform owner) accepted its password and required its existing authenticator, so its authenticated live dashboard was not exercised. Full workflows were already checked in isolation; this distinction avoids claiming an MFA bypass as a test.
+- Live mobile browser checks passed for all 13 authenticated demo accounts, including the institute-access navigation, MFA setup states, no horizontal overflow and no browser/runtime or failed-resource errors. Learner and auditor dashboard screenshots were visually inspected.
+- All five operational checks passed: web readiness, capacity, fresh verified backup, worker and retention timer. A fresh post-release backup was independently restored and checked. No service restarts were observed after activation.
+- [Download the signed Android APK](https://github.com/narvyn-official/surakshaar/releases/download/v0.19.1-rc.1/surakshaar-0.19.1-rc.1-release.apk). Signing identity matches the previous distribution APK. [Release assets and checksums](https://github.com/narvyn-official/surakshaar/releases/tag/v0.19.1-rc.1).
+
+See [deployment and recovery](surakshaar-0.19.1/DEPLOYMENT.md) for artifact hashes and recovery boundaries. The previously documented physical-device, expert-review and external-provider limits still apply.

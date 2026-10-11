@@ -6,12 +6,12 @@ Web and Android build 37 make institute onboarding reachable from every account 
 
 145 web unit tests, type checking, lint, production packaging and isolated worker startup passed. Isolated HTTP suites passed 589 combined checks covering institutional lifecycle, access boundaries, scopes, workflows and production MFA. Browser verification covered 13 role homes and 48 routes at 1440/390/320 CSS pixels, including invitation, institute application, content review and failed-save recovery. Android passed 317 JVM tests, lint/build and two API 36 emulator role/offline tests.
 
-See the [role checklist](../role-access-checklist.md) for role contracts, evidence and limits. This release introduces no database migration and no dependency change. Live release evidence will be recorded after deployment.
+See the [role checklist](../role-access-checklist.md) for role contracts, evidence and limits. This release introduces no database migration and no dependency change. The web and signed Android update are published; see [deployment evidence](DEPLOYMENT.md).
 
 ## Release acceptance and limitations
 
 - Role access, onboarding, navigation, safe draft recovery and independent review: passed in isolated HTTP/browser tests; staff MFA retained.
-- Data migration: N/A (schema unchanged). Backup restore, artifact verification and current-data preservation are required before live cutover.
+- Data migration: N/A (schema unchanged). Backup restore, artifact verification and all 63-table fingerprints passed before live cutover.
 - Providers, prices, consent, camera collection, clinical instructions, visual assets and rendering architecture: unchanged. No new provider or external service activation.
 - Accessibility/responsive behavior: tested keyboard skip, form labels/errors and narrow reflow; comprehensive assistive-technology and physical-device coverage remain open.
 - Android operational forms can open a separate authenticated browser session; full native parity and physical AR acceptance remain open.
