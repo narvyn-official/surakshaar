@@ -1,3 +1,4 @@
+import {scopedRoles} from '@/lib/staff-scope';
 import { requireInstitutionCapacity } from "@/lib/institution-store";
 import { freshUser } from "@/lib/auth";
 import { z } from "zod/v3";
@@ -7,7 +8,7 @@ import { assignmentStatus, roles } from "@/lib/access";
 const id = z.string().uuid();
 const command = z.discriminatedUnion("action", [
   z.object({action:z.literal("settings"),name:z.string().trim().min(2).max(100),site:z.string().trim().max(150)}).strict(),
-  z.object({action:z.literal("member"),email:z.string().trim().email().max(254),role:z.enum(roles),active:z.boolean()}).strict(),
+  z.object({action:z.literal("member"),email:z.string().trim().email().max(254),role:z.enum(roles),active:z.boolean(),scope:z.object({mode:z.enum(["all","units"]),unitIds:z.array(id).max(100)}).strict().optional()}).strict(),
   z.object({action:z.literal("worker"),id:id.optional(),androidId:id.optional(),name:z.string().trim().min(1).max(80),sector:z.enum(["Unspecified","Mining","Steel","Mica","Other"])}).strict(),
   z.object({action:z.literal("assign"),workerIds:z.array(id).min(1).max(100),moduleId:z.string().max(32),dueAt:z.number().int().positive().max(8640000000000000),note:z.string().trim().max(500)}).strict(),
   z.object({action:z.literal("cancel"),id,reason:z.string().trim().min(5).max(500)}).strict(),
@@ -19,11 +20,11 @@ export async function GET() {
       db().prepare("SELECT * FROM workers WHERE owner=? ORDER BY updated_at DESC,id LIMIT 1000").bind(who).all(),
       db().prepare(`SELECT t.*,w.name AS worker_name,w.sector,(SELECT p.payload FROM attempts p WHERE p.owner=t.owner AND p.worker_id=t.worker_id AND json_extract(p.payload,'$.moduleId')=t.module_id AND json_extract(p.payload,'$.kind')='assessment' AND json_extract(p.payload,'$.contentVersion')=t.content_version AND json_extract(p.payload,'$.startedAt')>=t.created_at ORDER BY json_extract(p.payload,'$.endedAt') DESC,p.id DESC LIMIT 1) AS latest_payload FROM training_assignments t LEFT JOIN workers w ON w.owner=t.owner AND w.id=t.worker_id WHERE t.owner=? ORDER BY t.created_at DESC,t.id DESC LIMIT 1000`).bind(who).all<{latest_payload:string|null;due_at:number;cancelled_at:number|null}>(),
       db().prepare("SELECT id,actor_email,action,target,detail,at FROM audit_log WHERE owner=? ORDER BY at DESC,id DESC LIMIT 200").bind(who).all(),
-      a.role==='admin'?db().prepare("SELECT email,role,active,user_id,updated_at FROM team_members WHERE owner=? ORDER BY email LIMIT 200").bind(who).all():Promise.resolve({results:[]}),
+      a.role==='admin'?db().prepare("SELECT email,role,active,user_id,updated_at,scope_mode,(SELECT json_group_array(unit_id) FROM team_member_units g WHERE g.owner=team_members.owner AND g.email=team_members.email) AS unit_ids FROM team_members WHERE owner=? ORDER BY email LIMIT 200").bind(who).all():Promise.resolve({results:[]}),
       db().prepare("SELECT (SELECT COUNT(*) FROM workers WHERE owner=?) AS workers,(SELECT COUNT(*) FROM training_assignments WHERE owner=?) AS assignments,(SELECT COUNT(*) FROM audit_log WHERE owner=?) AS audit").bind(who,who,who).first(),
     ]);
     const now=Date.now();
-    return Response.json({workers:workers.results,assignments:assignments.results.map(({latest_payload,...r})=>{const latest=latest_payload?JSON.parse(latest_payload):null;const completed_at=latest?.result?.passed?latest.endedAt:null;return {...r,completed_at,latestAttemptId:latest?.id ?? null,status:assignmentStatus({...r,completed_at},now)};}),audit:logs.results.map(r=>({...r,detail:JSON.parse(String(r.detail))})),team:team.results,counts,now},{headers:{"Cache-Control":"no-store"}});
+    return Response.json({workers:workers.results,assignments:assignments.results.map(({latest_payload,...r})=>{const latest=latest_payload?JSON.parse(latest_payload):null;const completed_at=latest?.result?.passed?latest.endedAt:null;return {...r,completed_at,latestAttemptId:latest?.id ?? null,status:assignmentStatus({...r,completed_at},now)};}),audit:logs.results.map(r=>({...r,detail:JSON.parse(String(r.detail))})),team:team.results,units:a.role==='admin'?(await db().prepare("SELECT id,name,kind FROM institution_units WHERE owner=? AND archived_at IS NULL ORDER BY kind,name LIMIT 300").bind(who).all()).results:[],counts,now},{headers:{"Cache-Control":"no-store"}});
   } catch(e){return failure(e);}
 }
 export async function POST(request:Request) {
@@ -37,12 +38,17 @@ export async function POST(request:Request) {
     } else if(c.action==='member') {
       await freshUser();
       const email=c.email.toLowerCase();if(email===a.user.email.toLowerCase())throw new Error("Invalid member change: you cannot change your own access.");
-      const prior=await db().prepare("SELECT user_id FROM team_members WHERE owner=? AND email=?").bind(a.owner,email).first<{user_id:string|null}>();
+      const prior=await db().prepare("SELECT user_id,scope_mode FROM team_members WHERE owner=? AND email=?").bind(a.owner,email).first<{user_id:string|null;scope_mode:string}>();
       if(prior?.user_id===a.owner)throw new Error("Forbidden: the workspace owner's access cannot be changed.");
+      if(c.scope?.mode==='units'&&(!scopedRoles.includes(c.role as typeof scopedRoles[number])||!c.scope.unitIds.length||new Set(c.scope.unitIds).size!==c.scope.unitIds.length))throw Error('Invalid staff scope: choose eligible staff and at least one distinct unit.');
+      if(c.scope?.mode==='all'&&c.scope.unitIds.length)throw Error('Invalid staff scope: institution-wide access has no selected units.');
+      if(!c.scope&&prior?.scope_mode==='units'&&!scopedRoles.includes(c.role as typeof scopedRoles[number]))throw Error('Invalid role change: explicitly select institution-wide access for this role.');
+      for(const unitId of c.scope?.unitIds??[]){if(!await db().prepare('SELECT 1 FROM institution_units WHERE owner=? AND id=? AND archived_at IS NULL').bind(a.owner,unitId).first())throw Error('Invalid staff scope: choose active units in this institution.');}
       const code=c.active&&!prior?.user_id ? crypto.randomUUID().replaceAll("-","")+crypto.randomUUID().replaceAll("-","") : null;
       const hash=code?await digest(code):null;
       if(code)invitation=`${a.owner}.${code}`;
       target=email;statements.push(db().prepare("INSERT INTO team_members(owner,email,role,active,updated_at,invite_hash,invite_expires_at) VALUES(?,?,?,?,?,?,?) ON CONFLICT(owner,email) DO UPDATE SET role=excluded.role,active=excluded.active,updated_at=excluded.updated_at,invite_hash=excluded.invite_hash,invite_expires_at=excluded.invite_expires_at").bind(a.owner,email,c.role,c.active?1:0,now,hash,code?now+7*86400000:null));
+      if(c.scope){statements.push(db().prepare('UPDATE team_members SET scope_mode=? WHERE owner=? AND email=?').bind(c.scope.mode,a.owner,email),db().prepare('DELETE FROM team_member_units WHERE owner=? AND email=?').bind(a.owner,email));for(const unitId of c.scope.unitIds)statements.push(db().prepare('INSERT INTO team_member_units VALUES(?,?,?)').bind(a.owner,email,unitId));}
     } else if(c.action==='worker') {
       if(c.id && c.androidId)throw new Error("Invalid worker ID change. Saved identity cannot be rewritten.");
       target=c.id??c.androidId??crypto.randomUUID();
@@ -62,7 +68,7 @@ export async function POST(request:Request) {
       const exists=await db().prepare("SELECT id FROM training_assignments WHERE owner=? AND id=? AND cancelled_at IS NULL").bind(a.owner,c.id).first();if(!exists)throw new Error("No active assignment found.");
       target=c.id;statements.push(db().prepare("UPDATE training_assignments SET cancelled_at=? WHERE owner=? AND id=? AND cancelled_at IS NULL").bind(now,a.owner,c.id));
     }
-    if(c.action!=='assign') statements.push(audit(a,`admin.${c.action}`,target,c.action==='cancel'?{reason:c.reason}:c.action==='member'?{role:c.role,active:c.active}:{}));
+    if(c.action!=='assign') statements.push(audit(a,`admin.${c.action}`,target,c.action==='cancel'?{reason:c.reason}:c.action==='member'?{role:c.role,active:c.active,scope:c.scope??"preserved"}:{}));
     await db().batch(statements);
     return Response.json({saved:true,id:target,...(invitation?{invitation}:{})},{headers:{"Cache-Control":"no-store"}});
   }catch(e){return failure(e);}

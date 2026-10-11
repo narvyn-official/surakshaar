@@ -1,10 +1,12 @@
+import {unitScope} from '@/lib/staff-scope';
 import {z} from 'zod';
 import {access,db,digest,failure,json} from '@/lib/server';
 import {POST as assignCourse} from '@/app/api/learning-centre/route';
 const command=z.object({id:z.string().uuid(),cohortId:z.string().uuid(),courseId:z.enum(['fire','first-aid']),contentVersion:z.string().max(100),audience:z.enum(['school-awareness','adult-learning']),scenarioIds:z.array(z.string().max(100)).min(1).max(50),mode:z.enum(['guided','independent']),dueAt:z.number().int().positive(),note:z.string().trim().max(500)}).strict();
 export async function POST(request:Request){try{
- const a=await access('write'),parsed=command.safeParse(await json(request));if(!parsed.success)throw Error('Invalid cohort programme.');const {cohortId,...c}=parsed.data;
- if(!await db().prepare("SELECT 1 FROM institution_units WHERE owner=? AND id=? AND kind='cohort' AND archived_at IS NULL").bind(a.owner,cohortId).first())throw Error('No active cohort found.');
+ const a=await access('write',true),parsed=command.safeParse(await json(request));if(!parsed.success)throw Error('Invalid cohort programme.');const {cohortId,...c}=parsed.data;
+ const scope=unitScope(a,"u.id");
+ if(!await db().prepare("SELECT 1 FROM institution_units u WHERE u.owner=? AND u.id=? AND u.kind='cohort' AND u.archived_at IS NULL AND "+scope.sql).bind(a.owner,cohortId,...scope.args).first())throw Error('No active cohort found.');
  const hash=await digest(parsed.data);
  let batch=await db().prepare('SELECT digest,worker_ids FROM institution_programme_batches WHERE owner=? AND id=?').bind(a.owner,c.id).first<{digest:string;worker_ids:string}>();
  if(!batch){

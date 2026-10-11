@@ -3,12 +3,13 @@ import { env } from "@/lib/runtime-env";
 import { headers } from "next/headers";
 import { permitted, type Role, type Permission } from "@/lib/access";
 import { getAppUser, requireStaffMfa } from "@/lib/auth";
+import {staffScope} from './staff-scope';
 export function db() {
   if (!env.DB) throw new Error("Training storage is unavailable.");
   return env.DB as D1Database;
 }
-export type Access = { owner: string; role: Role; user: NonNullable<Awaited<ReturnType<typeof getAppUser>>> };
-export async function access(permission: Permission = "read"): Promise<Access> {
+export type Access = { owner: string; role: Role; restricted:boolean; user: NonNullable<Awaited<ReturnType<typeof getAppUser>>> };
+export async function access(permission: Permission = "read", scoped = false): Promise<Access> {
   const user = await getAppUser();
   if (!user) throw new Error("Sign in to access training records.");
   const selected=selectedWorkspace((await headers()).get("cookie")??"");
@@ -18,15 +19,18 @@ export async function access(permission: Permission = "read"): Promise<Access> {
   const who=current.owner,role=current.role;
   await requireStaffMfa(user.userId);
   if (!permitted(role, permission)) throw new Error("Forbidden: your role does not allow this action.");
-  return {owner: who, role, user};
+  const {restricted}=await staffScope(who,user.userId);
+  if(restricted&&!scoped)throw new Error('Forbidden: this tool requires institution-wide access. Use the scoped tools on your dashboard.');
+  return {owner: who, role, user,restricted};
 }
 export async function owner(permission: Permission = "read") { return (await access(permission)).owner; }
-export function audit(a: Access, action: string, target: string, detail: unknown = {}, onlyAfterChange = false) {
+export function audit(a: Omit<Access,"restricted">, action: string, target: string, detail: unknown = {}, onlyAfterChange = false) {
   return db().prepare("INSERT INTO audit_log(id,owner,actor,actor_email,action,target,detail,at) SELECT ?,?,?,?,?,?,?,?" + (onlyAfterChange ? " WHERE changes() > 0" : ""))
     .bind(crypto.randomUUID(), a.owner, a.user.userId, a.user.email, action, target, JSON.stringify(detail), Date.now());
 }
 export function failure(error: unknown) {
-  const message = error instanceof Error ? error.message : "Request failed";
+  const raw = error instanceof Error ? error.message : "Request failed";
+  const message=raw.includes('staff_scope_current')?'Forbidden: your staff scope or learner placement changed. Refresh before continuing.':raw;
   const allowed =
     /^(Invalid|Unsupported|No |Not |Sign in|Record conflict|Only |Forbidden|Already |Credential |Training |File |Unknown)/.test(
       message,

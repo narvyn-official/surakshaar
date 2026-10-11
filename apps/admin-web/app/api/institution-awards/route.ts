@@ -1,3 +1,4 @@
+import {learnerScope,requireWorkerScope,scopeAssertion} from '@/lib/staff-scope';
 import {z} from 'zod';
 import {access,audit,db,canonical,failure,json} from '@/lib/server';
 import {freshUser,getAppUser} from '@/lib/auth';
@@ -13,22 +14,23 @@ const reply=(data:unknown)=>Response.json(data,{headers:{'Cache-Control':'privat
 export async function GET(request:Request){try{
  const learner=new URL(request.url).searchParams.get('learner')==='1';
  if(learner){const user=await getAppUser();if(!user)throw Error('Sign in to continue.');const workerId=new URL(request.url).searchParams.get('workerId');if(workerId&&!z.string().uuid().safeParse(workerId).success)throw Error('Invalid learner profile.');const rows=await db().prepare('SELECT id,payload,issued_at,expires_at,revoked_at,replaced_by FROM institution_awards WHERE account_id=?'+(workerId?' AND worker_id=?':'')+' ORDER BY issued_at DESC LIMIT 200').bind(user.userId,...(workerId?[workerId]:[])).all();return reply({awards:rows.results.map(row=>({...row,payload:JSON.parse(String(row.payload)),status:awardStatus(row as never)})),role:'learner',assignments:[]});}
- const a=await access(),rows=await db().prepare('SELECT id,assignment_id,payload,issued_at,expires_at,revoked_at,replaced_by,revocation_reason FROM institution_awards WHERE owner=? ORDER BY issued_at DESC LIMIT 200').bind(a.owner).all();
- const assignments=await db().prepare('SELECT a.id,a.course_id,w.name,a.mode,a.created_at FROM learning_course_assignments a JOIN workers w ON w.owner=a.owner AND w.id=a.worker_id WHERE a.owner=? AND a.cancelled_at IS NULL ORDER BY a.created_at DESC LIMIT 200').bind(a.owner).all();
+ const a=await access('read',true),scope=learnerScope(a,'r.worker_id'),assignmentScope=learnerScope(a,'a.worker_id'),rows=await db().prepare('SELECT id,assignment_id,payload,issued_at,expires_at,revoked_at,replaced_by,revocation_reason FROM institution_awards r WHERE owner=? AND '+scope.sql+' ORDER BY issued_at DESC LIMIT 200').bind(a.owner,...scope.args).all();
+ const assignments=await db().prepare('SELECT a.id,a.course_id,w.name,a.mode,a.created_at FROM learning_course_assignments a JOIN workers w ON w.owner=a.owner AND w.id=a.worker_id WHERE a.owner=? AND a.cancelled_at IS NULL AND '+assignmentScope.sql+' ORDER BY a.created_at DESC LIMIT 200').bind(a.owner,...assignmentScope.args).all();
  return reply({role:a.role,configured:awardStorageReady(),awards:rows.results.map(row=>({...row,payload:JSON.parse(String(row.payload)),status:awardStatus(row as never)})),assignments:assignments.results});
 }catch(e){return failure(e)}}
 export async function POST(request:Request){try{
- const input=command.safeParse(await json(request));if(!input.success)throw Error('Invalid institution record request.');const c=input.data,a=await access(c.action==='issue'?'certify':c.action==='revoke'?'revoke':'admin');await freshUser();await launchBudget(a.user.userId);const now=Date.now();
+ const input=command.safeParse(await json(request));if(!input.success)throw Error('Invalid institution record request.');const c=input.data,a=await access(c.action==='issue'?'certify':c.action==='revoke'?'revoke':'admin',c.action!=='rotate-key');await freshUser();await launchBudget(a.user.userId);const now=Date.now();
  if(c.action==='rotate-key'){
   await db().batch([db().prepare('UPDATE institution_signing_keys SET retired_at=? WHERE owner=? AND retired_at IS NULL').bind(now,a.owner),audit(a,'award.key-retired',a.owner,{reason:c.reason})]);await awardKey(a.owner);return reply({rotated:true});
  }
  if(c.action==='revoke'){
-  const result=await db().batch([db().prepare('UPDATE institution_awards SET revoked_at=?,revocation_reason=? WHERE owner=? AND id=? AND revoked_at IS NULL').bind(now,c.reason,a.owner,c.id),audit(a,'award.revoke',c.id,{reason:c.reason},true)]);if(!result[0].meta.changes)throw Error('No active institution record found.');return reply({revoked:true});
+  const record=await db().prepare('SELECT worker_id FROM institution_awards WHERE owner=? AND id=?').bind(a.owner,c.id).first<{worker_id:string}>();if(!record)throw Error('No active institution record found.');await requireWorkerScope(a,record.worker_id);
+  const result=await db().batch([db().prepare('UPDATE institution_awards SET revoked_at=?,revocation_reason=? WHERE owner=? AND id=? AND revoked_at IS NULL').bind(now,c.reason,a.owner,c.id),audit(a,'award.revoke',c.id,{reason:c.reason},true),scopeAssertion(a,record.worker_id)]);if(!result[0].meta.changes)throw Error('No active institution record found.');return reply({revoked:true});
  }
- const old=await db().prepare('SELECT assignment_id,issued_by FROM institution_awards WHERE owner=? AND id=?').bind(a.owner,c.id).first();if(old){if(old.assignment_id!==c.assignmentId||old.issued_by!==a.user.userId)throw Error('Record conflict: record ID reused.');return reply({saved:true,id:c.id});}
+ const old=await db().prepare('SELECT assignment_id,issued_by,worker_id FROM institution_awards WHERE owner=? AND id=?').bind(a.owner,c.id).first();if(old){await requireWorkerScope(a,String(old.worker_id));if(old.assignment_id!==c.assignmentId||old.issued_by!==a.user.userId)throw Error('Record conflict: record ID reused.');return reply({saved:true,id:c.id});}
  await requireInstitutionCapacity(a.owner);
  const assignment=await db().prepare('SELECT a.*,w.name AS learner_name,l.user_id,c.name AS centre_name,c.site FROM learning_course_assignments a JOIN workers w ON w.owner=a.owner AND w.id=a.worker_id JOIN learner_links l ON l.owner=a.owner AND l.worker_id=a.worker_id JOIN training_centres c ON c.owner=a.owner WHERE a.owner=? AND a.id=? AND a.cancelled_at IS NULL').bind(a.owner,c.assignmentId).first<{worker_id:string;user_id:string;learner_name:string;course_id:string;scenario_ids:string;policy_version:number|null;content_version:string;mode:string;centre_name:string;site:string}>();
- if(!assignment?.user_id)throw Error('No active linked assignment found.');if(assignment.user_id===a.user.userId)throw Error('Forbidden: you cannot issue your own learning record.');
+ if(!assignment?.user_id)throw Error('No active linked assignment found.');await requireWorkerScope(a,assignment.worker_id);if(assignment.user_id===a.user.userId)throw Error('Forbidden: you cannot issue your own learning record.');
  if(await db().prepare('SELECT 1 FROM institution_people WHERE owner=? AND worker_id=? AND archived_at IS NOT NULL').bind(a.owner,assignment.worker_id).first())throw Error('Forbidden: learner membership is archived.');
  const {version,policy}=await currentInstitutionPolicy(a.owner,assignment.policy_version),evidence:{scenario:string;submission:string;review:string;reviewer:string}[]=[],checks:{sql:string;args:unknown[]}[]=[];
  for(const scenario of JSON.parse(assignment.scenario_ids) as string[]){
@@ -52,5 +54,6 @@ export async function POST(request:Request){try{
  if(c.replaceId)statements.push(db().prepare('UPDATE institution_awards SET replaced_by=? WHERE owner=? AND id=? AND replaced_by IS NULL AND revoked_at IS NULL').bind(c.id,a.owner,c.replaceId));
  // Constraint failure rolls back replacement too. Evidence is rechecked in the insertion transaction.
  statements.push(db().prepare('INSERT INTO institution_awards(owner,id,assignment_id,worker_id,account_id,kid,payload,signature,issued_by,issued_at,expires_at) SELECT ?,CASE WHEN '+checks.map(check=>check.sql).join(' AND ')+' THEN ? ELSE NULL END,?,?,?,?,?,?,?,?,?').bind(a.owner,...checks.flatMap(check=>check.args),c.id,c.assignmentId,assignment.worker_id,assignment.user_id,key.kid,payload,signature,a.user.userId,now,expiresAt),audit(a,'award.issue',c.id,{reason:c.reason,replaces:c.replaceId??null},true));
+ statements.push(scopeAssertion(a,assignment.worker_id));
  const result=await db().batch(statements);if(!result[c.replaceId?1:0].meta.changes)throw Error('Record conflict: evidence changed during issuance. Refresh and retry.');return reply({saved:true,id:c.id});
 }catch(e){return failure(e)}}

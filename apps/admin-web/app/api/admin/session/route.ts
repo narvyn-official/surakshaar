@@ -5,9 +5,9 @@ export async function GET() {
     const user = await getAppUser();if (!user) throw new Error("Sign in to continue.");
     const choices = await db().prepare("SELECT m.owner,m.role,m.user_id,c.name FROM team_members m LEFT JOIN training_centres c ON c.owner=m.owner JOIN centre_approvals a ON a.owner=m.owner AND a.status='approved' WHERE m.active=1 AND m.user_id=?").bind(user.userId).all();
     const own=await db().prepare("SELECT status,reason FROM centre_approvals WHERE owner=?").bind(user.userId).first();
-    let current;try { current = await access("workspace"); } catch { current = null; }
+    let current;try { current = await access("workspace",true); } catch { current = null; }
     const centre = current ? await db().prepare("SELECT name,site FROM training_centres WHERE owner=?").bind(current.owner).first() : null;
-    return Response.json({user,operator:isOperator(user.userId),application:own??{status:"not-requested",reason:""}, current: current ? {owner:current.owner, role:current.role, name:centre?.name ?? "My training centre", site:centre?.site ?? ""} : null, workspaces:[...(own?.status==='approved'?[{owner:user.userId,role:"admin",name:"My approved centre",personal:true}]:[]),...choices.results.filter(r=>r.owner!==user.userId)]}, {headers:{"Cache-Control":"no-store"}});
+    return Response.json({user,operator:isOperator(user.userId),application:own??{status:"not-requested",reason:""}, current: current ? {owner:current.owner, role:current.role, restricted:current.restricted, name:centre?.name ?? "My training centre", site:centre?.site ?? ""} : null, workspaces:[...(own?.status==='approved'?[{owner:user.userId,role:"admin",name:"My approved centre",personal:true}]:[]),...choices.results.filter(r=>r.owner!==user.userId)]}, {headers:{"Cache-Control":"no-store"}});
   } catch(e) {return failure(e);}
 }
 export async function POST(request: Request) {

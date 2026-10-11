@@ -12,3 +12,5 @@
 .institution-workspace .studio-policy-form>*{min-width:0;max-width:100%}
 .institution-workspace .studio-policy-form .studio-field :is(input,select,textarea){min-width:0;width:100%;max-width:100%}
 .institution-workspace .studio-policy-form .studio-button{white-space:normal;height:auto;min-height:44px}
+
+.assigned-coursework .studio-notice{display:block}.assigned-coursework .review-card{overflow-wrap:anywhere}.assigned-coursework h2:focus{outline:2px solid var(--studio-teal,#0d756d);outline-offset:4px}

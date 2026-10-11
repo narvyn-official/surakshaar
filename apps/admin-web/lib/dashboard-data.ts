@@ -1,9 +1,10 @@
+import {learnerScope} from './staff-scope';
 import {db} from './server';
 import {workspaceContext,type WorkspaceContext} from './workspace-context';
-import {workspaceDefinitions} from './role-workspace';
+import {workspaceDefinitions,roleActions} from './role-workspace';
 export type DashboardData={context:WorkspaceContext;generatedAt:number;stats:{label:string;value:number;detail:string}[];queue:{id:string;title:string;detail:string;href:string}[];actions:typeof workspaceDefinitions.platform.actions};
 export async function dashboardData(contextOnly=false):Promise<DashboardData>{
- const context=await workspaceContext();if(!context)throw Error('Sign in to open your dashboard.');const now=Date.now(),{role,user,institution}=context,out:DashboardData={context,generatedAt:now,stats:[],queue:[],actions:workspaceDefinitions[role].actions};
+ const context=await workspaceContext();if(!context)throw Error('Sign in to open your dashboard.');const now=Date.now(),{role,user,institution}=context,out:DashboardData={context,generatedAt:now,stats:[],queue:[],actions:roleActions(role,context.restricted)};
  if(contextOnly||context.mfaRequired||context.workspaceUnavailable)return out;
  async function stat(label:string,sql:string,args:unknown[],detail:string){const row=await db().prepare(sql).bind(...args).first<{n:number}>();out.stats.push({label,value:Number(row?.n??0),detail});}
  const count=(table:string,where:string)=>'SELECT COUNT(*) AS n FROM '+table+' WHERE '+where;
@@ -13,6 +14,13 @@ export async function dashboardData(contextOnly=false):Promise<DashboardData>{
   const rows=await db().prepare("SELECT c.owner,c.name,c.site,a.requested_at FROM centre_approvals a JOIN training_centres c ON c.owner=a.owner WHERE a.status='pending' ORDER BY a.requested_at LIMIT 8").all<{owner:string;name:string;site:string;requested_at:number}>();out.queue=rows.results.map(r=>({id:r.owner,title:r.name,detail:'Application · '+r.site,href:'/platform?section=institutes'}));return out;
  }
  if(institution){const owner=institution.owner;
+  if(context.restricted){
+   const actor={owner,user,restricted:true},scope=learnerScope(actor,'a.worker_id'),people=learnerScope(actor,'w.id');
+   await stat('Learners in your scope','SELECT COUNT(*) n FROM workers w WHERE w.owner=? AND '+people.sql,[owner,...people.args],'Active people in assigned organisational units');
+   await stat('Current course assignments','SELECT COUNT(*) n FROM learning_course_assignments a WHERE a.owner=? AND a.cancelled_at IS NULL AND '+scope.sql,[owner,...scope.args],'Only assignments in your current scope');
+   const rows=await db().prepare('SELECT a.id,a.course_id,w.name,a.due_at FROM learning_course_assignments a JOIN workers w ON w.owner=a.owner AND w.id=a.worker_id WHERE a.owner=? AND a.cancelled_at IS NULL AND '+scope.sql+' ORDER BY a.created_at DESC LIMIT 8').bind(owner,...scope.args).all<{id:string;course_id:string;name:string;due_at:number}>();
+   out.queue=rows.results.map(r=>({id:r.id,title:r.name+' · '+r.course_id,detail:'Due '+new Date(r.due_at).toISOString().slice(0,10),href:'/coursework'}));return out;
+  }
   if(role==='author'||role==='reviewer'){
    const scope=role==='author'?'author_id=?':'author_id<>?';
    for(const [status,label] of [['submitted',role==='author'?'Awaiting review':'Ready for review'],['approved','Approved procedures'],['rejected','Returned procedures']])await stat(label,count('local_procedures','owner=? AND '+scope+' AND status=?'),[owner,user.userId,status],'Local institution content');

@@ -1,3 +1,4 @@
+import {learnerScope,unitScope} from '@/lib/staff-scope';
 import {access,audit,db,digest,failure,json} from '@/lib/server';
 import {freshUser} from '@/lib/auth';
 import {permitted} from '@/lib/access';
@@ -6,15 +7,16 @@ import {currentInstitutionPolicy,requireInstitutionCapacity} from '@/lib/institu
 import {launchBudget} from '@/lib/learning-centre-store';
 const reply=(data:unknown)=>Response.json(data,{headers:{'Cache-Control':'private, no-store'}});
 export async function GET(){try{
- const a=await access('workspace'),canRead=permitted(a.role,'read'),canContent=permitted(a.role,'content');
+ const a=await access('workspace',true),canRead=permitted(a.role,'read'),canContent=!a.restricted&&permitted(a.role,'content');
  if(!canRead&&!canContent)throw Error('Forbidden: your role does not allow institution records.');
+ const ps=learnerScope(a,"w.id"),us=unitScope(a,"u.id");
  const [units,people,policy,procedures,plan]=await Promise.all([
- canRead?db().prepare('SELECT * FROM institution_units WHERE owner=? ORDER BY kind,name LIMIT 300').bind(a.owner).all():{results:[]},
- canRead?db().prepare('SELECT w.id,w.name,w.sector,p.employee_number,p.unit_id,p.archived_at,l.user_id IS NOT NULL AS linked FROM workers w LEFT JOIN institution_people p ON p.owner=w.owner AND p.worker_id=w.id LEFT JOIN learner_links l ON l.owner=w.owner AND l.worker_id=w.id WHERE w.owner=? ORDER BY w.name,w.id LIMIT 1000').bind(a.owner).all():{results:[]},
+ canRead?db().prepare('SELECT u.* FROM institution_units u WHERE u.owner=? AND '+us.sql+' ORDER BY u.kind,u.name LIMIT 300').bind(a.owner,...us.args).all():{results:[]},
+ canRead?db().prepare('SELECT w.id,w.name,w.sector,p.employee_number,p.unit_id,p.archived_at,l.user_id IS NOT NULL AS linked FROM workers w LEFT JOIN institution_people p ON p.owner=w.owner AND p.worker_id=w.id LEFT JOIN learner_links l ON l.owner=w.owner AND l.worker_id=w.id WHERE w.owner=? AND '+ps.sql+' ORDER BY w.name,w.id LIMIT 1000').bind(a.owner,...ps.args).all():{results:[]},
  currentInstitutionPolicy(a.owner),
  canContent?db().prepare('SELECT * FROM local_procedures WHERE owner=? ORDER BY created_at DESC LIMIT 100').bind(a.owner).all():{results:[]},
- canRead?db().prepare('SELECT name,learner_limit,valid_until,restricted,reason FROM institution_plans WHERE owner=?').bind(a.owner).first():null]);
- return reply({owner:a.owner,actor:a.user.userId,role:a.role,units:units.results,people:people.results,policy,procedures:procedures.results,plan,limits:{people:1000,units:300,procedures:100}});
+ canRead&&!a.restricted?db().prepare('SELECT name,learner_limit,valid_until,restricted,reason FROM institution_plans WHERE owner=?').bind(a.owner).first():null]);
+ return reply({owner:a.owner,actor:a.user.userId,role:a.role,restricted:a.restricted,units:units.results,people:people.results,policy,procedures:procedures.results,plan,limits:{people:1000,units:300,procedures:100}});
 }catch(e){return failure(e)}}
 export async function POST(request:Request){try{
  const parsed=institutionCommand.safeParse(await json(request,150000));if(!parsed.success)throw Error('Invalid institution request. Check required fields and limits.');const c=parsed.data;

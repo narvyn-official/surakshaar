@@ -29,6 +29,7 @@ class RoleDashboardActivity:Activity(){
  if(c.optBoolean("workspaceUnavailable")){body.add(label("Your previous workspace is unavailable. Choose an authorised institute to continue.",16f),top=18);button("Clear previous workspace"){request("/api/admin/session",JSONObject().put("clear",true)){load()}}}
  else if(c.optBoolean("mfaRequired")){val card=card(Palette.tealBg);card.add(label("Secure your account",22f,bold=true));card.add(label("Your role is assigned. Set up an authenticator before opening its records and tools. The browser uses its own sign-in session.",16f),top=12);body.add(card,top=20);button("Set up account security in browser",true){web("/account")}}
  else{
+ if(c.optBoolean("restricted"))body.add(label("Your access is limited to assigned organisational units and their active subgroups. Institution-wide tools are unavailable.",15f,Palette.muted),top=12)
  val stats=value.getJSONArray("stats").objects();for(stat in stats){val card=card(Palette.surface);card.add(label(stat.getInt("value").toString(),30f,bold=true));card.add(label(stat.getString("label"),16f,bold=true),top=6);card.add(label(stat.getString("detail"),13f,Palette.muted),top=6);body.add(card,top=12)}
  body.add(label(if(RoleDashboardPolicy.learningRole(role))"Your learning tools" else "Your responsibilities",20f,bold=true).asHeading(),top=24)
  for((index,a) in value.getJSONArray("actions").objects().withIndex()){val path=a.getString("href");val id=a.getString("id");button(a.getString("title"),index==0){when{

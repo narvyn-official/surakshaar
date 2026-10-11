@@ -13,7 +13,7 @@ cpSync(join(app,'.next/static'),join(web,'apps/admin-web/.next/static'),{recursi
 cpSync(join(app,'public'),join(web,'apps/admin-web/public'),{recursive:true});
 cpSync(join(app,'drizzle'),join(web,'drizzle'),{recursive:true});
 cpSync(join(app,'deployment'),join(web,'deployment'),{recursive:true});
-mkdirSync(join(web,'scripts'),{recursive:true});for(const name of ['migrate-node.mjs','backup-node.mjs','maintain-node.mjs'])cpSync(join(app,'scripts',name),join(web,'scripts',name));
+mkdirSync(join(web,'scripts'),{recursive:true});for(const name of ['migrate-node.mjs','backup-node.mjs','maintain-node.mjs','health-monitor.mjs'])cpSync(join(app,'scripts',name),join(web,'scripts',name));
 // Explicit allowlist prevents copying the developer database, private config, cookies or release keys.
 const source=join(target,'source/apps/admin-web');mkdirSync(source,{recursive:true});
 for(const name of ['app','components','db','drizzle','lib','public','scripts','tests','deployment','docs','build','.openai','hooks','vendor','cloudflare-env.d.ts','drizzle.config.ts','components.json','.npmrc','package.json','package-lock.json','tsconfig.json','next.config.ts','postcss.config.mjs','eslint.config.mjs','next-env.d.ts','vite.config.ts','vite.safety-worker.config.ts'])if(existsSync(join(app,name)))cpSync(join(app,name),join(source,name),{recursive:true});
@@ -28,5 +28,6 @@ writeFileSync(join(target,'BUILD.json'),JSON.stringify({version,builtAt:new Date
 cpSync(join(root,'docs/surakshaar-0.16.0'),join(target,'docs/baseline-0.16.0'),{recursive:true});
 cpSync(join(root,'docs/surakshaar-0.17.0'),join(target,'docs/institution-0.17.0'),{recursive:true});
 cpSync(join(root,'docs/surakshaar-0.18.0'),join(target,'docs/roles-0.18.0'),{recursive:true});
+cpSync(join(root,'docs/surakshaar-0.19.0'),join(target,'docs/completion-0.19.0'),{recursive:true});
 execFileSync('tar',['-czf',join(target,`surakshaar-${version}-web.tar.gz`),'-C',target,'web','source','THIRD-PARTY-NOTICES.txt','BUILD.json','docs']);
 const archive=join(target,`surakshaar-${version}-web.tar.gz`);console.log(JSON.stringify({archive,sha256:createHash('sha256').update(readFileSync(archive)).digest('hex'),bytes:statSync(archive).size},null,2));

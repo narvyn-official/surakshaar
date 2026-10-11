@@ -1,3 +1,5 @@
+Current completion audit: [checklist](docs/surakshaar-0.19.0/COMPLETION-CHECKLIST.md).
+
 # SurakshaAR
 
 **Current release: 0.17.0-rc.1 / Android code 34 — institutional workflows.** Organisation units, cohort programmes, independent examiner/issuer/content roles, approved identity references, signed institute learning records, local procedures and limited guardian/facilitator access are implemented. [Implementation checklist](docs/surakshaar-0.17.0/IMPLEMENTATION-CHECKLIST.md) · [Deployment and tests](docs/surakshaar-0.17.0/DEPLOYED-2026-10-11.md) · [Role guide](docs/surakshaar-0.17.0/OPERATIONS.md) · [Download APK](https://github.com/narvyn-official/surakshaar/releases/download/v0.17.0-rc.1/surakshaar-0.17.0-rc.1-release.apk). Thirteen private demonstration logins were verified; staff require MFA. The checklist explicitly records unfinished architecture and external validation gates.

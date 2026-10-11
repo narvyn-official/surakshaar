@@ -1,0 +1,18 @@
+[Unit]
+Description=SurakshaAR operational readiness checks
+After=surakshaar.service
+
+[Service]
+Type=oneshot
+User=root
+Group=surakshaar
+WorkingDirectory=/opt/surakshaar/current
+EnvironmentFile=/etc/surakshaar/runtime.env
+Environment=SURAKSHA_OPS_STATUS_FILE=/var/lib/surakshaar/operations/status.json
+ExecStart=/usr/bin/node scripts/health-monitor.mjs
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/lib/surakshaar/operations
+UMask=0027

@@ -8,8 +8,8 @@ android {
         applicationId = "com.narvyn.suraksha"
         minSdk = 29
         targetSdk = 36
-        versionCode = 35
-        versionName = "0.18.0-rc.1"
+        versionCode = 36
+        versionName = "0.19.0-rc.1"
         val apiOrigin = System.getenv("SURAKSHA_API_ORIGIN") ?: ""
         require(apiOrigin.isEmpty() || (apiOrigin.startsWith("https://") && apiOrigin.matches(Regex("https://[A-Za-z0-9.-]+(:[0-9]+)?")))) { "SURAKSHA_API_ORIGIN must be an HTTPS origin" }
         buildConfigField("String", "API_ORIGIN", "\"$apiOrigin\"")

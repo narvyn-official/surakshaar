@@ -1,3 +1,4 @@
+import {learnerScope,requireWorkerScope,scopeAssertion} from '@/lib/staff-scope';
 import {z} from 'zod';
 import {access,audit,db,digest,failure,json} from '@/lib/server';
 import {freshUser,getAppUser} from '@/lib/auth';
@@ -15,11 +16,12 @@ const reply=(data:unknown)=>Response.json(data,{headers:{'Cache-Control':'privat
 export async function GET(request:Request){try{
  const user=await getAppUser();if(!user)throw Error('Sign in to continue.');const q=new URL(request.url).searchParams;
  if(q.get('staff')==='1'){
-  const a=await access('workspace');if(!['admin','examiner','assessor'].includes(a.role))throw Error('Forbidden: reference approval requires an enrolment administrator or examiner.');
+  const a=await access('workspace',true);if(!['admin','examiner','assessor'].includes(a.role))throw Error('Forbidden: reference approval requires an enrolment administrator or examiner.');
   if(q.has('image')){
-   const row=await db().prepare("SELECT id,ciphertext FROM identity_references WHERE owner=? AND id=? AND status NOT IN('withdrawn','rejected') AND expires_at>?").bind(a.owner,q.get('image'),Date.now()).first<{id:string;ciphertext:string}>();if(!row)throw Error('No reference image found.');await audit(a,'identity.reference-view',row.id).run();return new Response(new Uint8Array(decryptEvidence(row.ciphertext,a.owner+':reference:'+row.id,secret())),{headers:{'Content-Type':'image/jpeg','Cache-Control':'private, no-store','X-Content-Type-Options':'nosniff'}});
+   const row=await db().prepare("SELECT id,ciphertext,worker_id FROM identity_references WHERE owner=? AND id=? AND status NOT IN('withdrawn','rejected') AND expires_at>?").bind(a.owner,q.get('image'),Date.now()).first<{id:string;ciphertext:string;worker_id:string}>();if(!row)throw Error('No reference image found.');await requireWorkerScope(a,row.worker_id);await audit(a,'identity.reference-view',row.id).run();return new Response(new Uint8Array(decryptEvidence(row.ciphertext,a.owner+':reference:'+row.id,secret())),{headers:{'Content-Type':'image/jpeg','Cache-Control':'private, no-store','X-Content-Type-Options':'nosniff'}});
   }
-  const rows=await db().prepare('SELECT r.id,r.worker_id,r.status,r.created_at,r.expires_at,r.review_note,w.name FROM identity_references r JOIN workers w ON w.owner=r.owner AND w.id=r.worker_id WHERE r.owner=? AND r.expires_at>? ORDER BY r.created_at DESC LIMIT 100').bind(a.owner,Date.now()).all();return reply({staff:true,references:rows.results,configured:identityReady(secret())});
+  const scope=learnerScope(a,'r.worker_id');
+  const rows=await db().prepare('SELECT r.id,r.worker_id,r.status,r.created_at,r.expires_at,r.review_note,w.name FROM identity_references r JOIN workers w ON w.owner=r.owner AND w.id=r.worker_id WHERE r.owner=? AND r.expires_at>? AND '+scope.sql+' ORDER BY r.created_at DESC LIMIT 100').bind(a.owner,Date.now(),...scope.args).all();return reply({staff:true,references:rows.results,configured:identityReady(secret())});
  }
  const links=await learnerLinks(user.userId),rows=await db().prepare('SELECT owner,id,worker_id,status,created_at,expires_at,review_note FROM identity_references WHERE account_id=? AND expires_at>? ORDER BY created_at DESC LIMIT 50').bind(user.userId,Date.now()).all();return reply({staff:false,links,references:rows.results,configured:identityReady(secret())});
 }catch(e){return failure(e)}}
@@ -35,10 +37,10 @@ export async function POST(request:Request){try{
  if(c.action==='withdraw'){
   const user=await freshUser();await db().prepare("UPDATE identity_references SET status='withdrawn',ciphertext='' WHERE id=? AND account_id=? AND status IN('approved','pending','replaced')").bind(c.id,user.userId).run();return reply({withdrawn:true});
  }
- const a=await access('workspace');await freshUser();if(!['admin','examiner','assessor'].includes(a.role))throw Error('Forbidden reference approval role.');
- const row=await db().prepare("SELECT * FROM identity_references WHERE owner=? AND id=? AND status='pending' AND expires_at>?").bind(a.owner,c.id,now).first<{worker_id:string;account_id:string}>();if(!row)throw Error('No pending reference found.');if(row.account_id===a.user.userId)throw Error('Forbidden: you cannot approve your own reference.');
+ const a=await access('workspace',true);await freshUser();if(!['admin','examiner','assessor'].includes(a.role))throw Error('Forbidden reference approval role.');
+ const row=await db().prepare("SELECT * FROM identity_references WHERE owner=? AND id=? AND status='pending' AND expires_at>?").bind(a.owner,c.id,now).first<{worker_id:string;account_id:string}>();if(!row)throw Error('No pending reference found.');await requireWorkerScope(a,row.worker_id);if(row.account_id===a.user.userId)throw Error('Forbidden: you cannot approve your own reference.');
  if(!await db().prepare('SELECT 1 FROM learner_links WHERE owner=? AND worker_id=? AND user_id=?').bind(a.owner,row.worker_id,row.account_id).first())throw Error('Forbidden: learner enrolment changed.');
- const statements:D1PreparedStatement[]=[];
+ const statements:D1PreparedStatement[]=[scopeAssertion(a,row.worker_id)];
  if(c.outcome==='approved')statements.push(db().prepare("UPDATE identity_references SET status='replaced' WHERE owner=? AND worker_id=? AND status='approved' AND EXISTS(SELECT 1 FROM identity_references WHERE owner=? AND id=? AND status='pending')").bind(a.owner,row.worker_id,a.owner,c.id));
  statements.push(db().prepare("UPDATE identity_references SET status=?,reviewed_by=?,reviewed_at=?,review_note=?,expires_at=?,ciphertext=CASE WHEN ?='rejected' THEN '' ELSE ciphertext END WHERE owner=? AND id=? AND status='pending'").bind(c.outcome,a.user.userId,now,c.note,now+(c.outcome==='approved'?90:7)*86400000,c.outcome,a.owner,c.id),audit(a,'identity.reference-'+c.outcome,c.id,{attendedCheck:true},true));
  await db().batch(statements);return reply({saved:true});
