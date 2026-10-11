@@ -4,17 +4,19 @@
 
 Baseline: the 26-section architecture dated 10 October, the 0.17 implementation checklist, and the deployed 0.18 role release. This replaces neither historical evidence nor qualified safety review. “Implemented” means code exists; release verification is recorded separately. There is no defensible “perfect” or field-certified status.
 
-## Work being completed in this release
+## Completed in this release
 
 | ID | Work | Status | Acceptance evidence required |
 |---|---|---|---|
-| S01 | Cohort/department access for instructor, examiner, issuer, combined assessor and viewer | Implemented and tested; deployment pending | Descendants included; siblings, other tenants, archived people, moved learners and revoked staff excluded from lists, detail, photos, writes, exports and counts |
-| S02 | Admin invitation/update controls for staff scope | Implemented and tested; deployment pending | Explicit entire-institution versus selected units; revoke/restore preserves scope; invalid units rejected |
-| S03 | Safe navigation for scoped staff on web and Android | Implemented and tested; deployment pending | Only scoped tools shown; legacy whole-institution tools deny direct API access |
-| L01 | Web assigned practice, save/resume, explicit submission | Implemented and tested; deployment pending | Correct institute/profile/version/mode; private save distinct from sharing; failed save recoverable |
-| L02 | Web learner feedback, correction, withdrawal and pagination | Implemented and tested; deployment pending | Original decisions immutable; reviewed history visible; withdrawal immediately removes future staff evidence access |
-| O01 | Local operations monitor and owner status panel | Implemented; VPS activation pending | Readiness, disk, verified backup freshness, worker and retention timer; distinguish stale/unavailable |
-| V01 | Unit, integration, browser, native and release validation | Local checks passed; deployment pending | Test logs, migration preservation, signed APK, deployed smoke checks |
+| S01 | Cohort/department access for instructor, examiner, issuer, combined assessor and viewer | Implemented, tested and deployed | Descendants included; siblings, other tenants, archived people, moved learners and revoked staff excluded from lists, detail, photos, writes, exports and counts |
+| S02 | Admin invitation/update controls for staff scope | Implemented, tested and deployed | Explicit entire-institution versus selected units; revoke/restore preserves scope; invalid units rejected |
+| S03 | Safe navigation for scoped staff on web and Android | Implemented, tested and deployed | Only scoped tools shown; legacy whole-institution tools deny direct API access |
+| L01 | Web assigned practice, save/resume, explicit submission | Implemented, tested and deployed | Correct institute/profile/version/mode; private save distinct from sharing; failed save recoverable |
+| L02 | Web learner feedback, correction, withdrawal and pagination | Implemented, tested and deployed | Original decisions immutable; reviewed history visible; withdrawal immediately removes future staff evidence access |
+| O01 | Local operations monitor and owner status panel | Active on VPS; five checks passed | Readiness, disk, verified backup freshness, worker and retention timer; distinguish stale/unavailable |
+| V01 | Unit, integration, browser, native and release validation | Release checks and migration rehearsal passed; live verification recorded below | Test logs, migration preservation, signed APK, deployed smoke checks |
+
+CI maintenance: the workflow now pins Ubuntu 24.04 and Node 24-compatible GitHub actions to immutable commit hashes. Acceptance is the green validation workflow on the published commit.
 
 ## Existing capabilities retained
 
@@ -43,10 +45,10 @@ Baseline: the 26-section architecture dated 10 October, the 0.17 implementation 
 | ID | Remaining work | Why it is not complete | Next concrete completion criterion |
 |---|---|---|---|
 | E01 | Native monitored rear/front camera AR checkpoints | Native camera lifecycle exists; assessed switching/recovery is not connected end-to-end | Persist checkpoint state, release/reacquire cameras, bind private uploads and interruption outcomes; test real supported phones |
-| E02 | Google/email OTP/SSO and delivered account recovery | Password/MFA works; provider choice, credentials and delivery are not validated | Configure a selected provider, preserve staff MFA, test recovery and account linking. No mail is sent merely because credentials exist |
-| E03 | Online billing and automated renewal | Contracted manual plans work; no payment provider chosen | Approved pricing/tax/refund policy and provider, verified webhooks, duplicate/out-of-order handling |
+| E02 | Google/email OTP/SSO and delivered account recovery | Disabled by owner decision; password/MFA remains available | Configure a selected provider, preserve staff MFA, test recovery and account linking. No mail is sent merely because credentials exist |
+| E03 | Online billing and automated renewal | Disabled by owner decision; contracted manual plans remain available | Approved pricing/tax/refund policy and provider, verified webhooks, duplicate/out-of-order handling |
 | E04 | Managed PostgreSQL/RLS/object storage/queue migration | Current supported target is bounded SQLite with a separate worker | Migration rehearsal, tenancy parity, verified private objects, deployment/rollback and representative load; do not replace working infrastructure merely to match a proposed stack |
-| E05 | Offsite restore and operational alert delivery | Local backup/restore and local monitoring work; independent destination and external responder are unconfigured | Encrypted offsite copy, isolated restore drill, chosen alert channel and incident ownership |
+| E05 | Offsite restore and operational alert delivery | External services disabled by owner decision; local backup/restore and monitoring remain active | Encrypted offsite copy, isolated restore drill, chosen alert channel and incident ownership |
 | E06 | Full native/web parity and multi-persona switching | Some Android operations open an authenticated browser; role precedence selects the operational role | Explicit supported route matrix; native camera/exam path and reversible account-context chooser |
 | E07 | Institution branding/templates and closure export | Name/site, plans, archive, policy and signed record templates exist; full branded templates/closure wizard are incomplete | Validated template fields, export, access closure and retained verification/key history |
 | E08 | Full appearance/language/accessibility matrix | Light selected; some Hindi support; complete theme parity, translation and assistive-device matrix not validated | Reviewed translations, layout/direction checks, keyboard/screen-reader/native accessibility and physical-device matrix |
