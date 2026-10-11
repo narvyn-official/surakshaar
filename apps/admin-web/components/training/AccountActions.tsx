@@ -4,7 +4,7 @@ import {useRef,useState} from 'react';
 import {Button} from '@/components/ui/button';
 import {PasswordInput} from './PasswordInput';
 import {requestJson} from '@/lib/client-api';
-export async function signOut(){await requestJson('/api/auth/sign-out','POST',{});window.location.assign('/login');}
+export async function signOut(){await requestJson('/api/auth/sign-out','POST',{});try{for(const key of Object.keys(sessionStorage))if(key.startsWith('suraksha.assigned.v1:'))sessionStorage.removeItem(key);}catch{/* Storage may be disabled; server sign-out still takes effect. */}window.location.assign('/login');}
 export function AccountActions(){
  const [error,setError]=useState(''),[busy,setBusy]=useState(false),[message,setMessage]=useState('');const pending=useRef(false);
  return <><form className="admin-form" aria-busy={busy} onSubmit={async e=>{e.preventDefault();if(pending.current)return;pending.current=true;
