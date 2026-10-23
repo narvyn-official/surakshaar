@@ -54,7 +54,7 @@ internal class HandTrackingEngine(context:Context):AutoCloseable {
     private var closed=false
     private var generation=generations.incrementAndGet()
     private var geometry:Geometry?=null
-    private var lastOfferMs=Long.MIN_VALUE
+    private val pacer=HandInferencePacer()
     private var lastImageNs=0L
     private var paused=false
     private val snapshot=AtomicReference(HandTrackingSnapshot(HandTrackingState.DISABLED,"Hand controls are off. Touch controls remain available."))
@@ -67,7 +67,7 @@ internal class HandTrackingEngine(context:Context):AutoCloseable {
         synchronized(lock) {
             if(closed || enabled==value)return
             enabled=value;generation=generations.incrementAndGet();geometry=null;paused=false
-            lastOfferMs=Long.MIN_VALUE;lastImageNs=0
+            pacer.reset();lastImageNs=0
             snapshot.set(if(value)HandTrackingSnapshot(HandTrackingState.STARTING,"Starting on-device hand controls. Keep touch controls available.")
                 else HandTrackingSnapshot(HandTrackingState.DISABLED,"Hand controls are off. Touch controls remain available."))
         }
@@ -91,9 +91,8 @@ internal class HandTrackingEngine(context:Context):AutoCloseable {
                 snapshot.set(HandTrackingSnapshot(HandTrackingState.SEARCHING,"Show an open hand in the camera view.",sessionEpoch=epoch))
             }
             token=generation
-            if(lastOfferMs!=Long.MIN_VALUE && now-lastOfferMs<MIN_INTERVAL_MS)return
+            if(busy.get() || !pacer.offer(now))return
             if(!busy.compareAndSet(false,true))return
-            lastOfferMs=now
         }
         var copy:HandYuvCopy?=null
         try {
@@ -154,6 +153,7 @@ internal class HandTrackingEngine(context:Context):AutoCloseable {
             lastModelTimestamp=modelTimestamp
             val result=BitmapImageBuilder(bitmap).build().use { image->detector.detectForVideo(image,modelTimestamp) }
             val received=SystemClock.elapsedRealtime()
+            synchronized(lock){if(isCurrent(token,key))pacer.completed(received-started)}
             if(received-captureTime>MAX_RESULT_AGE_MS) {
                 publish(token,key,HandTrackingSnapshot(HandTrackingState.SEARCHING,"Hand signal delayed. Use touch controls.",processingMs=received-started,sessionEpoch=key.epoch))
                 return
@@ -179,10 +179,7 @@ internal class HandTrackingEngine(context:Context):AutoCloseable {
             val points=HandResultMapping.landmarks(landmarks.map{HandLandmark(it.x(),it.y(),it.z())},mapping,turns,
                 copy.sourceWidth,copy.sourceHeight,copy.left,copy.top,copy.cropWidth,copy.cropHeight) ?: return@mapIndexedNotNull null
             val category=result.handedness().getOrNull(index)?.maxByOrNull{it.score()}
-            val label=when(category?.categoryName()?.lowercase()){"left"->Handedness.LEFT;"right"->Handedness.RIGHT;else->Handedness.UNKNOWN}
-            val confidence=category?.score() ?: 0f
-            if(!confidence.isFinite()||confidence<.6f)return@mapIndexedNotNull null
-            TrackedHand("candidate-$index",label,confidence,points)
+            HandResultMapping.acceptedHand("candidate-$index",category?.categoryName(),category?.score(),points)
         }
     }
 
@@ -213,7 +210,6 @@ internal class HandTrackingEngine(context:Context):AutoCloseable {
     companion object {
         const val MODEL_ASSET="models/hand-tracking/hand_landmarker.task"
         const val MODEL_SHA256="fbc2a30080c3c557093b5ddfc334698132eb341044ccee322ccf8bcf3607cde1"
-        private const val MIN_INTERVAL_MS=100L
         private const val MAX_RESULT_AGE_MS=250L
         private const val MAX_CAMERA_LAG_NS=100_000_000L
         private val generations=AtomicLong()

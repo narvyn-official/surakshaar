@@ -44,6 +44,7 @@ internal class HandsArSceneView(
     private val surface=GLSurfaceView(host)
     private val accessibleControls=FrameLayout(host)
     private var accessibleControlIds=emptyList<String>()
+    private var accessibleControlKey=""
     private val release=ArSessionRelease()
     private var driver:NativeArDriver?=null
     private val tracker=HandTrackingEngine(host.applicationContext)
@@ -58,9 +59,11 @@ internal class HandsArSceneView(
     private var anchor:Anchor?=null
     private var modelId=initialModel.takeIf{it in MODELS}?:"extinguisher"
     private var offsetX=0f;private var offsetZ=0f;private var scale=1f;private var yaw=0f
-    private var committed=Transform()
+    private var committed=HandModelPose()
+    private val motion=HandModelMotion()
+    private var lastRenderAt=0L
     private var drag:Drag?=null
-    private var twoHandBase:Transform?=null
+    private var twoHandBase:TwoHandBase?=null
     private var cursors=emptyList<HandGestureEvent.Cursor>()
     private var handFrame:HandTrackingFrame?=null
     private var lastProcessedCapture=-1L
@@ -94,7 +97,7 @@ internal class HandsArSceneView(
     private var thermalAt=0L
     private var touchDownAt=0L;private var touchX=0f;private var touchY=0f
     private var touchMoved=false;@Volatile private var touchActive=false;private var touchSpan=0f;private var touchAngle=0f
-    private var touchTransform:Transform?=null
+    private var touchTransform:TwoHandBase?=null
     @Volatile private var controllerArmed=false;private var controllerDownAt=0L
     private var currentFrame:Frame?=null
     private val projection=FloatArray(16);private val view=FloatArray(16);private val vp=FloatArray(16);private val inverseVp=FloatArray(16)
@@ -107,8 +110,8 @@ internal class HandsArSceneView(
     var onExit:()->Unit={}
     var onFailure:(String)->Unit={}
     val isPaused get()=paused
-    private data class Transform(val x:Float=0f,val z:Float=0f,val scale:Float=1f,val yaw:Float=0f)
-    private data class Drag(val before:Transform,val planeY:Float,val grabX:Float,val grabZ:Float,val handId:String?=null)
+    private data class TwoHandBase(val pose:HandModelPose,val pivotX:Float,val pivotZ:Float)
+    private data class Drag(val before:HandModelPose,val planeY:Float,val grabX:Float,val grabZ:Float,val handId:String?=null)
     private data class Ray(val origin:FloatArray,val direction:FloatArray)
     private data class Hit(val id:String,val bounds:RectF)
     private fun commands():List<String> = when {
@@ -132,29 +135,40 @@ internal class HandsArSceneView(
         worker.execute{try{val data=loadBody();if(!closed)pendingBody.set(data)}catch(e:Exception){bodyLoadError="The body model is unavailable. Extinguisher and AED exploration still work."}}
     }
     override fun onSizeChanged(w:Int,h:Int,oldw:Int,oldh:Int){super.onSizeChanged(w,h,oldw,oldh);positionAccessibleControls()}
+    private fun commandEnabled(id:String)=when(id){
+        "place"->canPlace&&!paused&&!cooling
+        "resume"->!cooling
+        "smaller"->inputReady()&&scale>.3001f
+        "larger"->inputReady()&&scale<1.4999f
+        "rotate-left","rotate-right","reset"->inputReady()
+        "body"->body!=null
+        else->true
+    }
     private fun updateAccessibleControls(){
         if(headset)return
-        val ids=commands()
-        if(ids==accessibleControlIds)return
-        accessibleControlIds=ids.toList()
+        val ids=commands();val names=ids.map(::commandName);val enabled=ids.map(::commandEnabled)
+        val key=ids.joinToString()+names.joinToString()+enabled.joinToString()
+        if(key==accessibleControlKey)return
+        accessibleControlKey=key
         post{
             if(closed||headset)return@post
-            accessibleControls.removeAllViews()
-            for(id in ids){
-                // Semantic/native touch proxies exactly match the drawn command rectangles.
-                // This preserves TalkBack, keyboard and switch access to the same scene reducer.
-                val button=Button(host).apply{
-                    text="";contentDescription=commandName(id);tag="hands-ar-control-$id";isAllCaps=false
-                    minimumHeight=0;minimumWidth=0;setPadding(0,0,0,0)
-                    background=android.graphics.drawable.StateListDrawable().apply{
-                        addState(intArrayOf(android.R.attr.state_focused),host.shape(Color.TRANSPARENT,6,Palette.teal))
-                        addState(intArrayOf(),android.graphics.drawable.ColorDrawable(Color.TRANSPARENT))
+            if(accessibleControlIds!=ids){
+                accessibleControlIds=ids.toList();accessibleControls.removeAllViews()
+                for(id in ids){
+                    val button=Button(host).apply{
+                        text="";tag="hands-ar-control-$id";isAllCaps=false
+                        minimumHeight=0;minimumWidth=0;setPadding(0,0,0,0)
+                        background=android.graphics.drawable.StateListDrawable().apply{
+                            addState(intArrayOf(android.R.attr.state_focused),host.shape(Color.TRANSPARENT,6,Palette.teal))
+                            addState(intArrayOf(),android.graphics.drawable.ColorDrawable(Color.TRANSPARENT))
+                        }
+                        setOnClickListener{command(id)}
                     }
-                    setOnClickListener{command(id)}
+                    accessibleControls.addView(button,LayoutParams(1,1))
                 }
-                accessibleControls.addView(button,LayoutParams(1,1))
+                positionAccessibleControls()
             }
-            positionAccessibleControls()
+            for(i in ids.indices){accessibleControls.getChildAt(i).apply{contentDescription=names[i];isEnabled=enabled[i]}}
         }
     }
     private fun positionAccessibleControls(){
@@ -251,7 +265,7 @@ internal class HandsArSceneView(
     }
     private fun allocateStereo(){
         val factor=minOf(1f,1600f/surfaceWidth,900f/surfaceHeight)
-        renderWidth=((surfaceWidth*factor).toInt()/2*2).coerceAtLeast(2);renderHeight=(surfaceHeight*factor).toInt().coerceAtLeast(2)
+        renderWidth=(logicalWidth*factor).toInt().coerceAtLeast(2);renderHeight=(surfaceHeight*factor).toInt().coerceAtLeast(2)
         val names=IntArray(1);G.glGenTextures(1,names,0);stereoTexture=names[0];G.glBindTexture(G.GL_TEXTURE_2D,stereoTexture)
         for(p in intArrayOf(G.GL_TEXTURE_MIN_FILTER,G.GL_TEXTURE_MAG_FILTER))G.glTexParameteri(G.GL_TEXTURE_2D,p,G.GL_LINEAR)
         for(p in intArrayOf(G.GL_TEXTURE_WRAP_S,G.GL_TEXTURE_WRAP_T))G.glTexParameteri(G.GL_TEXTURE_2D,p,G.GL_CLAMP_TO_EDGE)
@@ -306,22 +320,27 @@ internal class HandsArSceneView(
                 }
                 if(handFrame?.let{now-it.captureTimeMs>HandGestureController.CAPTURE_FRESH_MS}!=false){handFrame=null;cursors=emptyList()}
             }
+            val dt=if(lastRenderAt==0L)0f else (now-lastRenderAt).coerceAtLeast(0)/1000f
+            lastRenderAt=now;motion.advance(transform(),dt);updateModel()
             canPlace=interaction&&floorHit(frame,.5f,.62f)!=null
-            if(now-lastHudAt>=150||hudKey.isEmpty()){paintHud();lastHudAt=now}
+            if(now-lastHudAt>=100||lastHudAt==0L){paintHud();lastHudAt=now}
             if(headset){
                 G.glBindFramebuffer(G.GL_FRAMEBUFFER,fbo);G.glClearColor(0f,0f,0f,1f);G.glClear(G.GL_COLOR_BUFFER_BIT or G.GL_DEPTH_BUFFER_BIT)
-                // These are identical camera views, not invented left/right camera depth.
-                for(e in 0..1){G.glViewport(e*renderWidth/2,0,renderWidth/2,renderHeight);drawMono(frame)}
+                // Share one monoscopic render at the existing per-eye resolution. VR still
+                // renders separate eye images; this never invents stereo camera depth.
+                G.glViewport(0,0,renderWidth,renderHeight);drawMono(frame)
                 G.glBindFramebuffer(G.GL_FRAMEBUFFER,0);G.glViewport(0,0,surfaceWidth,surfaceHeight);G.glDisable(G.GL_DEPTH_TEST);G.glDisable(G.GL_BLEND)
-                CardboardBridge.composite(cardboard,surfaceWidth,surfaceHeight,stereoTexture)
+                CardboardBridge.composite(cardboard,surfaceWidth,surfaceHeight,stereoTexture,sharedCameraImage=true)
             }else{G.glBindFramebuffer(G.GL_FRAMEBUFFER,0);G.glViewport(0,0,surfaceWidth,surfaceHeight);G.glClearColor(0f,0f,0f,1f);G.glClear(G.GL_COLOR_BUFFER_BIT or G.GL_DEPTH_BUFFER_BIT);drawMono(frame)}
+            updateAccessibleControls()
             status("$trackingMessage. $handMessage")
         }catch(e:Exception){fail("Live AR was interrupted. Return and retry; no learning records were changed.")}
     }
     private fun updateModel(){
         val a=anchor
         if(a==null||a.trackingState!=TrackingState.TRACKING){visibleParts=emptyList();return}
-        a.pose.toMatrix(model,0);Matrix.translateM(model,0,offsetX,0f,offsetZ);Matrix.rotateM(model,0,yaw,0f,1f,0f)
+        val visible=motion.visible
+        a.pose.toMatrix(model,0);Matrix.translateM(model,0,visible.x,0f,visible.z);Matrix.rotateM(model,0,visible.yaw,0f,1f,0f)
         partTransforms=emptyMap()
         val guide=if(modelId=="body"&&partId==null)FirstAidSceneGuide.byKey(teachingKey)else null
         val parts=when(modelId){"aed"->FirstAidEquipment.parts;"body"->body?.parts?.let{all->
@@ -333,7 +352,7 @@ internal class HandsArSceneView(
         if(parts.isEmpty())return
         val b=FloatArray(6){i->if(i<3)parts.minOf{it.bounds[i]}else parts.maxOf{it.bounds[i]}}
         val baseScale=if(modelId=="body"&&partId!=null)(.65f/(0..2).maxOf{b[it+3]-b[it]}.coerceAtLeast(.03f)).coerceAtMost(5f)else if(modelId=="body").48f else 1f
-        Matrix.scaleM(model,0,scale*baseScale,scale*baseScale,scale*baseScale)
+        Matrix.scaleM(model,0,visible.scale*baseScale,visible.scale*baseScale,visible.scale*baseScale)
         if(guide!=null){
             val skin=body?.parts?.firstOrNull{it.layer=="skin"}?.bounds?:b
             val lift=CasualtyGeometry.lift(skin,0f);val posed=CasualtyGeometry.bounds(skin,0f,lift)
@@ -352,10 +371,14 @@ internal class HandsArSceneView(
         }
         G.glDisable(G.GL_DEPTH_TEST);graphics.marks(cursors,handFrame?.hands.orEmpty(),logicalWidth,surfaceHeight);graphics.hud()
     }
-    private fun transform()=Transform(offsetX,offsetZ,scale,yaw)
-    private fun apply(t:Transform){offsetX=t.x.coerceIn(-.75f,.75f);offsetZ=t.z.coerceIn(-.75f,.75f);scale=t.scale.coerceIn(.3f,1.5f);yaw=normaliseAngle(t.yaw);updateModel();hudKey=""}
+    private fun transform()=HandModelPose(offsetX,offsetZ,scale,yaw)
+    private fun apply(t:HandModelPose,immediate:Boolean=false){
+        val value=t.bounded();offsetX=value.x;offsetZ=value.z;scale=value.scale;yaw=value.yaw
+        if(immediate)motion.snap(value)
+        updateModel();hudKey=""
+    }
     private fun cancelManipulation(){
-        drag?.let{apply(it.before)};drag=null;twoHandBase=null
+        drag?.let{apply(it.before,true)};drag=null;twoHandBase=null
         gestures.interrupt();cursors=emptyList();touchTransform=null
     }
     private fun consume(events:List<HandGestureEvent>){
@@ -370,14 +393,23 @@ internal class HandsArSceneView(
             is HandGestureEvent.Move->if(event.targetId=="object")moveDrag(event.x,event.y)
             is HandGestureEvent.End->{
                 if(event.targetId.startsWith("command:")&&!event.dragged&&targetAt(event.x,event.y)==event.targetId)activate(event.targetId.removePrefix("command:"))
-                else if(event.targetId=="object"){committed=transform();drag=null;twoHandBase=null;latestNotice="Object placed. Pinch again to move it."}
+                else if(event.targetId=="object"&&drag!=null){committed=transform();drag=null;twoHandBase=null;latestNotice="Object placed. Pinch again to move it."}
                 else if(event.targetId=="surface")place(event.x,event.y)
             }
-            is HandGestureEvent.Cancel->{drag?.let{apply(it.before)};drag=null;twoHandBase=null;latestNotice="Movement cancelled. Show a neutral hand to start again."}
-            is HandGestureEvent.TransformStart->if(event.targetId=="object")twoHandBase=transform()
-            is HandGestureEvent.TransformMove->if(event.targetId=="object")twoHandBase?.let{base->apply(base.copy(scale=base.scale*event.scale,yaw=base.yaw-Math.toDegrees(event.rotationRadians.toDouble()).toFloat()))}
+            is HandGestureEvent.Cancel->{drag?.let{apply(it.before,true)};drag=null;twoHandBase=null;latestNotice="Movement cancelled. Show a neutral hand to start again."}
+            is HandGestureEvent.TransformStart->if(event.targetId=="object"){
+                val point=drag?.let{planePoint(event.centreX,event.centreY,it.planeY)}
+                val local=point?.let{anchor?.pose?.inverse()?.transformPoint(it)}
+                twoHandBase=local?.let{TwoHandBase(transform(),it[0],it[2])}
+                latestNotice="Two hands hold the model. Move together; spread to resize; turn to rotate."
+            }
+            is HandGestureEvent.TransformMove->if(event.targetId=="object"&&inputReady())twoHandBase?.let{base->
+                val point=drag?.let{planePoint(event.centreX,event.centreY,it.planeY)}
+                val local=point?.let{anchor?.pose?.inverse()?.transformPoint(it)}
+                if(local!=null)apply(HandModelTransforms.twoHand(base.pose,base.pivotX,base.pivotZ,local[0],local[2],event.scale,-Math.toDegrees(event.rotationRadians.toDouble()).toFloat()))
+            }
             is HandGestureEvent.TransformEnd->{
-                if(event.cancelled)drag?.let{apply(it.before)}
+                if(event.cancelled)drag?.let{apply(it.before,true)}
                 else drag?.let{held->
                     // The primary pinch still owns the transaction. Rebase its grab offset after
                     // a two-hand resize, preserving the original rollback snapshot until End.
@@ -439,11 +471,11 @@ internal class HandsArSceneView(
         if(!frameReady||paused||cooling){latestNotice="Map a surface before placing an object.";return}
         val frame=currentFrame?:return;val hit=floorHit(frame,x,y)
         if(hit==null){latestNotice="No mapped surface here. Aim at a textured table or floor.";return}
-        try{val replacement=hit.createAnchor();val old=anchor;anchor=replacement;old?.detach();apply(Transform());committed=transform();latestNotice="Anchored. Point at the model, then pinch to move it."}
+        try{val replacement=hit.createAnchor();val old=anchor;anchor=replacement;old?.detach();apply(HandModelPose(),true);committed=transform();latestNotice="Anchored. Point at the model, then pinch to move it."}
         catch(e:Exception){latestNotice="Placement did not complete. The previous anchor is retained."}
     }
     private fun activate(id:String){
-        if(!foreground||!hasFocus)return
+        if(!foreground||!hasFocus||id !in commands()||!commandEnabled(id))return
         cancelManipulation()
         when(id){
             "exit"->post{onExit()}
@@ -457,8 +489,8 @@ internal class HandsArSceneView(
             "larger"->if(inputReady())apply(transform().copy(scale=scale*1.15f))
             "rotate-left"->if(inputReady())apply(transform().copy(yaw=yaw-15f))
             "rotate-right"->if(inputReady())apply(transform().copy(yaw=yaw+15f))
-            "reset"->if(inputReady()){apply(Transform());committed=transform();latestNotice="Model size, turn and local position reset. Its surface anchor is retained."}
-            in MODELS->{if(id=="body"&&body==null){latestNotice=bodyLoadError?:"Preparing the body model…"}else{modelId=id;apply(Transform());committed=transform();panel=0;latestNotice="${commandName(id)} selected. Its position remains anchored."}}
+            "reset"->if(inputReady()){apply(HandModelPose(),true);committed=transform();latestNotice="Model size, turn and local position reset. Its surface anchor is retained."}
+            in MODELS->{if(id=="body"&&body==null){latestNotice=bodyLoadError?:"Preparing the body model…"}else{modelId=id;apply(HandModelPose(),true);committed=transform();panel=0;latestNotice="${commandName(id)} selected. Its position remains anchored."}}
         }
         selectedControl=selectedControl.coerceAtMost(commands().lastIndex);hudKey=""
         updateAccessibleControls()
@@ -468,10 +500,34 @@ internal class HandsArSceneView(
         val x=(event.x/width.coerceAtLeast(1)).coerceIn(0f,1f);val y=(event.y/height.coerceAtLeast(1)).coerceIn(0f,1f)
         when(event.actionMasked){
             MotionEvent.ACTION_DOWN->{touchActive=true;touchMoved=false;touchDownAt=event.eventTime;touchX=x;touchY=y;surface.queueEvent{cancelManipulation();if(targetAt(x,y)=="object")beginDrag(x,y)}}
-            MotionEvent.ACTION_POINTER_DOWN->{if(event.pointerCount==2){touchSpan=hypot(event.getX(1)-event.getX(0),event.getY(1)-event.getY(0));touchAngle=atan2(event.getY(1)-event.getY(0),event.getX(1)-event.getX(0));surface.queueEvent{touchTransform=if(drag!=null)transform()else null}}}
+            MotionEvent.ACTION_POINTER_DOWN->{if(event.pointerCount==2){
+                touchMoved=true;touchSpan=hypot(event.getX(1)-event.getX(0),event.getY(1)-event.getY(0));touchAngle=atan2(event.getY(1)-event.getY(0),event.getX(1)-event.getX(0))
+                val cx=(event.getX(0)+event.getX(1))/(2*width);val cy=(event.getY(0)+event.getY(1))/(2*height)
+                surface.queueEvent{val point=drag?.let{planePoint(cx,cy,it.planeY)};val local=point?.let{anchor?.pose?.inverse()?.transformPoint(it)};touchTransform=local?.let{TwoHandBase(transform(),it[0],it[2])}}
+            }}
             MotionEvent.ACTION_MOVE->{if(!touchActive)return true;if(hypot(x-touchX,y-touchY)>.012f)touchMoved=true
-                if(event.pointerCount>=2){val span=hypot(event.getX(1)-event.getX(0),event.getY(1)-event.getY(0));val angle=atan2(event.getY(1)-event.getY(0),event.getX(1)-event.getX(0));surface.queueEvent{if(inputReady())touchTransform?.let{base->if(touchSpan>1f)apply(base.copy(scale=base.scale*span/touchSpan,yaw=base.yaw-Math.toDegrees((angle-touchAngle).toDouble()).toFloat()))}}}
+                if(event.pointerCount>=2){
+                    val span=hypot(event.getX(1)-event.getX(0),event.getY(1)-event.getY(0));val angle=atan2(event.getY(1)-event.getY(0),event.getX(1)-event.getX(0))
+                    val ratio=if(touchSpan>1f)span/touchSpan else 1f;val degrees=-Math.toDegrees((angle-touchAngle).toDouble()).toFloat()
+                    val cx=(event.getX(0)+event.getX(1))/(2*width);val cy=(event.getY(0)+event.getY(1))/(2*height)
+                    surface.queueEvent{if(inputReady())touchTransform?.let{base->
+                        val point=drag?.let{planePoint(cx,cy,it.planeY)};val local=point?.let{anchor?.pose?.inverse()?.transformPoint(it)}
+                        if(local!=null)apply(HandModelTransforms.twoHand(base.pose,base.pivotX,base.pivotZ,local[0],local[2],ratio,degrees))
+                    }}
+                }
                 else surface.queueEvent{moveDrag(x,y)}
+            }
+            MotionEvent.ACTION_POINTER_UP->{
+                if(event.pointerCount==2){
+                    val remaining=if(event.actionIndex==0)1 else 0
+                    val rx=event.getX(remaining)/width;val ry=event.getY(remaining)/height
+                    surface.queueEvent{
+                        touchTransform=null
+                        drag?.let{held->val point=planePoint(rx,ry,held.planeY);val local=point?.let{anchor?.pose?.inverse()?.transformPoint(it)}
+                            if(local!=null)drag=held.copy(grabX=local[0]-offsetX,grabZ=local[2]-offsetZ)
+                        }
+                    }
+                }
             }
             MotionEvent.ACTION_UP->{if(!touchActive)return true;touchActive=false;val moved=touchMoved;surface.queueEvent{
                 if(drag!=null){committed=transform();drag=null;touchTransform=null}
@@ -499,7 +555,7 @@ internal class HandsArSceneView(
         for((i,hit)in hits().withIndex()){
             val r=RectF(hit.bounds.left*800,hit.bounds.top*800,hit.bounds.right*800,hit.bounds.bottom*800)
             val selected=headset&&i==selectedControl
-            pen.color=if(selected)0xffb6eee0.toInt()else if(hit.id=="command:exit")0xff953e32.toInt()else 0xe61e5961.toInt();c.drawRoundRect(r,12f,12f,pen)
+            pen.color=if(!commandEnabled(hit.id.removePrefix("command:")))0xcc42515b.toInt()else if(selected)0xffb6eee0.toInt()else if(hit.id=="command:exit")0xff953e32.toInt()else 0xe61e5961.toInt();c.drawRoundRect(r,12f,12f,pen)
             pen.color=if(selected)0xff123d37.toInt()else Color.WHITE;pen.textSize=21f;pen.textAlign=Paint.Align.CENTER
             val name=commandName(hit.id.removePrefix("command:"));fit(c,name,r.centerX(),r.centerY()+7,r.width()-8)
         }

@@ -7,6 +7,10 @@
 #include "polynomial_radial_distortion.h"
 
 int main() {
+  assert((suraksha::EyeTextureU(false,0)==std::array<float,2>{0.f,.5f}));
+  assert((suraksha::EyeTextureU(false,1)==std::array<float,2>{.5f,1.f}));
+  assert((suraksha::EyeTextureU(true,0)==std::array<float,2>{0.f,1.f}));
+  assert((suraksha::EyeTextureU(true,1)==std::array<float,2>{0.f,1.f}));
   float p[]{.1f,-.2f,.3f};float q[]{0,0,0,1};float m[16]{};
   assert(suraksha::HeadView(p,q,m));
   for(int c=0;c<3;++c)for(int r=0;r<3;++r)assert(std::abs(m[c*4+r]-(c==r?1.f:0.f))<.00001f);

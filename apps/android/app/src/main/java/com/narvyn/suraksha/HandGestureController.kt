@@ -46,7 +46,7 @@ internal sealed class HandGestureEvent {
     data class Move(val targetId: String, val handId: String, val x: Float, val y: Float, val deltaX: Float, val deltaY: Float) : HandGestureEvent()
     data class End(val targetId: String, val handId: String, val x: Float, val y: Float, val dragged: Boolean) : HandGestureEvent()
     data class Cancel(val targetId: String, val reason: HandCancelReason) : HandGestureEvent()
-    data class TransformStart(val targetId: String, val firstHandId: String, val secondHandId: String) : HandGestureEvent()
+    data class TransformStart(val targetId: String, val firstHandId: String, val secondHandId: String, val centreX:Float, val centreY:Float) : HandGestureEvent()
     /** Cumulative relative values since TransformStart, never absolute model transforms. */
     data class TransformMove(val targetId: String, val scale: Float, val rotationRadians: Float, val centreX: Float, val centreY: Float) : HandGestureEvent()
     data class TransformEnd(val targetId: String, val cancelled: Boolean) : HandGestureEvent()
@@ -66,16 +66,17 @@ internal class HandGestureController {
         var releaseSince: Long? = null
         var palmSince: Long? = null
         var pinched = false
+        var pinchTarget: String? = null
         var lastX: Float? = null
         var lastY: Float? = null
         var wrist: HandLandmark? = null
         var handedness: Handedness = Handedness.UNKNOWN
-        var lastAt = 0L
+        val pointer = HandPointerFilter()
     }
     private data class Sample(val hand: TrackedHand, val point: HandLandmark, val ratio: Float, val openPalm: Boolean)
     private data class Active(val target: String, val primary: String, var x: Float, var y: Float, val startX: Float = x, val startY: Float = y, var dragged: Boolean = false)
     private data class Transform(
-        val secondary: String, val distance: Float, val angle: Float,
+        val secondary: String, val distance: Float, var lastAngle: Float, var rawRotation: Float = 0f,
         var scale: Float = 1f, var rotation: Float = 0f, var centreX: Float, var centreY: Float,
     )
     private val states = mutableMapOf<String, HandState>()
@@ -163,25 +164,30 @@ internal class HandGestureController {
         var openPalmCancel = false
         for (sample in samples) {
             val state = states.getOrPut(sample.hand.id) { HandState(sample.hand.id) }
-            val dt = (frame.captureTimeMs - state.lastAt).coerceIn(0, CAPTURE_FRESH_MS)
-            val alpha = if (state.lastX == null) 1f else (1.0 - exp(-dt / 55.0)).toFloat().coerceIn(.05f, .75f)
-            state.lastX = smooth(state.lastX ?: sample.point.x, sample.point.x, alpha, MAX_CURSOR_STEP)
-            state.lastY = smooth(state.lastY ?: sample.point.y, sample.point.y, alpha, MAX_CURSOR_STEP)
-            state.wrist = sample.hand.landmarks[0]; state.handedness = sample.hand.handedness; state.lastAt = frame.captureTimeMs
+            // Opening a pinch moves the index tip even when the hand itself is still. Freeze
+            // the held point throughout release confirmation; never commit that release drift.
+            if (!state.pinched || sample.ratio < PINCH_OFF) {
+                val point = state.pointer.sample(sample.point.x, sample.point.y, frame.captureTimeMs, viewAspect)
+                state.lastX = point.first; state.lastY = point.second
+            }
+            state.wrist = sample.hand.landmarks[0]; state.handedness = sample.hand.handedness
             if (!state.pinched) {
                 if (sample.ratio >= PINCH_OFF) {
-                    state.pinchSince = null
+                    state.pinchSince = null; state.pinchTarget = null
                     if (state.neutralSince == null) state.neutralSince = frame.captureTimeMs
                     if (frame.captureTimeMs - state.neutralSince!! >= NEUTRAL_MS) state.armed = true
                 } else {
                     state.neutralSince = null
                     if (state.armed && sample.ratio <= PINCH_ON) {
-                        if (state.pinchSince == null) state.pinchSince = frame.captureTimeMs
+                        if (state.pinchSince == null) {
+                            state.pinchSince = frame.captureTimeMs
+                            state.pinchTarget = targetAt(state.lastX!!, state.lastY!!)?.takeIf { it.isNotBlank() && it.length <= 160 }
+                        }
                         if (frame.captureTimeMs - state.pinchSince!! >= PINCH_MS) {
                             state.pinched = true; state.armed = false; state.pinchSince = null
                             state.releaseSince = null; state.palmSince = null; began += state.id
                         }
-                    } else state.pinchSince = null
+                    } else { state.pinchSince = null; state.pinchTarget = null }
                 }
             } else if (sample.ratio >= PINCH_OFF) {
                 if (state.releaseSince == null) state.releaseSince = frame.captureTimeMs
@@ -217,7 +223,7 @@ internal class HandGestureController {
         if (active == null) {
             for (id in began) {
                 val state = states.getValue(id)
-                val target = targetAt(state.lastX!!, state.lastY!!)?.takeIf { it.isNotBlank() && it.length <= 160 }
+                val target = state.pinchTarget
                 if (target != null) {
                     active = Active(target, id, state.lastX!!, state.lastY!!)
                     events += HandGestureEvent.Start(target, id, state.lastX!!, state.lastY!!)
@@ -234,7 +240,7 @@ internal class HandGestureController {
                 if (distance >= MIN_TRANSFORM_SPAN) {
                     a.dragged = true
                     transform = Transform(other, distance, angle(primary, secondary), centreX = (primary.lastX!! + secondary.lastX!!) / 2, centreY = (primary.lastY!! + secondary.lastY!!) / 2)
-                    events += HandGestureEvent.TransformStart(a.target, a.primary, other)
+                    events += HandGestureEvent.TransformStart(a.target, a.primary, other, transform!!.centreX, transform!!.centreY)
                 }
             }
             val previousX = a.x; val previousY = a.y
@@ -246,9 +252,13 @@ internal class HandGestureController {
                 val t = transform!!; val secondary = states.getValue(t.secondary)
                 val span = hypot((primary.lastX!! - secondary.lastX!!) * viewAspect, primary.lastY!! - secondary.lastY!!)
                 val rawScale = (span / t.distance).coerceIn(MIN_SCALE, MAX_SCALE)
-                val rawAngle = wrapAngle(angle(primary, secondary) - t.angle).coerceIn(-MAX_ROTATION, MAX_ROTATION)
-                t.scale = smooth(t.scale, rawScale, .4f, .12f).coerceIn(MIN_SCALE, MAX_SCALE)
-                t.rotation = smooth(t.rotation, rawAngle, .4f, .16f).coerceIn(-MAX_ROTATION, MAX_ROTATION)
+                val currentAngle = angle(primary, secondary)
+                t.rawRotation = (t.rawRotation + wrapAngle(currentAngle - t.lastAngle)).coerceIn(-MAX_ROTATION, MAX_ROTATION)
+                t.lastAngle = currentAngle
+                val rawAngle = t.rawRotation
+                val alpha=(1f-exp(-gap.coerceAtLeast(1)/55f)).coerceIn(.01f,.95f)
+                t.scale = (t.scale+(rawScale-t.scale)*alpha).coerceIn(MIN_SCALE, MAX_SCALE)
+                t.rotation = (t.rotation+(rawAngle-t.rotation)*alpha).coerceIn(-MAX_ROTATION, MAX_ROTATION)
                 t.centreX = (primary.lastX!! + secondary.lastX!!) / 2; t.centreY = (primary.lastY!! + secondary.lastY!!) / 2
                 events += HandGestureEvent.TransformMove(a.target, t.scale, t.rotation, t.centreX, t.centreY)
             }
@@ -268,7 +278,6 @@ internal class HandGestureController {
     private fun palmSize(p: List<HandLandmark>) = maxOf(distance(p[5], p[17]), distance(p[0], p[9]))
     private fun distance(a: HandLandmark, b: HandLandmark) = hypot((a.x - b.x) * viewAspect, a.y - b.y)
     private fun angle(a: HandState, b: HandState) = atan2(b.lastY!! - a.lastY!!, (b.lastX!! - a.lastX!!) * viewAspect)
-    private fun smooth(old: Float, value: Float, alpha: Float, step: Float) = (old + ((value - old) * alpha).coerceIn(-step, step)).coerceIn(-4f, 4f)
     private fun wrapAngle(value: Float): Float {
         var v = value
         while (v > PI) v -= (2 * PI).toFloat()
@@ -281,7 +290,7 @@ internal class HandGestureController {
         const val MIN_CONFIDENCE = .65f
         const val MIN_SCALE = .5f
         const val MAX_SCALE = 2f
-        val MAX_ROTATION = PI.toFloat()
+        val MAX_ROTATION = (PI * 4).toFloat()
         private const val PINCH_ON = .30f
         private const val PINCH_OFF = .52f
         private const val NEUTRAL_MS = 120L
@@ -289,7 +298,6 @@ internal class HandGestureController {
         private const val RELEASE_MS = 90L
         private const val OPEN_PALM_MS = 150L
         private const val MAX_WRIST_JUMP = .30f
-        private const val MAX_CURSOR_STEP = .075f
         private const val MIN_TRANSFORM_SPAN = .08f
     }
 }

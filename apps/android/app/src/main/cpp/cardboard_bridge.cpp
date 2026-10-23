@@ -114,11 +114,12 @@ JNIEXPORT void JNICALL JNI_NAME(nativeEyeFromHead)(JNIEnv* env,jobject,jlong id,
   if(eye<0||eye>1){Fail(env,"Invalid eye.");return;}
   std::array<float,16> m{};CardboardLensDistortion_getEyeFromHeadMatrix(v->lens,Eye(eye),m.data());Output(env,out,m.data());
 }
-JNIEXPORT void JNICALL JNI_NAME(nativeComposite)(JNIEnv* env,jobject,jlong id,jint w,jint h,jint texture) {
+JNIEXPORT void JNICALL JNI_NAME(nativeComposite)(JNIEnv* env,jobject,jlong id,jint w,jint h,jint texture,jboolean shared_image) {
   std::lock_guard<std::mutex> lock(mutex);auto* v=Get(env,id);if(!v)return;
   if (w!=v->width||h!=v->height||texture<=0) { Fail(env,"The headset frame no longer matches its viewer calibration."); return; }
-  const CardboardEyeTextureDescription left{static_cast<uint64_t>(texture),0.f,.5f,1.f,0.f};
-  const CardboardEyeTextureDescription right{static_cast<uint64_t>(texture),.5f,1.f,1.f,0.f};
+  const auto l=suraksha::EyeTextureU(shared_image,0),r=suraksha::EyeTextureU(shared_image,1);
+  const CardboardEyeTextureDescription left{static_cast<uint64_t>(texture),l[0],l[1],1.f,0.f};
+  const CardboardEyeTextureDescription right{static_cast<uint64_t>(texture),r[0],r[1],1.f,0.f};
   glBindFramebuffer(GL_FRAMEBUFFER,0);glViewport(0,0,w,h);
   glDisable(GL_SCISSOR_TEST);glDisable(GL_DEPTH_TEST);glDisable(GL_CULL_FACE);glDisable(GL_BLEND);
   glClearColor(0,0,0,1);glClear(GL_COLOR_BUFFER_BIT);

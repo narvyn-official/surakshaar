@@ -69,8 +69,8 @@ internal object CardboardBridge {
     fun eyeFromHead(handle: Long, eye: Int, out: FloatArray) {
         require(eye in 0..1 && out.size == 16); nativeEyeFromHead(handle, eye, out)
     }
-    fun composite(handle: Long, width: Int, height: Int, texture: Int) {
-        require(width > 0 && height > 0 && texture > 0); nativeComposite(handle, width, height, texture)
+    fun composite(handle: Long, width: Int, height: Int, texture: Int, sharedCameraImage:Boolean=false) {
+        require(width > 0 && height > 0 && texture > 0); nativeComposite(handle, width, height, texture, sharedCameraImage)
     }
     private external fun nativeInitialise(context: Context)
     private external fun nativeScanViewer()
@@ -82,5 +82,5 @@ internal object CardboardBridge {
     private external fun nativeHeadView(handle: Long, timeNs: Long, rotation: Int, out: FloatArray)
     private external fun nativeProjection(handle: Long, eye: Int, near: Float, far: Float, out: FloatArray)
     private external fun nativeEyeFromHead(handle: Long, eye: Int, out: FloatArray)
-    private external fun nativeComposite(handle: Long, width: Int, height: Int, texture: Int)
+    private external fun nativeComposite(handle: Long, width: Int, height: Int, texture: Int, sharedCameraImage:Boolean)
 }

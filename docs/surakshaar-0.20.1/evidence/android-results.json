@@ -1,0 +1,16 @@
+{
+  "fullSuite": false,
+  "latestSelected": {
+    "com.narvyn.suraksha.HandTrackingEngineTest#emptyStaticImageProducesNoHands": "pass",
+    "com.narvyn.suraksha.HandTrackingEngineTest#officialStaticHandFixturesRunRealOfflineInference": "pass",
+    "com.narvyn.suraksha.HandTrackingEngineTest#disabledAndClosedEngineNeverExposeActionableInput": "pass",
+    "com.narvyn.suraksha.HandTrackingEngineTest#bundledOfficialModelMatchesPinnedDigest": "pass",
+    "com.narvyn.suraksha.HandsArFlowTest#handheldConsentBackAndRecreationDoNotStartTheCamera": "pass",
+    "com.narvyn.suraksha.VrHeadsetFlowTest#stereoButtonLessonSupportsWrongFeedbackPauseResumeAndCompletion": "pass",
+    "com.narvyn.suraksha.VrHeadsetFlowTest#heldCancelledAndUnfocusedInputsCannotChooseAnAnswer": "pass",
+    "com.narvyn.suraksha.VrHeadsetFlowTest#monoCameraSharesTheImageWhileVrKeepsSeparateEyeRegions": "pass"
+  },
+  "initialFailures": 3,
+  "recovery": "Dismissed the observed System UI ANR dialog; no application code or test guards changed between initial and recovery runs.",
+  "physicalDeviceTests": 0
+}

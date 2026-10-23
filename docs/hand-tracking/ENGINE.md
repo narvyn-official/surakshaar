@@ -6,7 +6,7 @@ The optional hand-input engine shares the existing ARCore camera. It does not cr
 
 ## Resource and lifecycle limits
 
-- One inference worker and one frame in flight, with a maximum 10 offered frames per second; no inference or full-image RGB conversion on GL/UI threads.
+- One inference worker and one frame in flight, with a configured maximum of 20 offered frames per second, paced down using observed inference cost; no inference or full-image RGB conversion on GL/UI threads.
 - Copy at most 480 × 480 YUV samples, observing crop, each plane's position, limit, row stride and pixel stride. The Android `Image` closes before asynchronous work starts. The copied YUV arrays and temporary ARGB array are erased after use; the Bitmap and MPImage close/recycle. Images and landmarks are never logged, stored, uploaded or attached to learning evidence by this application.
 - CPU VIDEO mode, at most two hands, 21 landmarks per hand; no extra cloud provider. Temporal model tracking avoids repeating full palm detection on every frame.
 - Capture `IMAGE_NORMALIZED → VIEW_NORMALIZED` affine coordinates on the current frame. Derive the quarter turn from that transform, physically rotate the bounded inference image, unrotate model points, restore the original crop, then apply the captured mapping. An asynchronous worker never calls `Frame.transformCoordinates2d` on an old frame.
@@ -31,3 +31,11 @@ Google's [MediaPipe Tasks privacy notice](https://developers.google.com/edge/med
 Deterministic unit tests cover all four rotations, crop/affine projection, independent padded/interleaved plane strides, odd crop dimensions, bounded downsampling, truncated/invalid buffers, malformed or offscreen landmarks, stale/future snapshots and transient identity continuity/ambiguity. `HandTrackingEngineTest` uses explicitly labelled official Google static hand fixtures bundled only in `androidTest` assets, plus an empty generated image, to exercise genuine on-device model inference. Fixture images are not product assets or live camera results; source/license evidence is in `UPSTREAM.json`.
 
 Build/test results belong in the task's verification report after the commands run. Static fixture inference cannot verify a person's hands through a headset, physical phone latency, lighting, skin-tone coverage, gloves, camera-to-eye alignment, world-space occlusion or safe navigation. User-requested emulator checks must not be reported as physical hand-tracking acceptance. The model card identifies limitations for gloves/occlusion, low light and motion blur. Hand gestures are optional UI input for virtual teaching objects, not a measurement of first-aid technique or a medical/safety decision.
+
+## 23 October input follow-up
+
+`HandInferencePacer` bounds offers to a minimum 50 ms interval, backs off with observed worker cost, and keeps the existing one-frame-in-flight rule. `HandPointerFilter` uses aspect-corrected, filtered velocity to vary its low-pass cutoff, plus a time-based motion bound. Neither adds a queued frame backlog or predicts past observed input. Freshness and identity cancellation remain in force.
+
+The official [result contract](https://developers.google.com/edge/mediapipe/solutions/vision/hand_landmarker/android#handle_and_display_results), rechecked on 23 October, distinguishes handedness classification from landmarks. The previous adapter incorrectly reused the left/right category score as landmark tracking confidence. The corrected adapter treats uncertain handedness as UNKNOWN, validates coordinates and the category range, and relies on the model's configured presence/detection/tracking logic. Its internal admission-floor value is an adapter marker, **not** a measured landmark-confidence probability. No confidence percentage is shown or stored as learner evidence.
+
+The [23 October validation](../hand-interaction/VALIDATION-2026-10-23.md) separates deterministic tests, static fixture inference, generated GPU routing fixtures and the still-blocked physical phone/viewer checks.

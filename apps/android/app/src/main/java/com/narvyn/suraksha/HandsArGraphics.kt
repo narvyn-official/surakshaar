@@ -18,6 +18,7 @@ internal class HandsArGraphics {
     private var cameraProgram=0; private var flatProgram=0; private var textureProgram=0
     var cameraTexture=0; private set
     private var hudTexture=0
+    private var hudAllocated=false
     private val markBuffer=floats(FloatArray(84))
     private val markData=FloatArray(84)
     private val edges=arrayOf(0 to 1,1 to 2,2 to 3,3 to 4,0 to 5,5 to 6,6 to 7,7 to 8,5 to 9,9 to 10,10 to 11,11 to 12,9 to 13,13 to 14,14 to 15,15 to 16,13 to 17,17 to 18,18 to 19,19 to 20,0 to 17)
@@ -40,7 +41,9 @@ internal class HandsArGraphics {
     }
     fun hud(bitmap:Bitmap) {
         if(hudTexture==0)hudTexture=texture(G.GL_TEXTURE_2D)
-        G.glBindTexture(G.GL_TEXTURE_2D,hudTexture);GLUtils.texImage2D(G.GL_TEXTURE_2D,0,bitmap,0)
+        G.glBindTexture(G.GL_TEXTURE_2D,hudTexture)
+        if(!hudAllocated){GLUtils.texImage2D(G.GL_TEXTURE_2D,0,bitmap,0);hudAllocated=true}
+        else GLUtils.texSubImage2D(G.GL_TEXTURE_2D,0,0,0,bitmap)
     }
     fun hud() {
         if(hudTexture==0)return
@@ -70,7 +73,7 @@ internal class HandsArGraphics {
         }
         G.glDisableVertexAttribArray(location)
     }
-    fun release(){for(p in intArrayOf(cameraProgram,flatProgram,textureProgram))if(p!=0)G.glDeleteProgram(p);G.glDeleteTextures(2,intArrayOf(cameraTexture,hudTexture),0);cameraProgram=0;flatProgram=0;textureProgram=0;cameraTexture=0;hudTexture=0}
+    fun release(){for(p in intArrayOf(cameraProgram,flatProgram,textureProgram))if(p!=0)G.glDeleteProgram(p);G.glDeleteTextures(2,intArrayOf(cameraTexture,hudTexture),0);cameraProgram=0;flatProgram=0;textureProgram=0;cameraTexture=0;hudTexture=0;hudAllocated=false}
     private fun program(vertex:String,fragment:String):Int {
         fun shader(type:Int,text:String):Int{val s=G.glCreateShader(type);G.glShaderSource(s,text);G.glCompileShader(s);val ok=IntArray(1);G.glGetShaderiv(s,G.GL_COMPILE_STATUS,ok,0);if(ok[0]==0){val msg=G.glGetShaderInfoLog(s);G.glDeleteShader(s);error(msg)};return s}
         val v=shader(G.GL_VERTEX_SHADER,vertex);val f=shader(G.GL_FRAGMENT_SHADER,fragment);val p=G.glCreateProgram()

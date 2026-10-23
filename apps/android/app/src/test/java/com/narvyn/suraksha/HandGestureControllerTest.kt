@@ -246,4 +246,37 @@ class HandGestureControllerTest {
         assertTrue(rejected.none { it is HandGestureEvent.Start || it is HandGestureEvent.End })
     }
 
+    @Test fun releaseOpeningCannotMoveTheLastHeldPosition() {
+        val h = Harness(); h.start()
+        var heldX = .45f
+        repeat(8) { h.frame(hand(x=.50f, ratio=.1f)).filterIsInstance<HandGestureEvent.Move>().lastOrNull()?.let{heldX=it.x} }
+        val released=(1..4).flatMap { h.frame(hand(x=.62f)) }.filterIsInstance<HandGestureEvent.End>().single()
+        assertEquals("Opening the fingers must commit the last held position, not drag the object",heldX,released.x,.0001f)
+    }
+
+    @Test fun targetIsLatchedAtTheFirstDeliberatePinchSample() {
+        val h = Harness();h.arm(hand());h.target="original"
+        h.frame(hand(ratio=.1f))
+        h.target="neighbour"
+        val events=h.pinch(hand(ratio=.1f))
+        assertEquals("original",events.filterIsInstance<HandGestureEvent.Start>().single().targetId)
+    }
+
+    @Test fun turningBothHandsPastHalfATurnNeverReversesDirection() {
+        val h=Harness()
+        fun pair(degrees:Double,pinched:Boolean):Array<TrackedHand> {
+            val a=Math.toRadians(degrees);val dx=(kotlin.math.cos(a)*.15).toFloat();val dy=(kotlin.math.sin(a)*.15).toFloat()
+            return arrayOf(hand(x=.5f-dx,y=.35f-dy,ratio=if(pinched).1f else .8f),hand(id="right-2",x=.5f+dx,y=.35f+dy,ratio=if(pinched).1f else .8f))
+        }
+        h.arm(*pair(0.0,false));h.pinch(*pair(0.0,true))
+        var rotation=0f
+        for(angle in 5..220 step 5) {
+            val moves=h.frame(*pair(angle.toDouble(),true)).filterIsInstance<HandGestureEvent.TransformMove>()
+            assertEquals(1,moves.size)
+            assertTrue("Continuous turn reversed at $angle degrees",moves.single().rotationRadians>=rotation-.001f)
+            rotation=moves.single().rotationRadians
+        }
+        assertTrue(rotation>Math.PI)
+    }
+
 }

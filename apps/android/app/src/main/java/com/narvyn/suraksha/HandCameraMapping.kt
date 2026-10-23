@@ -103,6 +103,15 @@ internal class HandYuvCopy private constructor(
 
 /** Reject malformed/provider-outside-view results rather than clipping an unseen hand onto targets. */
 internal object HandResultMapping {
+    fun acceptedHand(id:String,name:String?,classificationScore:Float?,points:List<HandLandmark>):TrackedHand? {
+        val score=classificationScore?:return null
+        if(!score.isFinite()||score !in 0f..1f || points.size!=21 || points.any{!it.x.isFinite()||!it.y.isFinite()||!it.z.isFinite()||it.x !in 0f..1f||it.y !in 0f..1f||kotlin.math.abs(it.z)>4f})return null
+        // This API's category score measures Left versus Right, not landmark quality.
+        // The model runs its own presence/tracking gates. With valid accepted landmarks,
+        // use the controller's admission floor as an adapter flag, never a measured score.
+        val label=if(score<.8f)Handedness.UNKNOWN else when(name?.lowercase()){"left"->Handedness.LEFT;"right"->Handedness.RIGHT;else->Handedness.UNKNOWN}
+        return TrackedHand(id,label,HandGestureController.MIN_CONFIDENCE,points)
+    }
     fun landmarks(input:List<HandLandmark>,mapping:HandImageToView,quarterTurns:Int,
                   sourceWidth:Int,sourceHeight:Int,left:Int=0,top:Int=0,cropWidth:Int=sourceWidth,cropHeight:Int=sourceHeight):List<HandLandmark>? {
         if(input.size!=21 || sourceWidth<=0 || sourceHeight<=0)return null

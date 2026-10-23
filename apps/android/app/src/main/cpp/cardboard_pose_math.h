@@ -1,7 +1,12 @@
 #pragma once
 #include <cmath>
+#include <array>
 
 namespace suraksha {
+inline std::array<float,2> EyeTextureU(bool shared_image,int eye) {
+  if(shared_image)return {0.f,1.f};
+  return eye==0 ? std::array<float,2>{0.f,.5f} : std::array<float,2>{.5f,1.f};
+}
 // Column-major translation × quaternion rotation, matching Google's HelloCardboard
 // GetPose / Quatf::ToMatrix convention. The SDK output is already a world-to-head view.
 // Adapted from googlevr/cardboard v1.35.0 (Apache-2.0).

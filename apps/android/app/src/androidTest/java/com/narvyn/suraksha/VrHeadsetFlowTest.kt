@@ -314,4 +314,39 @@ class VrHeadsetFlowTest {
             }
         }
     }
+    /** Generated colour bands exercise GPU texture routing; they are not camera/hand evidence. */
+    @Test fun monoCameraSharesTheImageWhileVrKeepsSeparateEyeRegions(){
+        ActivityScenario.launch<VrTrainingActivity>(intent("escape-first")).use{a->
+            settled(a);val v=view(a);val done=CountDownLatch(1);var failure:Throwable?=null
+            v.queueEvent{
+                val names=IntArray(1)
+                try{
+                    val handle=field(v,"handle") as Long
+                    val pixels=java.nio.ByteBuffer.allocateDirect(64*8*4)
+                    repeat(8){repeat(64){column->
+                        val colour=if(column<25)intArrayOf(255,0,0)else if(column<39)intArrayOf(0,255,0)else intArrayOf(0,0,255)
+                        pixels.put(colour[0].toByte()).put(colour[1].toByte()).put(colour[2].toByte()).put(255.toByte())
+                    }};pixels.position(0)
+                    android.opengl.GLES20.glGenTextures(1,names,0);android.opengl.GLES20.glBindTexture(android.opengl.GLES20.GL_TEXTURE_2D,names[0])
+                    for(option in intArrayOf(android.opengl.GLES20.GL_TEXTURE_MIN_FILTER,android.opengl.GLES20.GL_TEXTURE_MAG_FILTER))android.opengl.GLES20.glTexParameteri(android.opengl.GLES20.GL_TEXTURE_2D,option,android.opengl.GLES20.GL_LINEAR)
+                    for(option in intArrayOf(android.opengl.GLES20.GL_TEXTURE_WRAP_S,android.opengl.GLES20.GL_TEXTURE_WRAP_T))android.opengl.GLES20.glTexParameteri(android.opengl.GLES20.GL_TEXTURE_2D,option,android.opengl.GLES20.GL_CLAMP_TO_EDGE)
+                    android.opengl.GLES20.glTexImage2D(android.opengl.GLES20.GL_TEXTURE_2D,0,android.opengl.GLES20.GL_RGBA,64,8,0,android.opengl.GLES20.GL_RGBA,android.opengl.GLES20.GL_UNSIGNED_BYTE,pixels)
+                    fun sample(eye:Int):IntArray{
+                        val result=java.nio.ByteBuffer.allocateDirect(4)
+                        android.opengl.GLES20.glReadPixels(v.width*(1+eye*2)/4,v.height/2,1,1,android.opengl.GLES20.GL_RGBA,android.opengl.GLES20.GL_UNSIGNED_BYTE,result)
+                        return IntArray(3){result.get(it).toInt() and 255}
+                    }
+                    CardboardBridge.composite(handle,v.width,v.height,names[0])
+                    val left=sample(0);val right=sample(1)
+                    assertTrue("Stereo left eye must use its red region: ${left.toList()}",left[0]>180&&left[1]<80&&left[2]<80)
+                    assertTrue("Stereo right eye must use its blue region: ${right.toList()}",right[2]>180&&right[0]<80&&right[1]<80)
+                    CardboardBridge.composite(handle,v.width,v.height,names[0],sharedCameraImage=true)
+                    for(eye in 0..1){val colour=sample(eye);assertTrue("Mono eye $eye must sample the same green image centre: ${colour.toList()}",colour[1]>180&&colour[0]<80&&colour[2]<80)}
+                    assertEquals(android.opengl.GLES20.GL_NO_ERROR,android.opengl.GLES20.glGetError())
+                }catch(error:Throwable){failure=error}finally{if(names[0]!=0)android.opengl.GLES20.glDeleteTextures(1,names,0);done.countDown()}
+            }
+            assertTrue("Compositor GPU check timed out",done.await(10,TimeUnit.SECONDS));failure?.let{throw it}
+        }
+    }
+
 }
