@@ -1,0 +1,22 @@
+{
+  "upstream": "https://github.com/googlevr/cardboard",
+  "tag": "v1.35.0",
+  "archive": "https://github.com/googlevr/cardboard/archive/refs/tags/v1.35.0.tar.gz",
+  "archiveSha256": "191fac0acf3401df8f645c97c1414bc811ab700e8a89b575b78353bf111e5c02",
+  "license": "Apache-2.0",
+  "nativeOptions": {
+    "GLESv3": false,
+    "Vulkan": false,
+    "Unity": false
+  },
+  "protoc": "4.36.2",
+  "protobufRuntime": "4.36.2",
+  "localChanges": [
+    "Build-only wrapper omits unused Apple project files, exported NFC activity, ES3/Unity/Vulkan support and unneeded storage permission.",
+    "patches/bounded-distortion-solve.patch bounds inverse distortion solving and fails invalid profiles.",
+    "Unchanged proto regenerated using protoc/runtime 4.36.2."
+  ],
+  "protocSha256": "765ccb18be73e565bfc3e2ad94e85039ca28f928b3e62b487e51b7b8fdf1dcfb",
+  "protocArtifact": "https://repo.maven.apache.org/maven2/com/google/protobuf/protoc/4.36.2/protoc-4.36.2-osx-aarch_64.exe",
+  "generatedJavaSha256": "c671ebd4654d0b87106640e5c81701fdaeaa001b3c5954a176c3d736605628cc"
+}

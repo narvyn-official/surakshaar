@@ -1,0 +1,32 @@
+--- a/sdk/polynomial_radial_distortion.cc
++++ b/sdk/polynomial_radial_distortion.cc
+@@ -62,14 +62,28 @@
+   float r2;
+   float dr0 = radius - DistortRadius(r0);
+   float dr1;
+-  while (std::fabs(r1 - r0) > 0.0001f /** 0.1mm */) {
++  // Suraksha adapter: QR profiles are untrusted. Bound the numerical solve so a
++  // non-converging polynomial cannot block the rendering thread indefinitely.
++  for (int iteration = 0;
++       iteration < 64 && std::fabs(r1 - r0) > 0.0001f /** 0.1mm */;
++       ++iteration) {
+     dr1 = radius - DistortRadius(r1);
++    if (!std::isfinite(dr1) || !std::isfinite(dr0) ||
++        std::fabs(dr1 - dr0) < std::numeric_limits<float>::epsilon()) {
++      const float invalid = std::numeric_limits<float>::quiet_NaN();
++      return {invalid, invalid};
++    }
+     r2 = r1 - dr1 * ((r1 - r0) / (dr1 - dr0));
+     r0 = r1;
+     r1 = r2;
+     dr0 = dr1;
+   }
+ 
++  if (!std::isfinite(r1) || std::fabs(r1 - r0) > 0.0001f) {
++    const float invalid = std::numeric_limits<float>::quiet_NaN();
++    return {invalid, invalid};
++  }
++
+   return std::array<float, 2>{(r1 / radius) * p[0], (r1 / radius) * p[1]};
+ }
+ 

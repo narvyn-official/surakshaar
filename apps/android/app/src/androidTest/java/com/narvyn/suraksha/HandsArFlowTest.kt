@@ -1,0 +1,137 @@
+package com.narvyn.suraksha
+
+import android.content.Intent
+import android.graphics.Bitmap
+import android.os.Build
+import android.view.View
+import android.view.ViewGroup
+import android.widget.Button
+import android.widget.CheckBox
+import android.widget.ScrollView
+import androidx.lifecycle.Lifecycle
+import androidx.test.core.app.ActivityScenario
+import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.action.ViewActions.click
+import androidx.test.espresso.matcher.ViewMatchers.withTagValue
+import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.platform.app.InstrumentationRegistry
+import org.hamcrest.Matchers.`is`
+import org.junit.After
+import org.junit.Assert.*
+import org.junit.Assume.assumeTrue
+import org.junit.Before
+import org.junit.Test
+import org.junit.runner.RunWith
+import java.io.File
+
+/** Preflight tests only. No synthetic gesture is represented as live camera recognition. */
+@RunWith(AndroidJUnit4::class)
+class HandsArFlowTest {
+    private val ins get()=InstrumentationRegistry.getInstrumentation()
+    private val context get()=ins.targetContext
+    private lateinit var original:String
+    private lateinit var worker:String
+    private val profiles=mutableListOf<String>()
+    private fun views(v:View):List<View> = listOf(v)+if(v is ViewGroup)(0 until v.childCount).flatMap{views(v.getChildAt(it))}else emptyList()
+    private fun tagged(name:String)=onView(withTagValue(`is`(name as Any)))
+    private fun field(host:Any,name:String)=host.javaClass.getDeclaredField(name).apply{isAccessible=true}.get(host)
+    private fun click(name:String){tagged(name).perform(revealOnPage(),click())}
+    private fun capture(name:String){
+        ins.waitForIdleSync()
+        val bitmap=ins.uiAutomation.takeScreenshot()?:error("Screenshot unavailable")
+        File(context.getExternalFilesDir("validation"),"hands-$name.png").outputStream().use{bitmap.compress(Bitmap.CompressFormat.PNG,100,it)}
+        bitmap.recycle()
+    }
+    @Before fun isolate(){
+        assumeTrue(Build.HARDWARE in setOf("ranchu","goldfish"))
+        Store(context).use{original=it.workerId;worker=it.createProfile("Synthetic hands preflight","Unspecified");profiles+=worker;it.switchProfile(worker)}
+    }
+    @After fun restore(){
+        if(!::worker.isInitialized)return
+        for(id in profiles)context.getSharedPreferences("learning-profile",0).edit().remove("context-$id").commit()
+        Store(context).use{it.switchProfile(original);for(id in profiles)it.writableDatabase.delete("worker_profiles","id=?",arrayOf(id))}
+    }
+    @Test fun handheldConsentBackAndRecreationDoNotStartTheCamera(){
+        ActivityScenario.launch(HandsArActivity::class.java).use{a->
+            a.onActivity{assertNull(field(it,"scene"));assertTrue(views(it.window.decorView).none{v->v is ScrollView})}
+            capture("entry");click("hands-ar-start")
+            a.onActivity{host->
+                val all=views(host.window.decorView)
+                assertFalse((all.single{it.tag=="hands-ar-start"} as Button).isEnabled)
+                for(id in listOf("hands-ar-space","hands-ar-privacy"))assertFalse((all.single{it.tag==id} as CheckBox).isChecked)
+            }
+            click("hands-ar-privacy")
+            a.onActivity{assertFalse((views(it.window.decorView).single{v->v.tag=="hands-ar-start"} as Button).isEnabled)}
+            click("hands-ar-space")
+            a.onActivity{assertTrue((views(it.window.decorView).single{v->v.tag=="hands-ar-start"} as Button).isEnabled);assertNull(field(it,"scene"))}
+            capture("handheld-ready");a.recreate()
+            a.onActivity{assertNull("Recreation must not open a camera",field(it,"scene"));assertEquals(1,field(it,"page"))}
+            click("hands-ar-back")
+            a.onActivity{assertEquals(0,field(it,"page"));assertFalse(it.isFinishing)}
+        }
+    }
+    @Test fun headsetRequiresUncoveredCameraAndExplicitViewerReadiness(){
+        val intent=Intent(context,HandsArActivity::class.java).putExtra("headset",true)
+        ActivityScenario.launch<HandsArActivity>(intent).use{a->
+            a.onActivity{it.requestedOrientation=android.content.pm.ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE}
+            var landscape=false
+            repeat(50){if(!landscape){a.onActivity{host->landscape=host.resources.configuration.orientation==android.content.res.Configuration.ORIENTATION_LANDSCAPE};if(!landscape)Thread.sleep(100)}}
+            assertTrue("Headset preflight must be landscape",landscape)
+            a.onActivity{CardboardBridge.initialise(it);CardboardBridge.useDefaultViewer()}
+            click("hands-ar-start");click("hands-ar-space");click("hands-ar-privacy")
+            a.onActivity{host->
+                val all=views(host.window.decorView)
+                assertFalse((all.single{it.tag=="hands-ar-camera"} as CheckBox).isChecked)
+                assertFalse((all.single{it.tag=="hands-ar-start"} as Button).isEnabled)
+            }
+            click("hands-ar-camera")
+            a.onActivity{assertTrue((views(it.window.decorView).single{v->v.tag=="hands-ar-start"} as Button).isEnabled);assertNull(field(it,"scene"))}
+            capture("headset-ready")
+        }
+    }
+    @Test fun schoolDeepEntryCannotOpenAdultTreatmentIllustrations(){
+        context.getSharedPreferences("learning-profile",0).edit().putString("context-$worker","School").commit()
+        val steps=SpatialCatalog(context).data.getJSONObject("steps")
+        val adult=steps.keys().asSequence().map{steps.getJSONObject(it)}.first{it.optString("audience")=="adult"&&it.optString("teachingKey").isNotEmpty()}
+        val intent=Intent(context,HandsArActivity::class.java).putExtra("modelId","body").putExtra("teachingKey",adult.getString("teachingKey"))
+        ActivityScenario.launch<HandsArActivity>(intent).use{a->
+            a.onActivity{assertNull(field(it,"teachingKey"));assertNull(field(it,"scene"));assertNotNull(field(it,"entryNote"))}
+            capture("school-entry")
+        }
+    }
+    @Test fun changingLearnerWhileInBackgroundClosesTheOldWorkspace(){
+        ActivityScenario.launch(HandsArActivity::class.java).use{a->
+            a.moveToState(Lifecycle.State.CREATED)
+            Store(context).use{val next=it.createProfile("Synthetic replacement learner","Unspecified");profiles+=next;it.switchProfile(next)}
+            // Resume through Android's real task navigation. ActivityScenario.moveToState(RESUMED)
+            // expects RESUMED even when the app correctly finishes the stale learner's Activity.
+            context.startActivity(Intent(context,HandsArActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_REORDER_TO_FRONT))
+            repeat(100){if(a.state!=Lifecycle.State.DESTROYED)Thread.sleep(100)}
+            assertEquals(Lifecycle.State.DESTROYED,a.state)
+        }
+    }
+    @Test fun firstCameraGrantContinuesTheRequestedSessionWithoutAnotherStartTap(){
+        assertEquals("Run this check with camera permission revoked on the isolated test emulator",android.content.pm.PackageManager.PERMISSION_DENIED,context.checkSelfPermission(android.Manifest.permission.CAMERA))
+        val automation=ins.uiAutomation
+        val info=automation.serviceInfo
+        info.flags=info.flags or android.accessibilityservice.AccessibilityServiceInfo.FLAG_REPORT_VIEW_IDS
+        automation.serviceInfo=info
+        ActivityScenario.launch(HandsArActivity::class.java).use{a->
+            click("hands-ar-start");click("hands-ar-privacy");click("hands-ar-space");click("hands-ar-start")
+            var allowed=false
+            repeat(100){if(!allowed){
+                val root=automation.rootInActiveWindow
+                val node=root?.findAccessibilityNodeInfosByViewId("com.android.permissioncontroller:id/permission_allow_one_time_button")?.firstOrNull()
+                if(node!=null)allowed=node.performAction(android.view.accessibility.AccessibilityNodeInfo.ACTION_CLICK)
+                if(!allowed)Thread.sleep(50)
+            }}
+            assertTrue("Android camera permission dialog was not handled",allowed)
+            var attempted=false
+            repeat(200){if(!attempted){a.onActivity{attempted=field(it,"scene")!=null||field(it,"error")!=null};if(!attempted)Thread.sleep(50)}}
+            assertTrue("Granting permission must continue the already-requested session",attempted)
+            // An emulator may reject ARCore. This check accepts the explicit recovery UI, but
+            // never calls that a successfully tracked camera or successful hand recognition.
+            capture("permission-continuation")
+        }
+    }
+}

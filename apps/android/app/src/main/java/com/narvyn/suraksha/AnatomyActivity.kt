@@ -104,6 +104,9 @@ class AnatomyActivity:Activity(){
         fun tool(text:String,action:()->Unit){tools.addView(this.action(text,false,ActionRole.NEUTRAL,action).apply{setPadding(dp(4),dp(8),dp(4),dp(8));textSize=13f},LinearLayout.LayoutParams(0,-2,1f).apply{marginEnd=dp(4)})}
         tool("Layers"){closeControls();layers()};tool("Parts"){closeControls();parts()};tool("View"){viewControls()};tool(if(camera)"3D" else "AR"){switchMode(!camera)}
         root.add(tools)
+        if(!observation)root.add(action(t("Explore with hand gestures","हाथों के इशारों से देखें"),false,ActionRole.CAMERA){
+            startActivity(android.content.Intent(this,HandsArActivity::class.java).putExtra("modelId","body").putExtra("partId",selected?.id))
+        }.apply{tag="anatomy-hands-ar";textSize=13f},top=6)
         if(observation){confirm=action("Use this structure"){
             val part=selected?:return@action
             if(part.id!=intent.getStringExtra("partId"))return@action

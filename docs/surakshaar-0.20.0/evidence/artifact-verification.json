@@ -1,0 +1,103 @@
+{
+  "apk": "artifacts/surakshaar-0.20.0-dev/surakshaar-0.20.0-dev-release.apk",
+  "bytes": 96316896,
+  "sha256": "53ff5e7ee29b46fe6437d4cdee738db79329ea4bb09bac3e03edb6d85e216274",
+  "sameSigningIdentityAs0191": true,
+  "native": [
+    {
+      "path": "lib/arm64-v8a/libGfxPluginCardboard.so",
+      "minLoadAlignmentBytes": 16384,
+      "requires16KiB": true,
+      "sha256": "8186e27777224b1fff78888af15d38c8c3e40e4cde4633de58e5da2959f71891"
+    },
+    {
+      "path": "lib/arm64-v8a/libarcore_sdk_c.so",
+      "minLoadAlignmentBytes": 16384,
+      "requires16KiB": true,
+      "sha256": "28b4651be4dd0682fc8ab424759c2043cfbb6e62e8ecf9a8cc348c4e3d145af3"
+    },
+    {
+      "path": "lib/arm64-v8a/libarcore_sdk_jni.so",
+      "minLoadAlignmentBytes": 16384,
+      "requires16KiB": true,
+      "sha256": "a4f04022337ae3cda065864868408326d1a36070cff6d9dd7171f9b292900b52"
+    },
+    {
+      "path": "lib/arm64-v8a/libmediapipe_tasks_jni.so",
+      "minLoadAlignmentBytes": 16384,
+      "requires16KiB": true,
+      "sha256": "ee9bd0e0502bdeef90816622ef041385d40ab5c21a5a8369c0e697da45c05b65"
+    },
+    {
+      "path": "lib/arm64-v8a/libsuraksha_cardboard.so",
+      "minLoadAlignmentBytes": 16384,
+      "requires16KiB": true,
+      "sha256": "2c6534a521d520fc4ed150849343192d860df977ec1e45cc90bcb669a2878818"
+    },
+    {
+      "path": "lib/armeabi-v7a/libGfxPluginCardboard.so",
+      "minLoadAlignmentBytes": 16384,
+      "requires16KiB": false,
+      "sha256": "20f89709b22ba006e2f5f9feb95048f55fdd59b065208bf9857f1a100475428e"
+    },
+    {
+      "path": "lib/armeabi-v7a/libarcore_sdk_c.so",
+      "minLoadAlignmentBytes": 4096,
+      "requires16KiB": false,
+      "sha256": "1aab2321753fdc3e44a0140cf74461877f019cb08b8a4b1327bd1c7582f5bc0d"
+    },
+    {
+      "path": "lib/armeabi-v7a/libarcore_sdk_jni.so",
+      "minLoadAlignmentBytes": 4096,
+      "requires16KiB": false,
+      "sha256": "a0adaec211d788fab1b5cdd2a5a84cf16766f80e4bf9ec65d0270cca6c7b9686"
+    },
+    {
+      "path": "lib/armeabi-v7a/libmediapipe_tasks_jni.so",
+      "minLoadAlignmentBytes": 16384,
+      "requires16KiB": false,
+      "sha256": "80272048c33eba0a9deb1b29f04e33cc94e7b9b27000f921744b7ed3331066b8"
+    },
+    {
+      "path": "lib/armeabi-v7a/libsuraksha_cardboard.so",
+      "minLoadAlignmentBytes": 16384,
+      "requires16KiB": false,
+      "sha256": "a63b369c41812f77f91c437b80446ac21e5af433f865d8e959d552c1f325288d"
+    },
+    {
+      "path": "lib/x86_64/libGfxPluginCardboard.so",
+      "minLoadAlignmentBytes": 16384,
+      "requires16KiB": true,
+      "sha256": "ad77fddbb8aa53aa5edb5537efbd560ba8782359a174e925bf604aa3b5b53682"
+    },
+    {
+      "path": "lib/x86_64/libarcore_sdk_c.so",
+      "minLoadAlignmentBytes": 16384,
+      "requires16KiB": true,
+      "sha256": "8c9c0af1f5225a31c0baf21c8785d362fef64ad133b645ddc5d2cedb68d71b4b"
+    },
+    {
+      "path": "lib/x86_64/libarcore_sdk_jni.so",
+      "minLoadAlignmentBytes": 16384,
+      "requires16KiB": true,
+      "sha256": "94621dbc3d062454b6b3e3c5648b185c5ec5f361fccb44f36b2631134facaa0b"
+    },
+    {
+      "path": "lib/x86_64/libmediapipe_tasks_jni.so",
+      "minLoadAlignmentBytes": 16384,
+      "requires16KiB": true,
+      "sha256": "45373752130938657d3648c045fd397eaa6765f639aa77435b2a17b6e118b198"
+    },
+    {
+      "path": "lib/x86_64/libsuraksha_cardboard.so",
+      "minLoadAlignmentBytes": 16384,
+      "requires16KiB": true,
+      "sha256": "45bf36773e28e2fe9e7b50a370e85c15be2e1463a6429375d639b42f6fa9ed15"
+    }
+  ],
+  "tinyfishCredentialPrefixFound": false,
+  "cardboardLicenseInApk": true,
+  "mediapipeNoticesInApk": true,
+  "staticTestFixturesInRelease": false,
+  "handModelSha256": "fbc2a30080c3c557093b5ddfc334698132eb341044ccee322ccf8bcf3607cde1"
+}

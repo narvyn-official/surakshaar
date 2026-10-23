@@ -1,0 +1,88 @@
+{
+  "verifiedOn": "2026-10-22",
+  "sdk": {
+    "coordinate": "com.google.mediapipe:tasks-vision:1.1.1",
+    "metadata": "https://dl.google.com/dl/android/maven2/com/google/mediapipe/tasks-vision/maven-metadata.xml",
+    "visionAarSha256": "cf6565d27feb96b411bbb2e5cb38b3db37e0e0d3109f30ec0c9a8178055051e6",
+    "coreAarSha256": "38fa5886edfe8dd8c83292f4c2fb069488b6e8f3856c1c42042eaf13432d0b61",
+    "license": "Apache-2.0",
+    "notice": "content/licenses/mediapipe/NOTICE"
+  },
+  "model": {
+    "url": "https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task",
+    "version": "float16/1",
+    "license": "Apache-2.0 per official linked model card, page 2",
+    "modelCard": "https://storage.googleapis.com/mediapipe-assets/Model%20Card%20Hand%20Tracking%20(Lite_Full)%20with%20Fairness%20Oct%202021.pdf",
+    "guide": "https://developers.google.com/edge/mediapipe/solutions/vision/hand_landmarker/index"
+  },
+  "fixtures": {
+    "sourceUrls": [
+      "https://storage.googleapis.com/mediapipe-assets/thumb_up.jpg",
+      "https://storage.googleapis.com/mediapipe-assets/right_hands.jpg"
+    ],
+    "upstreamTest": "https://github.com/google-ai-edge/mediapipe/blob/v1.1.1/mediapipe/tasks/python/test/vision/hand_landmarker_test.py",
+    "licenseEvidence": "https://github.com/google-ai-edge/mediapipe/blob/v1.1.1/mediapipe/tasks/testdata/vision/BUILD",
+    "license": "Apache-2.0 notice declared by upstream testdata package",
+    "scope": "androidTest assets only; official static test fixtures, never app camera output"
+  },
+  "nativeAlignment": [
+    {
+      "aar": "core.aar",
+      "library": "jni/arm64-v8a/libmediapipe_tasks_jni.so",
+      "loadAlignment": [
+        16384,
+        16384,
+        16384
+      ]
+    },
+    {
+      "aar": "core.aar",
+      "library": "jni/armeabi-v7a/libmediapipe_tasks_jni.so",
+      "loadAlignment": [
+        16384,
+        16384,
+        16384
+      ]
+    },
+    {
+      "aar": "core.aar",
+      "library": "jni/x86/libmediapipe_tasks_jni.so",
+      "loadAlignment": [
+        16384,
+        16384,
+        16384
+      ]
+    },
+    {
+      "aar": "core.aar",
+      "library": "jni/x86_64/libmediapipe_tasks_jni.so",
+      "loadAlignment": [
+        16384,
+        16384,
+        16384
+      ]
+    }
+  ],
+  "files": {
+    "content/models/hand-tracking/hand_landmarker.task": {
+      "sha256": "fbc2a30080c3c557093b5ddfc334698132eb341044ccee322ccf8bcf3607cde1",
+      "bytes": 7819105
+    },
+    "content/licenses/mediapipe/LICENSE": {
+      "sha256": "8707eef0533987efc5b155d64761eeb6e20793f50b9bd1a68dad1cf4719d0ed8",
+      "bytes": 12331
+    },
+    "content/licenses/mediapipe/NOTICE": {
+      "sha256": "8db2ce1a7fb4fa13d2261bcc4cd1f1c3044d94b59fb0e4b35a5c0b4ecb6a56d2",
+      "bytes": 2828093
+    },
+    "apps/android/app/src/androidTest/assets/hand-tracking/fixture-thumb-up.jpg": {
+      "sha256": "5d673c081ab13b8a1812269ff57047066f9c33c07db5f4178089e8cb3fdc0291",
+      "bytes": 80388
+    },
+    "apps/android/app/src/androidTest/assets/hand-tracking/fixture-two-right-hands.jpg": {
+      "sha256": "4b5134daa4cb60465535239535f9f74c2842aba3aa5fd30bf04ef5678f93d87f",
+      "bytes": 54887
+    }
+  }
+}

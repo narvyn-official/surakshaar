@@ -48,6 +48,12 @@ class LearningSpatialActivity:Activity(){
     .setNegativeButton("Cancel",null).show()
   }
   button("Inspect","spatial-step-inspect"){inspect()}
+  button("Hands AR","spatial-step-hands"){
+   if(allowed())startActivity(android.content.Intent(this,HandsArActivity::class.java)
+    .putExtra("modelId",if(plan.getString("model")=="anatomy")"body" else "extinguisher")
+    .putExtra("teachingKey",plan.optString("teachingKey"))
+    .putExtra("partId",plan.optString("part")))
+  }
   placement=action("Place at camera centre",false,ActionRole.CAMERA){body?.place();equipment?.placeAtCameraCentre()}.apply{tag="spatial-step-place";visibility=View.GONE}
   root.add(placement,bottom=6);root.add(row,bottom=8)
   root.add(action("Step cue",false,ActionRole.NEUTRAL){PageDialogBuilder(this).setTitle(step.getString("title")).setMessage(step.getString("cue")+"\n\nReturn to the lesson to make your decision. Inspection does not complete this step.").setPositiveButton("Close",null).show()})

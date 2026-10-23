@@ -1,0 +1,33 @@
+{
+  "fullAndroidSuite": false,
+  "uniqueSelectedTests": 20,
+  "latestSelectedResult": {
+    "com.narvyn.suraksha.HandTrackingEngineTest#emptyStaticImageProducesNoHands": "pass",
+    "com.narvyn.suraksha.HandTrackingEngineTest#officialStaticHandFixturesRunRealOfflineInference": "pass",
+    "com.narvyn.suraksha.HandTrackingEngineTest#disabledAndClosedEngineNeverExposeActionableInput": "pass",
+    "com.narvyn.suraksha.HandTrackingEngineTest#bundledOfficialModelMatchesPinnedDigest": "pass",
+    "com.narvyn.suraksha.HandsArFlowTest#changingLearnerWhileInBackgroundClosesTheOldWorkspace": "pass",
+    "com.narvyn.suraksha.HandsArFlowTest#headsetRequiresUncoveredCameraAndExplicitViewerReadiness": "pass",
+    "com.narvyn.suraksha.HandsArFlowTest#schoolDeepEntryCannotOpenAdultTreatmentIllustrations": "pass",
+    "com.narvyn.suraksha.HandsArFlowTest#handheldConsentBackAndRecreationDoNotStartTheCamera": "pass",
+    "com.narvyn.suraksha.VrHeadsetFlowTest#gazeCompletesAdultCollapseWithRequiredObservation": "pass",
+    "com.narvyn.suraksha.VrHeadsetFlowTest#gazeCompletesScaldWithStepSpecificModels": "pass",
+    "com.narvyn.suraksha.VrHeadsetFlowTest#gazeOptionalAnatomyAndControlsDoNotInventEvidenceOrRepeat": "pass",
+    "com.narvyn.suraksha.VrHeadsetFlowTest#gazeCompletesFireEvacuation": "pass",
+    "com.narvyn.suraksha.VrLearningStoreTest#resumePreservesFeedbackAndHistoryWhileRejectingAnOlderWriter": "pass",
+    "com.narvyn.suraksha.VrLearningStoreTest#corruptPayloadIsRejectedAndRetainedForRecovery": "pass",
+    "com.narvyn.suraksha.VrLearningStoreTest#anotherProfileCannotReadOverwriteOrSmuggleAnUnbundledLesson": "pass",
+    "com.narvyn.suraksha.HeadsetSetupFlowTest#homeHasAHeadsetEntryAndKeepsHandheldCoursesAvailable": "pass",
+    "com.narvyn.suraksha.HeadsetSetupFlowTest#schoolChooserRejectsAdultDeepLinkAndBackReturnsOneStep": "pass",
+    "com.narvyn.suraksha.VrHeadsetFlowTest#stereoButtonLessonSupportsWrongFeedbackPauseResumeAndCompletion": "pass",
+    "com.narvyn.suraksha.VrHeadsetFlowTest#heldCancelledAndUnfocusedInputsCannotChooseAnAnswer": "pass",
+    "com.narvyn.suraksha.HandsArFlowTest#firstCameraGrantContinuesTheRequestedSessionWithoutAnotherStartTap": "pass"
+  },
+  "runs": [
+    "emulator-acceptance.txt",
+    "recovery-checks.txt",
+    "simulated-button-acceptance.txt",
+    "first-camera-permission.txt"
+  ],
+  "largeTextVariant": "final-large-text-layouts.txt (3 passed)"
+}

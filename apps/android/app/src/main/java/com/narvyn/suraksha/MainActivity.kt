@@ -126,17 +126,19 @@ class MainActivity: Activity() {
         if(page=="lesson")root.add(lessonNavigation())
         root.addView(View(this).apply{setBackgroundColor(Palette.line)},LinearLayout.LayoutParams(-1,dp(1)))
         val nav=LinearLayout(this).apply{setPadding(dp(16),dp(6),dp(16),dp(6));setBackgroundColor(Palette.surface);gravity=Gravity.CENTER_VERTICAL}
-        listOf(Triple("home","Home","होम"),Triple("courses","Learn","सीखें"),Triple("explore","Explore","देखें"),Triple("records","Progress","प्रगति")).forEach{(dest,en,h)->
+        val largeTextNav=resources.configuration.fontScale>=1.5f&&!compactWorkspace
+        val navRows=if(largeTextNav){nav.orientation=LinearLayout.VERTICAL;List(2){LinearLayout(this).also{row->nav.addView(row,LinearLayout.LayoutParams(-1,-2))}}}else listOf(nav)
+        listOf(Triple("home","Home","होम"),Triple("courses","Learn","सीखें"),Triple("explore","Explore","देखें"),Triple("records","Progress","प्रगति")).forEachIndexed{index,(dest,en,h)->
             val active=page==dest||(dest=="courses"&&page in listOf("module","training","lesson","practice","library"))||(dest=="records"&&page in listOf("verify","legacy-records"))
-            nav.addView(action(t(en,h),false,role=ActionRole.NEUTRAL){go(dest)}.apply {
-                tag="main-nav-$dest";isSelected=active;textSize=12f;minHeight=dp(if(compactWorkspace)48 else 62);minimumHeight=dp(if(compactWorkspace)48 else 62)
+            navRows[if(largeTextNav)index/2 else 0].addView(action(t(en,h),false,role=ActionRole.NEUTRAL){go(dest)}.apply {
+                tag="main-nav-$dest";isSelected=active;textSize=12f;minHeight=dp(if(compactWorkspace||largeTextNav)48 else 62);minimumHeight=minHeight
                 setPadding(dp(4),dp(6),dp(4),dp(6));compoundDrawablePadding=dp(3)
                 setTextColor(if(active)Palette.blue else Palette.muted)
                 background=android.graphics.drawable.RippleDrawable(android.content.res.ColorStateList.valueOf(0x18086f62),shape(if(active)Palette.soft else Palette.surface,16),null)
                 val icon=if(dest=="home")homeIcon(if(active)Palette.blue else Palette.muted)else appIcon(if(dest=="courses")"learn"else if(dest=="explore")"camera"else dest,if(active)Palette.blue else Palette.muted,22)
-                if(compactWorkspace){setCompoundDrawables(icon,null,null,null);compoundDrawablePadding=dp(8)}else setCompoundDrawables(null,icon,null,null)
+                if(compactWorkspace||largeTextNav){setCompoundDrawables(icon,null,null,null);compoundDrawablePadding=dp(8)}else setCompoundDrawables(null,icon,null,null)
                 contentDescription=t(en,h)+if(active)t(", selected",", चयनित")else ""
-            },LinearLayout.LayoutParams(0,-2,1f).apply{if(dest!="help")marginEnd=dp(8)})
+            },LinearLayout.LayoutParams(0,-2,1f).apply{if(if(largeTextNav)index%2==0 else index<3)marginEnd=dp(8)})
         }
         root.add(nav);setContentView(root);root.requestApplyInsets();root.post{narrateVisibleLearning()}
     }
@@ -221,77 +223,117 @@ class MainActivity: Activity() {
                 Intent(this,RoomMissionActivity::class.java).putExtra("moduleId","fire").putExtra("camera",camera)
                     .putExtra("resumeId",r.getString("id")).putExtra("recall",coaching.recall).putExtra("explosionRisk",a.explosionRisk).putExtra("fireScenarioId",a.fireScenarioId))
         }.getOrNull()}
-        return (decisions+bays+rooms).sortedByDescending{it.updatedAt}
+        val headset=runCatching{VrLearningStore(this,store.workerId).use{it.records()}}.getOrDefault(emptyList()).mapNotNull{record->runCatching{
+            val scenario=scenarios[record.getString("scenarioId")]?:return@runCatching null
+            if(!HeadsetLessonPolicy.allowed(scenario,school))return@runCatching null
+            val attempt=VrLearningSession.restore(record,scenario,launch.version,store.workerId)
+            HomePractice(learningText(scenario,"title")+" · VR",record.getString("courseId"),record.getLong("updatedAt"),attempt.finished,!attempt.finished,
+                t("VR decision practice · ${attempt.index} of ${attempt.steps.size} steps","VR निर्णय अभ्यास · ${attempt.steps.size} में से ${attempt.index} चरण"),
+                Intent(this,HeadsetActivity::class.java).putExtra("scenarioId",record.getString("scenarioId")))
+        }.getOrNull()}
+        return (decisions+bays+rooms+headset).sortedByDescending{it.updatedAt}
+    }
+    private fun openHeadset(scenario:String?=null){
+        val route=Intent(this,HeadsetActivity::class.java)
+        scenario?.let{route.putExtra("scenarioId",it)}
+        startActivity(route)
     }
     private fun home(){
         val history=homePractices();val next=history.firstOrNull{it.resumable}
-        if(!compactWorkspace)title(t("Preparedness starts here.","तैयारी यहाँ से शुरू होती है।"))
-        if(!compactWorkspace&&store.name.isNotBlank())body.add(label(store.name,14f,Palette.muted).apply{tag="main-home-learner"},bottom=12)
         if(!compactWorkspace){
-            val preview=SpatialPreview(this).apply{tag="main-studio-preview";contentDescription=t("Open the interactive equipment explorer","उपकरण का इंटरैक्टिव मॉडल खोलें");isClickable=true;isFocusable=true;setOnClickListener{startActivity(Intent(this@MainActivity,EquipmentActivity::class.java).putExtra("moduleId","fire"))}}
-            body.addView(preview,LinearLayout.LayoutParams(-1,dp(164)).apply{bottomMargin=dp(12)})
+            body.add(label(t("Fire Safety & First Aid","अग्नि सुरक्षा व प्राथमिक उपचार"),25f,Palette.ink,true).asHeading(),bottom=if(store.name.isBlank())14 else 4)
+            if(store.name.isNotBlank())body.add(label(store.name,14f,Palette.muted).apply{tag="main-home-learner"},bottom=14)
         }
-        val focus=column(if(compactWorkspace)10 else 16).apply{background=shape(Palette.surface,12,Palette.line);tag="main-home-focus"}
+        val focus=column(if(compactWorkspace)12 else 16).apply{background=shape(Palette.surface,18,Palette.line);tag="main-home-focus"}
         if(compactWorkspace&&store.name.isNotBlank())focus.add(label(store.name,12f,Palette.teal).apply{tag="main-home-learner"},bottom=4)
+        focus.add(label(t(if(next==null)"NEXT STEP"else"PICK UP WHERE YOU LEFT OFF",if(next==null)"अगला चरण"else"जहाँ रुके थे, वहीं से"),11f,Palette.teal,true),bottom=6)
         if(next==null){
-            focus.add(label(t(if(history.isEmpty())"Start your first practice"else"Ready for your next practice?",if(history.isEmpty())"अपना पहला अभ्यास शुरू करें"else"अगले अभ्यास के लिए तैयार?"),if(compactWorkspace)16f else 19f,Palette.ink,true).asHeading(),bottom=6)
-            if(!compactWorkspace)focus.add(label(t("Choose Fire Safety or First Aid in Learn.","सीखें में अग्नि सुरक्षा या प्राथमिक उपचार चुनें।"),14f,Palette.muted),bottom=12)
+            focus.add(label(t(if(history.isEmpty())"Start your first practice"else"Choose your next lesson",if(history.isEmpty())"अपना पहला अभ्यास शुरू करें"else"अपना अगला पाठ चुनें"),if(compactWorkspace)17f else 20f,Palette.ink,true).asHeading(),bottom=10)
             focus.add(action(t("Browse courses","पाठ्यक्रम देखें")){go("courses")}.apply{tag="main-browse-courses"})
         }else{
-            if(!compactWorkspace)focus.add(label(t("CONTINUE LEARNING","सीखना जारी रखें"),12f,Palette.teal,true),bottom=6)
-            focus.add(label(next.title,if(compactWorkspace)16f else 19f,Palette.ink,true).asHeading().apply{tag="main-continue-title"},bottom=6)
-            focus.add(label(next.detail,14f,Palette.muted).apply{tag="main-continue-detail"},bottom=12)
+            focus.add(label(next.title,if(compactWorkspace)17f else 20f,Palette.ink,true).asHeading().apply{tag="main-continue-title"},bottom=5)
+            focus.add(label(next.detail,13f,Palette.muted).apply{tag="main-continue-detail"},bottom=10)
             focus.add(action(t("Resume practice","अभ्यास जारी रखें")){startActivity(next.intent)}.apply{tag="main-continue";contentDescription=t("Resume ","जारी रखें: ")+next.title})
         }
-        val details=if(compactWorkspace)column()else body
-        if(!compactWorkspace)body.add(focus,bottom=14)
+        val secondary=if(compactWorkspace)column()else body
+        if(!compactWorkspace)body.add(focus,bottom=12)
+        val modes=LinearLayout(this).apply{isBaselineAligned=false;gravity=Gravity.TOP}
+        fun mode(title:String,detail:String,headset:Boolean,tagName:String,click:()->Unit):Button=action(title+"\n"+detail,false,ActionRole.NEUTRAL,click).apply{
+            tag=tagName;minHeight=dp(if(compactWorkspace)70 else 84);minimumHeight=minHeight;textSize=14f;gravity=Gravity.START or Gravity.CENTER_VERTICAL
+            setPadding(dp(12),dp(10),dp(10),dp(10));setTextColor(if(headset)Palette.teal else Palette.ink)
+            background=headsetSurface(if(headset)Palette.tealBg else Palette.surface,if(headset)Palette.teal else Palette.line)
+            setCompoundDrawables(if(headset)headsetIcon(Palette.teal,26)else appIcon("camera",Palette.blue,26),null,null,null);compoundDrawablePadding=dp(9)
+            val second=text.indexOf('\n')+1
+            text=android.text.SpannableString(text).apply{setSpan(android.text.style.RelativeSizeSpan(.83f),second,length,0)}
+            contentDescription=title+". "+detail
+        }
+        modes.addView(mode(t("Handheld","फ़ोन पर"),t("AR & 3D lessons","AR और 3D पाठ"),false,"main-handheld"){go("courses")},LinearLayout.LayoutParams(0,-2,1f).apply{marginEnd=dp(8)})
+        modes.addView(mode(t("Headset VR","हेडसेट VR"),t("Look. Press. Learn.","देखें। दबाएँ। सीखें।"),true,"main-headset"){openHeadset()},LinearLayout.LayoutParams(0,-2,1f))
+        secondary.add(modes,bottom=10)
         val completed=history.count{it.completed};val inProgress=history.count{it.resumable}
         val summary=if(history.isEmpty())t("No practice saved yet","अभी कोई अभ्यास नहीं सहेजा गया")else t("$completed completed · $inProgress in progress","$completed पूरे · $inProgress जारी")
-        details.add(action(if(compactWorkspace)summary else t("Your progress","आपकी प्रगति")+"\n"+summary,false,ActionRole.REVIEW){go("records")}.apply{
-            tag="main-home-progress";contentDescription=t("Your progress. ","आपकी प्रगति। ")+summary;textSize=14f;gravity=Gravity.START or Gravity.CENTER_VERTICAL
-            setCompoundDrawables(appIcon("records",Palette.violet,22),null,null,null);compoundDrawablePadding=dp(10)
-        },bottom=12)
+        val quickActions=LinearLayout(this).apply{isBaselineAligned=false}
+        quickActions.addView(action(t("Hands AR\nPoint · pinch","हैंड AR\nइशारा · पिंच"),false,ActionRole.CAMERA){
+            startActivity(Intent(this,HandsArActivity::class.java))
+        }.apply{tag="main-hands-ar";textSize=13f;contentDescription=t("Live AR with hand gestures","हाथों के इशारों से लाइव AR")},LinearLayout.LayoutParams(0,-2,1f).apply{marginEnd=dp(8)})
+        quickActions.addView(action(t("Your progress","आपकी प्रगति")+"\n"+t("$completed complete","$completed पूरे"),false,ActionRole.REVIEW){go("records")}.apply{
+            tag="main-home-progress";contentDescription=t("Your progress. ","आपकी प्रगति। ")+summary;textSize=13f;gravity=Gravity.START or Gravity.CENTER_VERTICAL
+            setCompoundDrawables(appIcon("records",Palette.amber,20),null,null,null);compoundDrawablePadding=dp(8)
+        },LinearLayout.LayoutParams(0,-2,1f))
+        secondary.add(quickActions,bottom=8)
         history.firstOrNull{it.completed}?.let{recent->
-            if(!compactWorkspace)details.add(label(t("LATEST COMPLETED PRACTICE","हाल में पूरा अभ्यास"),12f,Palette.muted,true),bottom=4)
-            details.add(label(if(compactWorkspace)t("Latest: ","हाल का: ")+recent.title else recent.title+" · "+date(recent.updatedAt),if(compactWorkspace)12f else 14f,Palette.ink).apply{tag="main-home-recent"},bottom=if(compactWorkspace)6 else 12)
+            secondary.add(label(t("Latest: ","हाल का: ")+recent.title,12f,Palette.muted).apply{tag="main-home-recent"},bottom=8)
         }
-        val savedSignIn=AdminClient(this).hasSession()
-        details.add(action(t(if(savedSignIn)"Account & sync"else"Sign in or create account",if(savedSignIn)"खाता और सिंक"else"साइन इन या खाता बनाएँ"),false,ActionRole.NEUTRAL){account()}.apply{
-            tag="main-home-account";setCompoundDrawables(appIcon("user",Palette.ink,20),null,null,null);compoundDrawablePadding=dp(8)
+        val signedIn=AdminClient(this).hasSession()
+        secondary.add(action(t(if(signedIn)"Account & sync"else"Sign in or create account",if(signedIn)"खाता और सिंक"else"साइन इन या खाता बनाएँ"),false,ActionRole.NEUTRAL){account()}.apply{
+            tag="main-home-account";setCompoundDrawables(appIcon("user",Palette.ink,20),null,null,null);compoundDrawablePadding=dp(8);textSize=14f
         },bottom=6)
-        val status=if(compactWorkspace)t(if(savedSignIn)"Saved sign-in"else"Offline learning available",if(savedSignIn)"साइन इन सहेजा है"else"ऑफ़लाइन सीखना उपलब्ध है")else t(if(savedSignIn)"Saved sign-in · learning works offline."else"Not signed in · learning works offline.",
-            if(savedSignIn)"साइन इन सहेजा है · सीखना ऑफ़लाइन चलता है।"else"साइन इन नहीं है · सीखना ऑफ़लाइन चलता है।")
-        details.add(label(status,12f,Palette.muted).apply{tag="main-home-account-status"})
+        secondary.add(label(t(if(signedIn)"Saved sign-in · offline learning ready"else"Offline learning ready · sign-in optional",if(signedIn)"साइन इन सहेजा है · ऑफ़लाइन सीखना तैयार"else"ऑफ़लाइन सीखना तैयार · साइन इन वैकल्पिक"),11f,Palette.muted).apply{tag="main-home-account-status"})
         if(compactWorkspace){
             val row=LinearLayout(this).apply{orientation=LinearLayout.HORIZONTAL;gravity=Gravity.TOP;isBaselineAligned=false}
-            row.addView(focus,LinearLayout.LayoutParams(0,-2,1f).apply{marginEnd=dp(12)})
-            row.addView(details,LinearLayout.LayoutParams(0,-2,1f));body.add(row)
+            row.addView(focus,LinearLayout.LayoutParams(0,-2,.95f).apply{marginEnd=dp(12)})
+            row.addView(secondary,LinearLayout.LayoutParams(0,-2,1.05f));body.add(row)
         }
     }
     private fun explore(){
-        title(t("See how things work.","समझें कि चीज़ें कैसे काम करती हैं।"),t("Rotate, inspect and connect what you see with what it does.","मॉडल घुमाएँ, भाग देखें और उनका काम समझें।"))
-        body.add(action(t("Equipment explorer","उपकरण देखें")){startActivity(Intent(this,EquipmentActivity::class.java).putExtra("moduleId","fire"))}.apply{tag="studio-equipment"},bottom=12)
-        for((id,name) in listOf("gas" to "Gas detector", "machinery" to "Machinery isolation", "ppe" to "Protective equipment", "emergency" to "Emergency station"))body.add(action(name,false){startActivity(Intent(this,EquipmentActivity::class.java).putExtra("moduleId",id))}.apply{tag="studio-equipment-$id"},bottom=8)
-        body.add(action(t("Human body explorer","मानव शरीर देखें"),false){startActivity(Intent(this,AnatomyActivity::class.java))}.apply{tag="studio-anatomy"},bottom=12)
-        body.add(label(t("3D exploration works without a camera. Camera AR is available inside supported practice scenes. These models teach understanding; physical skills need supervised practice.","3D मॉडल कैमरे के बिना देखे जा सकते हैं। समर्थित अभ्यास में कैमरा AR उपलब्ध है। शारीरिक कौशल के लिए प्रशिक्षक के साथ अभ्यास ज़रूरी है।"),15f,Palette.muted))
+        title(t("Explore in space.","मॉडल को पास से समझें।"),t("Choose a model, then look closer.","मॉडल चुनें, फिर उसके भाग देखें।"))
+        body.add(action(t("Live AR with hands","हाथों से लाइव AR"),false,ActionRole.CAMERA){startActivity(Intent(this,HandsArActivity::class.java))}.apply{
+            tag="studio-hands-ar";contentDescription=t("Live camera AR. Point, pinch and manipulate virtual models.","लाइव कैमरा AR। इशारा और पिंच करके आभासी मॉडल नियंत्रित करें।")
+        },bottom=10)
+        body.add(action(t("Headset VR classroom","हेडसेट VR कक्षा"),false,ActionRole.LEARN){openHeadset()}.apply{
+            tag="studio-headset";setCompoundDrawables(headsetIcon(Palette.teal,26),null,null,null);compoundDrawablePadding=dp(10)
+        },bottom=14)
+        body.add(label(t("MODEL LIBRARY","मॉडल लाइब्रेरी"),11f,Palette.muted,true),bottom=8)
+        body.add(action(t("Fire equipment","अग्नि उपकरण")){startActivity(Intent(this,EquipmentActivity::class.java).putExtra("moduleId","fire"))}.apply{tag="studio-equipment"},bottom=8)
+        body.add(action(t("Human body","मानव शरीर"),false){startActivity(Intent(this,AnatomyActivity::class.java))}.apply{tag="studio-anatomy"},bottom=12)
+        body.add(action(t("Industrial equipment","औद्योगिक उपकरण"),false,ActionRole.NEUTRAL){
+            val models=listOf("gas" to t("Gas detector","गैस डिटेक्टर"),"machinery" to t("Machinery isolation","मशीन अलगाव"),"ppe" to t("Protective equipment","सुरक्षा उपकरण"),"emergency" to t("Emergency station","आपातकाल स्थल"))
+            PageDialogBuilder(this).setTitle(t("Industrial equipment","औद्योगिक उपकरण")).setItems(models.map{it.second}.toTypedArray()){_,i->startActivity(Intent(this,EquipmentActivity::class.java).putExtra("moduleId",models[i].first))}.setNegativeButton(t("Close","बंद करें"),null).show()
+        }.apply{tag="studio-industrial"},bottom=12)
+        body.add(label(t("3D works offline. Use camera AR on your phone or headset VR with a calibrated viewer.","3D ऑफ़लाइन चलता है। फ़ोन पर कैमरा AR या कैलिब्रेटेड व्यूअर में हेडसेट VR चुनें।"),13f,Palette.muted))
     }
     private fun launchCards(){
         val row=if(compactWorkspace)LinearLayout(this).apply{orientation=LinearLayout.HORIZONTAL;isBaselineAligned=false}else null
         learningCatalog.courses.forEachIndexed{index,course->
             val id=course.getString("id");val accent=if(id=="fire")Palette.fire else Palette.teal
-            val item=card().apply{
-                tag="main-course-card-$id"
-                add(label(learningText(course,"title"),if(compactWorkspace)17f else 20f,Palette.ink,true).asHeading().apply{setCompoundDrawables(appIcon(course.getString("icon"),accent,28),null,null,null);compoundDrawablePadding=dp(10)},bottom=if(compactWorkspace)10 else 6)
-                if(!compactWorkspace)add(label(learningText(course,"subtitle"),14f,Palette.muted),bottom=12)
+            val item=column(if(compactWorkspace)12 else 16).apply{
+                background=shape(Palette.surface,18,Palette.line);tag="main-course-card-$id"
+                val heading=LinearLayout(this@MainActivity).apply{gravity=Gravity.CENTER_VERTICAL}
+                heading.addView(ImageView(this@MainActivity).apply{setImageDrawable(appIcon(course.getString("icon"),accent,27));importantForAccessibility=View.IMPORTANT_FOR_ACCESSIBILITY_NO;background=shape(if(id=="fire")Palette.amberBg else Palette.tealBg,12);setPadding(dp(10),dp(10),dp(10),dp(10))},LinearLayout.LayoutParams(dp(48),dp(48)).apply{marginEnd=dp(10)})
+                heading.addView(label(learningText(course,"title"),if(compactWorkspace)18f else 20f,Palette.ink,true).asHeading(),LinearLayout.LayoutParams(0,-2,1f));add(heading,bottom=8)
+                if(!compactWorkspace)add(label(learningText(course,"subtitle"),13f,Palette.muted),bottom=10)
                 add(action(t("Open course","पाठ्यक्रम खोलें"),false){launchCourse(id)}.apply{tag="course-$id";contentDescription=t("Open ","खोलें: ")+learningText(course,"title")})
             }
-            if(row==null)body.add(item,bottom=14)else row.addView(item,LinearLayout.LayoutParams(0,-2,1f).apply{if(index==0)marginEnd=dp(12)})
+            if(row==null)body.add(item,bottom=12)else row.addView(item,LinearLayout.LayoutParams(0,-2,1f).apply{if(index==0)marginEnd=dp(12)})
         }
         row?.let{body.add(it,bottom=10)}
     }
     private fun courses(){
-        if(!compactWorkspace)title(t("Learn","सीखें"),t("Choose a course to explore and practise.","समझने और अभ्यास के लिए पाठ्यक्रम चुनें।"))
-        launchCards();body.add(action(t("Earlier industrial courses","पुराने औद्योगिक पाठ्यक्रम"),false,ActionRole.NEUTRAL){go("library")}.apply{tag="main-learning-library"})
+        if(!compactWorkspace)title(t("Choose what to practise.","अभ्यास के लिए पाठ चुनें।"),t("Fire Safety and First Aid, step by step.","अग्नि सुरक्षा और प्राथमिक उपचार, चरण दर चरण।"))
+        launchCards()
+        val footer=LinearLayout(this).apply{isBaselineAligned=false}
+        footer.addView(action(t("Headset VR","हेडसेट VR"),false,ActionRole.LEARN){openHeadset()}.apply{tag="main-learning-headset";setCompoundDrawables(headsetIcon(Palette.teal,22),null,null,null);compoundDrawablePadding=dp(8);textSize=13f},LinearLayout.LayoutParams(0,-2,1f).apply{marginEnd=dp(8)})
+        footer.addView(action(t("Industrial library","औद्योगिक लाइब्रेरी"),false,ActionRole.NEUTRAL){go("library")}.apply{tag="main-learning-library";textSize=13f},LinearLayout.LayoutParams(0,-2,1f));body.add(footer)
     }
     private fun homeIcon(colour:Int):android.graphics.drawable.Drawable=object:android.graphics.drawable.Drawable(){
         private val pen=Paint(Paint.ANTI_ALIAS_FLAG).apply{color=colour;style=Paint.Style.STROKE;strokeWidth=1.7f;strokeCap=Paint.Cap.ROUND;strokeJoin=Paint.Join.ROUND}
@@ -461,12 +503,40 @@ class MainActivity: Activity() {
             body.add(card().apply{add(label(course.getString("title"),18f,Palette.ink,true).asHeading(),bottom=6);add(label("${ids.size} scenario practices complete",14f,Palette.muted))},bottom=12)
         }
         body.add(action(t("Practice history & reflections","अभ्यास इतिहास और विचार")){startActivity(Intent(this,LearningScenarioActivity::class.java).putExtra("showRecords",true))},bottom=10)
+        body.add(action(t("Headset VR records","हेडसेट VR रिकॉर्ड"),false,ActionRole.REVIEW){headsetRecords()}.apply{tag="main-headset-records";setCompoundDrawables(headsetIcon(Palette.amber,22),null,null,null);compoundDrawablePadding=dp(8)},bottom=10)
         body.add(action(t("First-aid bay records","प्राथमिक उपचार अभ्यास रिकॉर्ड"),false,ActionRole.NEUTRAL){bayRecords()},bottom=10)
         body.add(action(t("Sync private learning records","निजी सीखने के रिकॉर्ड सिंक करें"),false,ActionRole.NEUTRAL){
             learningOverlay?.dismiss();learningOverlay=LearningPracticeSyncDialog.show(this,store)
         },bottom=10)
         body.add(action(t("Account & institution","खाता और संस्था"),false,ActionRole.NEUTRAL){startActivity(Intent(this,LearnerCentreActivity::class.java))},bottom=10)
         body.add(action(t("Earlier records & credentials","पुराने रिकॉर्ड और प्रमाणपत्र"),false,ActionRole.NEUTRAL){go("legacy-records")})
+    }
+    private fun headsetRecords(){
+        if(!store.isCurrentProfile())return
+        val owner=store.workerId
+        val result=runCatching{VrLearningStore(this,owner).use{it.records()}}
+        if(result.isFailure){notice(t("Headset records unavailable","हेडसेट रिकॉर्ड उपलब्ध नहीं"),t("A saved headset record could not be verified. Its original data has been retained. Reopen learning or contact your trainer.","सहेजा हेडसेट रिकॉर्ड सत्यापित नहीं हुआ। मूल डेटा सुरक्षित है। सीखना दोबारा खोलें या प्रशिक्षक से संपर्क करें।"));return}
+        val records=result.getOrThrow()
+        if(records.isEmpty()){notice(t("Headset VR records","हेडसेट VR रिकॉर्ड"),t("No headset practice saved yet. Choose a lesson in Headset VR to begin.","अभी हेडसेट अभ्यास नहीं सहेजा गया है। शुरू करने के लिए हेडसेट VR में पाठ चुनें।"));return}
+        val school=getSharedPreferences("learning-profile",MODE_PRIVATE).getString("context-$owner","")=="School"
+        val available=records.mapNotNull{record->learningCatalog.scenarioForVersion(record.getString("scenarioId"),record.getString("contentVersion"))?.takeIf{HeadsetLessonPolicy.allowed(it,school)}?.let{record to it}}
+        val panel=column(12)
+        panel.add(label(t("VR decision practice · no practical-skill certification","VR निर्णय अभ्यास · व्यावहारिक कौशल प्रमाणन नहीं"),13f,Palette.muted),bottom=12)
+        val dialog=PageDialogBuilder(this).setTitle(t("Headset VR records","हेडसेट VR रिकॉर्ड")).setView(paged(panel,hi)).setNegativeButton(t("Close","बंद करें"),null).create()
+        if(available.isEmpty())panel.add(label(t("No headset records are available for this learning profile.","इस सीखने की प्रोफ़ाइल के लिए हेडसेट रिकॉर्ड उपलब्ध नहीं हैं।"),14f,Palette.muted))
+        available.take(30).forEach{(record,scenario)->
+            val finished=record.getBoolean("finished")
+            val count=scenario.getJSONArray("steps").length()
+            panel.add(action(scenario.getString("title")+"\n"+t(if(finished)"Completed · $count steps"else"${record.getInt("index")} of $count steps · continue",if(finished)"पूरा · $count चरण"else"$count में से ${record.getInt("index")} चरण · जारी करें"),false,ActionRole.NEUTRAL){
+                if(store.isCurrentProfile()&&owner==store.workerId){
+                    dialog.dismiss()
+                    if(finished)notice(t("Headset practice complete","हेडसेट अभ्यास पूरा"),scenario.getString("title")+"\n\n"+date(record.getLong("updatedAt"))+"\n"+t("Decision practice saved. Physical skill was not assessed. Open Headset VR to practise again.","निर्णय अभ्यास सहेजा है। शारीरिक कौशल का मूल्यांकन नहीं हुआ। फिर अभ्यास के लिए हेडसेट VR खोलें।"))
+                    else openHeadset(record.getString("scenarioId"))
+                }
+            }.apply{tag="headset-record-${record.getString("id")}";gravity=Gravity.START or Gravity.CENTER_VERTICAL;textSize=14f},bottom=8)
+        }
+        if(available.size>30)panel.add(label(t("Showing the 30 most recent headset practices.","हाल के 30 हेडसेट अभ्यास दिखाए गए हैं।"),12f,Palette.muted))
+        dialog.show()
     }
     private fun bayRecords(){
         val records=SkillPracticeStore(this,store.workerId,"first-aid-bay.db").use{it.records()}

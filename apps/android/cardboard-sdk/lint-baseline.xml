@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Only three reviewed findings in hash-pinned upstream QR camera code.
+All three calls catch SecurityException; QrCodeCaptureActivity also checks
+CAMERA at onResume entry. Warnings and future findings remain visible. -->
+<issues format="6" by="lint 9.0.1" type="baseline" client="gradle" variant="all" version="">
+    <issue id="MissingPermission" message="Missing permissions required by CameraSourcePreview.startIfReady: android.permission.CAMERA" errorLine1="        startIfReady();" errorLine2="        ~~~~~~~~~~~~~~">
+        <location file="vendor/cardboard/sdk/qrcode/android/java/com/google/cardboard/sdk/qrcode/camera/CameraSourcePreview.java" line="94" column="9" />
+    </issue>
+    <issue id="MissingPermission" message="Missing permissions required by CameraSourcePreview.startIfReady: android.permission.CAMERA" errorLine1="      startIfReady();" errorLine2="      ~~~~~~~~~~~~~~">
+        <location file="vendor/cardboard/sdk/qrcode/android/java/com/google/cardboard/sdk/qrcode/camera/CameraSourcePreview.java" line="150" column="7" />
+    </issue>
+    <issue id="MissingPermission" message="Missing permissions required by CameraSourcePreview.start: android.permission.CAMERA" errorLine1="        cameraSourcePreview.start(cameraSource);" errorLine2="        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location file="vendor/cardboard/sdk/qrcode/android/java/com/google/cardboard/sdk/QrCodeCaptureActivity.java" line="234" column="9" />
+    </issue>
+</issues>

@@ -76,7 +76,9 @@ class TrainingNarrator(private val host: Activity, private val hi: () -> Boolean
     }
     /** Override only when the host provides a real language selector. Content uses show(..., tag). */
     var languageProvider: () -> String = { if (appPrefs.getBoolean("hi", false)) "hi-IN" else "en-IN" }
-    val automaticEnabled get() = prefs.getBoolean("automatic", true)
+    /** A self-contained host mode can own its voice toggle without changing handheld preferences. */
+    var automaticOverride: Boolean? = null
+    val automaticEnabled get() = automaticOverride ?: prefs.getBoolean("automatic", true)
     val speechRate get() = prefs.getFloat("rate", 1f).takeIf { it in .65f..1.25f } ?: 1f
     val isSpeaking get() = queue.playing || previewId != null
 

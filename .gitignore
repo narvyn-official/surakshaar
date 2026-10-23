@@ -19,3 +19,7 @@ artifacts/
 **/.kotlin/
 **/*.tsbuildinfo
 **/.sites-runtime/
+
+# Local Android IDE/native build state
+**/.cxx/
+**/.idea/
