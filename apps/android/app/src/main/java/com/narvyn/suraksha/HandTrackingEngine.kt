@@ -64,6 +64,7 @@ internal class HandTrackingEngine(context:Context):AutoCloseable {
     private var landmarker:HandLandmarker?=null
     private var segmenter:ForegroundSegmenter?=null
     private var segmentationFailed=false
+    private val segmentationSchedule=ForegroundInferenceSchedule()
     private var lastModelTimestamp=Long.MIN_VALUE
     private val identities=HandIdentityTracker()
 
@@ -155,31 +156,35 @@ internal class HandTrackingEngine(context:Context):AutoCloseable {
             pixels.third.fill(0)
             val modelTimestamp=maxOf(captureTime,lastModelTimestamp+1)
             lastModelTimestamp=modelTimestamp
-            var matte:ForegroundMask?=null
-            val result=BitmapImageBuilder(bitmap).build().use { image->
-                val hands=detector.detectForVideo(image,modelTimestamp)
-                if(!segmentationFailed&&SystemClock.elapsedRealtime()-captureTime<MAX_RESULT_AGE_MS){
+            BitmapImageBuilder(bitmap).build().use { image->
+                val result=detector.detectForVideo(image,modelTimestamp)
+                val received=SystemClock.elapsedRealtime()
+                if(!isCurrent(token,key)||received-captureTime>MAX_RESULT_AGE_MS)return@use
+                val candidates=mapResult(result,copy,mapping,turns)
+                val associated=identities.associate(candidates,token,key.width.toFloat()/key.height)
+                val handFrame=HandTrackingFrame(captureTime,received,token,associated.first,associated.second,key.width.toFloat()/key.height)
+                val previousMatte=snapshot.get().foreground?.takeIf{it.generation==token&&it.freshAt(received)}
+                val hands=HandTrackingSnapshot(if(associated.first.isEmpty())HandTrackingState.SEARCHING else HandTrackingState.TRACKING,
+                    if(associated.first.isEmpty())"Show an open hand in the camera view." else "Hand controls active.",handFrame,received-started,sourceNs,key.epoch,previousMatte,segmentationFailed)
+                // Input reaches the renderer immediately. Optional person matting cannot add its
+                // processing time to this hand result's publication latency.
+                publish(token,key,hands)
+                if(!segmentationFailed&&segmentationSchedule.shouldRun(received,received-captureTime,associated.first.isNotEmpty())){
                     try {
                         val foreground=segmenter?:ForegroundSegmenter(app).also{segmenter=it}
                         val viewToMask=ForegroundMask.mapping(mapping,turns,copy.sourceWidth,copy.sourceHeight,copy.left,copy.top,copy.cropWidth,copy.cropHeight)
-                        matte=foreground.segment(image,modelTimestamp,viewToMask,captureTime,token)
+                        val matte=foreground.segment(image,modelTimestamp,viewToMask,captureTime,token)
+                        val completed=SystemClock.elapsedRealtime()
+                        publish(token,key,hands.copy(foreground=matte.takeIf{it.freshAt(completed)}))
                     }catch(_:Exception){segmentationFailed=true;runCatching{segmenter?.close()};segmenter=null}
                     catch(_:LinkageError){segmentationFailed=true;runCatching{segmenter?.close()};segmenter=null}
                 }
-                hands
             }
             val received=SystemClock.elapsedRealtime()
             synchronized(lock){if(isCurrent(token,key))pacer.completed(received-started)}
-            if(received-captureTime>MAX_RESULT_AGE_MS) {
+            if(snapshot.get().frame?.captureTimeMs!=captureTime&&received-captureTime>MAX_RESULT_AGE_MS) {
                 publish(token,key,HandTrackingSnapshot(HandTrackingState.SEARCHING,"Hand signal delayed. Use touch controls.",processingMs=received-started,sessionEpoch=key.epoch))
-                return
             }
-            val candidates=mapResult(result,copy,mapping,turns)
-            val associated=identities.associate(candidates,token,key.width.toFloat()/key.height)
-            val handFrame=HandTrackingFrame(captureTime,received,token,associated.first,associated.second,key.width.toFloat()/key.height)
-            publish(token,key,HandTrackingSnapshot(if(associated.first.isEmpty())HandTrackingState.SEARCHING else HandTrackingState.TRACKING,
-                if(associated.first.isEmpty())"Show an open hand in the camera view." else "Hand controls active.",handFrame,received-started,sourceNs,key.epoch,
-                matte?.takeIf{it.freshAt(received)},segmentationFailed))
         } catch(_:LinkageError) {
             publish(token,key,unavailable(key))
             releaseModel()
@@ -218,7 +223,7 @@ internal class HandTrackingEngine(context:Context):AutoCloseable {
     private fun isCurrent(token:Long,key:Geometry)=synchronized(lock){!closed&&enabled&&!paused&&generation==token&&geometry==key}
     private fun publish(token:Long,key:Geometry,value:HandTrackingSnapshot) { synchronized(lock){if(!closed&&enabled&&!paused&&generation==token&&geometry==key)snapshot.set(value)} }
     private fun queueRelease(){try{executor.execute{releaseModel()}}catch(_:RejectedExecutionException){}}
-    private fun releaseModel(){try{landmarker?.close()}catch(_:Exception){}finally{landmarker=null;lastModelTimestamp=Long.MIN_VALUE;runCatching{segmenter?.close()};segmenter=null;segmentationFailed=false}}
+    private fun releaseModel(){try{landmarker?.close()}catch(_:Exception){}finally{landmarker=null;lastModelTimestamp=Long.MIN_VALUE;runCatching{segmenter?.close()};segmenter=null;segmentationFailed=false;segmentationSchedule.reset()}}
     override fun close() {
         synchronized(lock){if(closed)return;closed=true;enabled=false;generation=generations.incrementAndGet();snapshot.set(HandTrackingSnapshot(HandTrackingState.DISABLED,"Hand controls are off."))}
         queueRelease();executor.shutdown()

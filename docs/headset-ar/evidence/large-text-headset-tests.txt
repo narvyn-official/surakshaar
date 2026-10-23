@@ -1,0 +1,6 @@
+
+com.narvyn.suraksha.HandsArFlowTest:.
+
+Time: 7.661
+
+OK (1 test)

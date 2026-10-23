@@ -51,16 +51,18 @@ internal class HandsArSceneView(
     private var driver:NativeArDriver?=null
     private val tracker=HandTrackingEngine(host.applicationContext)
     private val gestures=HandGestureController()
+    private val metrics=HandsArSessionMetrics()
     private val worker=Executors.newSingleThreadExecutor{Thread(it,"hands-ar-model")}
     private val pendingBody=AtomicReference<AnatomyData?>()
     @Volatile private var bodyLoadError:String?=null
     private var body:AnatomyData?=null
     private var anatomy:AnatomyRenderer?=null
     private lateinit var graphics:HandsArGraphics
+    private lateinit var lensGraphics:CameraLensCompositor
     private lateinit var equipment:WorldEquipment
     private var anchor:Anchor?=null
     private var modelId=initialModel.takeIf{it in MODELS}?:"extinguisher"
-    private var offsetX=0f;private var offsetZ=0f;private var scale=1f;private var yaw=0f
+    private var offsetX=0f;private var offsetZ=0f;private var offsetY=0f;private var scale=1f;private var yaw=0f
     private var committed=HandModelPose()
     private val motion=HandModelMotion()
     private var lastRenderAt=0L
@@ -69,14 +71,15 @@ internal class HandsArSceneView(
     private var cursors=emptyList<HandGestureEvent.Cursor>()
     private var handFrame:HandTrackingFrame?=null
     private var foregroundMask:ForegroundMask?=null
+    private var handReveal:ForegroundMask?=null
+    private var revealCapture=-1L;private var revealGeneration=-1L
+    private var revealBytes=ByteArray(0)
     private var foregroundUnavailable=false
     private var seeThrough=false
     private var visibilityAssist=false
-    private var virtualRoom=false
+    private var opticalGrid=false
     private var detailPage=0
     private var detailPages=1
-    private var room:VrGraphics?=null
-    private val roomVp=FloatArray(16)
     private var renderModel=lesson?.current?.renderModel?:if(modelId=="extinguisher")"fire" else "anatomy"
     private var elapsed=0f
     private val animatedParts=mutableMapOf<String,FloatArray>()
@@ -102,7 +105,10 @@ internal class HandsArSceneView(
     private var validAt=0L
     private var surfaceWidth=1;private var surfaceHeight=1;private var logicalWidth=1
     private var renderWidth=1;private var renderHeight=1
+    private var eyeRenderWidth=1
     private var fbo=0;private var depth=0;private var stereoTexture=0;private var cardboard=0L
+    private var lensFbo=0;private var lensTexture=0
+    private val lensProjections=Array(2){FloatArray(16)}
     private var installRequested=false
     @Volatile private var foreground=false
     @Volatile private var hasFocus=true
@@ -131,20 +137,21 @@ internal class HandsArSceneView(
     var onInstruction:(String,String)->Unit={_,_->}
     var onStepChanged:(String)->Unit={}
     val isPaused get()=paused
-    private data class TwoHandBase(val pose:HandModelPose,val pivotX:Float,val pivotZ:Float)
-    private data class Drag(val before:HandModelPose,val plane:HandDragPlane,val grabX:Float,val grabZ:Float,val handId:String?=null)
+    private data class TwoHandBase(val pose:HandModelPose,val pivot:FloatArray)
+    private data class Drag(val before:HandModelPose,val plane:HandDragPlane,val grabX:Float,val grabZ:Float,val grabY:Float,val handId:String?=null)
     private data class Ray(val origin:FloatArray,val direction:FloatArray)
     private data class Hit(val id:String,val bounds:RectF)
     private fun commands():List<String> = when {
         paused -> listOf("resume","exit")
-        panel==1 -> listOf("smaller","larger","rotate-right","options","tools")
+        panel==1 -> listOf("smaller","larger","rotate-left","rotate-right","options","tools")
         panel==2 -> listOf("extinguisher","aed","body","hands","tools")
-        panel==3 -> listOf("view","details","voice","reset","tools")
+        panel==3 -> if(headset)listOf("lens-check","session-check","details","voice","reset","tools")else listOf("session-check","details","voice","reset","tools")
         panel==4 -> listOf("detail-back","detail-next","voice","tools")
+        panel==5 -> listOf("detail-back","detail-next","tools","pause")
         lesson!=null -> listOf("previous","next","place","visibility","tools","pause")
         else -> listOf("place","models","visibility","tools","pause","exit")
     }
-    private fun commandName(id:String)=when(id){"place"->if(anchor==null)"Place" else "Re-place";"models"->"Models";"tools"->if(panel>0)"Done" else "Controls";"options"->"Options";"smaller"->"− Size";"larger"->"+ Size";"rotate-left"->"Turn left";"rotate-right"->"Turn 15°";"reset"->"Reset";"resume"->if(cooling)"Cooling" else "Resume";"exit"->"Exit";"pause"->"Pause";"extinguisher"->"Extinguisher";"aed"->"AED trainer";"body"->if(activePartId()!=null)"Body / part" else "Body";"hands"->if(handEnabled)"Hands on" else "Hands off";"visibility"->if(seeThrough)"Solid view"else"See-through";"view"->if(virtualRoom)"Camera view"else"Virtual room";"details"->"Step details";"voice"->"Read aloud";"previous","detail-back"->"Previous";"next","detail-next"->"Next";else->id}
+    private fun commandName(id:String)=when(id){"place"->if(anchor==null)"Place" else "Re-place";"models"->"Models";"tools"->if(panel>0)"Done" else "Controls";"options"->"Options";"smaller"->"− Size";"larger"->"+ Size";"rotate-left"->"Turn left";"rotate-right"->"Turn right";"reset"->"Reset";"resume"->if(cooling)"Cooling" else "Resume";"exit"->"Exit";"pause"->"Pause";"extinguisher"->"Extinguisher";"aed"->"AED trainer";"body"->if(activePartId()!=null)"Body / part" else "Body";"hands"->if(handEnabled)"Hands on" else "Hands off";"visibility"->if(seeThrough)"Solid view"else"See-through";"session-check"->"Session check";"lens-check"->if(opticalGrid)"Hide grid"else"Lens check";"details"->"Step details";"voice"->"Read aloud";"previous","detail-back"->"Previous";"next","detail-next"->"Next";else->id}
     private fun hits():List<Hit> {
         val ids=commands();val margin=.035f;val gap=.012f;val w=(1f-margin*2-gap*(ids.size-1))/ids.size
         val h=(host.dp(54).toFloat()/surfaceHeight).coerceIn(.065f,.14f)
@@ -211,7 +218,7 @@ internal class HandsArSceneView(
     }
     private fun loadBody():AnatomyData {
         val context=host.applicationContext
-        val base=VrAssets.loadBody(context)
+        val base=SpatialBodyAssets.loadBody(context)
         val requested=partId?:return base
         if(base.parts.any{it.id==requested})return base
         val manifest=JSONObject(context.assets.open("anatomy/manifest.json").bufferedReader().use{it.readText()})
@@ -244,7 +251,7 @@ internal class HandsArSceneView(
         if(running){
             // The GL owner finishes before Session.pause. An ordinary foreground interruption keeps
             // its Session and anchors, while cancelling uncommitted manipulation.
-            surface.queueEvent{cancelManipulation();destroyStereo();currentFrame=null;frameReady=false}
+            surface.queueEvent{cancelManipulation();retireHandImages();metrics.suspend();destroyStereo();currentFrame=null;frameReady=false;lastRenderAt=0}
             surface.onPause();running=false;runCatching{driver?.pause()}
         }
         controllerArmed=false;touchActive=false
@@ -275,9 +282,9 @@ internal class HandsArSceneView(
     private fun status(message:String){if(message==statusKey)return;statusKey=message;post{if(!closed)onStatus(message)}}
     override fun onSurfaceCreated(gl:GL10?,config:EGLConfig?){
         try {
-            graphics=HandsArGraphics().also{it.create()};equipment=WorldEquipment().also{it.create()};room=VrGraphics().also{it.create()}
+            graphics=HandsArGraphics().also{it.create()};equipment=WorldEquipment().also{it.create()};lensGraphics=CameraLensCompositor().also{it.create()}
             anatomy=AnatomyRenderer(body?:AnatomyData(JSONObject().put("heightMetres",1.8),emptyList()),AnatomyClothing.parts+FirstAidEquipment.parts+FirstAidTeachingProps.parts).also{it.create()}
-            driver?.invalidateTexture();fbo=0;depth=0;stereoTexture=0;cardboard=0L;hudKey=""
+            driver?.invalidateTexture();fbo=0;depth=0;stereoTexture=0;lensFbo=0;lensTexture=0;cardboard=0L;hudKey=""
             val mesh=equipment.exportMesh("fire")!!;val vertices=FloatArray(mesh.capacity()/12*6);val source=mesh.duplicate().apply{clear()}
             for(i in vertices.indices step 6){for(j in 0..5)vertices[i+j]=source.get(i/6*12+j)}
             val b=FloatArray(6){i->if(i<3)(vertices.indices step 6).minOf{vertices[it+i]}else(vertices.indices step 6).maxOf{vertices[it+i-3]}}
@@ -289,16 +296,19 @@ internal class HandsArSceneView(
     override fun onSurfaceChanged(gl:GL10?,width:Int,height:Int){
         if(width<2||height<2)return
         try {
-            surfaceWidth=width;surfaceHeight=height;logicalWidth=if(headset)width/2 else width
-            val hudHeight=(800f*height/logicalWidth).toInt().coerceIn(640,3200)
+            surfaceWidth=width;surfaceHeight=height
+            val image=if(headset)driver?.cameraTextureSize()?:Pair(4,3)else null
+            logicalWidth=if(image!=null)HeadsetCaptureLayout.sourceWidth(height,image.first,image.second)else width
+            val hudHeight=(800f*height/logicalWidth).toInt().coerceIn(if(headset)360 else 640,3200)
             if(hud.height!=hudHeight){hud.recycle();hud=Bitmap.createBitmap(800,hudHeight,Bitmap.Config.ARGB_8888)}
-            cancelManipulation();hudKey="";frameReady=false
+            cancelManipulation();retireHandImages();hudKey="";frameReady=false
             if(headset){destroyStereo();cardboard=CardboardBridge.create(width,height);allocateStereo()}
         }catch(e:Exception){fail("The viewer profile could not load. Remove the phone and check its calibration.")}
     }
     private fun allocateStereo(){
-        val factor=minOf(1f,1600f/surfaceWidth,900f/surfaceHeight)
+        val factor=minOf(1f,1600f/surfaceWidth,900f/surfaceHeight,1600f/logicalWidth)
         renderWidth=(logicalWidth*factor).toInt().coerceAtLeast(2);renderHeight=(surfaceHeight*factor).toInt().coerceAtLeast(2)
+        eyeRenderWidth=(surfaceWidth/2*factor).toInt().coerceAtLeast(2)
         val names=IntArray(1);G.glGenTextures(1,names,0);stereoTexture=names[0];G.glBindTexture(G.GL_TEXTURE_2D,stereoTexture)
         for(p in intArrayOf(G.GL_TEXTURE_MIN_FILTER,G.GL_TEXTURE_MAG_FILTER))G.glTexParameteri(G.GL_TEXTURE_2D,p,G.GL_LINEAR)
         for(p in intArrayOf(G.GL_TEXTURE_WRAP_S,G.GL_TEXTURE_WRAP_T))G.glTexParameteri(G.GL_TEXTURE_2D,p,G.GL_CLAMP_TO_EDGE)
@@ -307,6 +317,14 @@ internal class HandsArSceneView(
         G.glGenFramebuffers(1,names,0);fbo=names[0];G.glBindFramebuffer(G.GL_FRAMEBUFFER,fbo)
         G.glFramebufferTexture2D(G.GL_FRAMEBUFFER,G.GL_COLOR_ATTACHMENT0,G.GL_TEXTURE_2D,stereoTexture,0);G.glFramebufferRenderbuffer(G.GL_FRAMEBUFFER,G.GL_DEPTH_ATTACHMENT,G.GL_RENDERBUFFER,depth)
         check(G.glCheckFramebufferStatus(G.GL_FRAMEBUFFER)==G.GL_FRAMEBUFFER_COMPLETE);G.glBindFramebuffer(G.GL_FRAMEBUFFER,0)
+        G.glGenTextures(1,names,0);lensTexture=names[0];G.glBindTexture(G.GL_TEXTURE_2D,lensTexture)
+        for(p in intArrayOf(G.GL_TEXTURE_MIN_FILTER,G.GL_TEXTURE_MAG_FILTER))G.glTexParameteri(G.GL_TEXTURE_2D,p,G.GL_LINEAR)
+        for(p in intArrayOf(G.GL_TEXTURE_WRAP_S,G.GL_TEXTURE_WRAP_T))G.glTexParameteri(G.GL_TEXTURE_2D,p,G.GL_CLAMP_TO_EDGE)
+        G.glTexImage2D(G.GL_TEXTURE_2D,0,G.GL_RGB,eyeRenderWidth*2,renderHeight,0,G.GL_RGB,G.GL_UNSIGNED_BYTE,null)
+        G.glGenFramebuffers(1,names,0);lensFbo=names[0];G.glBindFramebuffer(G.GL_FRAMEBUFFER,lensFbo)
+        G.glFramebufferTexture2D(G.GL_FRAMEBUFFER,G.GL_COLOR_ATTACHMENT0,G.GL_TEXTURE_2D,lensTexture,0)
+        check(G.glCheckFramebufferStatus(G.GL_FRAMEBUFFER)==G.GL_FRAMEBUFFER_COMPLETE);G.glBindFramebuffer(G.GL_FRAMEBUFFER,0)
+        for(i in 0..1)CardboardBridge.projection(cardboard,i,.05f,30f,lensProjections[i])
         // ARCore is the sole camera/pose owner. The Cardboard head tracker is never resumed here.
     }
     private fun destroyStereo(){
@@ -314,7 +332,9 @@ internal class HandsArSceneView(
         if(fbo!=0)G.glDeleteFramebuffers(1,intArrayOf(fbo),0)
         if(depth!=0)G.glDeleteRenderbuffers(1,intArrayOf(depth),0)
         if(stereoTexture!=0)G.glDeleteTextures(1,intArrayOf(stereoTexture),0)
-        fbo=0;depth=0;stereoTexture=0
+        if(lensFbo!=0)G.glDeleteFramebuffers(1,intArrayOf(lensFbo),0)
+        if(lensTexture!=0)G.glDeleteTextures(1,intArrayOf(lensTexture),0)
+        fbo=0;depth=0;stereoTexture=0;lensFbo=0;lensTexture=0
     }
     override fun onDrawFrame(gl:GL10?){
         if(!foreground||failed||!running||!hasFocus)return
@@ -340,6 +360,7 @@ internal class HandsArSceneView(
             val interaction=frameReady&&!cooling&&hasFocus
             tracker.offer(frame,rotation,logicalWidth,surfaceHeight,interaction,d.sessionEpoch)
             val snapshot=tracker.latestSnapshot(now)
+            metrics.render(now,frameReady&&!paused&&!cooling);metrics.hand(snapshot.frame,now)
             handMessage=snapshot.message
             foregroundMask=snapshot.foreground?.takeIf{interaction&&it.freshAt(now)}
             foregroundUnavailable=snapshot.foregroundUnavailable
@@ -356,29 +377,44 @@ internal class HandsArSceneView(
                 if(handFrame?.let{now-it.captureTimeMs>HandGestureController.CAPTURE_FRESH_MS}!=false){handFrame=null;cursors=emptyList()}
             }
             val visibleHands=handFrame?.hands.orEmpty()
-            visibilityAssist=seeThrough||(visibleHands.isNotEmpty()&&foregroundMask?.covers(visibleHands)!=true)
+            updateHandReveal(now,interaction)
+            visibilityAssist=seeThrough||(visibleHands.isNotEmpty()&&handReveal==null&&foregroundMask?.covers(visibleHands)!=true)
             val dt=if(lastRenderAt==0L)0f else (now-lastRenderAt).coerceAtLeast(0)/1000f
             if(!paused&&!cooling)elapsed+=dt.coerceAtMost(.1f)
             lastRenderAt=now;motion.advance(transform(),dt);updateModel()
-            canPlace=interaction&&(virtualRoom||floorHit(frame,.5f,.62f)!=null)
+            canPlace=interaction&&floorHit(frame,.5f,.62f)!=null
             if(now-lastHudAt>=100||lastHudAt==0L){paintHud();lastHudAt=now}
             if(headset){
                 G.glBindFramebuffer(G.GL_FRAMEBUFFER,fbo);G.glClearColor(0f,0f,0f,1f);G.glClear(G.GL_COLOR_BUFFER_BIT or G.GL_DEPTH_BUFFER_BIT)
-                // Share one monoscopic render at the existing per-eye resolution. VR still
-                // renders separate eye images; this never invents stereo camera depth.
+                // Render camera, geometry, foreground and controls ONCE. Reproject that same
+                // captured camera ray into each calibrated lens; do not invent stereo depth.
                 G.glViewport(0,0,renderWidth,renderHeight);drawMono(frame)
+                G.glBindFramebuffer(G.GL_FRAMEBUFFER,lensFbo)
+                for(i in 0..1){G.glViewport(i*eyeRenderWidth,0,eyeRenderWidth,renderHeight);lensGraphics.draw(stereoTexture,CameraLensMapping.between(projection,lensProjections[i]))}
                 G.glBindFramebuffer(G.GL_FRAMEBUFFER,0);G.glViewport(0,0,surfaceWidth,surfaceHeight);G.glDisable(G.GL_DEPTH_TEST);G.glDisable(G.GL_BLEND)
-                CardboardBridge.composite(cardboard,surfaceWidth,surfaceHeight,stereoTexture,sharedCameraImage=true)
+                CardboardBridge.composite(cardboard,surfaceWidth,surfaceHeight,lensTexture)
             }else{G.glBindFramebuffer(G.GL_FRAMEBUFFER,0);G.glViewport(0,0,surfaceWidth,surfaceHeight);G.glClearColor(0f,0f,0f,1f);G.glClear(G.GL_COLOR_BUFFER_BIT or G.GL_DEPTH_BUFFER_BIT);drawMono(frame)}
             updateAccessibleControls()
             status("$trackingMessage. $handMessage")
         }catch(e:Exception){fail("Live AR was interrupted. Return and retry; no learning records were changed.")}
     }
+    private fun updateHandReveal(now:Long,interaction:Boolean){
+        val frame=handFrame
+        val regions=if(interaction)HandCameraReveal.regions(frame,now)else emptyList()
+        if(frame==null||regions.isEmpty()){handReveal=null;return}
+        if(handReveal!=null&&revealCapture==frame.captureTimeMs&&revealGeneration==frame.orientationEpoch)return
+        val factor=minOf(1f,256f/maxOf(logicalWidth,surfaceHeight))
+        val w=(logicalWidth*factor).toInt().coerceAtLeast(2);val h=(surfaceHeight*factor).toInt().coerceAtLeast(2)
+        if(revealBytes.size!=w*h)revealBytes=ByteArray(w*h)
+        HandCameraReveal.rasterize(regions,w,h,logicalWidth.toFloat()/surfaceHeight,revealBytes)
+        handReveal=ForegroundMask(w,h,revealBytes,floatArrayOf(0f,0f,1f,0f,0f,1f),frame.captureTimeMs,frame.orientationEpoch)
+        revealCapture=frame.captureTimeMs;revealGeneration=frame.orientationEpoch
+    }
     private fun updateModel(){
         val a=anchor
         if(a==null||a.trackingState!=TrackingState.TRACKING){visibleParts=emptyList();return}
         val visible=motion.visible
-        a.pose.toMatrix(model,0);Matrix.translateM(model,0,visible.x,0f,visible.z);Matrix.rotateM(model,0,visible.yaw,0f,1f,0f)
+        a.pose.toMatrix(model,0);Matrix.translateM(model,0,visible.x,visible.y,visible.z);Matrix.rotateM(model,0,visible.yaw,0f,1f,0f)
         partTransforms=emptyMap()
         val selectedPartId=activePartId()
         val guide=if(modelId=="body"&&selectedPartId==null)FirstAidSceneGuide.byKey(activeTeachingKey())else null
@@ -408,17 +444,8 @@ internal class HandsArSceneView(
         Matrix.invertM(inverseModel,0,model,0);Matrix.multiplyMM(mvp,0,vp,0,model,0)
     }
     private fun drawMono(frame:Frame){
-        graphics.camera(frame,draw=!virtualRoom)
+        graphics.camera(frame)
         G.glClear(G.GL_DEPTH_BUFFER_BIT)
-        if(virtualRoom){
-            G.glClearColor(.13f,.20f,.23f,1f);G.glClear(G.GL_COLOR_BUFFER_BIT)
-            anchor?.takeIf{it.trackingState==TrackingState.TRACKING}?.let{a->
-                val transform=FloatArray(16);a.pose.toMatrix(transform,0);Matrix.multiplyMM(roomVp,0,vp,0,transform,0)
-                G.glEnable(G.GL_DEPTH_TEST)
-                room?.plane(roomVp,0f,-.02f,0f,2.5f,2f,colour=floatArrayOf(.65f,.72f,.72f,1f),tilt=-90f)
-                room?.plane(roomVp,0f,.6f,-1.1f,3.5f,1.5f,colour=floatArrayOf(.27f,.39f,.42f,1f))
-            }
-        }
         if(anchor?.trackingState==TrackingState.TRACKING&&frameReady&&!cooling){
             if(modelId=="extinguisher")equipment.draw(vp,model,renderModel,eye,clearDepth=false)
             else{
@@ -427,7 +454,7 @@ internal class HandsArSceneView(
                 if(film.isNotEmpty())anatomy?.draw(mvp,model,film,null,.44f,partTransforms=partTransforms,cameraPosition=eye)
             }
         }
-        graphics.foreground(foregroundMask,visibilityAssist)
+        graphics.foreground(foregroundMask,visibilityAssist,handReveal)
         G.glDisable(G.GL_DEPTH_TEST);graphics.marks(cursors,handFrame?.hands.orEmpty(),logicalWidth,surfaceHeight);graphics.hud()
     }
     private fun equipmentPick(id:String):AnatomyPart?=equipmentPicks[id]?:equipment.exportMesh(id)?.let{mesh->
@@ -436,15 +463,18 @@ internal class HandsArSceneView(
         val b=FloatArray(6){i->if(i<3)(vertices.indices step 6).minOf{vertices[it+i]}else(vertices.indices step 6).maxOf{vertices[it+i-3]}}
         AnatomyPart(id,id,"equipment","Authored training illustration",b,floatArrayOf(.8f,.1f,.1f),vertices).also{equipmentPicks[id]=it}
     }
-    private fun transform()=HandModelPose(offsetX,offsetZ,scale,yaw)
+    private fun transform()=HandModelPose(offsetX,offsetZ,scale,yaw,offsetY)
     private fun apply(t:HandModelPose,immediate:Boolean=false){
-        val value=t.bounded();offsetX=value.x;offsetZ=value.z;scale=value.scale;yaw=value.yaw
+        val value=t.bounded();offsetX=value.x;offsetZ=value.z;offsetY=value.y;scale=value.scale;yaw=value.yaw
         if(immediate)motion.snap(value)
         updateModel();hudKey=""
     }
     private fun cancelManipulation(){
         drag?.let{apply(it.before,true)};drag=null;twoHandBase=null
         gestures.interrupt();cursors=emptyList();touchTransform=null
+    }
+    private fun retireHandImages(){
+        handFrame=null;foregroundMask=null;handReveal=null;revealCapture=-1L;revealGeneration=-1L;lastProcessedCapture=-1L
     }
     private fun consume(events:List<HandGestureEvent>){
         val next=mutableListOf<HandGestureEvent.Cursor>()
@@ -458,20 +488,20 @@ internal class HandsArSceneView(
             is HandGestureEvent.Move->if(event.targetId=="object")moveDrag(event.x,event.y)
             is HandGestureEvent.End->{
                 if(event.targetId.startsWith("command:")&&!event.dragged&&targetAt(event.x,event.y)==event.targetId)activate(event.targetId.removePrefix("command:"))
-                else if(event.targetId=="object"&&drag!=null){committed=transform();drag=null;twoHandBase=null;latestNotice="Object placed. Pinch again to move it.";if(!event.dragged)inspectAt(event.x,event.y)}
+                else if(event.targetId=="object"&&drag!=null){drag?.let{if(it.handId!=null)metrics.committed(it.before,transform())};committed=transform();drag=null;twoHandBase=null;latestNotice="Object placed. Pinch again to move it.";haptic();if(!event.dragged)inspectAt(event.x,event.y)}
                 else if(event.targetId=="surface")place(event.x,event.y)
             }
             is HandGestureEvent.Cancel->{drag?.let{apply(it.before,true)};drag=null;twoHandBase=null;latestNotice="Movement cancelled. Show a neutral hand to start again."}
             is HandGestureEvent.TransformStart->if(event.targetId=="object"){
                 val point=drag?.let{planePoint(event.centreX,event.centreY,it.plane)}
                 val local=point?.let{anchor?.pose?.inverse()?.transformPoint(it)}
-                twoHandBase=local?.let{TwoHandBase(transform(),it[0],it[2])}
+                twoHandBase=local?.let{TwoHandBase(transform(),it)}
                 latestNotice="Two hands hold the model. Move together; spread to resize; turn to rotate."
             }
             is HandGestureEvent.TransformMove->if(event.targetId=="object"&&inputReady())twoHandBase?.let{base->
                 val point=drag?.let{planePoint(event.centreX,event.centreY,it.plane)}
                 val local=point?.let{anchor?.pose?.inverse()?.transformPoint(it)}
-                if(local!=null)apply(HandModelTransforms.twoHand(base.pose,base.pivotX,base.pivotZ,local[0],local[2],event.scale,-Math.toDegrees(event.rotationRadians.toDouble()).toFloat()))
+                if(local!=null)apply(HandModelTransforms.twoHand3d(base.pose,base.pivot,local,event.scale,-Math.toDegrees(event.rotationRadians.toDouble()).toFloat()))
             }
             is HandGestureEvent.TransformEnd->{
                 if(event.cancelled)drag?.let{apply(it.before,true)}
@@ -481,7 +511,7 @@ internal class HandsArSceneView(
                     val cursor=next.firstOrNull{it.handId==held.handId}
                     val point=cursor?.let{planePoint(it.x,it.y,held.plane)}
                     val local=point?.let{anchor?.pose?.inverse()?.transformPoint(it)}
-                    if(local!=null)drag=held.copy(grabX=local[0]-offsetX,grabZ=local[2]-offsetZ)
+                    if(local!=null)drag=held.copy(grabX=local[0]-offsetX,grabZ=local[2]-offsetZ,grabY=local[1]-offsetY)
                     latestNotice="Keep pinching to move. Release your primary pinch to place."
                 }
                 twoHandBase=null
@@ -489,13 +519,14 @@ internal class HandsArSceneView(
         }
         if(next.isNotEmpty())cursors=next
     }
+    private fun haptic(){post{if(!closed&&foreground&&hasFocus)performHapticFeedback(android.view.HapticFeedbackConstants.VIRTUAL_KEY)}}
     private fun inputReady()=foreground&&hasFocus&&!paused&&!cooling&&frameReady&&SystemClock.elapsedRealtime()-validAt in 0..150&&anchor?.trackingState==TrackingState.TRACKING
     private fun targetAt(x:Float,y:Float):String? {
         if(!x.isFinite()||!y.isFinite()||x !in 0f..1f||y !in 0f..1f)return null
         hits().firstOrNull{it.bounds.contains(x,y)}?.let{return it.id}
-        if(panel==4)return null
+        if(panel==4||panel==5)return null
         if(!frameReady||paused||cooling)return null
-        if(anchor==null)return if(virtualRoom||currentFrame?.let{floorHit(it,x,y)}!=null)"surface"else null
+        if(anchor==null)return if(currentFrame?.let{floorHit(it,x,y)}!=null)"surface"else null
         if(!inputReady())return null
         val ray=ray(x,y)?:return null
         return if(objectDistance(ray)!=null)"object"else null
@@ -554,12 +585,14 @@ internal class HandsArSceneView(
         val plane=HandDragPlane.atGrip(grip,ray.direction)
         val local=a.pose.inverse().transformPoint(grip)
         inspectionText=null
-        drag=Drag(transform(),plane,local[0]-offsetX,local[2]-offsetZ,handId);latestNotice="Holding object · move one hand; pinch with both hands to resize and turn."
+        drag=Drag(transform(),plane,local[0]-offsetX,local[2]-offsetZ,local[1]-offsetY,handId);latestNotice="Holding · lift or move; use two pinches to resize and turn."
+        if(handId!=null)metrics.selected()
+        haptic()
     }
     private fun moveDrag(x:Float,y:Float){
         val held=drag?:return;if(!inputReady()){cancelManipulation();return}
         val p=planePoint(x,y,held.plane)?:return;val local=anchor?.pose?.inverse()?.transformPoint(p)?:return
-        apply(transform().copy(x=local[0]-held.grabX,z=local[2]-held.grabZ))
+        apply(transform().copy(x=local[0]-held.grabX,z=local[2]-held.grabZ,y=local[1]-held.grabY))
     }
     private fun floorHit(frame:Frame,x:Float,y:Float)=frame.hitTest(x*logicalWidth,y*surfaceHeight).firstOrNull{
         val p=it.trackable as? Plane;p!=null&&p.type==Plane.Type.HORIZONTAL_UPWARD_FACING&&p.trackingState==TrackingState.TRACKING&&p.isPoseInPolygon(it.hitPose)&&it.distance in .25f..3f
@@ -567,13 +600,8 @@ internal class HandsArSceneView(
     private fun place(x:Float=.5f,y:Float=.62f){
         if(!frameReady||paused||cooling){latestNotice="Map a surface before placing an object.";return}
         val frame=currentFrame?:return;val hit=floorHit(frame,x,y)
-        if(hit==null&&!virtualRoom){latestNotice="No mapped surface here. Aim at a textured table or floor.";return}
-        try{val replacement=if(hit!=null)hit.createAnchor()else{
-            val camera=driver?.currentCamera?.pose?:return
-            val forward=camera.rotateVector(floatArrayOf(0f,0f,-1f))
-            val length=hypot(forward[0],forward[2]).coerceAtLeast(.1f)
-            driver?.anchorAt(com.google.ar.core.Pose.makeTranslation(camera.tx()+forward[0]/length*.9f,camera.ty()-.5f,camera.tz()+forward[2]/length*.9f))?:return
-        };val old=anchor;anchor=replacement;old?.detach();apply(HandModelPose(),true);committed=transform();latestNotice=if(virtualRoom)"Virtual practice table placed. Stay seated; it is not a real surface."else"Anchored. Point at the model, then pinch to move it."}
+        if(hit==null){latestNotice="No mapped surface here. Aim at a textured table or floor.";return}
+        try{val replacement=hit.createAnchor();val old=anchor;anchor=replacement;old?.detach();apply(HandModelPose(),true);committed=transform();latestNotice="Anchored. Point at the model, then pinch to move it."}
         catch(e:Exception){latestNotice="Placement did not complete. The previous anchor is retained."}
     }
     private fun activate(id:String){
@@ -587,8 +615,9 @@ internal class HandsArSceneView(
             "models"->panel=2
             "tools"->panel=if(panel==0)1 else 0
             "options"->panel=3
-            "visibility"->{seeThrough=!seeThrough;latestNotice=if(seeThrough)"See-through assistance on. Camera remains visible through models."else"Foreground mask on. Thin fingers may be missed; use See-through if needed."}
-            "view"->{virtualRoom=!virtualRoom;latestNotice=if(virtualRoom)"Virtual practice view. Camera still runs for hand controls. Stay seated."else"Camera view. Virtual objects remain anchored."}
+            "visibility"->{seeThrough=!seeThrough;latestNotice=if(seeThrough)"See-through assistance on."else"Local hand reveal on. Approximate foreground; not measured depth."}
+            "lens-check"->{opticalGrid=!opticalGrid;latestNotice=if(opticalGrid)"Check one aligned cross and comfortable text. Remove the phone to change viewer calibration."else"Lens grid hidden."}
+            "session-check"->{panel=5;detailPage=0}
             "details"->{inspectionText=null;panel=4;detailPage=0}
             "detail-back"->{detailPage=(detailPage-1).coerceAtLeast(0)}
             "detail-next"->{detailPage=(detailPage+1).coerceAtMost(detailPages-1)}
@@ -597,7 +626,7 @@ internal class HandsArSceneView(
                 val changed=if(id=="previous")lesson?.previous()==true else lesson?.next()==true
                 if(changed){val step=lesson!!.current;modelId=step.modelId;renderModel=step.renderModel;panel=0;detailPage=0;elapsed=0f;animatedParts.clear();inspectionText=null;apply(HandModelPose(),true);committed=transform();latestNotice=step.cue;post{onStepChanged(step.stepId);onInstruction(step.detailText,"en-IN")}}
             }
-            "hands"->{handEnabled=!handEnabled;tracker.setEnabled(handEnabled);latestNotice=if(handEnabled)"Hand controls enabled."else"Hand controls off. Touch or the viewer button still works."}
+            "hands"->{handEnabled=!handEnabled;retireHandImages();tracker.setEnabled(handEnabled);latestNotice=if(handEnabled)"Hand controls enabled."else"Hand controls off. Touch or the viewer button still works."}
             "smaller"->if(inputReady())apply(transform().copy(scale=scale/1.15f))
             "larger"->if(inputReady())apply(transform().copy(scale=scale*1.15f))
             "rotate-left"->if(inputReady())apply(transform().copy(yaw=yaw-15f))
@@ -616,7 +645,7 @@ internal class HandsArSceneView(
             MotionEvent.ACTION_POINTER_DOWN->{if(event.pointerCount==2){
                 touchMoved=true;touchSpan=hypot(event.getX(1)-event.getX(0),event.getY(1)-event.getY(0));touchAngle=atan2(event.getY(1)-event.getY(0),event.getX(1)-event.getX(0))
                 val cx=(event.getX(0)+event.getX(1))/(2*width);val cy=(event.getY(0)+event.getY(1))/(2*height)
-                surface.queueEvent{val point=drag?.let{planePoint(cx,cy,it.plane)};val local=point?.let{anchor?.pose?.inverse()?.transformPoint(it)};touchTransform=local?.let{TwoHandBase(transform(),it[0],it[2])}}
+                surface.queueEvent{val point=drag?.let{planePoint(cx,cy,it.plane)};val local=point?.let{anchor?.pose?.inverse()?.transformPoint(it)};touchTransform=local?.let{TwoHandBase(transform(),it)}}
             }}
             MotionEvent.ACTION_MOVE->{if(!touchActive)return true;if(hypot(x-touchX,y-touchY)>.012f)touchMoved=true
                 if(event.pointerCount>=2){
@@ -625,7 +654,7 @@ internal class HandsArSceneView(
                     val cx=(event.getX(0)+event.getX(1))/(2*width);val cy=(event.getY(0)+event.getY(1))/(2*height)
                     surface.queueEvent{if(inputReady())touchTransform?.let{base->
                         val point=drag?.let{planePoint(cx,cy,it.plane)};val local=point?.let{anchor?.pose?.inverse()?.transformPoint(it)}
-                        if(local!=null)apply(HandModelTransforms.twoHand(base.pose,base.pivotX,base.pivotZ,local[0],local[2],ratio,degrees))
+                        if(local!=null)apply(HandModelTransforms.twoHand3d(base.pose,base.pivot,local,ratio,degrees))
                     }}
                 }
                 else surface.queueEvent{moveDrag(x,y)}
@@ -637,7 +666,7 @@ internal class HandsArSceneView(
                     surface.queueEvent{
                         touchTransform=null
                         drag?.let{held->val point=planePoint(rx,ry,held.plane);val local=point?.let{anchor?.pose?.inverse()?.transformPoint(it)}
-                            if(local!=null)drag=held.copy(grabX=local[0]-offsetX,grabZ=local[2]-offsetZ)
+                            if(local!=null)drag=held.copy(grabX=local[0]-offsetX,grabZ=local[2]-offsetZ,grabY=local[1]-offsetY)
                         }
                     }
                 }
@@ -656,29 +685,36 @@ internal class HandsArSceneView(
     }
     private fun instructionLanguage()=if(inspectionText!=null)inspectionLanguage else if(lesson!=null)"en-IN"else if(hindi&&modelId=="body"&&(activeTeachingKey()!=null||activePartId()?.let{AnatomyKnowledge.info(it,"hi")!=null}==true))"hi-IN"else"en-IN"
     private fun paintHud(){
-        val text=lesson?.current?.cue?:instructionText()
-        val foregroundState=when{visibilityAssist->if(seeThrough)"See-through"else"Visibility assist";foregroundMask!=null->"Foreground on";foregroundUnavailable->"Mask unavailable · use eye control";else->"Waiting for fresh foreground"}
-        val key="$trackingMessage|$handMessage|$text|$panel|$selectedControl|$canPlace|$handEnabled|$bodyLoadError|$foregroundState|$virtualRoom|$detailPage"
+        val text=if(panel==5)metrics.summary()else lesson?.current?.cue?:instructionText()
+        val inputHint=when{
+            paused->if(cooling)"Cooling · remove the phone from the viewer"else"Paused · Resume or Exit"
+            twoHandBase!=null->"Two hands · spread to resize · turn to rotate"
+            drag!=null->"Holding · move or lift · release to place"
+            cursors.any{it.armed&&targetAt(it.x,it.y)=="object"}->"Model targeted · pinch to select"
+            else->handMessage
+        }
+        val foregroundState=when{visibilityAssist->if(seeThrough)"See-through"else"Visibility assist";handReveal!=null->"Local hand reveal";foregroundMask!=null->"Foreground on";foregroundUnavailable->"Mask unavailable · use eye control";else->"Show hands to interact"}
+        val key="$trackingMessage|$inputHint|$text|$panel|$selectedControl|$canPlace|$handEnabled|$bodyLoadError|$foregroundState|$opticalGrid|$detailPage"
         if(key==hudKey)return;hudKey=key
         val c=Canvas(hud);c.drawColor(Color.TRANSPARENT,android.graphics.PorterDuff.Mode.CLEAR)
-        pen.color=0xf020343d.toInt();c.drawRoundRect(RectF(24f,20f,776f,166f),18f,18f,pen)
-        pen.color=Color.WHITE;pen.textSize=29f;pen.typeface=android.graphics.Typeface.create("sans-serif-medium",android.graphics.Typeface.NORMAL)
+        pen.color=0xf020343d.toInt();c.drawRoundRect(RectF(24f,20f,776f,if(headset)122f else 166f),18f,18f,pen)
+        pen.color=Color.WHITE;pen.textSize=if(headset)25f else 29f;pen.typeface=android.graphics.Typeface.create("sans-serif-medium",android.graphics.Typeface.NORMAL)
         val heading=lesson?.current?.let{"${it.index+1}/${it.count}  ${it.title}"}?:trackingMessage
-        drawLine(c,heading,44f,61f,710f)
-        pen.textSize=26f;pen.color=0xffc5e8e1.toInt();drawLine(c,handMessage,44f,100f,710f)
-        pen.textSize=22f;pen.color=0xffe0e8ec.toInt();drawLine(c,(if(virtualRoom)"Virtual practice"else if(headset)"Single-camera AR"else"Camera AR")+" · "+foregroundState,44f,139f,710f)
+        drawLine(c,heading,44f,if(headset)51f else 61f,710f)
+        pen.textSize=if(headset)22f else 26f;pen.color=0xffc5e8e1.toInt();drawLine(c,inputHint,44f,if(headset)81f else 100f,710f)
+        pen.textSize=if(headset)17f else 22f;pen.color=0xffe0e8ec.toInt();drawLine(c,"Camera AR · "+foregroundState,44f,if(headset)107f else 139f,710f)
         val barTop=hits().first().bounds.top*hud.height
         val captionBottom=barTop-14f
-        val captionTop=if(panel==4)184f else maxOf(190f,captionBottom-180f)
+        val captionTop=if(panel==4||panel==5)(if(headset)140f else 184f)else maxOf(if(headset)140f else 190f,captionBottom-if(headset)100f else 180f)
         pen.color=0xf0edf2f4.toInt();c.drawRoundRect(RectF(24f,captionTop,776f,captionBottom),16f,16f,pen)
-        pen.color=Palette.ink;pen.textSize=29f
-        if(panel==4){
-            val lines=wrappedLines(instructionText(),710f)
+        pen.color=Palette.ink;pen.textSize=if(headset)25f else 29f
+        if(panel==4||panel==5){
+            val lines=wrappedLines(if(panel==5)text else instructionText(),710f)
             val count=((captionBottom-captionTop-60)/38).toInt().coerceAtLeast(1)
             detailPages=((lines.size+count-1)/count).coerceAtLeast(1);detailPage=detailPage.coerceIn(0,detailPages-1)
             lines.drop(detailPage*count).take(count).forEachIndexed{i,line->c.drawText(line,44f,captionTop+41+i*38,pen)}
             pen.textSize=22f;c.drawText("Details ${detailPage+1}/$detailPages · practice only",44f,captionBottom-12,pen)
-        }else wrap(c,text,44f,captionTop+41,710f,4)
+        }else wrap(c,text,44f,captionTop+34,710f,if(headset)2 else 4)
         for((i,hit)in hits().withIndex()){
             val r=RectF(hit.bounds.left*800,hit.bounds.top*hud.height,hit.bounds.right*800,hit.bounds.bottom*hud.height)
             val selected=headset&&i==selectedControl
@@ -695,6 +731,13 @@ internal class HandsArSceneView(
         }
         pen.textAlign=Paint.Align.LEFT;pen.color=Color.WHITE;pen.textSize=20f
         drawLine(c,if(headset)"Button: tap to move focus · hold to select"else"Point + pinch · open palm cancels",28f,hud.height-8f,744f)
+        if(opticalGrid){
+            pen.color=0xb0ffffff.toInt();pen.strokeWidth=2f;pen.style=Paint.Style.STROKE
+            val cy=hud.height*.5f
+            c.drawCircle(400f,cy,100f,pen);c.drawCircle(400f,cy,50f,pen)
+            c.drawLine(260f,cy,540f,cy,pen);c.drawLine(400f,cy-140f,400f,cy+140f,pen)
+            pen.style=Paint.Style.FILL
+        }
         if(anchor==null&&!paused){pen.color=if(canPlace)0xff8df3d9.toInt()else Color.WHITE;pen.style=Paint.Style.STROKE;pen.strokeWidth=3f;c.drawCircle(400f,hud.height*.5f,15f,pen);pen.style=Paint.Style.FILL}
         graphics.hud(hud)
     }

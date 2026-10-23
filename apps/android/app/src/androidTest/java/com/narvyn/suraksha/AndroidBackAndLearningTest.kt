@@ -31,7 +31,7 @@ class AndroidBackAndLearningTest {
     private fun field(a:RoomMissionActivity,name:String)=RoomMissionActivity::class.java.getDeclaredField(name).apply{isAccessible=true}.get(a)
     @Test fun systemBackPopsMainHistoryAndSurvivesRecreation(){
         setup();ActivityScenario.launch(MainActivity::class.java).use{s->
-            tap("Learn");tap("Earlier industrial courses");tap(Curriculum(context).module("fire").local("title",false));tap("Course actions & practice options");tap("More practice options")
+            tap("Learn");tap("Industrial library");tap(Curriculum(context).module("fire").local("title",false));tap("Course actions & practice options");tap("More practice options")
             s.recreate();back()
             s.onActivity{assertNotNull(views(it.window.decorView).singleOrNull{v->v.tag=="main-page-module"})}
             back();s.onActivity{assertNotNull(views(it.window.decorView).singleOrNull{v->v.tag=="main-page-library"})}

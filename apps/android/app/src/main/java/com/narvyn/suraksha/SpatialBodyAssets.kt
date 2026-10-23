@@ -5,7 +5,7 @@ import org.json.JSONObject
 import java.security.MessageDigest
 
 /** Fixed balanced subset for stereo. Does not change the learner's handheld model-quality choice. */
-internal object VrAssets {
+internal object SpatialBodyAssets {
     fun loadBody(context:Context):AnatomyData {
         val manifest=JSONObject(context.assets.open("anatomy/manifest.json").bufferedReader().use{it.readText()})
         val steps=SpatialCatalog(context).data.getJSONObject("steps")

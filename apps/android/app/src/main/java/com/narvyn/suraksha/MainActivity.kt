@@ -223,18 +223,10 @@ class MainActivity: Activity() {
                 Intent(this,RoomMissionActivity::class.java).putExtra("moduleId","fire").putExtra("camera",camera)
                     .putExtra("resumeId",r.getString("id")).putExtra("recall",coaching.recall).putExtra("explosionRisk",a.explosionRisk).putExtra("fireScenarioId",a.fireScenarioId))
         }.getOrNull()}
-        val headset=runCatching{VrLearningStore(this,store.workerId).use{it.records()}}.getOrDefault(emptyList()).mapNotNull{record->runCatching{
-            val scenario=scenarios[record.getString("scenarioId")]?:return@runCatching null
-            if(!HeadsetLessonPolicy.allowed(scenario,school))return@runCatching null
-            val attempt=VrLearningSession.restore(record,scenario,launch.version,store.workerId)
-            HomePractice(learningText(scenario,"title")+" · VR",record.getString("courseId"),record.getLong("updatedAt"),attempt.finished,!attempt.finished,
-                t("VR decision practice · ${attempt.index} of ${attempt.steps.size} steps","VR निर्णय अभ्यास · ${attempt.steps.size} में से ${attempt.index} चरण"),
-                Intent(this,HeadsetActivity::class.java).putExtra("scenarioId",record.getString("scenarioId")))
-        }.getOrNull()}
-        return (decisions+bays+rooms+headset).sortedByDescending{it.updatedAt}
+        return (decisions+bays+rooms).sortedByDescending{it.updatedAt}
     }
     private fun openHeadset(scenario:String?=null){
-        val route=Intent(this,HeadsetActivity::class.java)
+        val route=Intent(this,HandsArActivity::class.java).putExtra("headset",true)
         scenario?.let{route.putExtra("scenarioId",it)}
         startActivity(route)
     }
@@ -282,7 +274,7 @@ class MainActivity: Activity() {
         body.add(action(t("Live AR with hands","हाथों से लाइव AR"),false,ActionRole.CAMERA){startActivity(Intent(this,HandsArActivity::class.java))}.apply{
             tag="studio-hands-ar";contentDescription=t("Live camera AR. Point, pinch and manipulate virtual models.","लाइव कैमरा AR। इशारा और पिंच करके आभासी मॉडल नियंत्रित करें।")
         },bottom=10)
-        body.add(action(t("Headset VR classroom","हेडसेट VR कक्षा"),false,ActionRole.LEARN){openHeadset()}.apply{
+        body.add(action(t("Cardboard AR","कार्डबोर्ड AR"),false,ActionRole.LEARN){openHeadset()}.apply{
             tag="studio-headset";setCompoundDrawables(headsetIcon(Palette.teal,26),null,null,null);compoundDrawablePadding=dp(10)
         },bottom=14)
         body.add(label(t("MODEL LIBRARY","मॉडल लाइब्रेरी"),11f,Palette.muted,true),bottom=8)
@@ -292,7 +284,7 @@ class MainActivity: Activity() {
             val models=listOf("gas" to t("Gas detector","गैस डिटेक्टर"),"machinery" to t("Machinery isolation","मशीन अलगाव"),"ppe" to t("Protective equipment","सुरक्षा उपकरण"),"emergency" to t("Emergency station","आपातकाल स्थल"))
             PageDialogBuilder(this).setTitle(t("Industrial equipment","औद्योगिक उपकरण")).setItems(models.map{it.second}.toTypedArray()){_,i->startActivity(Intent(this,EquipmentActivity::class.java).putExtra("moduleId",models[i].first))}.setNegativeButton(t("Close","बंद करें"),null).show()
         }.apply{tag="studio-industrial"},bottom=12)
-        body.add(label(t("3D works offline. Use camera AR on your phone or headset VR with a calibrated viewer.","3D ऑफ़लाइन चलता है। फ़ोन पर कैमरा AR या कैलिब्रेटेड व्यूअर में हेडसेट VR चुनें।"),13f,Palette.muted))
+        body.add(label(t("Explore in 3D offline, or place models in your room with phone or Cardboard AR.","3D ऑफ़लाइन चलता है। फ़ोन पर कैमरा AR या कैलिब्रेटेड व्यूअर में कार्डबोर्ड AR चुनें।"),13f,Palette.muted))
     }
     private fun launchCards(){
         val row=if(compactWorkspace)LinearLayout(this).apply{orientation=LinearLayout.HORIZONTAL;isBaselineAligned=false}else null
@@ -314,7 +306,7 @@ class MainActivity: Activity() {
         if(!compactWorkspace)title(t("Choose what to practise.","अभ्यास के लिए पाठ चुनें।"),t("Fire Safety and First Aid, step by step.","अग्नि सुरक्षा और प्राथमिक उपचार, चरण दर चरण।"))
         launchCards()
         val footer=LinearLayout(this).apply{isBaselineAligned=false}
-        footer.addView(action(t("Headset VR","हेडसेट VR"),false,ActionRole.LEARN){openHeadset()}.apply{tag="main-learning-headset";setCompoundDrawables(headsetIcon(Palette.teal,22),null,null,null);compoundDrawablePadding=dp(8);textSize=13f},LinearLayout.LayoutParams(0,-2,1f).apply{marginEnd=dp(8)})
+        footer.addView(action(t("Cardboard AR","कार्डबोर्ड AR"),false,ActionRole.LEARN){openHeadset()}.apply{tag="main-learning-headset";setCompoundDrawables(headsetIcon(Palette.teal,22),null,null,null);compoundDrawablePadding=dp(8);textSize=13f},LinearLayout.LayoutParams(0,-2,1f).apply{marginEnd=dp(8)})
         footer.addView(action(t("Industrial library","औद्योगिक लाइब्रेरी"),false,ActionRole.NEUTRAL){go("library")}.apply{tag="main-learning-library";textSize=13f},LinearLayout.LayoutParams(0,-2,1f));body.add(footer)
     }
     private fun homeIcon(colour:Int):android.graphics.drawable.Drawable=object:android.graphics.drawable.Drawable(){
@@ -485,7 +477,7 @@ class MainActivity: Activity() {
             body.add(card().apply{add(label(course.getString("title"),18f,Palette.ink,true).asHeading(),bottom=6);add(label("${ids.size} scenario practices complete",14f,Palette.muted))},bottom=12)
         }
         body.add(action(t("Practice history & reflections","अभ्यास इतिहास और विचार")){startActivity(Intent(this,LearningScenarioActivity::class.java).putExtra("showRecords",true))},bottom=10)
-        body.add(action(t("Headset VR records","हेडसेट VR रिकॉर्ड"),false,ActionRole.REVIEW){headsetRecords()}.apply{tag="main-headset-records";setCompoundDrawables(headsetIcon(Palette.amber,22),null,null,null);compoundDrawablePadding=dp(8)},bottom=10)
+        body.add(action(t("Earlier headset records","पुराने हेडसेट रिकॉर्ड"),false,ActionRole.REVIEW){headsetRecords()}.apply{tag="main-headset-records";setCompoundDrawables(headsetIcon(Palette.amber,22),null,null,null);compoundDrawablePadding=dp(8)},bottom=10)
         body.add(action(t("First-aid bay records","प्राथमिक उपचार अभ्यास रिकॉर्ड"),false,ActionRole.NEUTRAL){bayRecords()},bottom=10)
         body.add(action(t("Sync private learning records","निजी सीखने के रिकॉर्ड सिंक करें"),false,ActionRole.NEUTRAL){
             learningOverlay?.dismiss();learningOverlay=LearningPracticeSyncDialog.show(this,store)
@@ -499,21 +491,20 @@ class MainActivity: Activity() {
         val result=runCatching{VrLearningStore(this,owner).use{it.records()}}
         if(result.isFailure){notice(t("Headset records unavailable","हेडसेट रिकॉर्ड उपलब्ध नहीं"),t("A saved headset record could not be verified. Its original data has been retained. Reopen learning or contact your trainer.","सहेजा हेडसेट रिकॉर्ड सत्यापित नहीं हुआ। मूल डेटा सुरक्षित है। सीखना दोबारा खोलें या प्रशिक्षक से संपर्क करें।"));return}
         val records=result.getOrThrow()
-        if(records.isEmpty()){notice(t("Headset VR records","हेडसेट VR रिकॉर्ड"),t("No headset practice saved yet. Choose a lesson in Headset VR to begin.","अभी हेडसेट अभ्यास नहीं सहेजा गया है। शुरू करने के लिए हेडसेट VR में पाठ चुनें।"));return}
+        if(records.isEmpty()){notice(t("Earlier headset records","पुराने हेडसेट रिकॉर्ड"),t("No earlier headset records. New lessons use camera AR.","पुराने हेडसेट रिकॉर्ड नहीं हैं। नए पाठ कैमरा AR में चलते हैं।"));return}
         val school=getSharedPreferences("learning-profile",MODE_PRIVATE).getString("context-$owner","")=="School"
         val available=records.mapNotNull{record->learningCatalog.scenarioForVersion(record.getString("scenarioId"),record.getString("contentVersion"))?.takeIf{HeadsetLessonPolicy.allowed(it,school)}?.let{record to it}}
         val panel=column(12)
-        panel.add(label(t("VR decision practice · no practical-skill certification","VR निर्णय अभ्यास · व्यावहारिक कौशल प्रमाणन नहीं"),13f,Palette.muted),bottom=12)
-        val dialog=PageDialogBuilder(this).setTitle(t("Headset VR records","हेडसेट VR रिकॉर्ड")).setView(paged(panel,hi)).setNegativeButton(t("Close","बंद करें"),null).create()
+        panel.add(label(t("Earlier VR decision practice · read only · no practical-skill certification","पुराना VR निर्णय अभ्यास · केवल देखने के लिए · व्यावहारिक कौशल प्रमाणन नहीं"),13f,Palette.muted),bottom=12)
+        val dialog=PageDialogBuilder(this).setTitle(t("Earlier headset records","पुराने हेडसेट रिकॉर्ड")).setView(paged(panel,hi)).setNegativeButton(t("Close","बंद करें"),null).create()
         if(available.isEmpty())panel.add(label(t("No headset records are available for this learning profile.","इस सीखने की प्रोफ़ाइल के लिए हेडसेट रिकॉर्ड उपलब्ध नहीं हैं।"),14f,Palette.muted))
         available.take(30).forEach{(record,scenario)->
             val finished=record.getBoolean("finished")
             val count=scenario.getJSONArray("steps").length()
-            panel.add(action(scenario.getString("title")+"\n"+t(if(finished)"Completed · $count steps"else"${record.getInt("index")} of $count steps · continue",if(finished)"पूरा · $count चरण"else"$count में से ${record.getInt("index")} चरण · जारी करें"),false,ActionRole.NEUTRAL){
+            panel.add(action(scenario.getString("title")+"\n"+t(if(finished)"Completed · $count steps"else"${record.getInt("index")} of $count steps · archived",if(finished)"पूरा · $count चरण"else"$count में से ${record.getInt("index")} चरण · पुराना रिकॉर्ड"),false,ActionRole.NEUTRAL){
                 if(store.isCurrentProfile()&&owner==store.workerId){
                     dialog.dismiss()
-                    if(finished)notice(t("Headset practice complete","हेडसेट अभ्यास पूरा"),scenario.getString("title")+"\n\n"+date(record.getLong("updatedAt"))+"\n"+t("Decision practice saved. Physical skill was not assessed. Open Headset VR to practise again.","निर्णय अभ्यास सहेजा है। शारीरिक कौशल का मूल्यांकन नहीं हुआ। फिर अभ्यास के लिए हेडसेट VR खोलें।"))
-                    else openHeadset(record.getString("scenarioId"))
+                    notice(t("Earlier headset record","पुराना हेडसेट रिकॉर्ड"),scenario.getString("title")+"\n\n"+date(record.getLong("updatedAt"))+"\n"+t("This VR decision record is retained for reference. The VR mode has been retired. New camera AR exploration does not change it or certify physical skill.","यह पुराना VR निर्णय रिकॉर्ड संदर्भ के लिए सुरक्षित है। VR मोड हटा दिया गया है। नया कैमरा AR इसे नहीं बदलता और शारीरिक कौशल प्रमाणित नहीं करता।"))
                 }
             }.apply{tag="headset-record-${record.getString("id")}";gravity=Gravity.START or Gravity.CENTER_VERTICAL;textSize=14f},bottom=8)
         }

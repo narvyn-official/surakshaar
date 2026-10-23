@@ -1,0 +1,112 @@
+{
+  "apk": "surakshaar-0.22.0-dev-release.apk",
+  "sha256": "814067021aeff076cec1884d772ee925fb0923d2888b3122fc72dd12030c6089",
+  "bytes": 96567173,
+  "versionName": "0.22.0-dev",
+  "versionCode": 42,
+  "physicalPhoneTested": false,
+  "physicalHeadsetTested": false,
+  "builtAgainstPublishedBase": "44d03660bc63e65187b8e977b7cf5401ef6e43f4",
+  "nativeLibraries": [
+    {
+      "library": "lib/arm64-v8a/libGfxPluginCardboard.so",
+      "loadAlignments": [
+        16384,
+        16384,
+        16384
+      ],
+      "supports16KiB": true
+    },
+    {
+      "library": "lib/arm64-v8a/libarcore_sdk_c.so",
+      "loadAlignments": [
+        16384,
+        16384,
+        16384
+      ],
+      "supports16KiB": true
+    },
+    {
+      "library": "lib/arm64-v8a/libarcore_sdk_jni.so",
+      "loadAlignments": [
+        16384,
+        16384,
+        16384
+      ],
+      "supports16KiB": true
+    },
+    {
+      "library": "lib/arm64-v8a/libmediapipe_tasks_jni.so",
+      "loadAlignments": [
+        16384,
+        16384,
+        16384
+      ],
+      "supports16KiB": true
+    },
+    {
+      "library": "lib/arm64-v8a/libsuraksha_cardboard.so",
+      "loadAlignments": [
+        16384,
+        16384,
+        16384
+      ],
+      "supports16KiB": true
+    },
+    {
+      "library": "lib/x86_64/libGfxPluginCardboard.so",
+      "loadAlignments": [
+        16384,
+        16384,
+        16384
+      ],
+      "supports16KiB": true
+    },
+    {
+      "library": "lib/x86_64/libarcore_sdk_c.so",
+      "loadAlignments": [
+        16384,
+        16384,
+        16384
+      ],
+      "supports16KiB": true
+    },
+    {
+      "library": "lib/x86_64/libarcore_sdk_jni.so",
+      "loadAlignments": [
+        16384,
+        16384,
+        16384
+      ],
+      "supports16KiB": true
+    },
+    {
+      "library": "lib/x86_64/libmediapipe_tasks_jni.so",
+      "loadAlignments": [
+        16384,
+        16384,
+        16384
+      ],
+      "supports16KiB": true
+    },
+    {
+      "library": "lib/x86_64/libsuraksha_cardboard.so",
+      "loadAlignments": [
+        16384,
+        16384,
+        16384
+      ],
+      "supports16KiB": true
+    }
+  ],
+  "retiredVrPlayerAbsent": true,
+  "accountOriginPreserved": true,
+  "testFixturesExcluded": true,
+  "noTinyfishKeyPrefix": true,
+  "nativeLibraryCount": 15,
+  "pinnedModels": {
+    "assets/models/foreground/selfie_segmenter.tflite": "191ac9529ae506ee0beefa6b2c945a172dab9d07d1e802a290a4e4038226658b",
+    "assets/models/hand-tracking/hand_landmarker.task": "fbc2a30080c3c557093b5ddfc334698132eb341044ccee322ccf8bcf3607cde1"
+  },
+  "signingIdentityMatchesPrevious": true
+}

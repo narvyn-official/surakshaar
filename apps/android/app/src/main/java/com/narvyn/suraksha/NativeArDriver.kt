@@ -71,6 +71,8 @@ internal class NativeArDriver(host: Activity, trainingBay: Boolean = false) : Au
     }
 
     fun invalidateTexture() { lastTexture = 0 }
+    /** Configured GPU-camera dimensions; used only to preserve full capture aspect in a viewer. */
+    fun cameraTextureSize():Pair<Int,Int> {check(!closed);val size=session.cameraConfig.textureSize;return size.width to size.height}
     fun setCameraTextureName(texture: Int) {
         check(texture > 0)
         if (lastTexture != texture) { session.setCameraTextureName(texture); lastTexture = texture }

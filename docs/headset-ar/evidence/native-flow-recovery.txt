@@ -1,0 +1,11 @@
+
+com.narvyn.suraksha.HandsArFlowTest:.......
+com.narvyn.suraksha.HeadsetSetupFlowTest:...
+com.narvyn.suraksha.MainNavigationTest:.
+com.narvyn.suraksha.LearningWorkspaceTest:......
+com.narvyn.suraksha.LearningJourneyFlowTest:..
+com.narvyn.suraksha.AndroidBackAndLearningTest:.
+
+Time: 185.922
+
+OK (20 tests)

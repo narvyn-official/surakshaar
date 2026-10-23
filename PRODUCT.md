@@ -16,11 +16,11 @@ Teach fire safety and first aid through guided lessons, interactive spatial illu
 
 ## Operating Context
 
-Android 10+ phones, handheld AR, on-screen 3D, and a Cardboard-style viewer with a button and an uncovered rear camera. Camera passthrough uses one rear-camera image for both eyes; it does not provide stereo camera depth. The current physical headset is unavailable for testing.
+Android 10+ phones, handheld AR, on-screen 3D, and a Cardboard-style viewer with a button and an uncovered rear camera. Camera passthrough maps one rear-camera image into each calibrated lens; it does not provide stereo camera depth. Physical phone and viewer verification is pending for the current build.
 
 ## Capabilities and Constraints
 
-The repository contains native Kotlin/OpenGL learning activities, ARCore tracking, MediaPipe hand landmarks, a calibrated Cardboard compositor and a separate stereo VR lesson player. Authored lesson content and role/workspace rules must remain intact. Gesture exploration does not establish clinical competence. Hindi and English are available; Santali review remains pending.
+The repository contains native Kotlin/OpenGL learning activities, ARCore tracking, MediaPipe hand landmarks and a calibrated Cardboard camera compositor. Separate VR and virtual-room modes are retired; historical decision records remain readable. Authored lesson content and role/workspace rules must remain intact. Gesture exploration does not establish clinical competence. Hindi and English are available; Santali review remains pending.
 
 ## Brand Commitments
 

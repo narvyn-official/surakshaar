@@ -1,0 +1,8 @@
+
+com.narvyn.suraksha.HandsArRenderContractTest:.
+com.narvyn.suraksha.CameraLensGpuTest:..
+com.narvyn.suraksha.ForegroundVisibilityTest:..
+
+Time: 23.209
+
+OK (5 tests)

@@ -14,7 +14,11 @@ import android.widget.ScrollView
 import androidx.test.core.app.ActivityScenario
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
+import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.withTagValue
+import androidx.test.espresso.matcher.ViewMatchers.withText
+import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
+import androidx.test.espresso.matcher.RootMatchers.isDialog
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import org.hamcrest.Matchers.`is`
@@ -49,45 +53,45 @@ class HeadsetSetupFlowTest {
     @After fun restore(){
         if(!::worker.isInitialized)return
         context.getSharedPreferences("learning-profile",0).edit().remove("context-$worker").commit()
+        VrLearningStore(context,worker).use{it.writableDatabase.delete("headset_practice","worker=?",arrayOf(worker))}
         Store(context).use{it.switchProfile(original);it.hi=hindi;it.writableDatabase.delete("worker_profiles","id=?",arrayOf(worker))}
     }
-    private fun landscape(activity:ActivityScenario<HeadsetActivity>){
-        if(InstrumentationRegistry.getArguments().getString("orientation")=="landscape"){
-            activity.onActivity{it.requestedOrientation=ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE}
-            waitFor{var done=false;activity.onActivity{done=it.resources.configuration.orientation==Configuration.ORIENTATION_LANDSCAPE};done}
-        }
+    @Test fun separateVrActivityIsNotAnInstalledDestination(){
+        val component=android.content.ComponentName(context,"com.narvyn.suraksha.VrTrainingActivity")
+        try{context.packageManager.getActivityInfo(component,0);fail("Retired VR mode must not be installed")}
+        catch(_:android.content.pm.PackageManager.NameNotFoundException){}
     }
-    @Test fun schoolChooserRejectsAdultDeepLinkAndBackReturnsOneStep(){
-        context.getSharedPreferences("learning-profile",0).edit().putString("context-$worker","School").commit()
-        val intent=Intent(context,HeadsetActivity::class.java).putExtra("scenarioId","adult-collapse").putExtra("preview",true)
-        ActivityScenario.launch<HeadsetActivity>(intent).use{activity->
-            landscape(activity)
+    @Test fun headsetEntryUsesCameraPreflightAndKeepsTheCameraClosed(){
+        val intent=Intent(context,HandsArActivity::class.java).putExtra("headset",true)
+        ActivityScenario.launch<HandsArActivity>(intent).use{activity->
             activity.onActivity{host->
                 val all=views(host.window.decorView)
                 assertTrue(all.none{it is ScrollView})
-                assertTrue("Adult deep link must not open readiness",all.none{it.tag=="headset-start"})
-                val shown=all.mapNotNull{(it.tag as? String)?.removePrefix("headset-lesson-")?.takeIf{tag->it.tag=="headset-lesson-$tag"}}
-                val catalog=LearningCatalog(host)
-                for(id in shown)assertEquals("awareness",catalog.scenario(id).getString("audience"))
+                assertNotNull(all.singleOrNull{it.tag=="hands-ar-headset"})
+                assertNotNull(all.singleOrNull{it.tag=="hands-ar-camera"})
+                assertFalse((all.single{it.tag=="hands-ar-start"} as Button).isEnabled)
+                val scene=host.javaClass.getDeclaredField("scene").apply{isAccessible=true}.get(host)
+                assertNull("Opening a headset route must not open the camera",scene)
             }
-            tagged("headset-course-first-aid").perform(revealOnPage(),click())
-            tagged("headset-lesson-school-help").perform(revealOnPage(),click())
-            activity.onActivity{host->
-                val all=views(host.window.decorView)
-                val start=all.single{it.tag=="headset-start"} as Button
-                assertFalse("Clear-space acknowledgement cannot be skipped",start.isEnabled)
-                assertEquals("Start in English",start.text.toString())
-                assertNotNull(all.singleOrNull{it.tag=="headset-clear-space"})
-                assertFalse((all.single{it.tag=="headset-clear-space"} as CheckBox).isChecked)
-                val bounds=Rect();assertTrue("Start action stays visible",start.getGlobalVisibleRect(bounds));assertTrue(start.height>=host.dp(48))
-            }
-            capture("setup-school")
-            activity.recreate()
-            activity.onActivity{host->assertNotNull(views(host.window.decorView).singleOrNull{it.tag=="headset-start"})}
-            tagged("headset-back").perform(click())
-            activity.onActivity{host->assertFalse(host.isFinishing);assertTrue(views(host.window.decorView).none{it.tag=="headset-start"})}
-            capture("chooser-school")
+            capture("camera-preflight")
         }
+    }
+    @Test fun earlierVrRecordRemainsReadableWithoutResumingOrChangingEvidence(){
+        val catalog=LearningCatalog(context)
+        val record=VrLearningSession.create(catalog.scenario("escape-first"),catalog.version,worker)
+        VrLearningStore(context,worker).use{it.save(record)}
+        val before=VrLearningStore(context,worker).use{it.record(record.data.getString("id")).toString()}
+        val evidence=Store(context).use{it.attempts().toString()+it.credentials().toString()}
+        ActivityScenario.launch(MainActivity::class.java).use{activity->
+            tagged("main-nav-records").perform(click())
+            tagged("main-headset-records").perform(revealOnPage(),click())
+            tagged("headset-record-${record.data.getString("id")}").perform(revealOnPage(),click())
+            activity.onActivity{host->assertFalse(host.isFinishing)}
+            capture("earlier-record-read-only")
+            onView(withText(org.hamcrest.Matchers.containsString("VR mode has been retired"))).inRoot(isDialog()).check(matches(isDisplayed()))
+        }
+        assertEquals(before,VrLearningStore(context,worker).use{it.record(record.data.getString("id")).toString()})
+        assertEquals(evidence,Store(context).use{it.attempts().toString()+it.credentials().toString()})
     }
     @Test fun homeLeadsToCoursesAndExploreOwnsTheViewingModes(){
         ActivityScenario.launch(MainActivity::class.java).use{activity->
@@ -100,6 +104,19 @@ class HeadsetSetupFlowTest {
             capture("home")
             tagged("main-nav-explore").perform(click())
             activity.onActivity{host->assertTrue(views(host.window.decorView).map{it.tag}.containsAll(listOf("studio-hands-ar","studio-headset","studio-anatomy")))}
+            val monitor=ins.addMonitor(HandsArActivity::class.java.name,null,false)
+            try{
+                tagged("studio-headset").perform(revealOnPage(),click())
+                val opened=ins.waitForMonitorWithTimeout(monitor,5000)
+                assertTrue("Explore must open the camera-AR preflight directly",opened is HandsArActivity)
+                ins.runOnMainSync{
+                    val scene=opened.javaClass.getDeclaredField("scene").apply{isAccessible=true}.get(opened)
+                    assertNull("Route entry cannot open the camera",scene)
+                    assertTrue(opened.intent.getBooleanExtra("headset",false))
+                    opened.finish()
+                }
+            }finally{ins.removeMonitor(monitor)}
+            ins.waitForIdleSync()
             tagged("main-nav-courses").perform(click())
             activity.onActivity{host->
                 val tags=views(host.window.decorView).map{it.tag}

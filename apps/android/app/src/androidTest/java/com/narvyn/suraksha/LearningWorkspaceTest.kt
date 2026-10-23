@@ -37,11 +37,11 @@ class LearningWorkspaceTest {
             owner.writableDatabase.delete("worker_profiles","id=?",arrayOf(id))
         }
     }}
-    @Test fun learnerHasThreeTabsAndAuthorisedWorkspaceDoesNotAppearForSignedOutUser()=isolated{_,_->
+    @Test fun learnerHasDistinctTabsAndAuthorisedWorkspaceDoesNotAppearForSignedOutUser()=isolated{_,_->
         AdminClient(context).clear()
         ActivityScenario.launch(MainActivity::class.java).use{s->
-            s.onActivity{a->assertEquals(setOf("main-nav-home","main-nav-courses","main-nav-records"),views(a.window.decorView).mapNotNull{it.tag as? String}.filter{it.startsWith("main-nav-")}.toSet())}
-            shot("home");clickTag("main-nav-courses");shot("courses");tap("Earlier industrial courses");clickTag("legacy-fire");clickTag("main-course-actions")
+            s.onActivity{a->assertEquals(setOf("main-nav-home","main-nav-courses","main-nav-explore","main-nav-records"),views(a.window.decorView).mapNotNull{it.tag as? String}.filter{it.startsWith("main-nav-")}.toSet())}
+            shot("home");clickTag("main-nav-courses");shot("courses");clickTag("main-learning-library");clickTag("legacy-fire");clickTag("main-course-actions")
             onView(withText("Read or listen to lessons")).inRoot(isDialog()).perform(revealOnPage(),click())
             clickTag("main-lesson-next");s.recreate();clickTag("main-nav-records");tap("Earlier records & credentials");tap("Objective skill passport");pressBack()
             clickTag("main-profile")

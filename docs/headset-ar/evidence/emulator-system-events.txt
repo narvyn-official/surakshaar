@@ -1,0 +1,3 @@
+--------- beginning of events
+10-24 01:28:18.236   724  2219 I am_anr  : [0,973,com.android.systemui,550026765,executing service com.android.systemui/.keyguard.KeyguardService, waited 25263ms]
+10-24 01:28:59.836   724  2782 I am_anr  : [0,1572,com.google.android.apps.wellbeing,550223429,Broadcast of Intent { act=com.google.com.android.gms.contextmanager.CONTEXT_MANAGER_RESTARTED flg=0x10000010 xflg=0x4 pkg=com.google.android.apps.wellbeing cmp=com.google.android.apps.wellbeing/.common.receiver.coalescedreceivers.ContextManagerRestartedCoalescedBroadcast_Receiver }]

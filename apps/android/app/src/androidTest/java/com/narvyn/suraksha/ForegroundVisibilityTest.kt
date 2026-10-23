@@ -84,6 +84,11 @@ class ForegroundVisibilityTest {
             blueModel();renderer.foreground(rotated)
             assertTrue("Affine rotation must move coverage to bottom-left",sample(4,4)[0]>220)
             assertTrue("Affine rotation must clear the old corner",sample(4,28)[2]>220)
+            blueModel();renderer.foreground(null,handReveal=mask)
+            assertTrue("Local hand reveal restores actual camera colour over geometry",sample(4)[0]>220)
+            assertTrue("Local reveal must leave unrelated geometry solid",sample(28)[2]>220)
+            blueModel();renderer.foreground(null)
+            assertTrue("Expired local hand region must not be reused",sample(4)[2]>220)
             assertEquals(G.GL_NO_ERROR,G.glGetError())
         }finally{
             producer?.release();texture?.release();graphics?.release()

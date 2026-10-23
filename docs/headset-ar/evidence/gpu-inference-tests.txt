@@ -1,0 +1,8 @@
+
+com.narvyn.suraksha.CameraLensGpuTest:..
+com.narvyn.suraksha.ForegroundVisibilityTest:..
+com.narvyn.suraksha.HandTrackingEngineTest:....
+
+Time: 6.2
+
+OK (8 tests)
