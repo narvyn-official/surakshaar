@@ -28,13 +28,15 @@ internal data class HandTrackingSnapshot(
     val frame:HandTrackingFrame?=null,
     val processingMs:Long=0,
     val sourceTimestampNs:Long=0,
-    val sessionEpoch:Long=0
+    val sessionEpoch:Long=0,
+    val foreground:ForegroundMask?=null,
+    val foregroundUnavailable:Boolean=false
 ) {
     fun freshAt(nowMs:Long):HandTrackingSnapshot {
         val sample=frame ?: return this
         return if(nowMs-sample.captureTimeMs !in 0..250L || nowMs-sample.receivedTimeMs !in 0..250L)
-            copy(state=HandTrackingState.SEARCHING,message="Hand signal delayed. Use touch controls.",frame=null)
-        else this
+            copy(state=HandTrackingState.SEARCHING,message="Hand signal delayed. Use touch controls.",frame=null,foreground=null)
+        else if(foreground?.freshAt(nowMs)==false)copy(foreground=null)else this
     }
 }
 
@@ -60,6 +62,8 @@ internal class HandTrackingEngine(context:Context):AutoCloseable {
     private val snapshot=AtomicReference(HandTrackingSnapshot(HandTrackingState.DISABLED,"Hand controls are off. Touch controls remain available."))
     // These fields are worker-owned, including destruction.
     private var landmarker:HandLandmarker?=null
+    private var segmenter:ForegroundSegmenter?=null
+    private var segmentationFailed=false
     private var lastModelTimestamp=Long.MIN_VALUE
     private val identities=HandIdentityTracker()
 
@@ -151,7 +155,19 @@ internal class HandTrackingEngine(context:Context):AutoCloseable {
             pixels.third.fill(0)
             val modelTimestamp=maxOf(captureTime,lastModelTimestamp+1)
             lastModelTimestamp=modelTimestamp
-            val result=BitmapImageBuilder(bitmap).build().use { image->detector.detectForVideo(image,modelTimestamp) }
+            var matte:ForegroundMask?=null
+            val result=BitmapImageBuilder(bitmap).build().use { image->
+                val hands=detector.detectForVideo(image,modelTimestamp)
+                if(!segmentationFailed&&SystemClock.elapsedRealtime()-captureTime<MAX_RESULT_AGE_MS){
+                    try {
+                        val foreground=segmenter?:ForegroundSegmenter(app).also{segmenter=it}
+                        val viewToMask=ForegroundMask.mapping(mapping,turns,copy.sourceWidth,copy.sourceHeight,copy.left,copy.top,copy.cropWidth,copy.cropHeight)
+                        matte=foreground.segment(image,modelTimestamp,viewToMask,captureTime,token)
+                    }catch(_:Exception){segmentationFailed=true;runCatching{segmenter?.close()};segmenter=null}
+                    catch(_:LinkageError){segmentationFailed=true;runCatching{segmenter?.close()};segmenter=null}
+                }
+                hands
+            }
             val received=SystemClock.elapsedRealtime()
             synchronized(lock){if(isCurrent(token,key))pacer.completed(received-started)}
             if(received-captureTime>MAX_RESULT_AGE_MS) {
@@ -162,7 +178,8 @@ internal class HandTrackingEngine(context:Context):AutoCloseable {
             val associated=identities.associate(candidates,token,key.width.toFloat()/key.height)
             val handFrame=HandTrackingFrame(captureTime,received,token,associated.first,associated.second,key.width.toFloat()/key.height)
             publish(token,key,HandTrackingSnapshot(if(associated.first.isEmpty())HandTrackingState.SEARCHING else HandTrackingState.TRACKING,
-                if(associated.first.isEmpty())"Show an open hand in the camera view." else "Hand controls active.",handFrame,received-started,sourceNs,key.epoch))
+                if(associated.first.isEmpty())"Show an open hand in the camera view." else "Hand controls active.",handFrame,received-started,sourceNs,key.epoch,
+                matte?.takeIf{it.freshAt(received)},segmentationFailed))
         } catch(_:LinkageError) {
             publish(token,key,unavailable(key))
             releaseModel()
@@ -201,7 +218,7 @@ internal class HandTrackingEngine(context:Context):AutoCloseable {
     private fun isCurrent(token:Long,key:Geometry)=synchronized(lock){!closed&&enabled&&!paused&&generation==token&&geometry==key}
     private fun publish(token:Long,key:Geometry,value:HandTrackingSnapshot) { synchronized(lock){if(!closed&&enabled&&!paused&&generation==token&&geometry==key)snapshot.set(value)} }
     private fun queueRelease(){try{executor.execute{releaseModel()}}catch(_:RejectedExecutionException){}}
-    private fun releaseModel(){try{landmarker?.close()}catch(_:Exception){}finally{landmarker=null;lastModelTimestamp=Long.MIN_VALUE}}
+    private fun releaseModel(){try{landmarker?.close()}catch(_:Exception){}finally{landmarker=null;lastModelTimestamp=Long.MIN_VALUE;runCatching{segmenter?.close()};segmenter=null;segmentationFailed=false}}
     override fun close() {
         synchronized(lock){if(closed)return;closed=true;enabled=false;generation=generations.incrementAndGet();snapshot.set(HandTrackingSnapshot(HandTrackingState.DISABLED,"Hand controls are off."))}
         queueRelease();executor.shutdown()

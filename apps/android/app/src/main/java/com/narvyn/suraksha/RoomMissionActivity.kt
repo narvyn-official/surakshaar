@@ -107,7 +107,7 @@ class RoomMissionActivity:Activity() {
             status.apply{
                 tag="room-step-details";maxLines=1;ellipsize=android.text.TextUtils.TruncateAt.END
                 gravity=Gravity.CENTER_VERTICAL;isFocusable=true;minHeight=dp(48)
-                background=shape(Palette.surface,10,Palette.line);setPadding(dp(10),0,dp(10),0)
+                background=softSurface(Palette.surface,10,interactive=true,inset=true);setPadding(dp(10),0,dp(10),0)
                 setOnClickListener{stepDetails()}
                 tooltipText=t("Read current step and status","वर्तमान क्रिया और स्थिति पढ़ें")
             }

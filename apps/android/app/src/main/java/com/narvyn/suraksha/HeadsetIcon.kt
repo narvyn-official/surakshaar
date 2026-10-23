@@ -29,10 +29,5 @@ internal fun Context.headsetIcon(ink:Int=Palette.teal,size:Int=24)=HeadsetIcon(i
 
 /** Native keyboard focus stays visible even on the shell's quiet tonal controls. */
 internal fun Context.headsetSurface(fill:Int,border:Int=Palette.line,radius:Int=16):Drawable {
-    val focused=shape(fill,radius,Palette.teal).apply{setStroke(dp(2),Palette.teal)}
-    val states=StateListDrawable().apply{
-        addState(intArrayOf(android.R.attr.state_focused),focused)
-        addState(intArrayOf(),shape(fill,radius,border))
-    }
-    return RippleDrawable(ColorStateList.valueOf(0x200f766e),states,shape(android.graphics.Color.WHITE,radius))
+    return RippleDrawable(ColorStateList.valueOf(0x18215b6b),softSurface(fill,radius,border,interactive=true),shape(android.graphics.Color.WHITE,radius))
 }

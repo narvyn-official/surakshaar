@@ -54,7 +54,7 @@ class HandsArFlowTest {
     @Test fun handheldConsentBackAndRecreationDoNotStartTheCamera(){
         ActivityScenario.launch(HandsArActivity::class.java).use{a->
             a.onActivity{assertNull(field(it,"scene"));assertTrue(views(it.window.decorView).none{v->v is ScrollView})}
-            capture("entry");click("hands-ar-start")
+            capture("entry")
             a.onActivity{host->
                 val all=views(host.window.decorView)
                 assertFalse((all.single{it.tag=="hands-ar-start"} as Button).isEnabled)
@@ -67,7 +67,8 @@ class HandsArFlowTest {
             capture("handheld-ready");a.recreate()
             a.onActivity{assertNull("Recreation must not open a camera",field(it,"scene"));assertEquals(1,field(it,"page"))}
             click("hands-ar-back")
-            a.onActivity{assertEquals(0,field(it,"page"));assertFalse(it.isFinishing)}
+            repeat(60){if(a.state!=Lifecycle.State.DESTROYED)Thread.sleep(50)}
+            assertEquals(Lifecycle.State.DESTROYED,a.state)
         }
     }
     @Test fun headsetRequiresUncoveredCameraAndExplicitViewerReadiness(){
@@ -77,15 +78,22 @@ class HandsArFlowTest {
             var landscape=false
             repeat(50){if(!landscape){a.onActivity{host->landscape=host.resources.configuration.orientation==android.content.res.Configuration.ORIENTATION_LANDSCAPE};if(!landscape)Thread.sleep(100)}}
             assertTrue("Headset preflight must be landscape",landscape)
+            // Configuration can report landscape before Android finishes the rotation transition.
+            // Wait for the real window to settle before sending its first pointer event.
+            ins.waitForIdleSync();ins.uiAutomation.waitForIdle(500,3000)
             a.onActivity{CardboardBridge.initialise(it);CardboardBridge.useDefaultViewer()}
-            click("hands-ar-start");click("hands-ar-space");click("hands-ar-privacy")
+            click("hands-ar-space");click("hands-ar-privacy")
             a.onActivity{host->
                 val all=views(host.window.decorView)
                 assertFalse((all.single{it.tag=="hands-ar-camera"} as CheckBox).isChecked)
                 assertFalse((all.single{it.tag=="hands-ar-start"} as Button).isEnabled)
             }
             click("hands-ar-camera")
-            a.onActivity{assertTrue((views(it.window.decorView).single{v->v.tag=="hands-ar-start"} as Button).isEnabled);assertNull(field(it,"scene"))}
+            capture("headset-before-start-check")
+            a.onActivity{host->
+                val flags=listOf("page","headset","space","privacy","rearCamera","profileContext").associateWith{field(host,it)}
+                assertTrue("Ready flags: $flags; orientation=${host.resources.configuration.orientation}; viewer=${CardboardBridge.hasViewerProfile()}",(views(host.window.decorView).single{v->v.tag=="hands-ar-start"} as Button).isEnabled);assertNull(field(host,"scene"))
+            }
             capture("headset-ready")
         }
     }
@@ -98,6 +106,32 @@ class HandsArFlowTest {
             a.onActivity{assertNull(field(it,"teachingKey"));assertNull(field(it,"scene"));assertNotNull(field(it,"entryNote"))}
             capture("school-entry")
         }
+    }
+    @Test fun authoredStepEntryKeepsItsSceneAndRejectsSchoolTreatment(){
+        val intent=Intent(context,HandsArActivity::class.java).putExtra("scenarioId","thermal-burn").putExtra("stepId","cool")
+        ActivityScenario.launch<HandsArActivity>(intent).use{a->
+            a.onActivity{host->val lesson=field(host,"lesson") as HandsLessonSession
+                assertEquals("thermal-burn-response/cool",lesson.current.teachingKey);assertEquals("body",field(host,"modelId"));assertNull(field(host,"scene"))}
+            a.recreate()
+            a.onActivity{host->assertEquals("cool",(field(host,"lesson") as HandsLessonSession).current.stepId);assertNull(field(host,"scene"))}
+        }
+        context.getSharedPreferences("learning-profile",0).edit().putString("context-$worker","School").commit()
+        ActivityScenario.launch<HandsArActivity>(intent).use{a->a.onActivity{host->
+            assertNull(field(host,"lesson"));assertNull(field(host,"scene"));assertNotNull(views(host.window.decorView).singleOrNull{it.tag=="hands-ar-unavailable"})
+        }}
+    }
+    @Test fun untranslatedHandsLessonDeclaresItsLanguageBeforeStarting(){
+        val oldHindi=Store(context).use{val old=it.hi;it.hi=true;old}
+        try{
+            val intent=Intent(context,HandsArActivity::class.java).putExtra("scenarioId","thermal-burn").putExtra("stepId","cool")
+            ActivityScenario.launch<HandsArActivity>(intent).use{a->
+                a.onActivity{host->val all=views(host.window.decorView)
+                    assertNotNull(all.singleOrNull{it.tag=="hands-ar-content-language"})
+                    assertTrue((all.single{it.tag=="hands-ar-start"} as Button).text.contains("अंग्रेज़ी"))
+                    assertNull(field(host,"scene"))
+                }
+            }
+        }finally{Store(context).use{it.hi=oldHindi}}
     }
     @Test fun changingLearnerWhileInBackgroundClosesTheOldWorkspace(){
         ActivityScenario.launch(HandsArActivity::class.java).use{a->
@@ -117,7 +151,7 @@ class HandsArFlowTest {
         info.flags=info.flags or android.accessibilityservice.AccessibilityServiceInfo.FLAG_REPORT_VIEW_IDS
         automation.serviceInfo=info
         ActivityScenario.launch(HandsArActivity::class.java).use{a->
-            click("hands-ar-start");click("hands-ar-privacy");click("hands-ar-space");click("hands-ar-start")
+            click("hands-ar-privacy");click("hands-ar-space");click("hands-ar-start")
             var allowed=false
             repeat(100){if(!allowed){
                 val root=automation.rootInActiveWindow

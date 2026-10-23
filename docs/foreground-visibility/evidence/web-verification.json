@@ -1,0 +1,56 @@
+{
+  "date": "2026-10-23",
+  "scope": "CSS and tokens only",
+  "files": [
+    "apps/admin-web/app/globals.css",
+    "apps/admin-web/app/spatial-studio.css"
+  ],
+  "checks": {
+    "postcssParse": "passed",
+    "renderedLogin": {
+      "widths": [
+        1440,
+        390,
+        320
+      ],
+      "horizontalOverflow": false,
+      "keyboardFocus": "3px primary outline, 4px offset"
+    },
+    "dashboard": {
+      "type": "clearly labelled browser-only synthetic DOM fixture",
+      "widths": [
+        1440,
+        390,
+        320
+      ],
+      "horizontalOverflow": false,
+      "liveStaffSessionTested": false
+    },
+    "palette": {
+      "canvas": "#e7ecef",
+      "surface": "#edf2f4",
+      "ink": "#20343d",
+      "primary": "#215b6b"
+    },
+    "contrast": {
+      "body": 10.89,
+      "mutedOnCanvas": 5.16,
+      "mutedOnSurface": 5.44,
+      "primaryWhite": 7.57,
+      "controlEdge": 3.3,
+      "focusEdge": 6.71
+    }
+  },
+  "limits": [
+    "No production Next build was run during coordinated native checks. Next dev compiled both stylesheets and the actual login route.",
+    "Dashboard pictures use a clearly labelled synthetic browser DOM fixture. No real account was used, created or changed.",
+    "Next dev emitted an existing installed-version security-upgrade reminder. No dependency or security configuration was changed."
+  ],
+  "artifacts": [
+    "login-desktop.png",
+    "login-mobile.png",
+    "login-320-focus.png",
+    "dashboard-fixture-desktop.png",
+    "dashboard-fixture-mobile.png"
+  ]
+}

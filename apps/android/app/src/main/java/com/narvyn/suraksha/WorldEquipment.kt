@@ -11,13 +11,13 @@ import kotlin.math.*
 /** Original procedural training illustrations, in metres. No operational readings or manufacturer claims. */
 class WorldEquipment {
  internal data class Material(val color:FloatArray,val roughness:Float=.5f,val metal:Float=0f,val emission:Float=0f)
- private val red=Material(floatArrayOf(.72f,.025f,.045f),.36f)
+ private val red=Material(floatArrayOf(.72f,.025f,.045f),.29f)
  private val blue=Material(floatArrayOf(.075f,.22f,.52f),.34f)
  private val yellow=Material(floatArrayOf(.98f,.63f,.035f),.31f)
- private val rubber=Material(floatArrayOf(.026f,.039f,.05f),.86f)
- private val metal=Material(floatArrayOf(.64f,.70f,.75f),.24f,.85f)
+ private val rubber=Material(floatArrayOf(.026f,.039f,.05f),.91f)
+ private val metal=Material(floatArrayOf(.64f,.70f,.75f),.29f,.85f)
  private val brass=Material(floatArrayOf(.66f,.45f,.17f),.28f,.8f)
- private val white=Material(floatArrayOf(.88f,.91f,.91f),.67f)
+ private val white=Material(floatArrayOf(.88f,.91f,.91f),.82f)
  private val glass=Material(floatArrayOf(.14f,.39f,.48f),.12f,.25f)
  private val dark=Material(floatArrayOf(.10f,.15f,.20f),.49f)
  private val screen=Material(floatArrayOf(.43f,.75f,.57f),.28f,0f,.23f)
@@ -88,16 +88,20 @@ class WorldEquipment {
    void main(){
     vec3 n=normalize(worldNormal);vec3 v=normalize(eye-worldPosition);
     vec3 l=normalize(vec3(-0.45,0.82,0.65));vec3 h=normalize(l+v);
-    float rough=material.x;float metallic=material.y;
+    float rough=clamp(material.x,.08,.98);float metallic=clamp(material.y,0.0,1.0);
     float diffuse=max(dot(n,l),0.0);float power=mix(100.0,9.0,rough);
-    float spec=pow(max(dot(n,h),0.0),power)*(1.0-rough*.65);
+    float spec=pow(max(dot(n,h),0.0),power)*(1.0-rough*.80)*step(0.0,dot(n,l));
     vec3 f0=mix(vec3(.045),base,metallic);
     vec3 fresnel=f0+(1.0-f0)*pow(1.0-max(dot(n,v),0.0),5.0);
     vec3 hemi=mix(vec3(.22,.23,.25),vec3(.54,.59,.68),n.y*.5+.5);
     vec3 result=base*(hemi*.62+diffuse*.72)*(1.0-metallic*.35);
-    result+=fresnel*spec*1.65;
+    result+=fresnel*spec*1.45;
     // Broad studio fill makes rounded surfaces legible without a costly environment map.
     result+=base*max(dot(n,normalize(vec3(.7,.35,-.5))),0.0)*.15;
+    // A wide reflected strip distinguishes machined metal from enamel and matte rubber.
+    // It is analytic studio lighting, not a claim of environment-mapped/PBR materials.
+    float strip=pow(max(dot(n,normalize(vec3(.15,.35,-.92))),0.0),4.0);
+    result+=fresnel*strip*metallic*.26;
     result+=fresnel*pow(1.0-max(dot(n,v),0.0),3.0)*.12;
     result*=lighting.rgb*lighting.a;result+=base*material.z;
     gl_FragColor=vec4(clamp(result,0.0,1.0),1.0);
@@ -336,16 +340,14 @@ class WorldEquipment {
     tube(listOf(floatArrayOf(.03f,.458f,-.006f),floatArrayOf(.092f,.466f,-.006f),floatArrayOf(.133f,.430f,-.006f),floatArrayOf(.16f,.35f,.015f)),.008f,rubber)
     tube(listOf(floatArrayOf(.19f,.30f,.035f),floatArrayOf(.138f,.240f,-.006f),floatArrayOf(.12f,.157f,-.006f)),.008f,rubber)
    }else hose(listOf(floatArrayOf(.03f,.458f,-.006f),floatArrayOf(.092f,.466f,-.006f),floatArrayOf(.133f,.430f,-.006f),floatArrayOf(.142f,.346f,-.006f),floatArrayOf(.138f,.240f,-.006f),floatArrayOf(.12f,.157f,-.006f)),.008f,rubber)
-   rod(floatArrayOf(.12f,.17f,-.006f),floatArrayOf(.12f,.115f,-.006f),.014f,dark)
+   outlet(floatArrayOf(.12f,.17f,-.006f),floatArrayOf(.12f,.108f,-.006f),.014f,.009f,rubber,metal,dark)
    for(i in 0..6)cylinder(.12f,.119f+i*.006f,-.006f,.029f,.0015f,rubber)
-   cylinder(.12f,.112f,-.006f,.028f,.003f,metal)
-   cylinder(.12f,.110f,-.006f,.019f,.001f,rubber)
   }else{
    val nozzle=floatArrayOf(.14f,.23f,.15f);val target=floatArrayOf(aimX,.065f,-.27f)
    val delta=FloatArray(3){target[it]-nozzle[it]};val length=sqrt(delta.sumOf{(it*it).toDouble()}).toFloat()
    val tip=FloatArray(3){nozzle[it]+delta[it]*.075f/length}
    hose(listOf(floatArrayOf(.03f,.458f,-.006f),floatArrayOf(.115f,.456f,.015f),floatArrayOf(.18f,.385f,.10f),floatArrayOf(.18f,.30f,.16f),nozzle),.008f,rubber)
-   rod(nozzle,tip,.014f,dark)
+   outlet(nozzle,tip,.014f,.009f,rubber,metal,dark)
    if(pressed){
     // Segmented pale rods are a symbolic discharge path, not particle/fluid physics or range guidance.
     val stream=Material(floatArrayOf(.70f,.88f,.96f),.68f,0f,.12f)
@@ -359,6 +361,9 @@ class WorldEquipment {
   cylinder(0f,.455f,.055f,.034f,.003f,white,rx=90f)
   // Coloured operating sector is an authored training cue, never a live pressure reading.
   for(i in 0..12){val a=(i*5+60)*PI/180;val x=cos(a).toFloat()*.013f;val y=sin(a).toFloat()*.013f;box(x,.455f+y,.0585f,.003f,.005f,.001f,0f,screen,rz=(i*5-30).toFloat())}
+  // Contrasting end sectors show the dial's structure without printing a fabricated pressure value.
+  for(i in 0..3)for(end in listOf(0f,155f)){val a=(end+i*7-15)*PI/180
+   box(cos(a).toFloat()*.013f,.455f+sin(a).toFloat()*.013f,.0582f,.0027f,.004f,.0008f,0f,if(end==0f)red else yellow,rz=(end+i*7-105))}
   for(i in 0..8){val a=(i*25+(-10))*PI/180;val x=cos(a).toFloat()*.013f;val y=sin(a).toFloat()*.013f;box(x,.455f+y,.058f,.0017f,.004f,.001f,0f,dark,rz=(i*25-100).toFloat())}
   rod(floatArrayOf(0f,.455f,.059f),if(damaged)floatArrayOf(-.013f,.450f,.059f)else floatArrayOf(0f,.468f,.059f),.0012f,red)
   EquipmentDetailGeometry.fire(this,pinRemoved,damaged,aimX!=null)
@@ -564,6 +569,25 @@ class WorldEquipment {
    for(r in 0 until 12)for(s in 0 until 32){vertex(r,s);vertex(r,s+1);vertex(r+1,s+1);vertex(r,s);vertex(r+1,s+1);vertex(r+1,s)}
   }
   fun rod(a:FloatArray,b:FloatArray,r:Float,m:Material)=tube(listOf(a,b),r,m)
+  /** A visible lip, recessed bore and inner wall make nozzle direction legible at inspection scale. */
+  fun outlet(a:FloatArray,b:FloatArray,outer:Float,inner:Float,body:Material,rim:Material,bore:Material){
+   require(outer>inner&&inner>0f)
+   val axis=norm(FloatArray(3){b[it]-a[it]})
+   fun cross(x:FloatArray,y:FloatArray)=floatArrayOf(x[1]*y[2]-x[2]*y[1],x[2]*y[0]-x[0]*y[2],x[0]*y[1]-x[1]*y[0])
+   val u=norm(cross(axis,if(abs(axis[2])<.8f)floatArrayOf(0f,0f,1f)else floatArrayOf(0f,1f,0f)));val v=cross(axis,u)
+   val back=FloatArray(3){b[it]-axis[it]*.020f}
+   fun radial(i:Int):FloatArray{val angle=i*2*PI/16;return FloatArray(3){u[it]*cos(angle).toFloat()+v[it]*sin(angle).toFloat()}}
+   fun point(c:FloatArray,n:FloatArray,r:Float)=FloatArray(3){c[it]+n[it]*r}
+   fun quad(p:List<FloatArray>,n:List<FloatArray>,m:Material){for(i in intArrayOf(0,1,2,0,2,3))emit(p[i],n[i],m)}
+   for(i in 0 until 16){
+    val n0=radial(i);val n1=radial(i+1)
+    quad(listOf(point(a,n0,outer),point(a,n1,outer),point(b,n1,outer),point(b,n0,outer)),listOf(n0,n1,n1,n0),body)
+    quad(listOf(point(b,n0,outer),point(b,n1,outer),point(b,n1,inner),point(b,n0,inner)),List(4){axis},rim)
+    val in0=FloatArray(3){-n0[it]};val in1=FloatArray(3){-n1[it]}
+    quad(listOf(point(b,n0,inner),point(b,n1,inner),point(back,n1,inner),point(back,n0,inner)),listOf(in0,in1,in1,in0),bore)
+    emit(back,axis,bore);emit(point(back,n0,inner),axis,bore);emit(point(back,n1,inner),axis,bore)
+   }
+  }
   fun hose(path:List<FloatArray>,r:Float,m:Material){
    val smooth=mutableListOf<FloatArray>()
    for(i in 0 until path.lastIndex)for(step in 0 until 6){

@@ -11,20 +11,22 @@ import android.graphics.Color
 import android.graphics.Typeface
 import android.graphics.drawable.GradientDrawable
 import android.graphics.drawable.RippleDrawable
-import android.graphics.drawable.StateListDrawable
+import android.graphics.drawable.InsetDrawable
 import android.content.res.ColorStateList
 import android.view.Gravity
 import android.view.View
 import android.widget.*
 
 object Palette {
-    val canvas=Color.rgb(234,240,244); val surface=Color.rgb(249,252,255); val ink=Color.rgb(24,52,76)
-    val muted=Color.rgb(75,102,123); val blue=Color.rgb(7,92,154); val soft=Color.rgb(210,233,245)
-    val line=Color.rgb(188,208,223); val success=Color.rgb(19,102,77); val successBg=Color.rgb(230,244,238)
-    val danger=Color.rgb(172,52,59); val dangerBg=Color.rgb(253,236,238); val amber=Color.rgb(128,82,11); val amberBg=Color.rgb(255,243,220)
-    val teal=Color.rgb(15,118,110); val tealBg=Color.rgb(228,244,239)
-    val fire=Color.rgb(198,91,34)
-    val violet=Color.rgb(101,65,168); val violetBg=Color.rgb(241,234,255)
+    // Cool tactile neutrals with a restrained blue-teal action accent.
+    val canvas=Color.rgb(231,236,239); val surface=Color.rgb(237,242,244); val ink=Color.rgb(32,52,61)
+    val muted=Color.rgb(83,100,111); val blue=Color.rgb(33,91,107); val soft=Color.rgb(220,232,237)
+    val line=Color.rgb(180,194,202); val controlLine=Color.rgb(111,130,142); val disabled=Color.rgb(222,228,232)
+    val success=Color.rgb(33,102,79); val successBg=Color.rgb(226,238,231)
+    val danger=Color.rgb(159,62,63); val dangerBg=Color.rgb(243,229,229); val amber=Color.rgb(128,91,29); val amberBg=Color.rgb(241,233,216)
+    val teal=Color.rgb(31,105,95); val tealBg=Color.rgb(222,236,232)
+    val fire=Color.rgb(180,77,38)
+    val violet=Color.rgb(106,82,141); val violetBg=Color.rgb(235,229,242)
 }
 /** Roles describe the action, never the correctness of an unanswered choice. */
 enum class ActionRole { PRIMARY, LEARN, CAMERA, REVIEW, NEUTRAL, DANGER }
@@ -36,32 +38,35 @@ fun Context.label(value: String,size: Float=16f,colour: Int=Palette.ink,bold: Bo
 }
 fun Context.column(padding: Int=0)=LinearLayout(this).apply { orientation=LinearLayout.VERTICAL;setPadding(dp(padding),dp(padding),dp(padding),dp(padding)) }
 fun LinearLayout.add(view: View,top: Int=0,bottom: Int=0) { addView(view,LinearLayout.LayoutParams(-1,-2).apply { topMargin=context.dp(top);bottomMargin=context.dp(bottom) }) }
-fun Context.card(colour: Int=Palette.surface)=column(18).apply {background=shape(colour,12,if(colour==Palette.surface) Palette.line else null)}
+fun Context.card(colour: Int=Palette.surface)=column(18).apply {
+    background=softSurface(colour,18);elevation=0f
+}
 fun Button.actionRole(role: ActionRole)=apply {
     val (fill,ink)=when(role) {
         ActionRole.PRIMARY -> Palette.blue to Color.WHITE
         ActionRole.LEARN -> Palette.soft to Palette.blue
-        ActionRole.CAMERA -> Palette.soft to Palette.blue
+        ActionRole.CAMERA -> Palette.tealBg to Palette.teal
         ActionRole.REVIEW -> Palette.amberBg to Palette.amber
-        ActionRole.NEUTRAL -> Palette.soft to Palette.ink
+        ActionRole.NEUTRAL -> Palette.surface to Palette.ink
         ActionRole.DANGER -> Palette.dangerBg to Palette.danger
     }
     setTextColor(ColorStateList(arrayOf(intArrayOf(-android.R.attr.state_enabled),intArrayOf()),intArrayOf(Palette.muted,ink)))
-    val states=StateListDrawable().apply {
-        addState(intArrayOf(-android.R.attr.state_enabled),context.shape(0xffe4eaed.toInt(),14,Palette.line))
-        addState(intArrayOf(android.R.attr.state_focused),context.shape(fill,14,ink))
-        addState(intArrayOf(),context.shape(fill,14))
-    }
-    states.state=drawableState
+    // Colour is supplementary to the existing label. Focus/selection also have a visible edge.
+    val edge=if(role==ActionRole.PRIMARY)Palette.blue else Palette.controlLine
+    val face=context.softSurface(fill,16,edge,interactive=true)
     backgroundTintList=null
-    background=RippleDrawable(ColorStateList.valueOf(if(role==ActionRole.PRIMARY)0x40ffffff else 0x200e3551),states,context.shape(Color.WHITE,14))
+    background=RippleDrawable(
+        ColorStateList.valueOf(if(role==ActionRole.PRIMARY)0x32ffffff else 0x1821343d),
+        face,
+        InsetDrawable(context.shape(Color.WHITE,16),context.dp(4)),
+    )
     background.state=drawableState
     refreshDrawableState()
 }
 fun Context.action(text: String,primary: Boolean=true,role: ActionRole=if(primary)ActionRole.PRIMARY else ActionRole.LEARN,onClick: ()->Unit)=Button(this).apply {
     stateListAnimator=null;elevation=0f;this.text=text;isAllCaps=false;textSize=15f;typeface=Typeface.create("sans-serif-medium",Typeface.NORMAL)
     actionRole(role)
-    minHeight=dp(48);minimumHeight=dp(48);setPadding(dp(14),dp(10),dp(14),dp(10));setOnClickListener{performHapticFeedback(android.view.HapticFeedbackConstants.KEYBOARD_TAP);onClick()}
+    minHeight=dp(48);minimumHeight=dp(48);minWidth=dp(48);minimumWidth=dp(48);setPadding(dp(16),dp(10),dp(16),dp(10));setOnClickListener{performHapticFeedback(android.view.HapticFeedbackConstants.KEYBOARD_TAP);onClick()}
 }
 fun Activity.notice(title: String,message: String) { android.app.AlertDialog.Builder(this).setTitle(title).setView(paged(column(12).apply{add(label(message,16f))},getSharedPreferences("preferences",Context.MODE_PRIVATE).getBoolean("hi",false))).setPositiveButton("OK",null).show() }
 

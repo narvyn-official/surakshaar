@@ -171,9 +171,12 @@ class LearningScenarioActivity : Activity() {
                         }
                     }
                 }
-                body.add(action(t("Inspect this step in 3D / AR", "इस चरण को 3D / AR में देखें"), false, ActionRole.CAMERA) {
+                body.add(action(t("Learn this step with Hands AR", "इस चरण को Hands AR में सीखें"), false, ActionRole.CAMERA) {
+                    openHandsLesson(a)
+                }.apply{tag="learning-step-hands"},top=10)
+                body.add(action(t("Inspect in 3D", "3D में देखें"), false, ActionRole.NEUTRAL) {
                     if(store.isCurrentProfile() && allowed(a.scenario))startActivity(Intent(this,LearningSpatialActivity::class.java).putExtra("scenarioId",a.scenario.getString("id")).putExtra("stepId",step.getString("id")))
-                }.apply{tag="learning-step-spatial"},top=10)
+                }.apply{tag="learning-step-spatial"},top=6)
                 narrator.show(when {
                     needsObservation(a) -> step.getString("cue") + ". Find " + (partNames[step.getString("part")] ?: "the structure") + " in the body viewer."
                     a.awaitingContinue -> step.getString("explanation")
@@ -194,6 +197,21 @@ class LearningScenarioActivity : Activity() {
         }
         setContentView(root)
         trainingInsets(root)
+    }
+
+    private fun openHandsLesson(a:LearningAttempt) {
+        if(a.finished||blocked||!store.isCurrentProfile()||!allowed(a.scenario))return
+        val view=runCatching{HandsLessonSession.create(a.scenario,SpatialCatalog(this).data.getJSONObject("steps"),catalog.version,school(),a.current.getString("id")).current}.getOrNull()
+        if(view==null){
+            PageDialogBuilder(this).setTitle(t("Step scene unavailable","इस चरण का दृश्य उपलब्ध नहीं है"))
+                .setMessage(t("The linked Hands AR scene could not be verified. Your lesson and saved decisions are unchanged; 3D inspection remains available.","जुड़ा Hands AR दृश्य सत्यापित नहीं हो सका। आपका पाठ और सहेजे गए निर्णय सुरक्षित हैं; 3D निरीक्षण उपलब्ध है।"))
+                .setPositiveButton(t("Back","वापस"),null).show()
+            return
+        }
+        narrator.pause()
+        startActivity(Intent(this,HandsArActivity::class.java)
+            .putExtra("scenarioId",view.scenarioId).putExtra("stepId",view.stepId)
+            .putExtra("modelId",view.modelId).putExtra("teachingKey",view.teachingKey).putExtra("partId",view.partId))
     }
 
     private fun resumeChoice(a: LearningAttempt) {

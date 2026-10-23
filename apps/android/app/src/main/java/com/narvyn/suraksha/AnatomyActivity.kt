@@ -84,7 +84,7 @@ class AnatomyActivity:Activity(){
             if(::summary.isInitialized) syncSelection(c)
         }
         root.add(placement,top=6)
-        inspector=column(10).apply{background=shape(Palette.surface,12,Palette.line)}
+        inspector=column(10).apply{background=softSurface(Palette.surface,12)}
         val selectionRow=LinearLayout(this).apply{gravity=Gravity.CENTER_VERTICAL}
         name=label(t("Tap a body part","शरीर का अंग चुनें"),16f,Palette.ink,true).apply{tag="anatomy-part-name";maxLines=2;ellipsize=android.text.TextUtils.TruncateAt.END}
         selectionRow.addView(name,LinearLayout.LayoutParams(0,-2,1f))

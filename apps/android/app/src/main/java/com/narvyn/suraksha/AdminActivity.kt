@@ -94,7 +94,7 @@ class AdminActivity:Activity() {
     private fun field(parent:LinearLayout,title:String,value:String="",type:Int=InputType.TYPE_CLASS_TEXT):EditText {
         val group=column();parent.add(group,top=12)
         val caption=label(title,14f,Palette.muted,true);group.add(caption)
-        val input=EditText(this).apply{ id=View.generateViewId();setText(value);textSize=16f;inputType=type;isSingleLine=true;minHeight=dp(48);setPadding(dp(12),dp(8),dp(12),dp(8));background=shape(Palette.surface,12,Palette.line);contentDescription=title;tag="admin-field-$title" }
+        val input=EditText(this).apply{ id=View.generateViewId();setText(value);textSize=16f;inputType=type;isSingleLine=true;minHeight=dp(48);setPadding(dp(12),dp(8),dp(12),dp(8));background=softSurface(Palette.surface,12,interactive=true,inset=true);contentDescription=title;tag="admin-field-$title" }
         caption.labelFor=input.id;group.add(input,top=6)
         if(type and InputType.TYPE_MASK_VARIATION==InputType.TYPE_TEXT_VARIATION_PASSWORD){
             input.isSaveEnabled=false

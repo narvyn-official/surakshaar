@@ -67,7 +67,7 @@ class LearnerCentreActivity:Activity(){
         val v=EditText(this).apply{
             id=when(key){"email"->R.id.account_email;"name"->R.id.account_name;"password"->R.id.account_password;"current-password"->R.id.account_current_password;"new-password"->R.id.account_new_password;else->android.view.View.generateViewId()}
             tag="account-$key";contentDescription=title;inputType=type;minHeight=dp(48);setSingleLine();textSize=16f;setTextColor(Palette.ink)
-            background=shape(Palette.surface,12,Palette.line);setPadding(dp(12),dp(8),dp(12),dp(8));isSaveEnabled=false
+            background=softSurface(Palette.surface,12,interactive=true,inset=true);setPadding(dp(12),dp(8),dp(12),dp(8));isSaveEnabled=false
             imeOptions=android.view.inputmethod.EditorInfo.IME_ACTION_NEXT
         }
         val caption=label(title,14f,Palette.muted,true).apply{labelFor=v.id};group.add(caption,bottom=4);group.add(v)

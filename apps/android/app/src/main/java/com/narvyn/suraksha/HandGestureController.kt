@@ -67,6 +67,8 @@ internal class HandGestureController {
         var palmSince: Long? = null
         var pinched = false
         var pinchTarget: String? = null
+        var pinchX = 0f
+        var pinchY = 0f
         var lastX: Float? = null
         var lastY: Float? = null
         var wrist: HandLandmark? = null
@@ -181,6 +183,7 @@ internal class HandGestureController {
                     if (state.armed && sample.ratio <= PINCH_ON) {
                         if (state.pinchSince == null) {
                             state.pinchSince = frame.captureTimeMs
+                            state.pinchX = state.lastX!!; state.pinchY = state.lastY!!
                             state.pinchTarget = targetAt(state.lastX!!, state.lastY!!)?.takeIf { it.isNotBlank() && it.length <= 160 }
                         }
                         if (frame.captureTimeMs - state.pinchSince!! >= PINCH_MS) {
@@ -225,8 +228,8 @@ internal class HandGestureController {
                 val state = states.getValue(id)
                 val target = state.pinchTarget
                 if (target != null) {
-                    active = Active(target, id, state.lastX!!, state.lastY!!)
-                    events += HandGestureEvent.Start(target, id, state.lastX!!, state.lastY!!)
+                    active = Active(target, id, state.pinchX, state.pinchY)
+                    events += HandGestureEvent.Start(target, id, state.pinchX, state.pinchY)
                     break
                 }
             }

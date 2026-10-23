@@ -89,16 +89,18 @@ class HeadsetSetupFlowTest {
             capture("chooser-school")
         }
     }
-    @Test fun homeHasAHeadsetEntryAndKeepsHandheldCoursesAvailable(){
+    @Test fun homeLeadsToCoursesAndExploreOwnsTheViewingModes(){
         ActivityScenario.launch(MainActivity::class.java).use{activity->
             activity.onActivity{host->
                 val all=views(host.window.decorView)
-                assertNotNull(all.singleOrNull{it.tag=="main-headset"})
-                assertNotNull(all.singleOrNull{it.tag=="main-handheld"})
+                assertNotNull(all.singleOrNull{it.tag=="main-browse-courses"})
+                assertTrue("Home should not repeat Explore controls",all.none{it.tag in setOf("main-headset","main-handheld","main-hands-ar")})
                 assertTrue("Home cannot repeat the course catalogue",all.none{(it.tag as? String)?.startsWith("course-")==true})
             }
             capture("home")
-            tagged("main-handheld").perform(revealOnPage(),click())
+            tagged("main-nav-explore").perform(click())
+            activity.onActivity{host->assertTrue(views(host.window.decorView).map{it.tag}.containsAll(listOf("studio-hands-ar","studio-headset","studio-anatomy")))}
+            tagged("main-nav-courses").perform(click())
             activity.onActivity{host->
                 val tags=views(host.window.decorView).map{it.tag}
                 assertTrue(tags.containsAll(listOf("course-fire","course-first-aid","main-learning-headset","main-learning-library")))

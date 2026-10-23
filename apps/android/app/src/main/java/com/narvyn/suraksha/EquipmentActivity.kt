@@ -94,7 +94,7 @@ class EquipmentActivity:Activity(){
  private fun resetView(){focusX=0f;focusZ=0f;selectedDetail="";val preset=FireScenePlan.viewForCase(if(module=="fire")contextCase()?.id else null);yaw=preset.yaw;pitch=preset.pitch;distance=1.25f;focusY=preset.focusY;updateView()}
  private fun closeDock(){dock?.let{(it.parent as? ViewGroup)?.removeView(it)};dock=null}
  private fun openDock(){
-  val panel=column(6).apply{tag="equipment-view-dock";background=shape(Palette.surface,12,Palette.line)};dock=panel
+  val panel=column(6).apply{tag="equipment-view-dock";background=softSurface(Palette.surface,12)};dock=panel
   fun row()=LinearLayout(this).apply{gravity=Gravity.CENTER_VERTICAL;isBaselineAligned=false}
   fun LinearLayout.choice(text:String,description:String=text,act:()->Unit){addView(action(text,false,ActionRole.NEUTRAL,act).apply{contentDescription=description;textSize=12f;minHeight=dp(48);minimumHeight=dp(48);setPadding(dp(5),dp(5),dp(5),dp(5))},LinearLayout.LayoutParams(0,-2,1f).apply{marginEnd=dp(3)})}
   val preset=row();preset.choice(t("Front","सामने")){yaw=0f;pitch=0f;updateView()};preset.choice(t("Back","पीछे")){yaw=180f;pitch=0f;updateView()};preset.choice(t("Side","बगल")){yaw=90f;pitch=0f;updateView()};preset.choice(t("Done","पूर्ण")){closeDock()};panel.add(preset)

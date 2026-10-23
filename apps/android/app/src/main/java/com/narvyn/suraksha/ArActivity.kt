@@ -337,7 +337,7 @@ class ArActivity: Activity(), GLSurfaceView.Renderer {
         private val buttons=mutableListOf<Button>();private val paint=Paint(Paint.ANTI_ALIAS_FLAG)
         private var lines=emptyList<FloatArray>()
         private var cameraIsVisible=false
-        private val placeholder=label(t("Camera view paused\nYou can continue on screen.","कैमरा दृश्य रुका है\nआप स्क्रीन पर जारी रख सकते हैं।"),17f,Palette.muted,true).apply { gravity=Gravity.CENTER;setPadding(dp(16),dp(16),dp(16),dp(16));background=shape(Palette.surface,16,Palette.line) }
+        private val placeholder=label(t("Camera view paused\nYou can continue on screen.","कैमरा दृश्य रुका है\nआप स्क्रीन पर जारी रख सकते हैं।"),17f,Palette.muted,true).apply { gravity=Gravity.CENTER;setPadding(dp(16),dp(16),dp(16),dp(16));background=softSurface(Palette.surface,16) }
         init { setWillNotDraw(false);cameraVisible(false);addView(placeholder,LayoutParams(-1,-2,Gravity.CENTER).apply { setMargins(dp(8),0,dp(8),0) }) }
         fun cameraVisible(visible: Boolean) { cameraIsVisible=visible;setBackgroundColor(if(visible)Color.TRANSPARENT else Palette.canvas);placeholder.visibility=if(visible)GONE else VISIBLE;invalidate() }
         fun bind(options: List<Option>, width: Int, revision: Int, questionId: String): List<Float> {

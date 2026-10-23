@@ -279,4 +279,12 @@ class HandGestureControllerTest {
         assertTrue(rotation>Math.PI)
     }
 
+    @Test fun gripStartsAtThePointThatSelectedTheModelBeforeFingerClosureDrift() {
+        val h=Harness();h.arm(hand(x=.45f));h.frame(hand(x=.45f,ratio=.1f))
+        val events=h.pinch(hand(x=.53f,ratio=.1f))
+        val start=events.filterIsInstance<HandGestureEvent.Start>().single()
+        assertEquals(.45f,start.x,.0001f)
+        assertTrue(events.filterIsInstance<HandGestureEvent.Move>().any{it.x>start.x})
+    }
+
 }

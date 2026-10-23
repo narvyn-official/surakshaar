@@ -50,6 +50,7 @@ class LearningSpatialActivity:Activity(){
   button("Inspect","spatial-step-inspect"){inspect()}
   button("Hands AR","spatial-step-hands"){
    if(allowed())startActivity(android.content.Intent(this,HandsArActivity::class.java)
+    .putExtra("scenarioId",scenarioId).putExtra("stepId",stepId)
     .putExtra("modelId",if(plan.getString("model")=="anatomy")"body" else "extinguisher")
     .putExtra("teachingKey",plan.optString("teachingKey"))
     .putExtra("partId",plan.optString("part")))

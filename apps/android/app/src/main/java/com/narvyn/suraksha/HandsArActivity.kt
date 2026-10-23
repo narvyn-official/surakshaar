@@ -28,7 +28,7 @@ class HandsArActivity:Activity(){
     private var rearCamera=false
     private var privacy=false
     private var active=false
-    private var page=0
+    private var page=1
     private var modelId="extinguisher"
     private var teachingKey:String?=null
     private var partId:String?=null
@@ -38,10 +38,13 @@ class HandsArActivity:Activity(){
     private lateinit var viewerStatus:TextView
     private var resumed=false
     private var permissionStartPending=false
+    private var lesson:HandsLessonSession?=null
+    private var lessonStepId:String?=null
+    private lateinit var narrator:TrainingNarrator
     override fun onCreate(saved:Bundle?){
         super.onCreate(saved)
         headset=saved?.getBoolean("headset")?:intent.getBooleanExtra("headset",false)
-        page=saved?.getInt("page")?:0
+        page=1
         space=saved?.getBoolean("space")?:false;rearCamera=saved?.getBoolean("rearCamera")?:false;privacy=saved?.getBoolean("privacy")?:false
         modelId=intent.getStringExtra("modelId")?.takeIf{it in HandsArSceneView.MODELS}?:"extinguisher"
         partId=intent.getStringExtra("partId")?.takeIf{it.matches(Regex("FMA[0-9]{1,8}"))}
@@ -50,6 +53,23 @@ class HandsArActivity:Activity(){
         if(requested!=null&&teachingKey==null)entryNote="This step illustration is unavailable. General model exploration is still available."
         profile=Store(this)
         profileContext=getSharedPreferences("learning-profile",MODE_PRIVATE).getString("context-${profile.workerId}","")?:""
+        narrator=TrainingNarrator(this){profile.hi}
+        lessonStepId=saved?.getString("lessonStepId")?:intent.getStringExtra("stepId")
+        intent.getStringExtra("scenarioId")?.let{id->
+            lesson=runCatching{
+                val catalog=LearningCatalog(this)
+                HandsLessonSession.create(catalog.scenario(id),SpatialCatalog(this).data.getJSONObject("steps"),catalog.version,profileContext=="School",lessonStepId)
+            }.getOrNull()
+            if(lesson==null){
+                page=-1
+                val root=column(18).apply{tag="hands-ar-unavailable";setBackgroundColor(Palette.canvas)}
+                root.add(label("Lesson unavailable",23f,Palette.ink,true).asHeading(),bottom=12)
+                root.add(label("This lesson or step is unavailable for the current learner. Return to Learn and choose a supported lesson."),bottom=16)
+                root.add(action("Return to learning"){finish()})
+                setContentView(root);back.enabled(true);return
+            }
+            lesson!!.current.let{step->modelId=step.modelId;teachingKey=step.teachingKey;partId=step.partId;lessonStepId=step.stepId}
+        }
         run{
             val school=profileContext=="School"
             if(school&&teachingKey!=null){
@@ -60,10 +80,10 @@ class HandsArActivity:Activity(){
         runCatching{CardboardBridge.initialise(this)}
         back.enabled(true);renderSetup()
     }
-    override fun onSaveInstanceState(out:Bundle){super.onSaveInstanceState(out);out.putBoolean("headset",headset);out.putInt("page",page);out.putBoolean("space",space);out.putBoolean("rearCamera",rearCamera);out.putBoolean("privacy",privacy)}
+    override fun onSaveInstanceState(out:Bundle){super.onSaveInstanceState(out);out.putBoolean("headset",headset);out.putInt("page",page);out.putBoolean("space",space);out.putBoolean("rearCamera",rearCamera);out.putBoolean("privacy",privacy);out.putString("lessonStepId",lessonStepId)}
     override fun onResume(){super.onResume();resumed=true;if(!profileCurrent()){permissionStartPending=false;scene?.pause();finish();return};if(active)scene?.resume()else if(::start.isInitialized){refreshReadiness();continuePermissionStart()}}
     override fun onPause(){resumed=false;scene?.pause();super.onPause()}
-    override fun onDestroy(){scene?.close();scene=null;back.close();if(::profile.isInitialized)profile.close();super.onDestroy()}
+    override fun onDestroy(){scene?.close();scene=null;back.close();if(::narrator.isInitialized)narrator.close();if(::profile.isInitialized)profile.close();super.onDestroy()}
     override fun onWindowFocusChanged(hasFocus:Boolean){super.onWindowFocusChanged(hasFocus);scene?.focus(hasFocus)}
     @android.annotation.SuppressLint("GestureBackNavigation")
     @Deprecated("Android 10–12 compatibility") override fun onBackPressed(){goBack()}
@@ -71,7 +91,7 @@ class HandsArActivity:Activity(){
         permissionStartPending=false
         scene?.let{it.back();return}
         if(popContentPage())return
-        if(page>0){page--;renderSetup()}else finish()
+        finish()
     }
     private fun shell(title:String):LinearLayout {
         val root=column().apply{tag="hands-ar-root";setBackgroundColor(Palette.canvas)}
@@ -87,45 +107,54 @@ class HandsArActivity:Activity(){
     }
     private fun renderSetup(){
         active=false
-        val root=shell(if(headset)"Live AR in a headset"else"Hands in live AR")
-        val content=column(18)
-        if(page==0){
-            content.add(label("Control virtual models in your surroundings",23f,Palette.ink,true),bottom=10)
-            content.add(label("Point and pinch to pick up a model. Move one hand to drag; pinch with both hands to resize and turn. Open your palm to cancel.",16f),bottom=14)
-            val modes=LinearLayout(this)
-            modes.addView(action("Handheld",!headset){headset=false;rearCamera=false;renderSetup()}.apply{tag="hands-ar-handheld"},LinearLayout.LayoutParams(0,dp(52),1f))
-            modes.addView(action("Cardboard",headset){headset=true;renderSetup()}.apply{tag="hands-ar-headset"},LinearLayout.LayoutParams(0,dp(52),1f).apply{marginStart=dp(10)})
-            content.add(modes,bottom=12)
-            content.add(label(if(headset)"Experimental single-camera passthrough. Both eyes show the same rear-camera image through calibrated lenses. This does not provide stereo depth or reliable real-world distance."else"For two-hand gestures, place the phone on a stable stand. Keep the whole hand visible; show both hands open before pinching.",15f,Palette.muted),bottom=12)
-            content.add(label("Choose virtual models only. The app does not identify arbitrary real objects, diagnose injuries or measure treatment skills.",15f,Palette.muted),bottom=12)
-            entryNote?.let{content.add(label(it,15f,Palette.amber),bottom=12)}
-            start=action("Continue"){page=1;renderSetup()}.apply{tag="hands-ar-start"}
-        }else{
-            content.add(label(if(headset)"Prepare before inserting the phone"else"Prepare your practice area",22f,Palette.ink,true),bottom=10)
-            content.add(label("Use a well-lit textured table or floor. Camera images and hand points are processed on this phone; this app does not store or upload them. The MediaPipe SDK may send vendor usage and performance metrics.",15f),bottom=8)
-            content.add(CheckBox(this).apply{tag="hands-ar-privacy";text="I understand camera and hand processing";isChecked=privacy;minHeight=dp(48);setTextColor(Palette.ink);setOnCheckedChangeListener{_,checked->privacy=checked;refreshReadiness()}},bottom=4)
-            content.add(CheckBox(this).apply{tag="hands-ar-space";text=if(headset)"I am seated, with clear space around my hands"else"My practice space is clear";isChecked=space;minHeight=dp(48);setTextColor(Palette.ink);setOnCheckedChangeListener{_,checked->space=checked;refreshReadiness()}},bottom=4)
-            if(headset){
-                content.add(CheckBox(this).apply{tag="hands-ar-camera";text="The rear camera is uncovered";isChecked=rearCamera;minHeight=dp(48);setTextColor(Palette.ink);setOnCheckedChangeListener{_,checked->rearCamera=checked;refreshReadiness()}},bottom=8)
-                content.add(label("Stay seated. Never walk, handle hot/sharp items or navigate a hazard through this camera view. Button: tap changes the highlighted control; hold activates it.",15f,Palette.amber),bottom=10)
-                content.add(action("Scan the manufacturer's viewer QR",false){runCatching{CardboardBridge.scanViewer(this)}.onFailure{error="Viewer scanning could not start.";renderSetup()}},bottom=6)
-                content.add(action("I use the original Google Cardboard v1",false){runCatching{CardboardBridge.initialise(this);CardboardBridge.useDefaultViewer()}.onFailure{error="That viewer profile could not be saved."};refreshReadiness()},bottom=6)
-            }
-            viewerStatus=label("",14f,Palette.muted).apply{tag="hands-ar-viewer-status"};content.add(viewerStatus,bottom=8)
-            error?.let{content.add(label(it,15f,Palette.danger).apply{tag="hands-ar-error"},bottom=10)}
-            content.add(label("Keep the whole hand in view. Point at a visible model and pinch; release to place. Ordinary touch controls remain available in handheld mode.",15f,Palette.muted),bottom=10)
-            start=action(if(headset)"Start seated AR"else"Start live AR"){requestStart()}.apply{tag="hands-ar-start"}
+        fun t(en:String,hi:String)=if(profile.hi)hi else en
+        val root=shell(t("Learn in AR","AR में सीखें"))
+        val content=column(16)
+        val compact=resources.configuration.screenHeightDp<500&&resources.configuration.screenWidthDp>resources.configuration.screenHeightDp
+        if(compact)content.setPadding(dp(8),dp(8),dp(8),dp(8))
+        val left=if(compact)column()else content
+        val right=if(compact)column()else content
+        left.add(label(lesson?.current?.scenarioTitle?:t("Your space. Your hands.","आपकी जगह। आपके हाथ।"),if(compact)19f else 22f,Palette.ink,true).asHeading(),bottom=if(compact)4 else 10)
+        val modes=LinearLayout(this)
+        modes.addView(action(t("Phone","फ़ोन"),!headset){if(headset){headset=false;space=false;rearCamera=false};renderSetup()}.apply{tag="hands-ar-handheld";isSelected=!headset},LinearLayout.LayoutParams(0,dp(if(compact)48 else 52),1f))
+        modes.addView(action(t("Cardboard","कार्डबोर्ड"),headset){if(!headset){headset=true;space=false;rearCamera=false};renderSetup()}.apply{tag="hands-ar-headset";isSelected=headset},LinearLayout.LayoutParams(0,dp(if(compact)48 else 52),1f).apply{marginStart=dp(8)})
+        left.add(modes,bottom=if(compact)4 else 12)
+        if(!compact)left.add(label(t("Point + pinch to select. Drag with one hand; use two hands to resize and turn.","इशारा और पिंच करके चुनें। एक हाथ से खिसकाएँ; दो हाथों से आकार और दिशा बदलें।"),15f),bottom=10)
+        left.add(label(if(compact)t("On-device camera · SDK metrics","कैमरा फ़ोन पर · SDK मेट्रिक्स")else t("Camera and hand processing stay on this phone. MediaPipe may send usage and performance metrics.","कैमरा और हाथों की प्रोसेसिंग इसी फ़ोन पर होती है। MediaPipe उपयोग और प्रदर्शन की जानकारी भेज सकता है।"),14f,Palette.muted),bottom=if(compact)4 else 8)
+        left.add(action(t("Privacy & controls","निजता और नियंत्रण"),false,ActionRole.NEUTRAL){
+            PageDialogBuilder(this).setTitle(t("Camera, hands & controls","कैमरा, हाथ और नियंत्रण"))
+                .setMessage(t("The app does not store or upload camera images or hand points. MediaPipe may send vendor usage/performance metrics.\n\nKeep the whole hand visible. Point and pinch to pick up; release to place. Two pinches resize and turn. Open your palm to cancel. Touch and viewer-button alternatives remain available.\n\nForeground masking is not measured depth and can miss thin fingers. The eye control enables see-through assistance.\n\nCardboard shows the same rear-camera image to both eyes through calibrated lenses. Keep the rear camera uncovered. Stay seated, never walk or handle real hazards through this view.\n\nThis is illustrative practice, not diagnosis or supervised practical certification.","ऐप कैमरे की तस्वीरें या हाथों के बिंदु सहेजता या अपलोड नहीं करता। MediaPipe उपयोग और प्रदर्शन की जानकारी भेज सकता है।\n\nपूरा हाथ कैमरे में रखें। इशारा और पिंच से चुनें, छोड़कर रखें। दो पिंच से आकार और दिशा बदलें। खुली हथेली से रद्द करें। टच और व्यूअर बटन भी उपलब्ध हैं।\n\nफ़ोरग्राउंड मास्क वास्तविक गहराई नहीं मापता और पतली उँगलियाँ छूट सकती हैं। आँख वाला नियंत्रण पारदर्शी दृश्य देता है।\n\nकार्डबोर्ड में दोनों आँखों को एक ही रियर-कैमरा दृश्य मिलता है। कैमरा खुला रखें। बैठे रहें; इस दृश्य से चलें या असली खतरे न सँभालें।\n\nयह सीखने का चित्रण है, निदान या व्यावहारिक प्रमाणन नहीं।"))
+                .setPositiveButton(t("Done","हो गया"),null).show()
+        },bottom=if(compact)2 else 8)
+        (if(compact)left else right).add(CheckBox(this).apply{tag="hands-ar-privacy";text=t("I understand camera processing","मैं कैमरा प्रोसेसिंग समझता/समझती हूँ");isChecked=privacy;minHeight=dp(48);setTextColor(Palette.ink);setOnCheckedChangeListener{_,checked->privacy=checked;refreshReadiness()}},bottom=4)
+        right.add(CheckBox(this).apply{tag="hands-ar-space";text=if(headset)t("I am seated in a clear area","मैं खाली जगह में बैठा/बैठी हूँ")else t("My practice space is clear","मेरे अभ्यास की जगह खाली है");isChecked=space;minHeight=dp(48);setTextColor(Palette.ink);setOnCheckedChangeListener{_,checked->space=checked;refreshReadiness()}},bottom=4)
+        if(headset){
+            right.add(CheckBox(this).apply{tag="hands-ar-camera";text=t("Rear camera is uncovered","रियर कैमरा खुला है");isChecked=rearCamera;minHeight=dp(48);setTextColor(Palette.ink);setOnCheckedChangeListener{_,checked->rearCamera=checked;refreshReadiness()}},bottom=4)
+            right.add(label(t("Stay seated. Single-camera view; no stereo depth.","बैठे रहें। एक कैमरे का दृश्य; स्टीरियो गहराई नहीं।"),13f,Palette.amber),bottom=6)
+            right.add(action(t("Viewer settings","व्यूअर सेटिंग"),false){
+                PageDialogBuilder(this).setTitle(t("Calibrate your viewer","अपना व्यूअर कैलिब्रेट करें"))
+                    .setItems(arrayOf(t("Scan manufacturer's viewer QR","निर्माता का व्यूअर QR स्कैन करें"),t("I use original Google Cardboard v1","मैं मूल Google Cardboard v1 उपयोग करता/करती हूँ"))){_,choice->
+                        runCatching{if(choice==0)CardboardBridge.scanViewer(this)else{CardboardBridge.initialise(this);CardboardBridge.useDefaultViewer()}}
+                            .onFailure{error="Viewer calibration could not start.";renderSetup()}
+                        refreshReadiness()
+                    }.setNegativeButton(t("Cancel","रद्द करें"),null).show()
+            },bottom=4)
         }
-        root.addView(paged(content,false),LinearLayout.LayoutParams(-1,0,1f))
-        root.add(start.apply{setPadding(dp(16),dp(8),dp(16),dp(8))},top=6,bottom=8)
+        viewerStatus=label("",13f,Palette.muted).apply{tag="hands-ar-viewer-status"};right.add(viewerStatus,bottom=6)
+        if(lesson!=null&&!compact)right.add(label(t("Draft lesson text and voice: English. App language stays unchanged.","इस ड्राफ्ट पाठ का विवरण और आवाज़ अंग्रेज़ी में हैं। ऐप की चुनी हुई भाषा नहीं बदलेगी।"),14f,Palette.amber).apply{tag="hands-ar-content-language"},bottom=6)
+        entryNote?.let{right.add(label(it,14f,Palette.amber),bottom=6)}
+        error?.let{right.add(label(it,14f,Palette.danger).apply{tag="hands-ar-error"},bottom=6)}
+        if(compact){val columns=LinearLayout(this).apply{isBaselineAligned=false};columns.addView(left,LinearLayout.LayoutParams(0,-2,1f).apply{marginEnd=dp(18)});columns.addView(right,LinearLayout.LayoutParams(0,-2,1f));content.add(columns)}
+        start=action(if(lesson!=null)t("Start lesson in English","अंग्रेज़ी में शुरू करें")else if(headset)t("Start seated AR","बैठकर AR शुरू करें")else t("Start live AR","लाइव AR शुरू करें")){requestStart()}.apply{tag="hands-ar-start"}
+        root.addView(paged(content,profile.hi),LinearLayout.LayoutParams(-1,0,1f))
+        root.add(start,bottom=8)
         setContentView(root);root.requestApplyInsets();showSystemBars();refreshReadiness()
     }
     private fun refreshReadiness(){
         if(!::start.isInitialized)return
-        if(page==0){start.isEnabled=true;return}
         val viewer=!headset||(CardboardBridge.nativeAvailable&&CardboardBridge.hasViewerProfile())
         start.isEnabled=canStart()
-        if(::viewerStatus.isInitialized)viewerStatus.text=if(!headset)"Models and hand inference work on-device. ARCore support is required."else if(!viewer)"Scan your actual viewer's QR, or select v1 only for an original Cardboard v1."else if(resources.configuration.orientation!=Configuration.ORIENTATION_LANDSCAPE)"Viewer profile ready. Rotate the phone to landscape before starting."else"Viewer profile ready. If this is a different viewer, scan its own QR."
+        if(::viewerStatus.isInitialized)viewerStatus.text=if(!headset)"ARCore required · on-device hand controls"else if(!viewer)"Calibrate your viewer to start."else if(resources.configuration.orientation!=Configuration.ORIENTATION_LANDSCAPE)"Viewer ready · rotate to landscape to start."else"Viewer calibrated"+(if(lesson!=null)" · draft English lesson"else"")
     }
     private fun profileCurrent()=::profile.isInitialized&&profile.isCurrentProfile()&&getSharedPreferences("learning-profile",MODE_PRIVATE).getString("context-${profile.workerId}","")==profileContext
     private fun canStart()=page==1&&profileCurrent()&&space&&privacy&&(!headset||(rearCamera&&CardboardBridge.nativeAvailable&&CardboardBridge.hasViewerProfile()&&resources.configuration.orientation==Configuration.ORIENTATION_LANDSCAPE))
@@ -155,16 +184,26 @@ class HandsArActivity:Activity(){
             // camera after Activity recreation. Rotate first, then explicitly start in landscape.
             error="Rotate the phone to landscape, then start again.";renderSetup();return
         }
-        val view=HandsArSceneView(this,headset,modelId,teachingKey,partId)
+        val view=HandsArSceneView(this,headset,modelId,teachingKey,partId,lesson,profile.hi)
         scene=view;active=true
         view.tag="hands-ar-live"
         view.onExit={leaveWorkspace()}
         view.onFailure={message->error=message;leaveWorkspace()}
         view.onStatus={message->view.contentDescription=message}
+        view.onStepChanged={id->lessonStepId=id}
+        view.onInstruction={text,language->narrator.show(text,language)}
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         if(headset)requestedOrientation=android.content.pm.ActivityInfo.SCREEN_ORIENTATION_LOCKED
-        setContentView(view);view.focus(window.decorView.hasWindowFocus());if(headset)hideSystemBars()else showSystemBars()
+        val stage=android.widget.FrameLayout(this).apply{setBackgroundColor(if(headset)android.graphics.Color.BLACK else Palette.canvas)}
+        stage.addView(view,android.widget.FrameLayout.LayoutParams(-1,-1))
+        if(!headset)stage.setOnApplyWindowInsetsListener{root,insets->
+            if(Build.VERSION.SDK_INT>=30){val b=insets.getInsets(WindowInsets.Type.systemBars());root.setPadding(b.left,b.top,b.right,b.bottom)}
+            else root.setPadding(insets.systemWindowInsetLeft,insets.systemWindowInsetTop,insets.systemWindowInsetRight,insets.systemWindowInsetBottom)
+            insets
+        }
+        setContentView(stage);stage.requestApplyInsets();view.focus(window.decorView.hasWindowFocus());if(headset)hideSystemBars()else showSystemBars()
         if(resumed)view.resume()
+        lesson?.current?.let{narrator.show(it.detailText,"en-IN")}
     }
     private fun leaveWorkspace(){scene?.close();scene=null;active=false;window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);requestedOrientation=android.content.pm.ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED;page=1;renderSetup()}
     override fun dispatchKeyEvent(event:KeyEvent):Boolean{

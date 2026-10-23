@@ -157,7 +157,7 @@ class HeadsetActivity:Activity(){
         val left=if(compact)column()else content
         val right=if(compact)column()else content
         left.add(summary,bottom=if(compact)8 else 12)
-        val viewer=column(12).apply{background=shape(Palette.surface,16,Palette.line)}
+        val viewer=column(12).apply{background=softSurface(Palette.surface,16)}
         viewer.add(label(t("VIEWER","व्यूअर"),11f,Palette.teal,true),bottom=4)
         readiness=label("",13f,Palette.muted).apply{tag="headset-readiness";accessibilityLiveRegion=View.ACCESSIBILITY_LIVE_REGION_POLITE}
         viewer.add(readiness,bottom=8)

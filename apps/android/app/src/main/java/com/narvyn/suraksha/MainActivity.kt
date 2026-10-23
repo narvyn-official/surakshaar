@@ -134,7 +134,7 @@ class MainActivity: Activity() {
                 tag="main-nav-$dest";isSelected=active;textSize=12f;minHeight=dp(if(compactWorkspace||largeTextNav)48 else 62);minimumHeight=minHeight
                 setPadding(dp(4),dp(6),dp(4),dp(6));compoundDrawablePadding=dp(3)
                 setTextColor(if(active)Palette.blue else Palette.muted)
-                background=android.graphics.drawable.RippleDrawable(android.content.res.ColorStateList.valueOf(0x18086f62),shape(if(active)Palette.soft else Palette.surface,16),null)
+                background=android.graphics.drawable.RippleDrawable(android.content.res.ColorStateList.valueOf(0x18215b6b),softSurface(if(active)Palette.soft else Palette.surface,16,interactive=true,inset=active),null)
                 val icon=if(dest=="home")homeIcon(if(active)Palette.blue else Palette.muted)else appIcon(if(dest=="courses")"learn"else if(dest=="explore")"camera"else dest,if(active)Palette.blue else Palette.muted,22)
                 if(compactWorkspace||largeTextNav){setCompoundDrawables(icon,null,null,null);compoundDrawablePadding=dp(8)}else setCompoundDrawables(null,icon,null,null)
                 contentDescription=t(en,h)+if(active)t(", selected",", चयनित")else ""
@@ -244,9 +244,9 @@ class MainActivity: Activity() {
             body.add(label(t("Fire Safety & First Aid","अग्नि सुरक्षा व प्राथमिक उपचार"),25f,Palette.ink,true).asHeading(),bottom=if(store.name.isBlank())14 else 4)
             if(store.name.isNotBlank())body.add(label(store.name,14f,Palette.muted).apply{tag="main-home-learner"},bottom=14)
         }
-        val focus=column(if(compactWorkspace)12 else 16).apply{background=shape(Palette.surface,18,Palette.line);tag="main-home-focus"}
+        val focus=column(if(compactWorkspace)12 else 16).apply{background=softSurface(Palette.surface,18);tag="main-home-focus"}
         if(compactWorkspace&&store.name.isNotBlank())focus.add(label(store.name,12f,Palette.teal).apply{tag="main-home-learner"},bottom=4)
-        focus.add(label(t(if(next==null)"NEXT STEP"else"PICK UP WHERE YOU LEFT OFF",if(next==null)"अगला चरण"else"जहाँ रुके थे, वहीं से"),11f,Palette.teal,true),bottom=6)
+
         if(next==null){
             focus.add(label(t(if(history.isEmpty())"Start your first practice"else"Choose your next lesson",if(history.isEmpty())"अपना पहला अभ्यास शुरू करें"else"अपना अगला पाठ चुनें"),if(compactWorkspace)17f else 20f,Palette.ink,true).asHeading(),bottom=10)
             focus.add(action(t("Browse courses","पाठ्यक्रम देखें")){go("courses")}.apply{tag="main-browse-courses"})
@@ -257,30 +257,12 @@ class MainActivity: Activity() {
         }
         val secondary=if(compactWorkspace)column()else body
         if(!compactWorkspace)body.add(focus,bottom=12)
-        val modes=LinearLayout(this).apply{isBaselineAligned=false;gravity=Gravity.TOP}
-        fun mode(title:String,detail:String,headset:Boolean,tagName:String,click:()->Unit):Button=action(title+"\n"+detail,false,ActionRole.NEUTRAL,click).apply{
-            tag=tagName;minHeight=dp(if(compactWorkspace)70 else 84);minimumHeight=minHeight;textSize=14f;gravity=Gravity.START or Gravity.CENTER_VERTICAL
-            setPadding(dp(12),dp(10),dp(10),dp(10));setTextColor(if(headset)Palette.teal else Palette.ink)
-            background=headsetSurface(if(headset)Palette.tealBg else Palette.surface,if(headset)Palette.teal else Palette.line)
-            setCompoundDrawables(if(headset)headsetIcon(Palette.teal,26)else appIcon("camera",Palette.blue,26),null,null,null);compoundDrawablePadding=dp(9)
-            val second=text.indexOf('\n')+1
-            text=android.text.SpannableString(text).apply{setSpan(android.text.style.RelativeSizeSpan(.83f),second,length,0)}
-            contentDescription=title+". "+detail
-        }
-        modes.addView(mode(t("Handheld","फ़ोन पर"),t("AR & 3D lessons","AR और 3D पाठ"),false,"main-handheld"){go("courses")},LinearLayout.LayoutParams(0,-2,1f).apply{marginEnd=dp(8)})
-        modes.addView(mode(t("Headset VR","हेडसेट VR"),t("Look. Press. Learn.","देखें। दबाएँ। सीखें।"),true,"main-headset"){openHeadset()},LinearLayout.LayoutParams(0,-2,1f))
-        secondary.add(modes,bottom=10)
         val completed=history.count{it.completed};val inProgress=history.count{it.resumable}
         val summary=if(history.isEmpty())t("No practice saved yet","अभी कोई अभ्यास नहीं सहेजा गया")else t("$completed completed · $inProgress in progress","$completed पूरे · $inProgress जारी")
-        val quickActions=LinearLayout(this).apply{isBaselineAligned=false}
-        quickActions.addView(action(t("Hands AR\nPoint · pinch","हैंड AR\nइशारा · पिंच"),false,ActionRole.CAMERA){
-            startActivity(Intent(this,HandsArActivity::class.java))
-        }.apply{tag="main-hands-ar";textSize=13f;contentDescription=t("Live AR with hand gestures","हाथों के इशारों से लाइव AR")},LinearLayout.LayoutParams(0,-2,1f).apply{marginEnd=dp(8)})
-        quickActions.addView(action(t("Your progress","आपकी प्रगति")+"\n"+t("$completed complete","$completed पूरे"),false,ActionRole.REVIEW){go("records")}.apply{
-            tag="main-home-progress";contentDescription=t("Your progress. ","आपकी प्रगति। ")+summary;textSize=13f;gravity=Gravity.START or Gravity.CENTER_VERTICAL
-            setCompoundDrawables(appIcon("records",Palette.amber,20),null,null,null);compoundDrawablePadding=dp(8)
-        },LinearLayout.LayoutParams(0,-2,1f))
-        secondary.add(quickActions,bottom=8)
+        secondary.add(action(t("Your progress","आपकी प्रगति")+"\n"+summary,false,ActionRole.NEUTRAL){go("records")}.apply{
+            tag="main-home-progress";contentDescription=t("Your progress. ","आपकी प्रगति। ")+summary;gravity=Gravity.START or Gravity.CENTER_VERTICAL
+            setCompoundDrawables(appIcon("records",Palette.teal,24),null,null,null);compoundDrawablePadding=dp(12)
+        },bottom=14)
         history.firstOrNull{it.completed}?.let{recent->
             secondary.add(label(t("Latest: ","हाल का: ")+recent.title,12f,Palette.muted).apply{tag="main-home-recent"},bottom=8)
         }
@@ -317,7 +299,7 @@ class MainActivity: Activity() {
         learningCatalog.courses.forEachIndexed{index,course->
             val id=course.getString("id");val accent=if(id=="fire")Palette.fire else Palette.teal
             val item=column(if(compactWorkspace)12 else 16).apply{
-                background=shape(Palette.surface,18,Palette.line);tag="main-course-card-$id"
+                background=softSurface(Palette.surface,18);tag="main-course-card-$id"
                 val heading=LinearLayout(this@MainActivity).apply{gravity=Gravity.CENTER_VERTICAL}
                 heading.addView(ImageView(this@MainActivity).apply{setImageDrawable(appIcon(course.getString("icon"),accent,27));importantForAccessibility=View.IMPORTANT_FOR_ACCESSIBILITY_NO;background=shape(if(id=="fire")Palette.amberBg else Palette.tealBg,12);setPadding(dp(10),dp(10),dp(10),dp(10))},LinearLayout.LayoutParams(dp(48),dp(48)).apply{marginEnd=dp(10)})
                 heading.addView(label(learningText(course,"title"),if(compactWorkspace)18f else 20f,Palette.ink,true).asHeading(),LinearLayout.LayoutParams(0,-2,1f));add(heading,bottom=8)

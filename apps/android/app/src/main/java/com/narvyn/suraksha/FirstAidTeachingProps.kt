@@ -71,10 +71,10 @@ internal object FirstAidTeachingProps {
         for((g,x,y,z) in listOf(Weave("gauze",-.38f,.79f,.041f),Weave("dressing",-.265f,1f,.131f),Weave("cloth",0f,1.70f,.157f))){
             group(g,floatArrayOf(.71f,.77f,.76f),"$g-weave"){
                 for(i in -10..10){
-                    cylinder(floatArrayOf(x-.050f,y+i*.0045f,z),floatArrayOf(x+.050f,y+i*.0045f,z),.00045f)
-                    cylinder(floatArrayOf(x+i*.0045f,y-.050f,z+.0006f),floatArrayOf(x+i*.0045f,y+.050f,z+.0006f),.00045f)
+                    ribbon(x-.050f,y+i*.0045f,z,x+.050f,y+i*.0045f,.0009f)
+                    ribbon(x+i*.0045f,y-.050f,z+.0006f,x+i*.0045f,y+.050f,.0009f)
                 }
-                for(i in -8..8)cylinder(floatArrayOf(x-.050f,y+i*.005f,z),floatArrayOf(x-.054f,y+i*.005f+.001f,z),.00035f)
+                for(i in -8..8)ribbon(x-.050f,y+i*.005f,z,x-.054f,y+i*.005f+.001f,.0007f)
             }
         }
         group("dressing",white){foldedSheet(-.265f,1f,.125f,.11f,.14f,.004f)}
@@ -90,16 +90,22 @@ internal object FirstAidTeachingProps {
         group("tap",silver){box(.435f,1.08f,-.035f,.10f,.12f,.070f)
             cylinder(floatArrayOf(.435f,1.08f,-.015f),floatArrayOf(.435f,1.08f,.37f),.019f)
             cylinder(floatArrayOf(.435f,1.08f,.37f),floatArrayOf(.265f,1.03f,.37f),.021f)
-            cylinder(floatArrayOf(.265f,1.03f,.37f),floatArrayOf(.265f,1.03f,.32f),.019f)}
+            cylinder(floatArrayOf(.265f,1.03f,.37f),floatArrayOf(.265f,1.03f,.32f),.019f)
+            // Rounded plumbing elbows replace the visual intersection of two capped rods.
+            ellipsoid(.435f,1.08f,.37f,.021f,.021f,.021f)
+            ellipsoid(.265f,1.03f,.37f,.022f,.022f,.022f)}
         group("tap",blue,"tap-control"){cylinder(floatArrayOf(.435f,1.08f,.26f),floatArrayOf(.49f,1.08f,.26f),.015f)
             box(.49f,1.08f,.26f,.014f,.095f,.016f)}
         group("tray",silver){box(.265f,1f,-.053f,.19f,.25f,.022f)
             for(x in listOf(.172f,.358f))box(x,1f,-.025f,.012f,.25f,.056f)
             for(y in listOf(.88f,1.12f))box(.265f,y,-.025f,.19f,.012f,.056f)}
         group("tray",water,"tray-water"){box(.265f,1f,-.032f,.17f,.225f,.003f)}
-        for(i in 0..11)group("water",water,"water-drop-$i"){
+        group("water",water,"water-stream"){
+            // Continuous authored stream plus spaced moving highlights; no flow/treatment measurement.
+            cylinder(floatArrayOf(.265f,1.03f,.318f),floatArrayOf(.265f,1.03f,.136f),.0045f)}
+        for(i in 0..10 step 2)group("water",floatArrayOf(.56f,.86f,.97f),"water-drop-$i"){
             val x=.265f+((i%3)-1)*.012f;val y=1.03f+((i%2)*2-1)*.006f
-            ellipsoid(x,y,.305f,.007f,.007f,.020f)}
+            ellipsoid(x,y,.305f,.0045f,.0045f,.016f)}
         group("sleeve",cloth){foldedSheet(.269f,1.075f,.129f,.105f,.086f,.008f)
             // A narrow adhered edge remains in place through cooling and covering.
             foldedSheet(.270f,1.035f,.118f,.068f,.044f,.003f)}
@@ -198,6 +204,14 @@ internal object FirstAidTeachingProps {
         private val v=GeometryFloats()
         private fun vertex(p:FloatArray,n:FloatArray){for(a in p)v.add(a);for(a in n)v.add(a)}
         private fun tri(a:FloatArray,b:FloatArray,c:FloatArray,n:FloatArray){vertex(a,n);vertex(b,n);vertex(c,n)}
+        /** Raised weave at inspection scale needs a ribbon, not a twelve-sided microscopic tube. */
+        fun ribbon(x0:Float,y0:Float,z:Float,x1:Float,y1:Float,width:Float){
+            val dx=x1-x0;val dy=y1-y0;val length=sqrt(dx*dx+dy*dy).coerceAtLeast(.000001f)
+            val ox=-dy/length*width*.5f;val oy=dx/length*width*.5f
+            val a=floatArrayOf(x0-ox,y0-oy,z);val b=floatArrayOf(x1-ox,y1-oy,z)
+            val c=floatArrayOf(x1+ox,y1+oy,z);val d=floatArrayOf(x0+ox,y0+oy,z)
+            val n=floatArrayOf(0f,0f,1f);tri(a,b,c,n);tri(a,c,d,n)
+        }
         fun box(x:Float,y:Float,z:Float,w:Float,h:Float,d:Float){
             val p=arrayOf(floatArrayOf(x-w/2,y-h/2,z-d/2),floatArrayOf(x+w/2,y-h/2,z-d/2),floatArrayOf(x+w/2,y+h/2,z-d/2),floatArrayOf(x-w/2,y+h/2,z-d/2),floatArrayOf(x-w/2,y-h/2,z+d/2),floatArrayOf(x+w/2,y-h/2,z+d/2),floatArrayOf(x+w/2,y+h/2,z+d/2),floatArrayOf(x-w/2,y+h/2,z+d/2))
             val f=arrayOf(intArrayOf(4,5,6,7),intArrayOf(1,0,3,2),intArrayOf(0,4,7,3),intArrayOf(5,1,2,6),intArrayOf(3,7,6,2),intArrayOf(0,1,5,4))

@@ -1,0 +1,121 @@
+{
+  "distinctSelectedTests": 26,
+  "latestResults": {
+    "com.narvyn.suraksha.ForegroundVisibilityTest#pinnedModelRunsOfflineAndMatchesOfficialPortraitMatte": {
+      "status": 0,
+      "log": "final-setup-tests.txt"
+    },
+    "com.narvyn.suraksha.ForegroundVisibilityTest#cameraForegroundCompositesOverModelAndStaleMaskIsNotReused": {
+      "status": 0,
+      "log": "final-setup-tests.txt"
+    },
+    "com.narvyn.suraksha.HandTrackingEngineTest#emptyStaticImageProducesNoHands": {
+      "status": 0,
+      "log": "foreground-tests.txt"
+    },
+    "com.narvyn.suraksha.HandTrackingEngineTest#officialStaticHandFixturesRunRealOfflineInference": {
+      "status": 0,
+      "log": "foreground-tests.txt"
+    },
+    "com.narvyn.suraksha.HandTrackingEngineTest#disabledAndClosedEngineNeverExposeActionableInput": {
+      "status": 0,
+      "log": "foreground-tests.txt"
+    },
+    "com.narvyn.suraksha.HandTrackingEngineTest#bundledOfficialModelMatchesPinnedDigest": {
+      "status": 0,
+      "log": "foreground-tests.txt"
+    },
+    "com.narvyn.suraksha.HandsArFlowTest#handheldConsentBackAndRecreationDoNotStartTheCamera": {
+      "status": 0,
+      "log": "final-setup-tests.txt"
+    },
+    "com.narvyn.suraksha.HomeLearningNavigationTest#recentProgressIsProfileScopedAndAccountEntryHasOneExplicitDestination": {
+      "status": 0,
+      "log": "ui-and-matte-tests.txt"
+    },
+    "com.narvyn.suraksha.HomeLearningNavigationTest#resumeUsesTheNewestValidPracticeAndSchoolContextCannotResumeAdultPractice": {
+      "status": 0,
+      "log": "ui-and-matte-tests.txt"
+    },
+    "com.narvyn.suraksha.HomeLearningNavigationTest#homeAndLearnHaveDifferentJobsInBothLanguagesAndBackRetainsTheCatalog": {
+      "status": 0,
+      "log": "ui-and-matte-tests.txt"
+    },
+    "com.narvyn.suraksha.HeadsetSetupFlowTest#homeLeadsToCoursesAndExploreOwnsTheViewingModes": {
+      "status": 0,
+      "log": "ui-and-matte-tests.txt"
+    },
+    "com.narvyn.suraksha.TactileSurfaceTest#pressSelectionFocusAndDisableRemainVisuallyDistinct": {
+      "status": 0,
+      "log": "final-setup-tests.txt"
+    },
+    "com.narvyn.suraksha.TactileSurfaceTest#nativeTextAndControlEdgesRetainContrastWithoutShadow": {
+      "status": 0,
+      "log": "final-setup-tests.txt"
+    },
+    "com.narvyn.suraksha.HandsArFlowTest#authoredStepEntryKeepsItsSceneAndRejectsSchoolTreatment": {
+      "status": 0,
+      "log": "final-setup-tests.txt"
+    },
+    "com.narvyn.suraksha.EquipmentExplorerFlowTest#focusRotationAndBackKeepTheModelVisibleWithoutPagingItAway": {
+      "status": 0,
+      "log": "final-android-tests.txt"
+    },
+    "com.narvyn.suraksha.LearningFlowRefinementTest#fireModeAndScenarioLaunchWithoutASecondPicker": {
+      "status": 0,
+      "log": "final-android-tests.txt"
+    },
+    "com.narvyn.suraksha.LearningFlowRefinementTest#courseRecommendsSavedUnfinishedLessonAndPreservesItsEvents": {
+      "status": 0,
+      "log": "final-android-tests.txt"
+    },
+    "com.narvyn.suraksha.LearningFlowRefinementTest#choosingLessonOpensItImmediatelyAndCourseFitsNormalPortrait": {
+      "status": 0,
+      "log": "final-android-tests.txt"
+    },
+    "com.narvyn.suraksha.LearningFlowRefinementTest#schoolContextKeepsOnlyAwarenessLessonsAndBodyExploration": {
+      "status": 0,
+      "log": "final-android-tests.txt"
+    },
+    "com.narvyn.suraksha.LearningFlowRefinementTest#lessonStillRecordsEveryDecisionAndContinueThenOffersNextLesson": {
+      "status": 0,
+      "log": "final-android-tests.txt"
+    },
+    "com.narvyn.suraksha.FirstAidDirectPropFlowTest#visibleTapAdvancesOnceAndSleeveCannotBeChosenThroughTheBody": {
+      "status": 0,
+      "log": "final-android-tests.txt"
+    },
+    "com.narvyn.suraksha.VrHeadsetFlowTest#monoCameraSharesTheImageWhileVrKeepsSeparateEyeRegions": {
+      "status": 0,
+      "log": "final-android-tests.txt"
+    },
+    "com.narvyn.suraksha.HandsArFlowTest#untranslatedHandsLessonDeclaresItsLanguageBeforeStarting": {
+      "status": 0,
+      "log": "final-setup-tests.txt"
+    },
+    "com.narvyn.suraksha.HandsArFlowTest#headsetRequiresUncoveredCameraAndExplicitViewerReadiness": {
+      "status": 0,
+      "log": "setup-window-tests.txt"
+    },
+    "com.narvyn.suraksha.HandsArFlowTest#schoolDeepEntryCannotOpenAdultTreatmentIllustrations": {
+      "status": 0,
+      "log": "final-setup-tests.txt"
+    },
+    "com.narvyn.suraksha.HandsArFlowTest#firstCameraGrantContinuesTheRequestedSessionWithoutAnotherStartTap": {
+      "status": 0,
+      "log": "permission-test.txt"
+    }
+  },
+  "additionalVariants": [
+    {
+      "test": "HomeLearningNavigationTest#homeAndLearnHaveDifferentJobsInBothLanguagesAndBackRetainsTheCatalog",
+      "fontScale": 2.0,
+      "orientation": "landscape",
+      "result": "passed",
+      "log": "large-text-landscape.txt"
+    }
+  ],
+  "physicalPhoneTests": 0,
+  "headsetOpticsTested": false,
+  "fullSuite": false
+}

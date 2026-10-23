@@ -278,7 +278,7 @@ class FirstAidBayActivity : Activity() {
             }
         }
         scene = next; viewport.removeAllViews(); viewport.addView(next, FrameLayout.LayoutParams(-1, -1))
-        val demoBar=LinearLayout(this).apply{gravity=Gravity.CENTER_VERTICAL;setPadding(dp(4),dp(4),dp(4),dp(4));background=shape(Palette.surface,12,Palette.line)}
+        val demoBar=LinearLayout(this).apply{gravity=Gravity.CENTER_VERTICAL;setPadding(dp(4),dp(4),dp(4),dp(4));background=softSurface(Palette.surface,12)}
         demoPlay=practiceTool("",PracticeIcon.PAUSE,t("Pause visual demonstration","दृश्य प्रदर्शन रोकें")){
             next.change{it.copy(teachingPaused=!it.teachingPaused)};syncDemoControls()
         }.apply{tag="bay-demo-toggle"}
