@@ -1,0 +1,110 @@
+{
+  "apk": "surakshaar-0.22.1-dev-release.apk",
+  "sha256": "c2e3b8890cd1450004fe00987fb087e60a4c9308fbab325f70d74b27ad9c8477",
+  "bytes": 96583557,
+  "versionName": "0.22.1-dev",
+  "versionCode": 43,
+  "physicalPhoneTested": false,
+  "physicalHeadsetTested": false,
+  "nativeLibraries": [
+    {
+      "library": "lib/arm64-v8a/libGfxPluginCardboard.so",
+      "loadAlignments": [
+        16384,
+        16384,
+        16384
+      ],
+      "supports16KiB": true
+    },
+    {
+      "library": "lib/arm64-v8a/libarcore_sdk_c.so",
+      "loadAlignments": [
+        16384,
+        16384,
+        16384
+      ],
+      "supports16KiB": true
+    },
+    {
+      "library": "lib/arm64-v8a/libarcore_sdk_jni.so",
+      "loadAlignments": [
+        16384,
+        16384,
+        16384
+      ],
+      "supports16KiB": true
+    },
+    {
+      "library": "lib/arm64-v8a/libmediapipe_tasks_jni.so",
+      "loadAlignments": [
+        16384,
+        16384,
+        16384
+      ],
+      "supports16KiB": true
+    },
+    {
+      "library": "lib/arm64-v8a/libsuraksha_cardboard.so",
+      "loadAlignments": [
+        16384,
+        16384,
+        16384
+      ],
+      "supports16KiB": true
+    },
+    {
+      "library": "lib/x86_64/libGfxPluginCardboard.so",
+      "loadAlignments": [
+        16384,
+        16384,
+        16384
+      ],
+      "supports16KiB": true
+    },
+    {
+      "library": "lib/x86_64/libarcore_sdk_c.so",
+      "loadAlignments": [
+        16384,
+        16384,
+        16384
+      ],
+      "supports16KiB": true
+    },
+    {
+      "library": "lib/x86_64/libarcore_sdk_jni.so",
+      "loadAlignments": [
+        16384,
+        16384,
+        16384
+      ],
+      "supports16KiB": true
+    },
+    {
+      "library": "lib/x86_64/libmediapipe_tasks_jni.so",
+      "loadAlignments": [
+        16384,
+        16384,
+        16384
+      ],
+      "supports16KiB": true
+    },
+    {
+      "library": "lib/x86_64/libsuraksha_cardboard.so",
+      "loadAlignments": [
+        16384,
+        16384,
+        16384
+      ],
+      "supports16KiB": true
+    }
+  ],
+  "nativeLibraryCount": 15,
+  "pinnedModels": {
+    "assets/models/foreground/selfie_segmenter.tflite": "191ac9529ae506ee0beefa6b2c945a172dab9d07d1e802a290a4e4038226658b",
+    "assets/models/hand-tracking/hand_landmarker.task": "fbc2a30080c3c557093b5ddfc334698132eb341044ccee322ccf8bcf3607cde1"
+  },
+  "testFixturesExcluded": true,
+  "noTinyfishKeyPrefix": true,
+  "accountOriginPreserved": true,
+  "signingIdentityMatchesPrevious": true
+}

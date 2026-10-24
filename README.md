@@ -4,7 +4,7 @@ Current completion audit: [checklist](docs/surakshaar-0.19.0/COMPLETION-CHECKLIS
 
 # SurakshaAR
 
-**Current development preview: 0.22.0-dev / Android code 42 — camera AR for phone and Cardboard.** Lens-aware projection, camera-aspect capture, local hand-visibility assistance, earlier hand-result publication, bounded lifting and two-hand resizing/turning, a lens-check grid and session diagnostics. Separate VR and virtual-room modes are removed; earlier VR decision records remain read only. [Download signed APK](https://github.com/narvyn-official/surakshaar/releases/download/v0.22.0-preview/surakshaar-0.22.0-dev-release.apk) · [Release and checksums](https://github.com/narvyn-official/surakshaar/releases/tag/v0.22.0-preview) · [Verification and remaining hardware checks](docs/headset-ar/VERIFICATION-2026-10-24.md). 415 JVM and 30 distinct targeted Android checks passed, plus a large-text variant. Physical phone/headset acceptance remains incomplete. Hand reveal is approximate foreground assistance, not measured depth; camera headset mode uses one rear-camera image for both calibrated lenses. No backend deployment was performed; existing web dependency-audit findings remain open.
+**Current development preview: 0.22.1-dev / Android code 43 — camera AR for phone and Cardboard.** Fixes the grey “Start seated AR” button: Cardboard setup enters landscape even with auto-rotate off, and a persistent English/Hindi message explains any remaining setup requirement. [Download signed APK](https://github.com/narvyn-official/surakshaar/releases/download/v0.22.1-preview/surakshaar-0.22.1-dev-release.apk) · [Release and checksums](https://github.com/narvyn-official/surakshaar/releases/tag/v0.22.1-preview) · [Patch verification](docs/headset-ar/SEATED-START-FIX-2026-10-24.md) · [Camera/hand architecture and remaining hardware checks](docs/headset-ar/VERIFICATION-2026-10-24.md). This patch passed 415 JVM tests, 14 distinct targeted Android checks and repeated large-text checks. Physical phone/headset acceptance remains incomplete. Hand reveal is approximate foreground assistance, not measured depth; camera headset mode uses one rear-camera image for both calibrated lenses. No backend deployment was performed; existing web dependency-audit findings remain open.
 
 **Earlier institutional release: 0.17.0-rc.1 / Android code 34 — institutional workflows.** Organisation units, cohort programmes, independent examiner/issuer/content roles, approved identity references, signed institute learning records, local procedures and limited guardian/facilitator access are implemented. [Implementation checklist](docs/surakshaar-0.17.0/IMPLEMENTATION-CHECKLIST.md) · [Deployment and tests](docs/surakshaar-0.17.0/DEPLOYED-2026-10-11.md) · [Role guide](docs/surakshaar-0.17.0/OPERATIONS.md) · [Download APK](https://github.com/narvyn-official/surakshaar/releases/download/v0.17.0-rc.1/surakshaar-0.17.0-rc.1-release.apk). Thirteen private demonstration logins were verified; staff require MFA. The checklist explicitly records unfinished architecture and external validation gates.
 
@@ -52,7 +52,7 @@ The [access and certification follow-up](docs/access-certification-review-2026-0
 - Android credential wallet with pinned-issuer signature verification offline, explicit expiry and legacy-date handling; renewal requires a new passed assessment.
 - Role-coloured Mineral Light controls with native ripple/focus feedback and a responsive trainer dashboard.
 
-**Pilot scope:** these are simulation learning records, not statutory safety certificates, identity verification, practical competence or permission to work. Santali is visibly pending native review. Samsung results cited above belong to earlier versions. Current candidate evidence is recorded in the [0.22.0 verification report](docs/headset-ar/VERIFICATION-2026-10-24.md); historical Samsung results are not proof for the new build.
+**Pilot scope:** these are simulation learning records, not statutory safety certificates, identity verification, practical competence or permission to work. Santali is visibly pending native review. Samsung results cited above belong to earlier versions. Current candidate evidence is recorded in the [0.22.1 patch report](docs/headset-ar/SEATED-START-FIX-2026-10-24.md) and [0.22.0 camera/hand report](docs/headset-ar/VERIFICATION-2026-10-24.md); historical Samsung results are not proof for the new build.
 
 ## Build Android
 
@@ -62,7 +62,7 @@ Install Android SDK platform/build tools 36 and a compatible JDK, then:
 bash scripts/build-android.sh
 ```
 
-The debug-signed APK is copied to `artifacts/surakshaar-0.22.0/surakshaar-0.22.0-dev-debug.apk`. Android Studio can open `apps/android`. The repository includes the Gradle wrapper. For a fresh clone, generate the pilot issuer before building if you want your own independently approved pilot credentials:
+The debug-signed APK is copied to `artifacts/surakshaar-0.22.1/surakshaar-0.22.1-dev-debug.apk`. Android Studio can open `apps/android`. The repository includes the Gradle wrapper. For a fresh clone, generate the pilot issuer before building if you want your own independently approved pilot credentials:
 
 ```sh
 node scripts/create-pilot-issuer.mjs

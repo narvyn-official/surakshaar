@@ -3,6 +3,7 @@ package com.narvyn.suraksha
 import android.Manifest
 import android.app.Activity
 import android.content.Intent
+import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.os.Build
@@ -107,6 +108,9 @@ class HandsArActivity:Activity(){
     }
     private fun renderSetup(){
         active=false
+        // Cardboard needs a landscape display even when Android's auto-rotate is disabled.
+        // Changing viewing mode never starts a camera; explicit consent and Start still apply.
+        requestedOrientation=if(headset)ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE else ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
         fun t(en:String,hi:String)=if(profile.hi)hi else en
         val root=shell(t("Learn in AR","AR में सीखें"))
         val content=column(16)
@@ -140,21 +144,34 @@ class HandsArActivity:Activity(){
                     }.setNegativeButton(t("Cancel","रद्द करें"),null).show()
             },bottom=4)
         }
-        viewerStatus=label("",13f,Palette.muted).apply{tag="hands-ar-viewer-status"};right.add(viewerStatus,bottom=6)
+        viewerStatus=label("",14f,Palette.muted).apply{tag="hands-ar-viewer-status";setPadding(dp(16),0,dp(16),0);accessibilityLiveRegion=View.ACCESSIBILITY_LIVE_REGION_POLITE}
         if(lesson!=null&&!compact)right.add(label(t("Draft lesson text and voice: English. App language stays unchanged.","इस ड्राफ्ट पाठ का विवरण और आवाज़ अंग्रेज़ी में हैं। ऐप की चुनी हुई भाषा नहीं बदलेगी।"),14f,Palette.amber).apply{tag="hands-ar-content-language"},bottom=6)
         entryNote?.let{right.add(label(it,14f,Palette.amber),bottom=6)}
         error?.let{right.add(label(it,14f,Palette.danger).apply{tag="hands-ar-error"},bottom=6)}
         if(compact){val columns=LinearLayout(this).apply{isBaselineAligned=false};columns.addView(left,LinearLayout.LayoutParams(0,-2,1f).apply{marginEnd=dp(18)});columns.addView(right,LinearLayout.LayoutParams(0,-2,1f));content.add(columns)}
         start=action(if(lesson!=null)t("Start lesson in English","अंग्रेज़ी में शुरू करें")else if(headset)t("Start seated AR","बैठकर AR शुरू करें")else t("Start live AR","लाइव AR शुरू करें")){requestStart()}.apply{tag="hands-ar-start"}
         root.addView(paged(content,profile.hi),LinearLayout.LayoutParams(-1,0,1f))
-        root.add(start,bottom=8)
+        if(compact){
+            val footer=LinearLayout(this).apply{gravity=Gravity.CENTER_VERTICAL;isBaselineAligned=false}
+            footer.addView(viewerStatus,LinearLayout.LayoutParams(0,-2,1f))
+            footer.addView(start,LinearLayout.LayoutParams(0,-2,1f).apply{marginEnd=dp(8)})
+            root.add(footer,bottom=8)
+        }else{root.add(viewerStatus,bottom=6);root.add(start,bottom=8)}
         setContentView(root);root.requestApplyInsets();showSystemBars();refreshReadiness()
     }
     private fun refreshReadiness(){
         if(!::start.isInitialized)return
-        val viewer=!headset||(CardboardBridge.nativeAvailable&&CardboardBridge.hasViewerProfile())
         start.isEnabled=canStart()
-        if(::viewerStatus.isInitialized)viewerStatus.text=if(!headset)"ARCore required · on-device hand controls"else if(!viewer)"Calibrate your viewer to start."else if(resources.configuration.orientation!=Configuration.ORIENTATION_LANDSCAPE)"Viewer ready · rotate to landscape to start."else"Viewer calibrated"+(if(lesson!=null)" · draft English lesson"else"")
+        fun t(en:String,hi:String)=if(profile.hi)hi else en
+        if(::viewerStatus.isInitialized)viewerStatus.text=when{
+            !privacy->t("Confirm camera processing above.","ऊपर कैमरा प्रोसेसिंग की पुष्टि करें।")
+            !space->if(headset)t("Confirm you are seated in a clear area.","खाली जगह में बैठे होने की पुष्टि करें।")else t("Confirm your practice space is clear.","अभ्यास की जगह खाली होने की पुष्टि करें।")
+            headset&&!rearCamera->t("Confirm the rear camera is uncovered.","रियर कैमरा खुला होने की पुष्टि करें।")
+            headset&&!CardboardBridge.nativeAvailable->t("Headset AR is unavailable. Choose Phone mode.","हेडसेट AR उपलब्ध नहीं है। फ़ोन मोड चुनें।")
+            headset&&!CardboardBridge.hasViewerProfile()->t("Open Viewer settings to calibrate your lenses.","लेंस कैलिब्रेट करने के लिए व्यूअर सेटिंग खोलें।")
+            headset&&resources.configuration.orientation!=Configuration.ORIENTATION_LANDSCAPE->t("Opening landscape. If rotation is blocked, use full screen or Phone mode.","लैंडस्केप खुल रहा है। रोटेशन बंद हो तो पूरा स्क्रीन या फ़ोन मोड चुनें।")
+            else->t("Ready. Tap Start to open the camera.","तैयार है। कैमरा खोलने के लिए शुरू करें दबाएँ।")
+        }
     }
     private fun profileCurrent()=::profile.isInitialized&&profile.isCurrentProfile()&&getSharedPreferences("learning-profile",MODE_PRIVATE).getString("context-${profile.workerId}","")==profileContext
     private fun canStart()=page==1&&profileCurrent()&&space&&privacy&&(!headset||(rearCamera&&CardboardBridge.nativeAvailable&&CardboardBridge.hasViewerProfile()&&resources.configuration.orientation==Configuration.ORIENTATION_LANDSCAPE))
@@ -205,7 +222,7 @@ class HandsArActivity:Activity(){
         if(resumed)view.resume()
         lesson?.current?.let{narrator.show(it.detailText,"en-IN")}
     }
-    private fun leaveWorkspace(){scene?.close();scene=null;active=false;window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);requestedOrientation=android.content.pm.ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED;page=1;renderSetup()}
+    private fun leaveWorkspace(){scene?.close();scene=null;active=false;window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);page=1;renderSetup()}
     override fun dispatchKeyEvent(event:KeyEvent):Boolean{
         val view=scene
         if(headset&&view!=null&&event.keyCode in setOf(KeyEvent.KEYCODE_ENTER,KeyEvent.KEYCODE_DPAD_CENTER,KeyEvent.KEYCODE_BUTTON_A,KeyEvent.KEYCODE_HEADSETHOOK)){

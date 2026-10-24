@@ -97,6 +97,59 @@ class HandsArFlowTest {
             capture("headset-ready")
         }
     }
+    @Test fun headsetStartWorksWithSystemAutoRotateOff(){
+        val resolver=context.contentResolver
+        val auto=android.provider.Settings.System.getString(resolver,"accelerometer_rotation")
+        val rotation=android.provider.Settings.System.getString(resolver,"user_rotation")
+        fun setting(key:String,value:String?){
+            val command=if(value==null)"settings delete system $key" else "settings put system $key $value"
+            ins.uiAutomation.executeShellCommand(command).use{android.os.ParcelFileDescriptor.AutoCloseInputStream(it).readBytes()}
+        }
+        try{
+            setting("accelerometer_rotation","0");setting("user_rotation","0")
+            val intent=Intent(context,HandsArActivity::class.java).putExtra("headset",true)
+            ActivityScenario.launch<HandsArActivity>(intent).use{a->
+                var landscape=false
+                repeat(60){if(!landscape){a.onActivity{landscape=it.resources.configuration.orientation==android.content.res.Configuration.ORIENTATION_LANDSCAPE};if(!landscape)Thread.sleep(100)}}
+                capture("rotation-locked-preflight")
+                assertTrue("Cardboard must enter landscape even when system auto-rotate is off",landscape)
+                ins.waitForIdleSync();ins.uiAutomation.waitForIdle(500,3000)
+                a.onActivity{CardboardBridge.initialise(it);CardboardBridge.useDefaultViewer()}
+                click("hands-ar-space");click("hands-ar-privacy");click("hands-ar-camera")
+                a.onActivity{host->
+                    assertTrue("All headset prerequisites are satisfied; Start must be usable",(views(host.window.decorView).single{it.tag=="hands-ar-start"} as Button).isEnabled)
+                    assertNull("Orientation and consent alone must not open the camera",field(host,"scene"))
+                    if(host.resources.configuration.fontScale<=1f)assertEquals("Ordinary headset setup should fit one screen",1,views(host.window.decorView).filterIsInstance<PagedPanel>().first().pageCount)
+                }
+                capture("rotation-locked-ready")
+                click("hands-ar-start")
+                var attempted=false
+                repeat(100){if(!attempted){a.onActivity{attempted=field(it,"permissionStartPending")==true||field(it,"scene")!=null||field(it,"error")!=null};if(!attempted)Thread.sleep(50)}}
+                assertTrue("A Start tap must request the camera or attempt AR startup",attempted)
+            }
+        }finally{setting("accelerometer_rotation",auto);setting("user_rotation",rotation)}
+    }
+    @Test fun missingSafetyCheckIsExplainedBesideTheStartButton(){
+        val wasHindi=Store(context).use{val old=it.hi;it.hi=false;old}
+        try{
+            for(hindi in listOf(false,true)){
+            Store(context).use{it.hi=hindi}
+            ActivityScenario.launch(HandsArActivity::class.java).use{a->
+                click("hands-ar-privacy")
+                a.onActivity{host->
+                    val all=views(host.window.decorView)
+                    val status=all.single{it.tag=="hands-ar-viewer-status"} as android.widget.TextView
+                    val button=all.single{it.tag=="hands-ar-start"} as Button
+                    assertTrue("Explain the remaining clear-space check in the selected language",status.text.contains(if(hindi)"अभ्यास की जगह"else"practice space"))
+                    assertSame("Readiness help must stay beside Start outside the paged content",button.parent,status.parent)
+                    assertFalse(button.isEnabled)
+                    assertNull(field(host,"scene"))
+                }
+                capture(if(hindi)"hindi-readiness"else"english-readiness")
+            }
+            }
+        }finally{Store(context).use{it.hi=wasHindi}}
+    }
     @Test fun schoolDeepEntryCannotOpenAdultTreatmentIllustrations(){
         context.getSharedPreferences("learning-profile",0).edit().putString("context-$worker","School").commit()
         val steps=SpatialCatalog(context).data.getJSONObject("steps")

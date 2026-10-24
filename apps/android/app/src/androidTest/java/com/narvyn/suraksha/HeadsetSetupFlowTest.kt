@@ -109,11 +109,16 @@ class HeadsetSetupFlowTest {
                 tagged("studio-headset").perform(revealOnPage(),click())
                 val opened=ins.waitForMonitorWithTimeout(monitor,5000)
                 assertTrue("Explore must open the camera-AR preflight directly",opened is HandsArActivity)
+                ins.waitForIdleSync()
                 ins.runOnMainSync{
-                    val scene=opened.javaClass.getDeclaredField("scene").apply{isAccessible=true}.get(opened)
+                    // Entering Cardboard can recreate the first monitored instance for landscape.
+                    // Inspect and close the resumed Activity, rather than its destroyed predecessor.
+                    val current=androidx.test.runner.lifecycle.ActivityLifecycleMonitorRegistry.getInstance()
+                        .getActivitiesInStage(androidx.test.runner.lifecycle.Stage.RESUMED).filterIsInstance<HandsArActivity>().single()
+                    val scene=current.javaClass.getDeclaredField("scene").apply{isAccessible=true}.get(current)
                     assertNull("Route entry cannot open the camera",scene)
-                    assertTrue(opened.intent.getBooleanExtra("headset",false))
-                    opened.finish()
+                    assertTrue(current.intent.getBooleanExtra("headset",false))
+                    current.finish()
                 }
             }finally{ins.removeMonitor(monitor)}
             ins.waitForIdleSync()
